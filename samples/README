@@ -1,0 +1,24 @@
+****************************************************
+* Execution sous linux
+****************************************************
+Sous linux (mauka) :
+./compilation.sh
+
+pour executer les tests :
+- test Client / server
+    make check (penser a demarrer le server avant le client pour le test client/server)
+    
+- test sample
+    make check
+
+
+****************************************************
+* Configuration pour Eclipse
+****************************************************
+ajouter les includes dans les proprietees du projet 
+Properties/C/C++Builds/Settings/cygwin C compile/Includes
+
+includes-linux/
+  czmq/includes
+  zmq/includes
+  type

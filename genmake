@@ -1,0 +1,101 @@
+#!/bin/bash
+
+PROJECT_DIR=$HOME/cnes/malzmq/
+LIB_DIR=$PROJECT_DIR/local
+SRC_DIR=$PROJECT_DIR/ccsds.mo.mal.c
+
+if  [ $# -ne 0 ]; then
+  ALL=$1
+else
+  ALL="simple"
+fi
+
+genmake_all() {
+  echo "=== generate : $PWD"
+  ./generate.sh
+  check
+  echo "=== autogen"
+  ./autogen.sh
+  check
+  echo "=== configure"
+  ./configure --prefix=$LIB_DIR
+  check
+  echo "=== make"
+  make
+  check
+  echo "=== make check"
+  make check
+  check
+  echo "=== make install"
+  make install
+  check
+}
+
+genmake_simple() {
+  echo "=== make"
+  make
+  check
+  echo "=== make check"
+  make check
+  check
+  echo "=== make install"
+  make install
+  check
+}
+
+genmake() {
+if [ $ALL == "all" ]; then
+  genmake_all
+else
+  genmake_simple
+fi
+}
+
+check() {
+if  [ $? -ne 0 ]; then
+    echo "ERROR in $PWD" 1>&2
+    exit 1
+fi
+}
+
+cd $SRC_DIR/util;
+genmake
+
+cd $SRC_DIR/malattributes;
+genmake
+
+cd $SRC_DIR/malbinary;
+genmake
+
+cd $SRC_DIR/mal;
+genmake
+
+cd $SRC_DIR/malzmq;
+genmake
+
+cd $SRC_DIR/malactor;
+genmake
+
+cd $SRC_DIR/test/testarea;
+genmake
+
+#cd $SRC_DIR/test/simple_app;
+#genmake
+
+#cd $SRC_DIR/test/send_app;
+#genmake
+
+#cd $SRC_DIR/test/submit_app;
+#genmake
+
+#cd $SRC_DIR/test/request_app;
+#genmake
+
+#cd $SRC_DIR/test/invoke_app;
+#genmake
+
+cd $SRC_DIR/test/progress_app;
+genmake
+
+#cd $SRC_DIR/test/pubsub_app;
+#genmake
