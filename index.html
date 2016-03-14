@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="./img/favicon.ico">
+
+	<title>MAL C API</title>
+
+        <link href="./css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="./css/font-awesome-4.5.0.css" rel="stylesheet">
+        <link href="./css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="./css/highlight.css">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body class="homepage">
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+            <a class="navbar-brand" href=".">MAL C API</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li class="active">
+                        <a href=".">Accueil</a>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="tutorial/">Tutoriel</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">APIs MAL <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="mal_attributes/">Attributs</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="mal_encoding/">Encodage</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="mal_api/">MAL</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="mal_transport/">Transport</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="area/">Area</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="mal_actor/">Actor</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Transports <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="mal_czmq/">MAL/CZMQ</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Générateurs <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="stub_generator/">Stubs de service</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="malbinary_generator/">MalBinary</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="annexes/">Annexes</a>
+                    </li>
+                
+                
+                </ul>
+            
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                    <li class="disabled">
+                        <a rel="next" >
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="tutorial/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#api-mal-en-c-et-transport-malczmq">API MAL en C et transport MAL/CZMQ</a></li>
+        
+    
+        <li class="main "><a href="#introduction">Introduction</a></li>
+        
+            <li><a href="#polymorphisme-delement-mal">Polymorphisme d'élément MAL</a></li>
+        
+            <li><a href="#polymorphisme-dattribut-mal">Polymorphisme d'Attribut MAL</a></li>
+        
+    
+        <li class="main "><a href="#concepts">Concepts</a></li>
+        
+            <li><a href="#end-point">End-Point</a></li>
+        
+            <li><a href="#poller">Poller</a></li>
+        
+            <li><a href="#handler-et-routage">Handler et Routage</a></li>
+        
+            <li><a href="#mal-broker">MAL Broker</a></li>
+        
+            <li><a href="#transformation-duri">Transformation d'URI</a></li>
+        
+            <li><a href="#attributs-pointeurs">Attributs pointeurs</a></li>
+        
+    
+        <li class="main "><a href="#vue-densemble-de-lapi-c">Vue d'ensemble de l'API C</a></li>
+        
+    
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="api-mal-en-c-et-transport-malczmq">API MAL en C et transport MAL/CZMQ</h1>
+<h1 id="introduction">Introduction</h1>
+<p>L'API C représente tous les concepts MAL, en particulier les patterns d'interaction, le format de message MAL et le modèle de données.
+L'objectif principal de l'API C est d'offrir une version simplifiée des fonctions de l'API MAL en Java. La complexité inhérente au standard MAL doit être conservée. Cependant, plusieurs aspects complexes de l'API MAL en Java peuvent être simplifiés ou abandonnés, soit parce qu'ils ne sont pas indispensables, soit parce qu'ils sont liés à des choix de conception différents (par exemple l'approche orientée appel de procédure, RPC), soit parce qu'ils peuvent être améliorés (par exemple la liaison forte entre transport et encodage).</p>
+<p>Les éléments de complexité suivants sont inhérents au standard MAL. Ils doivent être conservés :</p>
+<ul>
+<li>Séparation des fonctions de transport, d'encodage et de contrôle d'accès : multiples APIs et fonctions abstraites</li>
+<li>Patterns d'interaction complexes : <em>Invoke</em>, <em>Progress</em>, <em>Publish-Subscribe</em></li>
+<li>Polymorphisme d'élément MAL, limité au dernier élément d'un corps de message</li>
+<li>Polymorphisme d'Attribut MAL</li>
+<li>Héritage de structure</li>
+</ul>
+<h2 id="polymorphisme-delement-mal">Polymorphisme d'élément MAL</h2>
+<p>Le livre MAL autorise l'utilisation du polymorphisme d'élément à condition qu'il ne soit appliqué qu'au dernier élément d'un corps de message. Ce dernier élément peut être déclaré avec les types suivants :</p>
+<ul>
+<li><code>MAL::Element</code></li>
+<li>un type <code>Composite</code> abstrait</li>
+<li>une liste d'éléments de type <code>MAL::Element</code></li>
+<li>une liste d'éléments de type <code>Composite</code> abstrait</li>
+<li>une liste d'éléments de type <code>MAL::Attribute</code></li>
+</ul>
+<p>Les types listés ci-dessus sont réservés au polymorphisme du dernier élément d'un corps de message. Ils ne peuvent pas être utilisés pour un champ de Composite.</p>
+<p>Les listes d'éléments de type abstrait (<code>Composite</code>, <code>MAL::Element</code> ou <code>MAL::Attribute</code>) ne peuvent pas être instanciées : il n'y a pas de structure de liste pouvant contenir des éléments de type abstrait (et donc des éléments de plusieurs types conformes à ce type abstrait). Par exemple :</p>
+<ul>
+<li><code>List&lt;MAL::Element&gt;</code>, <code>List&lt;MAL::Attribute&gt;</code> ne peuvent pas être instanciées</li>
+<li><code>List&lt;MAL::UpdateHeader&gt;</code>, <code>List&lt;MAL::Boolean&gt;</code> peuvent être instanciées</li>
+</ul>
+<p>En conséquence, une structure liste contient nécessairement des éléments de même type et de type non abstrait.</p>
+<h2 id="polymorphisme-dattribut-mal">Polymorphisme d'Attribut MAL</h2>
+<p>Le livre MAL autorise l'utilisation du polymorphisme d'attribut pour le dernier élément d'un corps de message et pour les champs de Composite.
+Le polymorphisme d'Attribut consiste à déclarer un élément ou un champ avec le type MAL::Attribute.</p>
+<h1 id="concepts">Concepts</h1>
+<p>La plupart des concepts de l'API MAL en C sont imposés par la spécification MAL : message MAL, champs de header, types de données. Cependant, la spécification MAL ne définit pas certains concepts qui sont propres à l'implémentation de la spécification. Cette section présente uniquement ces concepts.</p>
+<h2 id="end-point">End-Point</h2>
+<p>Le end-point MAL est l'entité qui permet d'émettre et de recevoir des messages MAL. Chaque end-point est associé à une unique URI de service MAL, l'API MAL permet la création et la suppression dynamique de end-point.</p>
+<p>Seul le end-point qui a reçu le message initiant une interaction peut répondre à cette interaction.</p>
+<p>Un end-point possède les caractéristiques suivantes :</p>
+<ul>
+<li>Il ne peut utiliser qu'un unique transport (binding) pour recevoir et envoyer des messages MAL.</li>
+<li>Il peut utiliser plusieurs formats d'encodage du corps de message MAL.</li>
+<li>Il est identifié de manière unique par une URI MAL relative au contexte MAL et dont le format dépend du transport utilisé.</li>
+<li>Il doit être exécuté de manière mono-threadée.</li>
+<li>Il gère un compteur de <code>Transaction Id</code> (champ du header MAL).</li>
+</ul>
+<h2 id="poller">Poller</h2>
+<p>Le poller MAL est une entité qui permet d'attendre l'arrivée d'un message sur de multiples end-points. L'API MAL permet la création et la suppression dynamique de pollers, l'ajout et la suppression de end-point au poller.</p>
+<p>Un poller possède les caractéristiques suivantes :</p>
+<ul>
+<li>L'ensemble des end-points d'un poller doivent dépendre d'un même contexte MAL et donc d'un unique transport (binding).</li>
+<li>Il doit être exécuté de manière mono-threadée.</li>
+</ul>
+<p>L'usage du poller MAL n'est pas obligatoire, il est utile dans différents cas :</p>
+<ul>
+<li>Gestion de multiples end-points au travers d'un flot d'exécution unique,</li>
+<li>Réception non bloquante de messages.</li>
+</ul>
+<h2 id="handler-et-routage">Handler et Routage</h2>
+<p>Ces concepts sont offerts afin de faciliter la distribution des messages MAL reçus aux fonctions de traitement, leur utilisation est optionnelle.</p>
+<p>Un Handler est un traitant d'interaction MAL, il s'exécute de manière asynchrone quand il est notifié de l'arrivée d'un message MAL et envoie en retour zéro, un ou plusieurs messages MAL, soit pour initier de nouvelles interactions (rôle du consumer), soit pour répondre à l'interaction en cours (rôle du provider).</p>
+<p>Chaque handler possède une interface dépendant de son rôle (provider, consumer, etc.) et de l'interaction dans laquelle il intervient (send, submit, etc.). Par exemple pour une interaction Progress :</p>
+<ul>
+<li>Le handler du provider doit offrir la fonction : <code>on_progress</code></li>
+<li>Le handler du consumer doit offrir les fonctions : <code>on_ack</code>, <code>on_update</code> et <code>on_response</code>.</li>
+</ul>
+<p>Chacune de ces fonctions est appelée avec les paramètres suivants :</p>
+<ul>
+<li>un pointeur sur l'état du router (cf 7.6),</li>
+<li>un pointeur sur le contexte MAL (cf 7.2),</li>
+<li>un pointeur sur le end-point MAL (cf 7.4),</li>
+<li>et un pointeur sur le message MAL (cf 7.3).</li>
+</ul>
+<p>L'API MAL offre une classe helper (mal_routing) qui simplifie la gestion des Handlers d'un end-point donné, cette classe mal_routing permet d'enregistrer les handlers correspondants aux différentes interactions attendues, puis lors de la réception d'un message par le end-point d'activer le handler correspondant pour qu'il traite le message.</p>
+<p>Les routeurs possèdent un état partagé par l'ensemble des handlers qu'ils gèrent.</p>
+<h2 id="mal-broker">MAL Broker</h2>
+<p>Dans notre implantation du transport ZMQ le Publish/Subscribe est partiellement supporté par le transport ZMQ au travers des sockets PUB/SUB de ZMQ. Afin de respecter la sémantique du pattern Publish/Subscribe du MAL il est cependant nécessaire d'implanter un composant Broker gérant les souscriptions et le filtrage des messages.</p>
+<p>Afin de respecter le mode de fonctionnement de ZMQ ce composant Broker sera localisé coté Consumer. Actuellement il est implanté sous la forme d'un Handler (section 2.3) particulier que l'utilisateur de l'API peut modifier.</p>
+<h2 id="transformation-duri">Transformation d'URI</h2>
+<p>ZMQ peut utiliser de multiples protocoles sous-jacents pour communiquer. Par exemple des communications point-à-point peuvent passer par TCP entre des processus de machines différentes, des IPC entre processus de la même machine ou des mécanismes internes dans un même processus. De même, le Publish/Subscribe peut être mis en œuvre au travers de TCP, PGM ou EPGM.</p>
+<p>Le transport MALZMQ utilise différents flots de communication selon les interactions, dans notre prototype chaque contexte MAL écoute sur 2 sockets différents :</p>
+<ul>
+<li>Un socket <code>DEALER</code> pour les communications point-à-point</li>
+<li>Un socket <code>SUB</code> pour les communications multicast.</li>
+</ul>
+<p>Afin d'assurer la transformation de l'URI MAL d'un service en URI ZMQ nécessaire à la réalisation d'une interaction et afin d'offrir à l'utilisateur une grande liberté de configuration nous avons choisi d'externaliser cette transformation au travers d'upcalls (section 12.2.1).</p>
+<h2 id="attributs-pointeurs">Attributs pointeurs</h2>
+<p>Les attributs pointeurs sont les attributs MAL dont la représentation en C est un type pointeur : <code>MAL::Blob</code>, <code>MAL::Identifier</code>, <code>MAL::String</code> et <code>MAL::URI</code>.</p>
+<p>Pour ces attributs, la valeur <code>NULL</code> (pointeur nul) est autorisée.</p>
+<p>Pour les autres attributs (non pointeurs), la valeur nulle est représentée par un champ additionnel (de type booléen) appelé « flag de présence ».</p>
+<h1 id="vue-densemble-de-lapi-c">Vue d'ensemble de l'API C</h1>
+<p>L'API C est constituée de plusieurs APIs :</p>
+<ul>
+<li><strong>API d'attribut MAL</strong> : Les attributs MAL sont extraits de l'API MAL afin d'éviter une double-dépendance entre l'API MAL (qui dépend des APIs d'encodage) et les APIs d'encodage (qui dépendent des attributs MAL).</li>
+<li><strong>APIs d'encodage</strong> : Les APIs d'encodage sont définies de manière spécifique à un format d'encodage.</li>
+<li><strong>API MAL</strong> : L'API MAL permet l'utilisation des concepts de niveau MAL.</li>
+<li><strong>APIs d'Area</strong> (générées) : L'API MAL contient l'API d'Area générée à partir de la définition de l'Area MAL.</li>
+<li><strong>APIs de transport</strong> : qui gère le mapping des concepts MAL sur les concepts sous-jacents du transport choisi.</li>
+<li><strong>API d'extraction de paramètres de configuration</strong>.</li>
+</ul>
+<p>La plupart des concepts sont représentés chacun par une classe conforme au modèle Class de zproject :</p>
+<ul>
+<li>une structure opaque (seul le type est visible, pas le contenu) déclarée dans le header principal de l'API (<code>&lt;api&gt;.h</code>)</li>
+<li>un fichier « include » : <code>&lt;nom de classe&gt;.h</code></li>
+<li>un fichier « source » : <code>&lt;nom de classe&gt;.c</code></li>
+</ul>
+<p>Les noms de classe sont en caractères minuscules, avec séparateur '_', et sont préfixés du nom de l'API. Par exemple, le concept de end-point, défini dans l'API MAL, est représenté par une classe nommée : <code>mal_endpoint</code>.</p>
+<p>Les noms des classes représentant des types de données sont préfixés des noms de leur Area et leur Service (si existant). Par exemple le type MAL::Blob (défini dans l'area MAL, sans Service intermédiaire) est nommé : <code>mal_blob</code>.</p>
+<p>Les autres conventions sont propres au modèle <em>CLASS</em>.</p></div>
+            
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+
+        <script src="./js/jquery-1.10.2.min.js"></script>
+        <script src="./js/bootstrap-3.0.3.min.js"></script>
+        <script src="./js/highlight.pack.js"></script>
+        <script>var base_url = '.';</script>
+        <script data-main="./mkdocs/js/search.js" src="./mkdocs/js/require.js"></script>
+        <script src="./js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 0.15.3
+Build Date UTC : 2016-03-14 15:54:33.252048
+-->

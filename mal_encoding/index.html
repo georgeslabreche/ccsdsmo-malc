@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+	<title>Encodage - MAL C API</title>
+
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.5.0.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">MAL C API</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="..">Accueil</a>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../tutorial/">Tutoriel</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">APIs MAL <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../mal_attributes/">Attributs</a>
+</li>
+
+                        
+                            
+<li class="active">
+    <a href="./">Encodage</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../mal_api/">MAL</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../mal_transport/">Transport</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../area/">Area</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../mal_actor/">Actor</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Transports <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../mal_czmq/">MAL/CZMQ</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Générateurs <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../stub_generator/">Stubs de service</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../malbinary_generator/">MalBinary</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../annexes/">Annexes</a>
+                    </li>
+                
+                
+                </ul>
+            
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                    <li >
+                        <a rel="next" href="../mal_attributes/">
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../mal_api/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#apis-dencodage">APIs d'encodage</a></li>
+        
+            <li><a href="#definitions">Définitions</a></li>
+        
+            <li><a href="#donnees-a-encoder">Données à encoder</a></li>
+        
+            <li><a href="#encodeur">Encodeur</a></li>
+        
+            <li><a href="#decodeur">Décodeur</a></li>
+        
+            <li><a href="#format-malbinary">Format malbinary</a></li>
+        
+    
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="apis-dencodage">APIs d'encodage</h1>
+<p>Les APIs d'encodage sont définies de manière spécifique à un format d'encodage. Aucune fonction virtuelle n'est imposée par l'API C. Seuls des patterns de fonction sont proposés. Ces patterns sont le plus générique possible mais ils ne sont pas forcément applicables à tous les formats d'encodage. D'autres patterns de fonction peuvent être définis selon les besoins.</p>
+<p>Les fonctions d'encodage générées pour chaque structure de donnée appellent directement les fonctions spécifiques d'encodage. Donc le générateur de stub doit connaître les fonctions spécifiques d'encodage offertes par chaque module d'encodage.</p>
+<p>Le code applicatif ne dépend pas des APIs spécifiques d'encodage, sauf dans le cas où l'application a besoin d'encoder ou de décoder des données de manière explicite.</p>
+<p>Le nom donné en C au format d'encodage défini dans le livre MAL/SPP est : malbinary.</p>
+<p>Ce nom est une chaîne de caractères utilisée pour le nommage des APIs.</p>
+<h2 id="definitions">Définitions</h2>
+<pre><code class="c">    &lt;format&gt;.h
+</code></pre>
+
+<p>Un code identifie de manière unique le format d'encodage doit être défini.</p>
+<pre><code class="c">    #define &lt;FORMAT&gt;_FORMAT_CODE &lt;unique number&gt;
+</code></pre>
+
+<h2 id="donnees-a-encoder">Données à encoder</h2>
+<p>Les données à encoder sont :</p>
+<ul>
+<li>les attributs MAL (dont les types C sont définis en section 5)</li>
+<li>le type d'union <code>mal_attribute_t</code></li>
+<li>des données spécifiques à certains format ; par exemple : le flag de présence d'un champ, la taille de liste, la valeur d'un énuméré.</li>
+</ul>
+<p>Il n'y a pas de fonction d'encodage d'énumérations car seul le code généré (stubs) a la connaissance de la taille des énumérés qui détermine le format d'encodage (dans le cas du format <code>malbinary</code>).</p>
+<p>Il n'y a pas non plus de fonction d'encodage de liste car l'encodage des éléments de la liste est spécifique à leur type. Donc le code d'encodage d'une liste doit être généré dans les stubs.</p>
+<p>L'encodage/décodage d'un code d'erreur est réalisé avec les fonctions d'encodage du type <code>MAL Uinteger</code>.</p>
+<p>Pour chaque type de donnée à encoder, trois fonctions sont définies :</p>
+<ul>
+<li>une fonction permettant de calculer la taille requise par l'encodage de la donnée ; cette fonction prend en paramètre une taille initiale (la taille d'encodage en cours de calcul) et ajoute la taille de la donnée ;</li>
+<li>une fonction d'encodage de la donnée ;</li>
+<li>une fonction de décodage de la donnée.</li>
+</ul>
+<h2 id="encodeur">Encodeur</h2>
+<pre><code class="c">    &lt;format&gt;_encoder.h
+</code></pre>
+
+<h3 id="calcul-de-la-taille-dencodage">Calcul de la taille d'encodage</h3>
+<p>Fonction d'ajout de la taille d'encodage à une valeur initiale.</p>
+<p>Déclaration :</p>
+<ul>
+<li>Si la donnée n'est pas de type pointeur (Attributs non pointeurs ou données spécifiques) :</li>
+</ul>
+<pre><code class="c">    int &lt;format&gt;_encoder_add_&lt;data&gt;_encoding_length(
+     &lt;format&gt;_encoder_t *self, mal_&lt;data type&gt;_t to_encode,
+     unsigned int *encoding_length);
+</code></pre>
+
+<ul>
+<li>Si la donnée est de type pointeur (Attributs pointeurs ou données spécifiques) :</li>
+</ul>
+<pre><code class="c">    int &lt;format&gt;_encoder_add_&lt;data&gt;_encoding_length(
+     &lt;format&gt;_encoder_t *self, mal_&lt;data type&gt;_t *to_encode,
+     unsigned int *encoding_length);
+</code></pre>
+
+<ul>
+<li>Pour le type MAL::Attribute (polymorphisme d'Attribut) :</li>
+</ul>
+<pre><code class="c">    int &lt;format&gt;_encoder_add_attribute_encoding_length(
+     &lt;format&gt;_encoder_t *self, unsigned char attribute_tag,
+      union mal_attribute_t to_encode, unsigned int *encoding_length);
+</code></pre>
+
+<p>Paramètres :</p>
+<ul>
+<li><code>self</code> : le contexte d'encodage</li>
+<li><code>attribute_tag</code> : l'identifiant du type d'Attribut (en cas de polymorphisme d'Attribut)</li>
+<li><code>to_encode</code> : la donnée à encoder</li>
+<li><code>encoding_length</code> : valeur initiale et résultat de la fonction d'ajout</li>
+</ul>
+<p>Résultat : </p>
+<p>Code d'erreur</p>
+<h3 id="encodage">Encodage</h3>
+<p>Déclaration :</p>
+<ul>
+<li>Si la donnée n'est pas de type pointeur (Attributs non pointeurs ou données spécifiques) :</li>
+</ul>
+<pre><code class="c">    int &lt;format&gt;_encoder_encode_&lt;data&gt;(&lt;format&gt;_encoder_t *self,
+      char *bytes, int *offset, mal_&lt;data type&gt;_t to_encode);
+</code></pre>
+
+<ul>
+<li>Si la donnée est de type pointeur (Attributs pointeurs ou données spécifiques) :</li>
+</ul>
+<pre><code class="c">    int &lt;format&gt;_encoder_encode_&lt;data&gt;(&lt;format&gt;_encoder_t *self,
+      char *bytes, int *offset, mal_&lt;data type&gt;_t *to_encode);
+</code></pre>
+
+<ul>
+<li>Pour le type <code>MAL::Attribute</code> (polymorphisme d'Attribut) :</li>
+</ul>
+<pre><code class="c">    int &lt;format&gt;_encoder_encode_attribute(
+      &lt;format&gt;_encoder_t *self, char *bytes, int *offset,
+      unsigned char attribute_tag, mal_attribute_t to_encode);
+</code></pre>
+
+<p>Paramètres :</p>
+<ul>
+<li><code>self</code> : le contexte d'encodage</li>
+<li><code>bytes</code> : le tableau d'octets où doit être encodée la donnée</li>
+<li><code>offset</code> : l'index à partir duquel la donnée doit être encodée, augmenté en résultat du nombre d'octets encodés</li>
+<li><code>attribute_tag</code> : l'identifiant du type d'Attribut (en cas de polymorphisme d'Attribut)</li>
+<li><code>to_encode</code> : la donnée à encoder</li>
+</ul>
+<p>Résultat : </p>
+<p>Code d'erreur</p>
+<h2 id="decodeur">Décodeur</h2>
+<pre><code class="c">    &lt;format&gt;_decoder.h
+</code></pre>
+
+<p>Pour chaque type de donnée à décoder, une fonction de décodage est définie.</p>
+<p>Déclaration :</p>
+<ul>
+<li>Si la donnée n'est pas de type pointeur (Attributs non pointeurs ou données spécifiques) :</li>
+</ul>
+<pre><code class="c">    int &lt;format&gt;_decoder_decode_&lt;data&gt;(&lt;format&gt;_decoder_t *self,
+      char *bytes, int *offset, mal_&lt;data type&gt;_t *result);
+</code></pre>
+
+<ul>
+<li>Si la donnée est de type pointeur (Attributs pointeurs ou données spécifiques) :</li>
+</ul>
+<pre><code class="c">    int &lt;format&gt;_decoder_decode_&lt;data&gt;(&lt;format&gt;_decoder_t *self,
+      char *bytes, int *offset, mal_&lt;data type&gt;_t **result);
+</code></pre>
+
+<ul>
+<li>Pour le type <code>MAL::Attribute</code> (polymorphisme d'Attribut) :</li>
+</ul>
+<pre><code class="c">    int &lt;format&gt;_decoder_decode_attribute(
+      &lt;format&gt;_decoder_t *self, char *bytes, int *offset,
+      unsigned char attribute_tag, mal_attribute_t *result);
+</code></pre>
+
+<p>Paramètres :</p>
+<ul>
+<li><code>self</code> : le contexte de décodage</li>
+<li><code>bytes</code> : le tableau d'octets qui contient la donnée encodée</li>
+<li><code>offset</code> : l'index à partir duquel la donnée doit être décodée, augmenté en résultat du nombre d'octets décodés</li>
+<li><code>result</code> : la donnée décodée</li>
+</ul>
+<p>Résultat : </p>
+<p>Code d'erreur</p>
+<h2 id="format-malbinary">Format <strong>malbinary</strong></h2>
+<h3 id="donnees-specifiques">Données spécifiques</h3>
+<table>
+<thead>
+<tr>
+<th>Donnée</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>presence_flag</code></td>
+<td><code>bool</code></td>
+<td>Champ de présence d'un élément pouvant être nul. <code>TRUE</code> si le champ est présent (valeur non nulle), <code>FALSE</code> si le champ est absent (valeur nulle).</td>
+</tr>
+<tr>
+<td><code>list_size</code></td>
+<td><code>unsigned int</code></td>
+<td>Champ donnant la taille d'une liste MAL</td>
+</tr>
+<tr>
+<td><code>small_enum</code></td>
+<td><code>int</code></td>
+<td>Champ donnant la valeur d'un élément d'une petite énumération (taille inférieure à 2^8)</td>
+</tr>
+<tr>
+<td><code>medium_enum</code></td>
+<td><code>int</code></td>
+<td>Champ donnant la valeur d'un élément d'une  moyenne énumération (taille inférieure à 2^16)</td>
+</tr>
+<tr>
+<td><code>large_enum</code></td>
+<td><code>int</code></td>
+<td>Champ donnant la valeur d'un élément d'une grande énumération (taille inférieure à 2^32)</td>
+</tr>
+<tr>
+<td><code>short_form</code></td>
+<td><code>long</code></td>
+<td>Identifiant de type constitué des numéros d'Area, de Service, de version d'Area et de type. Défini en section 4.1.2 du livre MAL. Cet identifiant est encodé en cas de polymorphisme d'élément.</td>
+</tr>
+<tr>
+<td><code>attribute_tag</code></td>
+<td><code>unsigned char</code></td>
+<td>Identifiant d'attribut : <code>short form</code> de l'attribut moins 1 (voir section 5.2.2 du livre MAL/SPP)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="constantes">Constantes</h3>
+<p>Ces constantes donnent la taille d'encodage de certaines données : <code>presence_flag</code>, <code>attribute_tag</code>, <code>short_form</code>, <code>small_enum</code>, <code>medium_enum</code>, <code>large_enum</code>.</p>
+<pre><code class="c">    #define MALBINARY_PRESENCE_FLAG_SIZE 1
+    #define MALBINARY_ATTRIBUTE_TAG_SIZE 1
+    #define MALBINARY_SHORT_FORM_SIZE 8
+    #define MALBINARY_SMALL_ENUM_SIZE 1
+    #define MALBINARY_MEDIUM_ENUM_SIZE 2
+    #define MALBINARY_LARGE_ENUM_SIZE 4
+</code></pre></div>
+            
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script>
+        <script>var base_url = '..';</script>
+        <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+        <script src="../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>

@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+	<title>Area - MAL C API</title>
+
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.5.0.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">MAL C API</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="..">Accueil</a>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../tutorial/">Tutoriel</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">APIs MAL <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../mal_attributes/">Attributs</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../mal_encoding/">Encodage</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../mal_api/">MAL</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../mal_transport/">Transport</a>
+</li>
+
+                        
+                            
+<li class="active">
+    <a href="./">Area</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../mal_actor/">Actor</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Transports <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../mal_czmq/">MAL/CZMQ</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Générateurs <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../stub_generator/">Stubs de service</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../malbinary_generator/">MalBinary</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../annexes/">Annexes</a>
+                    </li>
+                
+                
+                </ul>
+            
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                    <li >
+                        <a rel="next" href="../mal_transport/">
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../mal_actor/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#apis-darea">APIs d'area</a></li>
+        
+            <li><a href="#definition-de-constantes">Définition de constantes</a></li>
+        
+            <li><a href="#definition-des-types">Définition des types</a></li>
+        
+            <li><a href="#envoi-de-message">Envoi de message</a></li>
+        
+            <li><a href="#encodage">Encodage</a></li>
+        
+            <li><a href="#composite_1">Composite</a></li>
+        
+            <li><a href="#listes-de-composite">Listes de Composite</a></li>
+        
+            <li><a href="#listes-denumere">Listes d'énuméré</a></li>
+        
+    
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="apis-darea">APIs d'area</h1>
+<p>Les noms de type (de donnée) ou d'opération sont toujours préfixés par les nom d'area et de service où est déclaré le type ou l'opération. Deux notations sont utilisées pour spécifier ce format de nommage. La première consiste à inclure systématiquement les noms d'Area et de service, le nom de service n'existant pas pour les types définis dans des Areas (il est donc entre crochets pour les types) :</p>
+<pre><code class="c">&lt;area&gt;_[&lt;service&gt;_]&lt;type&gt;
+&lt;area&gt;_&lt;service&gt;_&lt;operation&gt;
+</code></pre>
+
+<p>La seconde notation n'indique que le nom de type ou d'opération avec le préfix <code>qf</code> signifiant « qualified » c'est-à-dire incluant les noms d'Area et de service. Cette notation est plus compacte :</p>
+<pre><code class="c">&lt;qftype&gt;
+&lt;qfop&gt;
+</code></pre>
+
+<h2 id="definition-de-constantes">Définition de constantes</h2>
+<pre><code class="c">#define &lt;AREA&gt;_AREA_NUMBER &lt;area number&gt;
+#define &lt;AREA&gt;_AREA_VERSION &lt;version&gt;
+</code></pre>
+
+<p>Pour chaque service :</p>
+<pre><code class="c">#define &lt;AREA&gt;_&lt;SERVICE&gt;_SERVICE_NUMBER &lt;service number&gt;
+</code></pre>
+
+<p>Pour chaque opération de service :</p>
+<pre><code class="c">#define &lt;AREA&gt;_&lt;SERVICE&gt;_&lt;OPERATION&gt;_OPERATION_NUMBER &lt;operation number&gt;
+</code></pre>
+
+<p>Pour chaque erreur levée par une opération :</p>
+<pre><code class="c">#define &lt;AREA&gt;_&lt;SERVICE&gt;_&lt;OPERATION&gt;_&lt;ERROR&gt;_ERROR_NUMBER &lt;error number&gt;
+</code></pre>
+
+<p>Pour chaque type de donnée :</p>
+<pre><code class="c">#define &lt;AREA&gt;_[&lt;SERVICE&gt;_]&lt;TYPE&gt;_SHORT_FORM &lt;short form&gt;
+#define &lt;AREA&gt;_[&lt;SERVICE&gt;_]&lt;TYPE&gt;_LIST_SHORT_FORM &lt;short form&gt;
+</code></pre>
+
+<h2 id="definition-des-types">Définition des types</h2>
+<h3 id="enumeration">Enumeration</h3>
+<p>La valeur d'un énuméré est sa valeur ordinale, qui est égale à 0 pour le premier énuméré et qui est incrémentée de 1 pour chaque énuméré dans l'ordre de leur déclaration.</p>
+<pre><code class="c">typedef enum {
+  &lt;AREA&gt;_[&lt;SERVICE&gt;_]&lt;ENUMERATION&gt;_&lt;ENUMERATED NAME&gt;,
+} &lt;area&gt;_[&lt;service&gt;_]&lt;enumeration&gt;_t;
+</code></pre>
+
+<p>La valeur numérique de l'énuméré (spécifiée par la définition du service) est résolue au travers d'un tableau d'entiers déclaré statiquement. Ce tableau contient la valeur numérique pour chaque énuméré dans l'ordre de leur déclaration.</p>
+<pre><code class="c">int &lt;AREA&gt;_[&lt;SERVICE&gt;_]&lt;ENUMERATION&gt;_NUMERIC_VALUES[] = {
+  &lt;numeric value&gt;,
+}
+</code></pre>
+
+<h3 id="composite">Composite</h3>
+<pre><code class="c">typedef struct _&lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_t
+  &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_t;
+</code></pre>
+
+<h3 id="listes">Listes</h3>
+<p>Pour chaque Composite :</p>
+<pre><code class="c">typedef struct _&lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_list_t
+    &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_list_t;
+</code></pre>
+
+<p>Pour chaque Enumeration :</p>
+<pre><code class="c">typedef struct _&lt;area&gt;_[&lt;service&gt;_]&lt;enumeration&gt;_list_t
+    &lt;area&gt;_[&lt;service&gt;_]&lt;enumeration&gt;_list_t;
+</code></pre>
+
+<h2 id="envoi-de-message">Envoi de message</h2>
+<h3 id="operation-non-publishsubscribe">Opération non Publish/Subscribe</h3>
+<p>Pour chaque opération, excepté si le pattern d'interaction est Publish/Subscribe, les fonctions d'envoi de message listées dans le tableau ci-dessous doivent être définies. </p>
+<p>L'étape et le rôle de l'application MAL appelant la fonction sont spécifiés pour chaque fonction.</p>
+<table>
+<thead>
+<tr>
+<th>Fonction</th>
+<th>Etape</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Initiation d'interaction</td>
+<td>send, submit, request, invoke, progress</td>
+<td>Consumer</td>
+</tr>
+<tr>
+<td>Résultat d'interaction</td>
+<td>submit_ack, request_response invoke_ack, invoke_response, progress_ack, progress_update, progress_response</td>
+<td>Provider</td>
+</tr>
+</tbody>
+</table>
+<p>Déclarations :</p>
+<pre><code class="c">int &lt;area&gt;_&lt;service&gt;_&lt;operation&gt;_&lt;first stage&gt;(
+  mal_endpoint_t *endpoint, mal_message_t *init_message,
+  mal_uri_t *provider_uri);
+
+int &lt;area&gt;_&lt;service&gt;_&lt;operation&gt;_&lt;result stage&gt;(
+  mal_endpoint_t *endpoint, mal_message_t *init_message,
+  mal_message_t *result_message, bool is_error_message);
+</code></pre>
+
+<p>Paramètres :</p>
+<ul>
+<li><code>endpoint</code> : le end-point qui envoie le message</li>
+<li><code>init_message</code> : le message qui initie l'interaction (première étape)</li>
+<li><code>provider_uri</code> : l'URI du provider de service</li>
+<li><code>result_message</code> : le message résultat du traitement de l'interaction (seconde étape et suivantes)</li>
+<li><code>is_error_message</code> : flag indiquant si le message renvoie une erreur</li>
+</ul>
+<p>Résultat : </p>
+<p>code d'erreur</p>
+<h3 id="operation-publishsubscribe">Opération Publish/Subscribe</h3>
+<p>Pour chaque opération dont le pattern d'interaction est Publish/Subscribe, les fonctions d'envoi de message listées dans le tableau ci-dessous doivent être définies. </p>
+<p>L'étape Pub/Sub et le rôle de l'application MAL appelant la fonction sont spécifiés pour chaque fonction. Aucune fonction n'est générée pour le rôle Broker car un Broker est un composant générique qui ne dépend pas d'Area particulière (excepté l'Area MAL).</p>
+<table>
+<thead>
+<tr>
+<th>Fonction</th>
+<th>Etape Pub/Sub</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Abonnement</td>
+<td>Register</td>
+<td>Subscriber</td>
+</tr>
+<tr>
+<td>Déclaration de publication</td>
+<td>Publish Register</td>
+<td>Publisher</td>
+</tr>
+<tr>
+<td>Publication</td>
+<td>Publish</td>
+<td>Publisher</td>
+</tr>
+<tr>
+<td>Désabonnement</td>
+<td>Deregister</td>
+<td>Subscriber</td>
+</tr>
+<tr>
+<td>Arrêt de publication</td>
+<td>Publish Deregister</td>
+<td>Publisher</td>
+</tr>
+</tbody>
+</table>
+<p>Déclarations :</p>
+<pre><code class="c">int &lt;area&gt;_&lt;service&gt;_&lt;operation&gt;_register(
+  mal_endpoint_t *endpoint, mal_message_t *message, mal_uri_t *broker_uri);
+
+int &lt;area&gt;_&lt;service&gt;_&lt;operation&gt;_publish_register(
+  mal_endpoint_t *endpoint, mal_message_t *message, mal_uri_t *broker_uri);
+
+int &lt;area&gt;_&lt;service&gt;_&lt;operation&gt;_publish(
+  mal_endpoint_t *endpoint, mal_message_t *message, mal_uri_t *broker_uri,
+  long initial_publish_register_tid);
+
+int &lt;area&gt;_&lt;service&gt;_&lt;operation&gt;_deregister(
+  mal_endpoint_t *endpoint, mal_message_t *message, mal_uri_t *broker_uri);
+
+int &lt;area&gt;_&lt;service&gt;_&lt;operation&gt;_publish_deregister(
+  mal_endpoint_t *endpoint, mal_message_t *message, mal_uri_t *broker_uri);
+</code></pre>
+
+<p>Paramètres :</p>
+<ul>
+<li><code>endpoint</code> : Le end-point qui envoie le message</li>
+<li><code>message</code> : le message relatif à l'étape Pub/Sub</li>
+<li><code>broker_uri</code> : l'URI du broker</li>
+<li><code>initial_publish_register_tid</code> : identifiant de transaction du premier message Publish Register envoyé</li>
+</ul>
+<p>Résultat : </p>
+<p>code d'erreur</p>
+<h2 id="encodage">Encodage</h2>
+<p>Ces fonctions sont définies pour chaque opération, chaque élément de corps de message et chaque erreur retournée par l'opération. Les éléments sont identifiés par leur index dans le corps de message comme spécifié par la définition MAL (XML) du service.</p>
+<p>En Pub/Sub, l'index des éléments commence à 0 avec la première liste d'Update. Les éléments précédents comme par exemple l'Identifier (message Notify) ou l'UpdateHeaderList (messages Publish et Notify) ne sont pas comptés.</p>
+<p>Les messages d'erreur n'ont au plus qu'un seul élément (identifié par le champ extraInformation). Il n'y a donc pas d'index.</p>
+<h3 id="polymorphisme-du-dernier-element-de-corps-de-message">Polymorphisme du dernier élément de corps de message</h3>
+<p>Si l'élément est le dernier du corps de message :</p>
+<ul>
+<li>Si le type déclaré est MAL::Attribute, alors l'élément est transmis avec le type de l'union 'mal_attribute_t'.</li>
+<li>Si le type déclaré est MAL::Element, un composite abstrait, ou une liste d'un type abstrait (y compris MAL::Attribute), alors une fonction doit être définie pour chaque type final conforme au type abstrait. Le nom du type (qftype) est ajouté au nom de la fonction après un séparateur '_' :</li>
+</ul>
+<pre><code class="c">&lt;nom de la fonction d encodage&gt;_&lt;qftype&gt;(&lt;paramètres&gt;);
+</code></pre>
+
+<p>Les fonctions d'encodage du message d'erreur suivront également la même convention de nommage, que le type du champ extraInformation soit polymorphique ou non. Cela permet de distinguer les fonctions des éventuelles erreurs multiples.</p>
+<h3 id="calcul-de-la-taille-dencodage-dun-element-de-corps-de-message">Calcul de la taille d'encodage d'un élément de corps de message</h3>
+<p>Fonction d'ajout de la taille d'encodage à une valeur initiale.</p>
+<p>Déclaration :</p>
+<ul>
+<li>
+<p>Si l'opération n'est pas Pub/Sub :</p>
+</li>
+<li>
+<p>En cas de polymorphisme d'Attribut :</p>
+</li>
+</ul>
+<pre><code class="c">int &lt;qfop&gt;_&lt;stage|error&gt;_add_encoding_length[_&lt;index&gt;][_&lt;qftype&gt;](
+  int encoding_format_code, void *encoder, bool presence_flag,
+  unsigned char attribute_tag, union mal_attribute_t element,
+  unsigned int *encoding_length);
+</code></pre>
+
+<ul>
+<li>Sinon, le type de l'élément est connu (même en cas de polymorphisme) :</li>
+<li>Si l’élément est un Attribut non pointeur, ou un énuméré :</li>
+</ul>
+<pre><code class="c">int &lt;qfop&gt;_&lt;stage|error&gt;_add_encoding_length[_&lt;index&gt;][_&lt;qftype&gt;](
+  int encoding_format_code, void *encoder, bool presence_flag,
+  &lt;qftype&gt;_t element, unsigned int *encoding_length);
+</code></pre>
+
+<ul>
+<li>Si l’élément est un Attribut pointeur, un Composite ou une liste :</li>
+</ul>
+<pre><code class="c">int &lt;qfop&gt;_&lt;stage|error&gt;_add_encoding_length[_&lt;index&gt;][_&lt;qftype&gt;](
+  int encoding_format_code, void *encoder, &lt;qftype&gt;_[list_]t *element,
+  unsigned int *encoding_length);
+</code></pre>
+
+<ul>
+<li>Si l'opération est Pub/Sub :</li>
+</ul>
+<pre><code class="c">int &lt;qfop&gt;_update_add_encoding_length[_&lt;index&gt;][_&lt;qftype&gt;_list](
+    int encoding_format_code, void * encoder,
+    &lt;qftype&gt;_list_t *element,
+    unsigned int *encoding_length);
+</code></pre>
+
+<p>Paramètres :</p>
+<ul>
+<li><code>encoding_format_code</code> : code du format d'encodage</li>
+<li><code>encoder</code> : configuration du module d'encodage</li>
+<li><code>presence_flag</code> : champ de présence, nécessaire si le type de l'élément n'est pas un pointeur</li>
+<li><code>element</code> : élément à encoder</li>
+<li><code>encoding_length</code> : valeur initiale et résultat de la fonction d'ajout</li>
+</ul>
+<p>Résultat : </p>
+<p>code d'erreur</p>
+<h3 id="encodage-dun-element-de-corps-de-message">Encodage d'un élément de corps de message</h3>
+<p>Déclaration :</p>
+<ul>
+<li>Si l'opération n'est pas Pub/Sub :</li>
+<li>En cas de polymorphisme d'Attribut :</li>
+</ul>
+<pre><code class="c">int &lt;qfop&gt;_&lt;stage|error&gt;_encode[_&lt;index&gt;][_&lt;qftype&gt;](
+  int encoding_format_code, char *bytes, unsigned int *offset,
+  void *encoder, bool presence_flag, unsigned char attribute_tag,
+  union mal_attribute_t element);
+</code></pre>
+
+<ul>
+<li>Sinon, le type de l'élément est connu (même en cas de polymorphisme) :</li>
+<li>Si l’élément est un Attribut non pointeur ou un énuméré :</li>
+</ul>
+<pre><code class="c">int &lt;qfop&gt;_&lt;stage|error&gt;_encode[_&lt;index&gt;][_&lt;qftype&gt;](
+  int encoding_format_code, char *bytes, unsigned int *offset,
+  void *encoder, bool presence_flag, &lt;qftype&gt;_t element);
+</code></pre>
+
+<ul>
+<li>Si l’élément est un Attribut pointeur, un Composite, ou une liste :</li>
+</ul>
+<pre><code class="c">int &lt;qfop&gt;_&lt;stage|error&gt;_encode[_&lt;index&gt;][_&lt;qftype&gt;](
+  int encoding_format_code, char *bytes, unsigned int *offset,
+  void *encoder, &lt;qftype&gt;_[list_]t *element);
+</code></pre>
+
+<ul>
+<li>Si l'opération est Pub/Sub :</li>
+</ul>
+<pre><code class="c">int &lt;qfop&gt;_update_encode[_&lt;index&gt;][_&lt;qftype&gt;_list](
+    int encoding_format_code, char *bytes,
+    unsigned int *offset, void *encoder, &lt;qftype&gt;_list_t *element) {
+</code></pre>
+
+<p>Paramètres :</p>
+<ul>
+<li><code>encoding_format_code</code> : code du format d'encodage</li>
+<li><code>bytes</code> : le tableau d'octets dans lequel l'élément doit être encodé</li>
+<li><code>offset</code> : index à partir duquel l'élément est encodé, augmenté en résultat du nombre d'octets encodés</li>
+<li><code>encoder</code> : configuration du module d'encodage</li>
+<li><code>presence_flag</code> : flag de présence à encoder</li>
+<li><code>attribute_tag</code> : tag d'Attribut à encoder</li>
+<li><code>element</code> : élément à encoder</li>
+</ul>
+<h3 id="decodage-dun-element-de-corps-de-message">Décodage d'un élément de corps de message</h3>
+<p>Déclaration :</p>
+<ul>
+<li>Si l'opération n'est pas Pub/Sub :</li>
+<li>En cas de polymorphisme d'Attribut :</li>
+</ul>
+<pre><code class="c">int &lt;qfop&gt;_&lt;stage&gt;_decode[_&lt;index&gt;](
+  int encoding_format_code, char *bytes, unsigned int *offset,
+  void *decoder, bool *presence_flag_res,
+  unsigned char *attribute_tag_res, union mal_attribute_t *element_res);
+</code></pre>
+
+<ul>
+<li>En cas de polymorphisme d'élément et/ou pour un message d'erreur :</li>
+</ul>
+<pre><code class="c">int &lt;qfop&gt;_&lt;stage|error&gt;_decode[_&lt;index&gt;](
+  int encoding_format_code,
+  char *bytes, unsigned int *offset, void *decoder,
+  mal_element_holder_t *element_holder);
+</code></pre>
+
+<ul>
+<li>Si le type de l'élément est connu :</li>
+<li>Si l’élément est un Attribut non pointeur ou un énuméré :</li>
+</ul>
+<pre><code class="c">int &lt;qfop&gt;_&lt;stage&gt;_decode[_&lt;index&gt;](
+  int encoding_format_code, char *bytes, unsigned int *offset,
+  void *decoder, bool *presence_flag_res, &lt;qftype&gt;_t *element_res);
+</code></pre>
+
+<ul>
+<li>Si l’élément est un Attribut pointeur, un Composite ou une liste :</li>
+</ul>
+<pre><code class="c">int &lt;qfop&gt;_&lt;stage&gt;_decode[_&lt;index&gt;](
+  int encoding_format_code, char *bytes, unsigned int *offset,
+  void *decoder, &lt;qftype&gt;_[list_]t **element_res);
+</code></pre>
+
+<ul>
+<li>Si l'opération est Pub/Sub :</li>
+<li>En cas de polymorphisme d'élément :</li>
+</ul>
+<pre><code class="c">int &lt;qfop&gt;_update_decode[_&lt;index&gt;](int encoding_format_code,
+  char *bytes, unsigned int *offset, void *decoder,
+  mal_element_holder_t *element_holder);
+</code></pre>
+
+<ul>
+<li>Si le type de l'update est connu :</li>
+</ul>
+<pre><code class="c">int &lt;qfop&gt;_update_decode[_&lt;index&gt;](int encoding_format_code,
+  char *bytes, unsigned int *offset, void *decoder,
+  &lt;qftype&gt;_list_t **element_res);
+</code></pre>
+
+<p>Paramètres :</p>
+<ul>
+<li><code>encoding_format_code</code> : code du format d'encodage</li>
+<li><code>bytes</code> : le tableau d'octets à partir duquel l'élément doit être décodé</li>
+<li><code>offset</code> : index à partir duquel l'élément est décodé, augmenté en résultat du nombre d'octets décodés</li>
+<li><code>decoder</code> : configuration du module de décodage</li>
+<li><code>presence_flag_res</code> : flag de présence décodé</li>
+<li><code>attribute_tag_res</code> : tag d'Attribut décodé</li>
+<li><code>element_res</code> : élément décodé</li>
+<li><code>element_holder</code> : élément décodé</li>
+</ul>
+<h3 id="allocation-memoire">Allocation mémoire</h3>
+<p>Les primitives de décodage allouent de la mémoire pour certains paramètres (attributs pointeurs, composites, listes, et ce récursivement. Ces paramètres doivent en final être détruits par l'appel des fonctions destroy adaptées, qui assurent la libération récursive de la mémoire.</p>
+<p>En cas de retour en erreur d'une fonction de décodage, il peut y avoir eu allocation partielle d'un ensemble d'éléments. Dans ce cas le paramètre partiellement décodé est retourné et doit également être détruit par l'appel à la fonction destroy.</p>
+<p>La destruction de la mémoire allouée lors du décodage d'un élément polymorphique au travers d'une structure mal_holder_t est particulière. Le destructeur de la structure ne libérant pas le contenu, il faut retrouvé le type effectif de l'élément alloué et appeler le constructeur spécifique de l'élément.</p>
+<h2 id="composite_1">Composite</h2>
+<p>Une classe est générée pour chaque Composite.</p>
+<h3 id="constructeur">Constructeur</h3>
+<pre><code class="c">&lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_t
+  *&lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_new(void);
+</code></pre>
+
+<h3 id="getters-et-setters">Getters et setters</h3>
+<p>L'affectation du flag de présence est réalisée de manière explicite par des fonctions <code>setter</code> dédiées. Le flag de présence ne doit pas être modifié implicitement par le <code>setter</code> de la valeur du champ.</p>
+<p>Pour chaque champ, les fonctions 'setter' et 'getter' d'accès à la valeur du champ sont définies :</p>
+<pre><code class="c">&lt;field type&gt; &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_get_&lt;field&gt;(
+    &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_t *self);
+void &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_set_&lt;field&gt;(
+    &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_t *self, &lt;field type&gt; &lt;field&gt;);
+</code></pre>
+
+<p>Si le champ n'est pas un pointeur (valeur NULL interdite), des fonctions 'setter' et 'getter' d'accès aux flags de présence sont ajoutées :</p>
+<pre><code class="c">bool &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_&lt;field&gt;_is_present(
+    &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_t *self);
+void &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_&lt;field&gt;_set_present(
+    &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_t *self, bool is_present);
+</code></pre>
+
+<p>En cas de polymorphisme d'attribut, des fonctions 'setter' et 'getter' d'accès aux tags d'Attribut sont ajoutées :</p>
+<pre><code class="c">unsigned char &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_&lt;field&gt;_get_attribute_tag(
+    &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_t *self);
+void &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_&lt;field&gt;_set_attribute_tag(
+    &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_t *self, unsigned char attribute_tag);
+</code></pre>
+
+<h3 id="destructeur">Destructeur</h3>
+<p>Détruit la structure et les structures contenues dedans (composites, listes, Attributs pointeurs).</p>
+<pre><code class="c">void &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_destroy(
+    &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_t **self_p);
+</code></pre>
+
+<h2 id="listes-de-composite">Listes de Composite</h2>
+<p>Structures de liste générées pour chaque type Composite.</p>
+<h3 id="constructeur_1">Constructeur</h3>
+<p>Déclaration :</p>
+<pre><code class="c">&lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_list_t
+  *&lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_list_new(unsigned int element_count);
+</code></pre>
+
+<p>Paramètres :</p>
+<ul>
+<li><code>element_count</code></li>
+</ul>
+<h3 id="getters">Getters</h3>
+<p>Des fonctions « getters » sont définies pour accéder aux champs :</p>
+<pre><code class="c">unsigned int &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_list_get_element_count(
+  &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_list_t *self);
+&lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_t **&lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_list_get_content(
+  &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_list_t *self);
+</code></pre>
+
+<h3 id="destructeur_1">Destructeur</h3>
+<p>Détruit la liste, son contenu et les éléments de la liste.</p>
+<pre><code class="c">void &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_list_destroy(
+    &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_list_t **self_p);
+</code></pre>
+
+<h2 id="listes-denumere">Listes d'énuméré</h2>
+<p>Structures de liste générées pour chaque type Enumeration.</p>
+<h3 id="constructeur_2">Constructeur</h3>
+<p>Déclaration :</p>
+<pre><code class="c">&lt;area&gt;_[&lt;service&gt;_]&lt;enum&gt;_list_t
+  *&lt;area&gt;_[&lt;service&gt;_]&lt;enum&gt;_list_new(unsigned int element_count);
+</code></pre>
+
+<p>Paramètres :</p>
+<ul>
+<li><code>element_count</code></li>
+</ul>
+<h3 id="getters_1">Getters</h3>
+<p>Des fonctions « getters » sont définies pour accéder aux champs :</p>
+<pre><code class="c">unsigned int &lt;area&gt;_[&lt;service&gt;_]&lt;enum&gt;_list_get_element_count(
+  &lt;area&gt;_[&lt;service&gt;_]&lt;enum&gt;_list_t *self);
+bool *&lt;area&gt;_[&lt;service&gt;_]&lt;enum&gt;_list_get_presence_flags(
+  &lt;area&gt;_[&lt;service&gt;_]&lt;enum&gt;_list_t *self);
+&lt;area&gt;_[&lt;service&gt;_]&lt;enum&gt;_t *&lt;area&gt;_[&lt;service&gt;_]&lt;enum&gt;_list_get_content(
+  &lt;area&gt;_[&lt;service&gt;_]&lt;enum&gt;_list_t *self);
+</code></pre>
+
+<h3 id="destructeur_2">Destructeur</h3>
+<p>Détruit la liste et son contenu.</p>
+<pre><code class="c">void &lt;area&gt;_[&lt;service&gt;_]&lt;enum&gt;_list_destroy(
+    &lt;area&gt;_[&lt;service&gt;_]&lt;enum&gt;_list_t **self_p);
+</code></pre></div>
+            
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script>
+        <script>var base_url = '..';</script>
+        <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+        <script src="../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>

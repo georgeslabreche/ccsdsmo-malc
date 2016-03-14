@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+	<title>Attributs - MAL C API</title>
+
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.5.0.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">MAL C API</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="..">Accueil</a>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../tutorial/">Tutoriel</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">APIs MAL <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li class="active">
+    <a href="./">Attributs</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../mal_encoding/">Encodage</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../mal_api/">MAL</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../mal_transport/">Transport</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../area/">Area</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../mal_actor/">Actor</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Transports <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../mal_czmq/">MAL/CZMQ</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Générateurs <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../stub_generator/">Stubs de service</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../malbinary_generator/">MalBinary</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../annexes/">Annexes</a>
+                    </li>
+                
+                
+                </ul>
+            
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                    <li >
+                        <a rel="next" href="../tutorial/">
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../mal_encoding/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#api-dattributs-mal">API d'Attributs MAL</a></li>
+        
+            <li><a href="#type-booleen">Type booléen</a></li>
+        
+            <li><a href="#types-numeriques-entiers">Types numériques entiers</a></li>
+        
+            <li><a href="#types-numeriques-flotants">Types numériques flotants</a></li>
+        
+            <li><a href="#dates">Dates</a></li>
+        
+            <li><a href="#duree">Durée</a></li>
+        
+            <li><a href="#types-chaine-de-caracteres">Types chaîne de caractères</a></li>
+        
+            <li><a href="#blob">Blob</a></li>
+        
+            <li><a href="#polymorphisme-dattribut">Polymorphisme d'Attribut</a></li>
+        
+            <li><a href="#short-forms-dattribut">Short forms d'Attribut</a></li>
+        
+    
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="api-dattributs-mal">API d'Attributs MAL</h1>
+<p>L'API d'Attributs MAL définit les types C utilisés pour représenter les Attributs MAL.</p>
+<h2 id="type-booleen">Type booléen</h2>
+<p>Définition du type <code>MAL::Boolean</code> :</p>
+<pre><code class="c">    typedef bool mal_boolean_t;
+</code></pre>
+
+<h2 id="types-numeriques-entiers">Types numériques entiers</h2>
+<p>Définition des types <code>MAL::Octet</code>, <code>MAL::UOctet</code>, <code>MAL::Short</code>, <code>MAL::UShort</code>, <code>MAL::Integer</code>, <code>MAL::UInteger</code>, <code>MAL::Long</code>, <code>MAL::ULong</code> :</p>
+<pre><code class="c">    typedef char mal_octet_t;
+    typedef unsigned char mal_uoctet_t;
+    typedef short mal_short_t;
+    typedef unsigned short mal_ushort_t;
+    typedef int mal_integer_t;
+    typedef unsigned int mal_uinteger_t;
+    typedef long mal_long_t;
+    typedef unsigned long mal_ulong_t;
+</code></pre>
+
+<h2 id="types-numeriques-flotants">Types numériques flotants</h2>
+<p>Définition des types <code>MAL::Float</code>, <code>MAL::Double</code>.</p>
+<pre><code class="c">    typedef float mal_float_t;
+    typedef double mal_double_t;
+</code></pre>
+
+<h2 id="dates">Dates</h2>
+<p>Définition des types <code>MAL::Time</code>, <code>MAL::FineTime</code> :</p>
+<pre><code class="c">    typedef unsigned long mal_time_t;
+    typedef unsigned long mal_finetime_t;
+</code></pre>
+
+<h2 id="duree">Durée</h2>
+<p>Définition du type <code>MAL::Duration</code> :</p>
+<pre><code class="c">    typedef float mal_duration_t;
+</code></pre>
+
+<h2 id="types-chaine-de-caracteres">Types chaîne de caractères</h2>
+<p>Le type <code>char</code> est utilisé pour représenter les chaînes de caractères. Si les caractères n'appartiennent pas au format ASCII (MAL spécifie le format Unicode), alors un même caractère peut être représenté par plusieurs octets . Dans ce cas, les fonctions C traitant les chaînes ASCII ne sont plus applicables.</p>
+<p>Définition des types <code>MAL::String</code>, <code>MAL::Identifier</code>, <code>MAL::URI</code> :</p>
+<pre><code class="c">    typedef char mal_string_t;
+    typedef char mal_identifier_t;
+    typedef char mal_uri_t;
+</code></pre>
+
+<h3 id="constructeur">Constructeur</h3>
+<p>Alloue dynamiquement une nouvelle chaîne de caractères à partir d'une chaîne existante. Cette fonction doit être appelée quand une chaîne MAL est construite à partir d'une chaîne définie statiquement.</p>
+<pre><code class="c">    mal_&lt;attribute&gt;_t *mal_&lt;attribute&gt;_new(char *char_content);
+</code></pre>
+
+<h3 id="nombre-de-caracteres-ascii">Nombre de caractères (ASCII)</h3>
+<p>Retourne le nombre de caractères (encodés sur 1 octet) dans la chaîne, avant le caractère nul final (<code>\0</code>).</p>
+<pre><code class="c">    size_t mal_&lt;attribute&gt;_get_char_count(mal_&lt;attribute&gt;_t *self)
+</code></pre>
+
+<h3 id="copie">Copie</h3>
+<p>Lorsqu'une même chaîne de caractères doit être affectée à deux champs distincts d'une même structure MAL ou de deux structures MAL distinctes (composite, liste), alors il est nécessaire de dupliquer la chaîne MAL. Il ne faut pas affecter la même chaîne MAL aux deux champs.</p>
+<pre><code class="c">    mal_&lt;attribute&gt;_t *attribute2 = mal_&lt;attribute&gt;_new(attribute1);
+</code></pre>
+
+<h3 id="destructeur">Destructeur</h3>
+<p>Détruit la chaîne de caractères.</p>
+<pre><code class="c">    mal_&lt;attribute&gt;_destroy(mal_&lt;attribute&gt;_t **self_p);
+</code></pre>
+
+<h2 id="blob">Blob</h2>
+<p>Une classe est définie pour le type Blob afin de conserver la taille du tableau d'octets (non accessible en C).</p>
+<h3 id="constructeur_1">Constructeur</h3>
+<p>Déclaration :</p>
+<pre><code class="c">    mal_blob_t *mal_blob_new(unsigned int length);
+</code></pre>
+
+<p>Paramètres :</p>
+<ul>
+<li><code>length</code> : nombre d'octets dans le Blob</li>
+</ul>
+<h3 id="getters">Getters</h3>
+<p>Des fonctions sont définies pour accéder aux champs de Blob :</p>
+<pre><code class="c">    char *mal_blob_get_content(mal_blob_t *self);
+    unsigned int mal_blob_get_length(mal_blob_t *self);
+</code></pre>
+
+<h3 id="destructeur_1">Destructeur</h3>
+<p>Détruit le Blob et son contenu.</p>
+<pre><code class="c">    void mal_blob_destroy(mal_blob_t **self_p);
+</code></pre>
+
+<h2 id="polymorphisme-dattribut">Polymorphisme d'Attribut</h2>
+<p>Pour gérer le cas du polymorphisme d'Attribut MAL, on définit une classe avec les éléments suivants :</p>
+<ul>
+<li>des tags qui permettent d'identifier le type concret de l'attribut,</li>
+<li>un type C union qui permet de manipuler la valeur de l'attribut typée en fonction du tag associé,</li>
+<li>un destructeur.</li>
+</ul>
+<h3 id="union-des-attributs">Union des Attributs</h3>
+<p>Une union <code>mal_attribute_t</code> est définie pour permettre le polymorphisme d'Attribut.</p>
+<pre><code class="c">    union mal_attribute_t {
+      mal_blob_t *blob_value;
+      mal_boolean_t boolean_value;
+      mal_double_t double_value;
+      mal_float_t float_value;
+      mal_octet_t octet_value;
+      mal_uoctet_t uoctet_value;
+      mal_short_t short_value;
+      mal_ushort_t ushort_value;
+      mal_integer_t integer_value;
+      mal_uinteger_t uinteger_value;
+      mal_long_t long_value;
+      mal_ulong_t ulong_value;
+      mal_string_t *string_value;
+      mal_identifier_t *identifier_value;
+      mal_uri_t *uri_value;
+      mal_time_t time_value;
+      mal_finetime_t finetime_value;
+      mal_duration_t duration_value;
+    };
+</code></pre>
+
+<h3 id="tags-dattribut">Tags d'Attribut</h3>
+<p>Ces identifiants sont transmis en cas de polymorphisme d'Attribut.</p>
+<pre><code class="c">    #define MAL_BLOB_ATTRIBUTE_TAG 0
+    #define MAL_BOOLEAN_ATTRIBUTE_TAG 1
+    #define MAL_DURATION_ATTRIBUTE_TAG 2
+    #define MAL_FLOAT_ATTRIBUTE_TAG 3
+    #define MAL_DOUBLE_ATTRIBUTE_TAG 4
+    #define MAL_IDENTIFIER_ATTRIBUTE_TAG 5
+    #define MAL_OCTET_ATTRIBUTE_TAG 6
+    #define MAL_UOCTET_ATTRIBUTE_TAG 7
+    #define MAL_SHORT_ATTRIBUTE_TAG 8
+    #define MAL_USHORT_ATTRIBUTE_TAG 9
+    #define MAL_INTEGER_ATTRIBUTE_TAG 10
+    #define MAL_UINTEGER_ATTRIBUTE_TAG 11
+    #define MAL_LONG_ATTRIBUTE_TAG 12
+    #define MAL_ULONG_ATTRIBUTE_TAG 13
+    #define MAL_STRING_ATTRIBUTE_TAG 14
+    #define MAL_TIME_ATTRIBUTE_TAG 15
+    #define MAL_FINETIME_ATTRIBUTE_TAG 16
+    #define MAL_URI_ATTRIBUTE_TAG 17
+</code></pre>
+
+<h3 id="destructeur_2">Destructeur</h3>
+<p>Détruit le contenu de l'union. Ne détruit pas l'union elle-même qui n'est pas une structure allouée.</p>
+<pre><code class="c">    void mal_attribute_destroy(union mal_attribute_t *self_p,
+        unsigned char attribute_tag);
+</code></pre>
+
+<h2 id="short-forms-dattribut">Short forms d'Attribut</h2>
+<p>Ces identifiants sont transmis en cas de polymorphisme d'élément MAL.</p>
+<pre><code class="c">    #define MAL_BLOB_SHORT_FORM 0x1000001000001L
+    #define MAL_BOOLEAN_SHORT_FORM 0x1000001000002L
+    #define MAL_DURATION_SHORT_FORM 0x1000001000003L
+    #define MAL_FLOAT_SHORT_FORM 0x1000001000004L
+    #define MAL_DOUBLE_SHORT_FORM 0x1000001000005L
+    #define MAL_IDENTIFIER_SHORT_FORM 0x1000001000006L
+    #define MAL_OCTET_SHORT_FORM 0x1000001000007L
+    #define MAL_UOCTET_SHORT_FORM 0x1000001000008L
+    #define MAL_SHORT_SHORT_FORM 0x1000001000009L
+    #define MAL_USHORT_SHORT_FORM 0x100000100000AL
+    #define MAL_INTEGER_SHORT_FORM 0x100000100000BL
+    #define MAL_UINTEGER_SHORT_FORM 0x100000100000CL
+    #define MAL_LONG_SHORT_FORM 0x100000100000DL
+    #define MAL_ULONG_SHORT_FORM 0x100000100000EL
+    #define MAL_STRING_SHORT_FORM 0x100000100000FL
+    #define MAL_TIME_SHORT_FORM 0x10000010000010L
+    #define MAL_FINETIME_SHORT_FORM 0x10000010000011L
+    #define MAL_URI_SHORT_FORM 0x10000010000012L
+</code></pre></div>
+            
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script>
+        <script>var base_url = '..';</script>
+        <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+        <script src="../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>

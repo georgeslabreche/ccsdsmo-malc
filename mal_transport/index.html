@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+	<title>Transport - MAL C API</title>
+
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.5.0.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">MAL C API</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="..">Accueil</a>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../tutorial/">Tutoriel</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">APIs MAL <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../mal_attributes/">Attributs</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../mal_encoding/">Encodage</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../mal_api/">MAL</a>
+</li>
+
+                        
+                            
+<li class="active">
+    <a href="./">Transport</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../area/">Area</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../mal_actor/">Actor</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Transports <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../mal_czmq/">MAL/CZMQ</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Générateurs <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../stub_generator/">Stubs de service</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../malbinary_generator/">MalBinary</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../annexes/">Annexes</a>
+                    </li>
+                
+                
+                </ul>
+            
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                    <li >
+                        <a rel="next" href="../mal_api/">
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../area/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#apis-de-transport">APIs de transport</a></li>
+        
+            <li><a href="#contexte-de-binding">Contexte de Binding</a></li>
+        
+    
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="apis-de-transport">APIs de transport</h1>
+<p>Les APIs de transport sont définies de manière spécifique à un « binding », par exemple MALZMQ.</p>
+<p>Plusieurs fonctions virtuelles sont imposées par la couche MAL, par exemple la fonction d'envoi de message (section 7.1.8). Ainsi, le code applicatif peut envoyer un message sans dépendre de l'API spécifique du transport utilisé.</p>
+<p>Le code des services (consumer, provider) ne dépend pas de l'API de transport. Il utilise seulement l'API MAL.
+Le nom donné en C au transport (binding) MALZMQ est : <code>malzmq</code>
+Ce nom est une chaîne de caractères utilisée pour le nommage des APIs.</p>
+<h2 id="contexte-de-binding">Contexte de Binding</h2>
+<pre><code class="c">&lt;binding&gt;_ctx.h
+</code></pre>
+
+<h3 id="constructeur">Constructeur</h3>
+<p>Déclaration :</p>
+<pre><code class="c">&lt;binding&gt;_ctx_t *&lt;binding&gt;_ctx_new(mal_ctx_t *mal_ctx);
+</code></pre>
+
+<p>Paramètre :</p>
+<ul>
+<li><code>mal_ctx</code> : le context MAL utilisant le transport créé</li>
+</ul>
+<p>Résultat :</p>
+<p>le transport créé</p>
+<h3 id="creation-dune-uri">Création d'une URI</h3>
+<p>Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour créer une URI  (voir 7.1.1).</p>
+<p>Déclaration :</p>
+<pre><code class="c">mal_uri_t *&lt;binding&gt;_ctx_create_uri(void *self, char *id);
+</code></pre>
+
+<p>Paramètre :</p>
+<ul>
+<li><code>self</code> : la référence du module de transport</li>
+<li><code>id</code> : identifiant unique dans le contexte MALZMQ</li>
+</ul>
+<p>Résultat :</p>
+<p>l'URI créée</p>
+<h3 id="creation-de-end-point">Création de end-point</h3>
+<p>Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour créer un end-point  (voir 7.1.2).</p>
+<p>Déclaration :</p>
+<pre><code class="c">void *&lt;binding&gt;_ctx_create_endpoint(
+  void *self,
+  mal_endpoint_t *endpoint);
+</code></pre>
+
+<p>Paramètres :</p>
+<ul>
+<li><code>self</code> : la référence du module de transport</li>
+<li><code>mal_endpoint</code> : end-point MAL correspondant au end-point physique du transport</li>
+</ul>
+<p>Retour :</p>
+<p>La référence du end-point créé par le transport</p>
+<h3 id="envoi-de-message-mal">Envoi de message MAL</h3>
+<p>Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour envoyer un message MAL (voir 7.1.8).</p>
+<p>Déclaration :</p>
+<pre><code class="c">int &lt;binding&gt;_ctx_send_message(void *self,
+  mal_endpoint_t *mal_endpoint, mal_message_t *message);
+</code></pre>
+
+<p>Paramètres :</p>
+<ul>
+<li><code>self</code> : la référence du module de transport</li>
+<li><code>mal_endpoint</code> : le end-point qui envoie le message</li>
+<li><code>message</code> : message MAL à envoyer</li>
+</ul>
+<p>Résultat :</p>
+<p>Code d'erreur</p>
+<h3 id="destruction-de-message-mal">Destruction de message MAL</h3>
+<p>Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour détruire un message MAL (voir 7.1.10).</p>
+<p>Déclaration :</p>
+<pre><code class="c">int &lt;binding&gt;_ctx_destroy_message(void *self, mal_message_t *message);
+</code></pre>
+
+<p>Paramètres :</p>
+<ul>
+<li><code>self</code> : la référence du module de transport</li>
+<li><code>message</code> : message MAL à détruire</li>
+</ul>
+<p>Résultat :</p>
+<p>Code d'erreur</p>
+<h3 id="destruction-de-end-point">Destruction de end-point</h3>
+<p>Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour détruire un end-point (voir 7.1.3).</p>
+<p>Déclaration :</p>
+<pre><code class="c">void &lt;binding&gt;_ctx_destroy_endpoint(void *self, void **endpoint_p);
+</code></pre>
+
+<h3 id="creation-de-poller">Création de poller</h3>
+<p>Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour créer un end-point  (voir 7.1.4).</p>
+<p>Déclaration :</p>
+<pre><code class="c">void *&lt;binding&gt;_ctx_create_poller(
+  void *self,
+  mal_poller_t *poller);
+</code></pre>
+
+<p>Paramètres :</p>
+<ul>
+<li><code>self</code> : la référence du module de transport</li>
+<li><code>mal_poller</code> : poller MAL correspondant au poller physique du transport</li>
+</ul>
+<p>Retour :</p>
+<p>La référence du poller créé par le transport</p>
+<h3 id="ajout-suppression-de-end-point-au-poller">Ajout / Suppression de end-point au poller</h3>
+<p>Ces fonctions doivent être conformes aux fonctions virtuelles définies par l'API MAL pour ajouter ou supprimer un end-point du poller (voir 7.1.5).</p>
+<p>Déclaration :</p>
+<pre><code class="c">int malzmq_ctx_poller_add_endpoint(
+    void *self,
+    mal_poller_t *mal_poller,
+    mal_endpoint_t *mal_endpoint);
+
+int malzmq_ctx_poller_del_endpoint(
+    void *self,
+    mal_poller_t *mal_poller,
+    mal_endpoint_t *mal_endpoint);
+</code></pre>
+
+<p>Paramètres :</p>
+<ul>
+<li><code>self</code> : la référence du module de transport</li>
+<li><code>mal_poller</code> : poller MAL correspondant au poller physique du transport</li>
+<li><code>mal_endpoint</code> : end-point MAL à ajouter ou supprimer du poller</li>
+</ul>
+<p>Retour : </p>
+<p>Code d'erreur</p>
+<h3 id="attente-de-message-sur-le-poller">Attente de message sur le poller</h3>
+<p>Ces fonctions doivent être conformes aux fonctions virtuelles définies par l'API MAL pour attendre la réception d'un message sur un des end-points du poller (voir 7.1.6).</p>
+<p>Déclaration :</p>
+<pre><code class="c">int malzmq_ctx_poller_wait(
+    void *self,
+    mal_poller_t *mal_poller,
+    mal_endpoint_t **mal_endpoint,
+    int timeout);
+</code></pre>
+
+<p>Paramètres :</p>
+<ul>
+<li><code>self</code> : la référence du module de transport</li>
+<li><code>mal_poller</code> : poller MAL correspondant au poller physique du transport</li>
+<li><code>mal_endpoint</code> : le end-point sur lequel un message est en attente de réception</li>
+<li><code>timeout</code> : le temps d'attente maximum, éventuellement infini (-1)</li>
+</ul>
+<p>Retour : </p>
+<p>Code d'erreur</p>
+<h3 id="destruction-du-poller">Destruction du poller</h3>
+<p>Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour détruire un poller (voir 7.1.7).</p>
+<p>Déclaration :</p>
+<pre><code class="c">void &lt;binding&gt;_ctx_destroy_poller(void *self, void **poller_p);
+</code></pre>
+
+<h3 id="destructeur">Destructeur</h3>
+<p>Détruit le contexte MALZMQ.</p>
+<pre><code class="c">void &lt;binding&gt;_ctx_destroy(&lt;binding&gt;_ctx_t **self_p);
+</code></pre></div>
+            
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script>
+        <script>var base_url = '..';</script>
+        <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+        <script src="../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>
