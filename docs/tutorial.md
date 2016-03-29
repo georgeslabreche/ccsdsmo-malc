@@ -212,8 +212,10 @@ Composant « provider »
 
 Dépendances avec l'API MAL et l'API du service (code généré) :
 
+```c
 	#include "mal.h"
 	#include "testarea.h"
+```
 
 ### Constructeur
 
@@ -225,23 +227,30 @@ Dans cet exemple de code, tous les paramètres nécessaires au fonctionnement du
 
 Déclaration :
 
+```c
 	simple_app_myprovider_t simple_app_myprovider_new(
 	  mal_endpoint_t *endpoint,
 	  int encoding_format_code,
 	  void *encoder, void *decoder);
+```
 
 ### Implémentation
 
 Dans cet exemple un acteur CZMQ est lié au composant « provider » et enregistre un handler  lors de son démarrage. La signature doit être conforme à la fonction virtuelle de l'acteur définie dans l'API CZMQ :
 
+```c
 	void simple_app_myprovider_run(zsock_t *pipe, void *self) {
+```
 
 Afin de faciliter la distribution des messages un routeur est créé :
 
+```c
 	mal_routing_t *router = mal_routing_new(self->endpoint, self);
+```
 
 Puis pour permettre son fonctionnement un handler correspondant au rôle provider de l'interaction Send doit être dynamiquement enregistré au près de l'acteur :
 
+```c
 	rc = mal_routing_register_provider_send_handler(
 	     router,
 	     TESTAREA_AREA_NUMBER,
@@ -249,36 +258,46 @@ Puis pour permettre son fonctionnement un handler correspondant au rôle provide
 	     TESTAREA_TESTSERVICE_SERVICE_NUMBER,
 	     TESTAREA_TESTSERVICE_TESTSEND_OPERATION_NUMBER,
 	     simple_app_myprovider_testarea_testservice_testsend);
+```
 
 Ces appels sont réalisés dans la fonction d'initialisation de l'acteur.
 Enfin l'acteur se met en attente de réception d'un message sur le end-point :
 
+```c
 	mal_message_t *message = NULL;
 	rc = mal_endpoint_recv_message(self->endpoint, &message);
+```
 
 Puis il demande l'activation du handler correspondant au travers du routeur et détruit ce message si il n'a pu être traité par aucun handler :
 
+```c
 	if (message != NULL) {
 	  rc = mal_routing_handle(router, message);
 	  if (rc != 0)
 	    mal_message_destroy(
 	      message,
 	      mal_endpoint_get_mal_ctx(self->endpoint));
+```
 
 Le handler peut alors réagir à la réception du message MAL correspondant via la fonction correspondante dont la signature doit être conforme à la fonction virtuelle de Handler définie dans l'API MAL (voir section 7.6.1). Le code de dispatch renvoie donc vers une fonction spécifique au traitement de l'opération 'testSend'. :
 
+```c
 	int simple_app_myprovider_testarea_testservice_testsend(
 	  void *self,
 	  mal_ctx_t *mal_ctx,
 	  mal_endpoint_t *mal_endpoint,
 	  mal_message_t *message) {
+```
 
 La référence 'self' est castée pour obtenir l'état du router commun à tous les handlers enregistrés (le « provider »):
 
+```c
 	  simple_app_myprovider_t *provider = (simple_app_myprovider_t *) self;
+```
 
 Décodage du premier élément du corps de message :
 
+```c
 	  testarea_testservice_testcomposite_t *parameter_0 = NULL;
 	  unsigned int offset = mal_message_get_body_offset(message);
 	  char *bytes = mal_message_get_body(message);
@@ -289,9 +308,11 @@ Décodage du premier élément du corps de message :
 	    // destruction des paramètres décodés (voir plus bas)
 	    return rc;
 	  }
+```
 
 Décodage du deuxième élément du corps de message :
 
+```c
 	  mal_string_list_t *parameter_1;
 	  rc = testarea_testservice_testsend_send_decode_1(
 	    provider->encoding_format_code, bytes, &offset,
@@ -300,9 +321,11 @@ Décodage du deuxième élément du corps de message :
 	    // destruction des paramètres décodés (voir plus bas)
 	    return rc;
 	  }
+```
 
 Décodage du troisième élément du corps de message (avec polymorphisme) :
 
+```c
 	  mal_element_holder_t parameter_2;
 	  rc = testarea_testservice_testsend_send_decode_2(
 	    provider->encoding_format_code, bytes, &offset,
@@ -311,33 +334,44 @@ Décodage du troisième élément du corps de message (avec polymorphisme) :
 	    // destruction des paramètres décodés (voir plus bas)
 	    return rc;
 	  }
+```
 
 La valeur des paramètres décodés peut être nulle.
 
 Le troisième paramètre nécessite de tester la valeur du 'short_form' avant de faire le cast :
 
+```c
 	if (parameter_2.presence_flag && parameter_2.short_form ==
 	    TESTAREA_TESTSERVICE_TESTFINALCOMPOSITEA_SHORT_FORM) {
 	  testarea_testservice_testfinalcompositea_t *testfinalcompositea =
 	    (testarea_testservice_testfinalcompositea_t *) parameter_2;
 	  ...
+```
 
 Destruction de la donnée :
 
+```c
 	  testarea_testservice_testfinalcompositea_destroy(&testfinalcompositea);
+```
 
 Fin du traitement du troisième paramètre :
 
+```c
 	}
+```
 
 Enfin, les premier et deuxième paramètres sont détruits :
 
+```c
 	  testarea_testservice_testcomposite_destroy(&parameter_0);
 	  mal_string_list_destroy(&parameter_1);
+```
 
 Le message est également détruit :
 
+```c
 	mal_message_destroy(&message, mal_ctx);
+```
 
 Lancement de l'application
 --------------------------
@@ -347,55 +381,67 @@ Les dépendances nécessaires sont :
   -	l'API MAL
   -	l'API du transport MALZMQ
 
-<!-- without this comment, markdown incorrectly merges the code block with the list -->
-
+```c
 	#include "mal.h"
 	#include "malzmq.h"
+```
 
 ### Création d'un contexte MAL :
 
+```c
 	mal_ctx_t *mal_ctx = mal_ctx_new();
+```
 
 Les contextes d'encodage et de décodage sont créés pour le format 'malbinary'. Le format 'varint' n'est pas utilisé et le flag 'verbose' est activé :
 
+```c
 	malbinary_encoder_t *encoder = malbinary_encoder_new(false, true);
 	malbinary_decoder_t *decoder = malbinary_decoder_new(false, true);
+```
 
 Configuration du catalogue de mapping (cf 12.1.3) et des flags de présence (cf 12.1.2) dans le header MALZMQ : dans l'exemple il n'y a pas de catalogue et tous les champs optionnels sont présents (encodés) dans le header.
 
+```c
 	malzmq_header_t *malzmq_header = malzmq_header_new(NULL, true, 0, true, NULL,
 	  NULL, NULL, NULL);
+```
 
 Un contexte de transport MALZMQ est créé à partir du contexte MAL. Une fonction de mapping d'URI est fournie (cf 12.2). Dans l'exemple on utilise la fonction par défaut. L'adresse et le port d'écoute de connexions entrantes sont 'localhost' et 5555.
 
+```c
 	malzmq_ctx_t *malzmq_ctx = malzmq_ctx_new(
 	  mal_ctx, NULL,
 	  "localhost", "5555",
 	  malzmq_header,
 	  encoder, decoder,
 	  true);
+```
 
 ### Création du provider
 Allocation d'une URI MALZMQ. Un nom unique (dans le contexte MALZMQ) est passé en paramètre.
 
+```c
 	mal_uri_t *provider_uri =
 	  mal_ctx_create_uri(mal_ctx, "simple_app/myprovider");
+```
 
 Création du end-point du provider avec les paramètres suivants :
 
   -	la référence du contexte MAL,
   -	l'URI du provider allouée précédemment.
 
-<!-- without this comment, markdown incorrectly merges the code block with the list -->
-
+```c
 	mal_endpoint_t *provider_endpoint = mal_endpoint_new(mal_ctx, provider_uri);
+```
 
 Instanciation du provider avec la référence du end-point correspondant et les paramètres liés à l'encodage :
 
+```c
 	simple_app_myprovider_t *provider = simple_app_myprovider_new(
 	  provider_endpoint,
 	  MALBINARY_FORMAT_CODE,
 	  encoder, decoder);
+```
 
 L'enregistrement du handler de l'opération sera effectuée dans la fonction run de l'acteur CZMQ (voir section 4.2.2).
 
@@ -403,20 +449,23 @@ L'enregistrement du handler de l'opération sera effectuée dans la fonction run
 
 Allocation d'une URI MALZMQ. Un nom unique (dans le contexte MALZMQ) est passé en paramètre.
 
+```c
 	mal_uri_t *consumer_uri =
 	  mal_ctx_create_uri(mal_ctx, "simple_app/myconsumer");
+```
 
 Création du end-point du consumer avec les paramètres suivants :
 
   -	la référence du contexte MAL,
   -	l'URI du consumer allouée précédemment.
 
-<!-- without this comment, markdown incorrectly merges the code block with the list -->
-
+```c
 	mal_endpoint_t *consumer_endpoint = mal_endpoint_new(mal_ctx, consumer_uri);
+```
 
 L'instanciation du consumer nécessite de déterminer certains paramètres du Header de message MAL :
 
+```c
 	mal_blob_t *authentication_id = mal_blob_new(0);
 	mal_qoslevel_t qoslevel = MAL_QOSLEVEL_ASSURED;
 	mal_uinteger_t priority = 4;
@@ -429,6 +478,7 @@ L'instanciation du consumer nécessite de déterminer certains paramètres du He
 	simple_app_myconsumer_new(provider_uri,
 	  authentication_id, qoslevel, priority, domain, network_zone, session,
 	  session_name, MALBINARY_FORMAT_CODE, encoder, decoder);
+```
 
 Les mêmes contextes d'encodage et de décodage que ceux du provider sont utilisés par le consumer.
 
@@ -438,25 +488,33 @@ L'opération Send ne nécessitant pas de handler coté consumer il n'y aura pas 
 
 Création du provider et de l'acteur ZMQ correspondant :
 
+```c
 	provider = simple_app_create_provider(
 	  verbose,
 	  mal_ctx, provider_uri,
 	  encoder, decoder);
 	zactor_t *provider_actor = zactor_new(simple_app_myprovider_run, provider);
+```
 
 Création du consumer et de l'acteur ZMQ correspondant :
 
+```c
 	consumer = simple_app_create_consumer(
 	  verbose,
 	  mal_ctx, provider_uri,
 	  encoder, decoder);
 	zactor_t *consumer_actor = zactor_new(simple_app_myconsumer_run, consumer);
+```
 
 Démarrage du contexte MALZMQ (appel bloquant jusqu'à l'interruption du contexte) :
 
+```c
 	  malzmq_ctx_start(malzmq_ctx);
+```
 
 Destruction des contextes MAL et MALZMQ :
 
+```c
 	  mal_ctx_destroy(&mal_ctx);
 	  malzmq_ctx_destroy(&malzmq_ctx);
+```
