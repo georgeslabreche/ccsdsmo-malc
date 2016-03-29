@@ -252,7 +252,7 @@ Résultat :
 
 L'URI créée
 
-### Création d'un end-point
+### Création d'un poller
 
 Déclaration :
 
@@ -271,7 +271,7 @@ Résultat :
 
 	La référence du poller physique créé (non typée pour éviter la dépendance avec les concepts physiques du transport, par exemple zpoller ZMQ).
 
-### Création d'un poller
+### Création d'un end-point
 
 Déclaration :
 
