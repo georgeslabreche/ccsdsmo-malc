@@ -24,6 +24,7 @@ Before installing 'zproject', the file 'zproject_known_projects.xml' has to be u
 in order to contain the right versions of czmq, and the definition of new projects such
 as 'mal':
 
+```xml
     <use project = "util"
         repository = ""
         test = "clog_test"
@@ -65,6 +66,7 @@ as 'mal':
         test = "mal_actor_test"
         cmake_name = "MALACTOR">
     </use>
+```
     
 The installed 'zproject_known_projects.xml' is in the directory:
 
@@ -83,9 +85,11 @@ In 'project.xml' all dependencies must be listed in the order of the dependence,
 even if a dependency depends on another. For example the project 'testarea' 
 depends on:
 
+```xml
     <use project = "malattributes" />
     <use project = "malbinary" />
     <use project = "mal" />
+```
 
 Each project is built as follows:
 
