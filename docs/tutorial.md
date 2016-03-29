@@ -343,6 +343,7 @@ Lancement de l'application
 --------------------------
 
 Les dépendances nécessaires sont :
+
   -	l'API MAL
   -	l'API du transport MALZMQ
 
@@ -379,6 +380,7 @@ Allocation d'une URI MALZMQ. Un nom unique (dans le contexte MALZMQ) est passé 
 	  mal_ctx_create_uri(mal_ctx, "simple_app/myprovider");
 
 Création du end-point du provider avec les paramètres suivants :
+
   -	la référence du contexte MAL,
   -	l'URI du provider allouée précédemment.
 
@@ -401,6 +403,7 @@ Allocation d'une URI MALZMQ. Un nom unique (dans le contexte MALZMQ) est passé 
 	  mal_ctx_create_uri(mal_ctx, "simple_app/myconsumer");
 
 Création du end-point du consumer avec les paramètres suivants :
+
   -	la référence du contexte MAL,
   -	l'URI du consumer allouée précédemment.
 
