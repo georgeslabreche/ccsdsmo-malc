@@ -114,7 +114,7 @@ For NULL Macro:
 
     /usr/lib/gcc/x86_64-redhat-linux/4.1.2/include/stddef.h
 
-## UPDATING Documentation
+## UPDATING DOCUMENTATION
 
 Project documentation in entirely in Markdown and lives in the `docs` directory. It is compiled into a static site thanks to [mkdocs](http://www.mkdocs.org/).
 
