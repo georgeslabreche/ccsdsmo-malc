@@ -347,6 +347,8 @@ Les dépendances nécessaires sont :
   -	l'API MAL
   -	l'API du transport MALZMQ
 
+<!-- without this comment, markdown incorrectly merges the code block with the list -->
+
 	#include "mal.h"
 	#include "malzmq.h"
 
@@ -384,6 +386,8 @@ Création du end-point du provider avec les paramètres suivants :
   -	la référence du contexte MAL,
   -	l'URI du provider allouée précédemment.
 
+<!-- without this comment, markdown incorrectly merges the code block with the list -->
+
 	mal_endpoint_t *provider_endpoint = mal_endpoint_new(mal_ctx, provider_uri);
 
 Instanciation du provider avec la référence du end-point correspondant et les paramètres liés à l'encodage :
@@ -406,6 +410,8 @@ Création du end-point du consumer avec les paramètres suivants :
 
   -	la référence du contexte MAL,
   -	l'URI du consumer allouée précédemment.
+
+<!-- without this comment, markdown incorrectly merges the code block with the list -->
 
 	mal_endpoint_t *consumer_endpoint = mal_endpoint_new(mal_ctx, consumer_uri);
 
