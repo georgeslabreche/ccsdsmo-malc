@@ -6,7 +6,7 @@ Complete standard specification can be found on the [CCSDS website](http://publi
 
 ## ABOUT
 
-The CCSDS MO MAL C API was originally developed for the [CNES](http://cnes.fr), the French Space Agency, by [ScalAgent](www.scalagent.com/en/), a french company specialized in distributed technologies. All contributations are welcome.
+The CCSDS MO MAL C API was originally developed for the [CNES](http://cnes.fr), the French Space Agency, by [ScalAgent](http://www.scalagent.com/en/), a french company specialized in distributed technologies. All contributations are welcome.
 
 ## PROJECT DOCUMENTATION
 
