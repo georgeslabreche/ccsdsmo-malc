@@ -218,6 +218,7 @@ Dépendances avec l'API MAL et l'API du service (code généré) :
 ### Constructeur
 
 Dans cet exemple de code, tous les paramètres nécessaires au fonctionnement du provider sont  donnés lors de sa création :
+
   -	le end-point MAL du provider
   -	l'identifiant du format d'encodage
   -	les contextes d'encodage (non typés pour éviter la dépendance avec 'malbinary')
@@ -234,7 +235,9 @@ Déclaration :
 Dans cet exemple un acteur CZMQ est lié au composant « provider » et enregistre un handler  lors de son démarrage. La signature doit être conforme à la fonction virtuelle de l'acteur définie dans l'API CZMQ :
 
 	void simple_app_myprovider_run(zsock_t *pipe, void *self) {
-	Afin de faciliter la distribution des messages un routeur est créé :
+
+Afin de faciliter la distribution des messages un routeur est créé :
+
 	mal_routing_t *router = mal_routing_new(self->endpoint, self);
 
 Puis pour permettre son fonctionnement un handler correspondant au rôle provider de l'interaction Send doit être dynamiquement enregistré au près de l'acteur :
