@@ -1,50 +1,50 @@
-Modèle d'exécution Acteur / Handler
-===================================
+Execution Model Actor / Handler
+===============================
 
-L'acteur MAL utilise l'API MAL/C et en particulier les notions de **poller**, de **end-point** et de **handler**. Il repose sur la notion d'acteur CZMQ.
 
-Acteur
-------
-Un acteur est en charge de l'exécution d'un ensemble de handlers d'interactions correspondant aux interactions d'un end-point donné. L'API permet l'ajout et la suppression dynamique de handlers. Afin d'éviter les problèmes liés au parallélisme, l'enregistrement et la suppression d'un handler ne peut s'effectuer que depuis l'acteur lui-même.
-Un Handler ne peut être exécuté que par un unique acteur.
+The MAL actor uses the MAL C API and in particular the notions of **poller**, **end-point** and **handler**. It is based on the notion of CZMQ actor.
 
-Un acteur réagit aux messages MAL indépendamment de tout rôle dans l'interaction. Lors de la réception d'un message il recherche le handler correspondant dans la liste des handlers  enregistrés. En cas de succès il active cet handler en appelant la fonction correspondant au message reçu, dans le cas contraire le message est détruit.
+MAL Actor
+---------
+An actor is in charge of the execution of a set of interaction handlers corresponding to the interactions of a given end-point. The API allows the dynamic addition and removal of handlers. To avoid problems related to parallelism, registering and deleting a handler can be made only from the actor himself.
+A handler can only be performed by an unique actor.
 
-La durée de vie d'une interaction dépasse celle d'une réaction de l'acteur.
+An actor reacts to MAL messages independently of any role in the interaction. When receiving a message it searches for the corresponding handler in the list of registered handlers. If successful, it activates the handler by calling the function corresponding to the received message, otherwise the message is destroyed.
 
-Seul l'acteur qui a reçu le message initiant une interaction peut répondre à cette interaction.
+The lifetime of an interaction exceeds the reaction of the actor.
 
-Un acteur possède les caractéristiques suivantes :
+Only the actor who received the message initiating an interaction can answer to this interaction.
 
-  -	Il correspond à un unique end-point, en conséquence :
-      - Il ne peut utiliser qu'un unique transport (binding) pour recevoir et envoyer des messages MAL.
-      - Il peut utiliser plusieurs formats d'encodage du corps de message MAL.
-      - Il est identifié de manière unique par une URI MAL relative au contexte MAL et dont le format dépend du transport utilisé.
-      - Il gère un compteur de 'Transaction Id' (champ du header MAL)
-  -	Il possède un état.
-  -	Il a un cycle de vie à 3 trois états :
-      - Lors de sa création la fonction `initialize` est appelée avant de le lancement de la boucle de traitement des messages entrants.
-      - La fonction `handle` est appelée par la boucle de réception des messages pour rechercher le handler correspondant au message reçu et l'activer.
-      - Lors de son arrêt la fonction `finalize` est appelée avant sa destruction.
-  -	Les fonctions `initialize` et `finalize` sont personnalisables par l'utilisateur.
-  -	Il est exécuté de manière mono-threadée.
-  -	Son état n'est modifiable qu'au travers des réactions des Handlers.
-  -	Son état n'est pas transmissible à un autre acteur.
+An actor has the following features:
+-	It corresponds to a single a single endpoint, therefore:
+    - It can only use a single transport (binding) to receive and send MAL messages.
+    - It can use multiple encoding formats for the MAL message body.
+    - It is uniquely identified by a MAL URI relative to the MAL context, the format of this URI depends on the transport used.
+    - It handles a counter of `Transaction Id` (field of MAL header)
+-	It owns a state.
+-	Its life cycle has three states:
+      - When created the `initialize` function is called before the launch of processing loop that handles incoming message.
+      - When receiving a message the processing loop calls the `handle` function to search the handler corresponding to the received message and then activate it.
+      - When stopped the `finalize` function is called before the actor destruction.
+-	The `initialize` and `finalize` functions are customizable by the user.
+-	It runs in single-threaded way.
+-	Its state can be changed only through the handlers reactions.
+-	Its state can not be transmitted to another actor.
 
-Si un mode d'exécution multi-threadé est nécessaire, par exemple pour effectuer un traitement coûteux en CPU, alors le Handler doit déléguer l'exécution de ce traitement à différents acteurs. Le traitement est donc exécuté en parallèle, et la charge associée est partagée entre ces acteurs.
+If a multithreaded execution mode is needed, for example to perform a costly CPU processing, then the handler must delegate the execution of this task to different actors. The processing is then performed in parallel, and the associated load is shared between all these actors.
 
-L'acteur définit un end-point spécifique correspondant au socket d'écoute de l'acteur C/ZMQ sous-jacent, il utilise la notion de poller MAL pour écouter simultanément le end-point utilisateur et ce end-point interne. Ce end-point interne permet la réception de commandes envoyées à l'acteur, par la fontion `mal_actor_send_command`.
+Each actor defines a specific endpoint corresponding to the listen socket of the underlying C/ZMQ actor, it uses the concept of poller to simultaneously listen to the user end-point and this internal end-point. The internal end-point allows to receive commands sent to the actor by the `mal_actor_send_command` function.
 
-API Actor MAL
+MAL Actor API
 -------------
 
-### Constructeur
+### Constructor
 
-Crée une instance d'acteur identifiée par une URI MAL. La création d'un acteur entraîne la création d'un end-point correspondant à l'URI MAL de cet acteur, et d'un routeur pour la gestion des handlers de cet acteur. L'état de ce routeur est l'état de l'acteur.
+Create an actor instance identified by a MAL URI. Creating an actor will create the end-point corresponding to the MAL URI of this actor, and the router needed to manage handlers of this actor. The state of this router is the state of the actor.
 
-Un compteur de `Transaction Id` est géré.
+A `Transaction Id` counter is created.
 
-Déclaration :
+Declaration:
 
 ```c
 mal_actor_t *mal_actor_new(
@@ -55,97 +55,99 @@ mal_actor_t *mal_actor_new(
   mal_actor_finalize_fn *finalize);
 ```
 
-Paramètres :
+Parameters:
 
-  - `mal_ctx` : contexte MAL
-  - `uri` : URI MAL identifiant l'acteur MAL
-  - `state` : état de l'acteur; non typé pour permettre le polymorphisme
-  - `initialize` : fonction d'initialisation de l'acteur
-  - `finalize` : fonction de terminaison de l'acteur
+  - `mal_ctx` : MAL context
+  - `uri` : MAL URI that identify this actor
+  - `state` : actor state; untyped to allow polymorphism
+  - `initialize` : initialization function
+  - `finalize` : finalization function
 
-### Fonction virtuelle d'initialisation de l'acteur MAL
+### Virtual initialization function of the MAL actor
 
-Déclaration :
-
-```c
-typedef int mal_actor_initialize_fn(void *self, mal_ctx_t *mal_ctx,
-  mal_actor_t *mal_actor);
-```
-
-Paramètres :
-
-  - `self` : état de l'acteur
-  - `mal_ctx` : référence du contexte MAL
-  - `mal_actor` : référence de l'acteur
-
-Résultat :
-
-Code d'erreur
-
-### Fonction virtuelle de terminaison de l'acteur MAL
-
-Déclaration :
+Declaration:
 
 ```c
-typedef int mal_handler_finalize_fn(void *self, mal_ctx_t *mal_ctx,
-  mal_actor_t *mal_actor);
+typedef int mal_actor_initialize_fn(void *self, mal_ctx_t *mal_ctx, mal_actor_t *mal_actor);
 ```
 
-Paramètres :
+Parameters:
 
-  - `self` : état de l'acteur
-  - `mal_ctx` : référence du contexte MAL
-  - `mal_actor` : référence de l'acteur
+  - `self` : actor state
+  - `mal_ctx` : MAL context pointer
+  - `mal_actor` : MAL actor pointer
 
-Résultat :
+Result:
 
-Code d'erreur
+  - Error code
 
-### Envoi de message MAL
+### Virtual finalisation function of the MAL actor
 
-L'envoi de messages MAL se fait au travers du end-point intégré à l'acteur (voir interface définie en 7.4.2). L'interface de l'acteur définit une fonction permettant de retrouver le end-point correspondant :
+Declaration:
+
+```c
+typedef int mal_handler_finalize_fn(void *self, mal_ctx_t *mal_ctx, mal_actor_t *mal_actor);
+```
+
+Parameters:
+
+  - `self` : actor state
+  - `mal_ctx` : MAL context pointer
+  - `mal_actor` : MAL actor pointer
+
+Result:
+
+  - Error code
+
+### Sending a MAL message
+
+MAL messages are sent through the actor's integrated endpoint (see interface defined in 7.4.2). The actor's interface defines a function to find the corresponding end-point:
 
 ```c
 mal_endpoint_t *mal_actor_get_mal_endpoint(mal_actor_t *self);
 ```
 
-### Enregistrement des handlers
+### Handlers registration
 
-L'enregistrement des handlers de l'acteur se fait au travers du routeur intégré à l'acteur ( voir interface définie en 7.6.3). L'interface de l'acteur définit une fonction permettant de retrouver le routeur correspondant :
+The registration of the handlers is done through the actor's integrated router (see interface defined in 7.6.3).
+The actor's interface defines a function to find the corresponding router:
 
 ```c
 mal_routing_t *mal_actor_get_router(mal_actor_t *self);
 ```
 
-### Envoi de commandes à l'acteur MAL
+### Sending a command to the MAL actor
 
-L'envoi de commandes à l'acteur MAL au travers de son end-point interne peut s'effectuer au travers de la fonction :
+Sending commands to the an actor via its internal endpoint can be done through the following function:
 
 ```c
 int mal_actor_send_command(mal_actor_t *to, char *cmd);
 ```
 
-Cette fonction prend en paramètre l'acteur destinataire et la chaine de caractère contenant la commande. Par exemple :
+The parameters of this function are the recipient actor and the string containing the command.
+For example, to request the termination of an actor:
 
 ```c
 mal_actor_send_command(actor, "$TERM");
 ```
 
-### Destructeur
+### Destructor
 
-Détruit l'acteur et son état.
+Deletes the actor and free its state.
 
 ```c
 void mal_actor_destroy(mal_actor_t **self_p);
 ```
 
-### Exemple simple d'application MAL
+Simple example of a MAL application
+-----------------------------------
 
-Dans cet exemple nous reprenons le code de l'exemple du chapitre 4 mais en utilisant la librairie d'acteurs présentée dans ce chapitre. Une part importante du code est identique et nous ne détaillerons que les aspects spécifiquement liés à l'usage du framework d'acteurs MAL.
+In this example we use the code already introduced in the tutorial but we use the library of actors described in this chapter.
+Most of the code is identical and we only detail the aspects specifically related to the use of MAL actors framework.
 
-### Composant consumer
+### Consumer component
 
-Lors de la création du composant concumer on crée un acteur MAL pour sa gestion :
+During the creation of the consumer component we also create a MAL actor for managing this component:
 
 ```c
 send_app_myconsumer_t *consumer = send_app_myconsumer_new(
@@ -162,11 +164,13 @@ mal_actor_t *consumer_actor = mal_actor_new(
   send_app_myconsumer_initialize, send_app_myconsumer_finalize);
 ```
 
-Deux fonctions d'initialisation et de terminaison sont spécifiées à l'acteur, la fonction d'initialisation nous permet d'initier l'interaction SEND vers le provider. Ce code correspond au code la méthode run décrit en section 4.1.2.
+The initialization and termination functions are provided to the actor during its creation.
+The initialization function allows us to initiate the SEND interaction to the provider. This code corresponds
+to the code the run method described in section 4.1.2.
 
-### Composant Provider
+### Provider component
 
-Lors de la création du composant provider on crée un acteur MAL pour sa gestion :
+During the creation of the provider component we also create a MAL actor for managing this component:
 
 ```c
 send_app_myprovider_t *provider =
@@ -180,23 +184,25 @@ mal_actor_t *provider_actor = mal_actor_new(
   send_app_myprovider_initialize, send_app_myprovider_finalize);
 ```
 
-Deux fonctions d'initialisation et de terminaison sont spécifiées à l'acteur, la fonction d'initialisation permettra entre autre d'enregistrer les handlers du provider. La réception de message est maintenant implicitement gérée par l'acteur MAL :
+The initialization and termination functions are provided to the actor during its creation.
+The initialization function allow to record the handlers of the provider.
+The message reception is now handled automatically by the MAL actor:
 
-  -	Lors de la réception d'un message MAL sur le end-point correspondant à l'URI du provider le handler enregistrés en automatiquement exécuté.
-  -	Dans le cas contraire le message est détruit.
+  -	When a MAL message is received on the endpoint corresponding to the provider's URI the registered handler is automatically executed.
+  -	Otherwise the message is destroyed.
 
-### Lancement de l'application
+### Run the application
 
-Les composants consumer et provider sont maintenant des acteurs MAL, ils ne nécessitent donc plus la création explicite d'un acteur ZMQ pour les exécuter :
+Consumer and provider components are now actors, they do not require explicit creation of a ZMQ an actor to run:
 
 ```c
 send_app_create_provider(verbose, mal_ctx, provider_uri, encoder, decoder);
 send_app_create_consumer(verbose, mal_ctx, provider_uri, encoder, decoder);
 ```
 
-Le code de lancement de l'application est par ailleurs identique :
+The launch of the application code is identical:
 
-  -	création du contexte MAL,
-  -	création des encoder et decoder,
-  -	création du transport MALZMQ,
-  -	démarrage du contexte MAL.
+  -	creation of the MAL context,
+  -	creation of encoder and decoder components,
+  -	instantiation of the MALZMQ transport,
+  -	starting the MAL context.
