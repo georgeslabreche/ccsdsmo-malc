@@ -426,13 +426,6 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
 
   malbinary_write64(mal_message_get_transaction_id(message), bytes, offset);
 
-  // always encode 'URI From' and 'URI To'
-  // this ordering is not consistent with the blue book proposal
-  malzmq_encode_uri(mal_message_get_uri_from(message),
-      malzmq_header_get_mapping_directory(malzmq_header), encoder, bytes, offset);
-  malzmq_encode_uri(mal_message_get_uri_to(message),
-      malzmq_header_get_mapping_directory(malzmq_header), encoder, bytes, offset);
-
   bool priority_flag = malzmq_header_get_priority_flag(malzmq_header);
   bool timestamp_flag = malzmq_header_get_timestamp_flag(malzmq_header);
   bool network_zone_flag = malzmq_header_get_network_zone_flag(malzmq_header);
@@ -444,6 +437,14 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
   bytes[(*offset)++] = (char) (priority_flag << 5) | (timestamp_flag << 4)
           | (network_zone_flag << 3) | (session_name_flag << 2) | (domain_flag << 1)
           | (authentication_id_flag << 0);
+
+  // always encode 'URI From' and 'URI To'
+  // this ordering is not consistent with the blue book proposal,
+  // but closer with the TCP/IP blue book proposal.
+  malzmq_encode_uri(mal_message_get_uri_from(message),
+      malzmq_header_get_mapping_directory(malzmq_header), encoder, bytes, offset);
+  malzmq_encode_uri(mal_message_get_uri_to(message),
+      malzmq_header_get_mapping_directory(malzmq_header), encoder, bytes, offset);
 
   if (priority_flag > 0) {
     malbinary_encoder_encode_uinteger(encoder, bytes, offset,
@@ -531,7 +532,8 @@ int malzmq_decode_uri_to(malzmq_header_t *malzmq_header,
   // +1 bytes: area version
   // +1 bytes: is error message + qos level + session
   // +8 bytes: transaction id
-  (*offset) += 1 + 2 * 3 + 1 + 1 + 8;
+  // +1 bytes: flags
+  (*offset) += 1 + 2 * 3 + 1 + 1 + 8 + 1;
 
   // this ordering is not consistent with the blue book proposal
   // Read the 'URI From' length
@@ -630,6 +632,14 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
   long transaction_id = malbinary_read64(bytes, offset);
   mal_message_set_transaction_id(message, transaction_id);
 
+  b = bytes[(*offset)++];
+  bool priority_flag = (b >> 5) & 0x01;
+  bool timestamp_flag = (b >> 4) & 0x01;
+  bool network_zone_flag = (b >> 3) & 0x01;
+  bool session_name_flag = (b >> 2) & 0x01;
+  bool domain_flag = (b >> 1) & 0x01;
+  bool authentication_id_flag = b & 0x01;
+
   // this ordering is not consistent with the blue book proposal
   mal_uri_t *uri_from;
   malzmq_decode_uri(malzmq_header_get_mapping_directory(malzmq_header),
@@ -642,14 +652,6 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
       decoder, bytes, offset, &uri_to);
   mal_message_set_free_uri_to(message, true);
   mal_message_set_uri_to(message, uri_to);
-
-  b = bytes[(*offset)++];
-  bool priority_flag = (b >> 5) & 0x01;
-  bool timestamp_flag = (b >> 4) & 0x01;
-  bool network_zone_flag = (b >> 3) & 0x01;
-  bool session_name_flag = (b >> 2) & 0x01;
-  bool domain_flag = (b >> 1) & 0x01;
-  bool authentication_id_flag = b & 0x01;
 
   mal_uinteger_t priority;
   if (priority_flag) {
