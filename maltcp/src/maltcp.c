@@ -438,6 +438,8 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
 
   malbinary_write64(mal_message_get_transaction_id(message), bytes, offset);
 
+  bool source_flag = true;
+  bool destination_flag = true;
   bool priority_flag = maltcp_header_get_priority_flag(maltcp_header);
   bool timestamp_flag = maltcp_header_get_timestamp_flag(maltcp_header);
   bool network_zone_flag = maltcp_header_get_network_zone_flag(maltcp_header);
@@ -446,14 +448,15 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
   bool authentication_id_flag = maltcp_header_get_authentication_id_flag(
       maltcp_header);
 
-  bytes[(*offset)++] = (char) (priority_flag << 5) | (timestamp_flag << 4)
+  bytes[(*offset)++] = (char) (source_flag << 7) | (destination_flag << 6)
+              | (priority_flag << 5) | (timestamp_flag << 4)
               | (network_zone_flag << 3) | (session_name_flag << 2) | (domain_flag << 1)
               | (authentication_id_flag << 0);
 
-  //encoding id
+  // encoding id, set to 0
   malbinary_encoder_encode_octet(encoder, bytes, offset, 0);
 
-  //body length (message length)
+  // body length (message length)
   unsigned int offset_bl = *offset;
   (*offset) += 4; // encode in end of this function
 
@@ -658,6 +661,8 @@ int maltcp_decode_message(maltcp_header_t *maltcp_header,
   mal_message_set_transaction_id(message, transaction_id);
 
   b = bytes[(*offset)++];
+  bool source_flag = (b >> 7) & 0x01;
+  bool destination_flag = (b >> 6) & 0x01;
   bool priority_flag = (b >> 5) & 0x01;
   bool timestamp_flag = (b >> 4) & 0x01;
   bool network_zone_flag = (b >> 3) & 0x01;
@@ -674,16 +679,20 @@ int maltcp_decode_message(maltcp_header_t *maltcp_header,
 
   // this ordering is not consistent with the blue book proposal
   mal_uri_t *uri_from;
-  maltcp_decode_uri(maltcp_header_get_mapping_directory(maltcp_header),
-      decoder, bytes, offset, &uri_from);
-  mal_message_set_free_uri_from(message, true);
-  mal_message_set_uri_from(message, uri_from);
+  if (source_flag) {
+    maltcp_decode_uri(maltcp_header_get_mapping_directory(maltcp_header),
+        decoder, bytes, offset, &uri_from);
+    mal_message_set_free_uri_from(message, true);
+    mal_message_set_uri_from(message, uri_from);
+  }
 
   mal_uri_t *uri_to;
-  maltcp_decode_uri(maltcp_header_get_mapping_directory(maltcp_header),
-      decoder, bytes, offset, &uri_to);
-  mal_message_set_free_uri_to(message, true);
-  mal_message_set_uri_to(message, uri_to);
+  if (destination_flag) {
+    maltcp_decode_uri(maltcp_header_get_mapping_directory(maltcp_header),
+        decoder, bytes, offset, &uri_to);
+    mal_message_set_free_uri_to(message, true);
+    mal_message_set_uri_to(message, uri_to);
+  }
 
   mal_uinteger_t priority;
   if (priority_flag) {
