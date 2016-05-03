@@ -1,61 +1,63 @@
-APIs de transport
-=================
+Transport API
+=============
 
-Les APIs de transport sont définies de manière spécifique à un « binding », par exemple MALZMQ.
+Transport APIs are defined in the context of a specific binding, for example MALZMQ.
+These APIs are not directly used by the final user of the MAL API, these APIs are used by
+the MAL/C itself to perform all actions related to the tranport. 
 
-Plusieurs fonctions virtuelles sont imposées par la couche MAL, par exemple la fonction d'envoi de message (section 7.1.8). Ainsi, le code applicatif peut envoyer un message sans dépendre de l'API spécifique du transport utilisé.
+Several virtual functions are defined by the MAL layer, such as the message sending function (section 7.1.8).
+Thus, the application code can send messages without dependence to specific transport API.
 
-Le code des services (consumer, provider) ne dépend pas de l'API de transport. Il utilise seulement l'API MAL.
-Le nom donné en C au transport (binding) MALZMQ est : `malzmq`
-Ce nom est une chaîne de caractères utilisée pour le nommage des APIs.
+The code of the various services (consumer, provider) does not depend on the transport API. It only uses the MAL API.
+The binding identifier corresponding to the MALZMQ transport is `malzmq`. This identifier is a string used for naming APIs.
 
-Contexte de Binding
--------------------
+Binding Context
+---------------
 
 ```c
 <binding>_ctx.h
 ```
 
-### Constructeur
+### Constructor
 
-Déclaration :
+Declaration:
 
 ```c
 <binding>_ctx_t *<binding>_ctx_new(mal_ctx_t *mal_ctx);
 ```
 
-Paramètre :
+Parameters:
 
-  -	`mal_ctx` : le context MAL utilisant le transport créé
+  - `mal_ctx`: MAL context using the created transport.
 
-Résultat :
+Result:
 
-le transport créé
+  - pointer to the created transport.
 
-### Création d'une URI
+### URI creation
 
-Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour créer une URI  (voir 7.1.1).
+This function must conform to the virtual function defined by the MAL API to create a URI (see 7.1.1).
 
-Déclaration :
+Declaration:
 
 ```c
 mal_uri_t *<binding>_ctx_create_uri(void *self, char *id);
 ```
 
-Paramètre :
+Parameters:
 
-  -	`self` : la référence du module de transport
-  -	`id` : identifiant unique dans le contexte MALZMQ
+  - `self`: pointer to the transport component.
+  - `id`: unique identifier in the transport context.
 
-Résultat :
+Result:
 
-l'URI créée
+  - the created URI
 
-### Création de end-point
+### End-point creation
 
-Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour créer un end-point  (voir 7.1.2).
+This function must conform to the virtual function defined by the MAL API to create an end-point (see 7.1.2).
 
-Déclaration :
+Declaration:
 
 ```c
 void *<binding>_ctx_create_endpoint(
@@ -63,69 +65,81 @@ void *<binding>_ctx_create_endpoint(
   mal_endpoint_t *endpoint);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`self` : la référence du module de transport
-  -	`mal_endpoint` : end-point MAL correspondant au end-point physique du transport
+  - `self`: pointer to the transport component.
+  - `mal_endpoint`: MAL end-point corresponding to the physical transport end-point.
 
-Retour :
+Result:
 
-La référence du end-point créé par le transport
+  - a pointer to the created end-point.
 
-### Envoi de message MAL
+### MAL message sending
 
-Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour envoyer un message MAL (voir 7.1.8).
+This function must conform to the virtual function defined by the MAL API to send a MAL message (see 7.1.8).
 
-Déclaration :
+Declaration:
 
 ```c
 int <binding>_ctx_send_message(void *self,
   mal_endpoint_t *mal_endpoint, mal_message_t *message);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`self` : la référence du module de transport
-  -	`mal_endpoint` : le end-point qui envoie le message
-  -	`message` : message MAL à envoyer
+  - `self`: pointer to the transport component.
+  - `mal_endpoint`: MAL end-point sending the message.
+  - `message`: MAL message to send.
 
-Résultat :
+Result:
 
-Code d'erreur
+  - an error code.
+  
+### MAL message deletion
 
-### Destruction de message MAL
-Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour détruire un message MAL (voir 7.1.10).
+This function must conform to the virtual function defined by the MAL API to delete a MAL message (see 7.1.10).
 
-Déclaration :
+Declaration:
 
 ```c
 int <binding>_ctx_destroy_message(void *self, mal_message_t *message);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`self` : la référence du module de transport
-  -	`message` : message MAL à détruire
+  - `self`: pointer to the transport component.
+  - `message`: MAL message to delete.
 
-Résultat :
+Result:
 
-Code d'erreur
+  - an error code.
 
-### Destruction de end-point
 
-Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour détruire un end-point (voir 7.1.3).
+### End-point deletion
 
-Déclaration :
+This function must conform to the virtual function defined by the MAL API to delete an end-point (see 7.1.3).
+
+Declaration:
 
 ```c
 void <binding>_ctx_destroy_endpoint(void *self, void **endpoint_p);
 ```
 
-### Création de poller
+Parameters:
 
-Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour créer un end-point  (voir 7.1.4).
+  - `self`: pointer to the transport component.
+  - `mal_endpoint`: handle to the MAL end-point to delete.
 
-Déclaration :
+Result:
+
+  - an error code.
+
+
+### Poller creation
+
+This function must conform to the virtual function defined by the MAL API to create a MAL poller (see 7.1.4).
+
+Declaration:
 
 ```c
 void *<binding>_ctx_create_poller(
@@ -133,20 +147,20 @@ void *<binding>_ctx_create_poller(
   mal_poller_t *poller);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`self` : la référence du module de transport
-  -	`mal_poller` : poller MAL correspondant au poller physique du transport
+  - `self`: pointer to the transport component.
+  - `mal_poller`: MAL poller corresponding to the physical transport poller.
 
-Retour :
+Result:
 
-La référence du poller créé par le transport
+  -- pointer to the created poller.
 
-### Ajout / Suppression de end-point au poller
+### End-point adding / removing to the poller
 
-Ces fonctions doivent être conformes aux fonctions virtuelles définies par l'API MAL pour ajouter ou supprimer un end-point du poller (voir 7.1.5).
+Theses functions must conform to the virtual functions defined by the MAL API to add and remove an end-point to a poller (see 7.1.5).
 
-Déclaration :
+Declaration:
 
 ```c
 int malzmq_ctx_poller_add_endpoint(
@@ -160,21 +174,22 @@ int malzmq_ctx_poller_del_endpoint(
     mal_endpoint_t *mal_endpoint);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`self` : la référence du module de transport
-  -	`mal_poller` : poller MAL correspondant au poller physique du transport
-  -	`mal_endpoint` : end-point MAL à ajouter ou supprimer du poller
+  - `self`: pointer to the transport component.
+  - `mal_poller`: MAL poller corresponding to the physical transport poller.
+  - `mal_endpoint`: MAL end-point to add / remove to the specified poller.
 
-Retour : 
+Result:
 
-Code d'erreur
+  - an error code.
 
-### Attente de message sur le poller
 
-Ces fonctions doivent être conformes aux fonctions virtuelles définies par l'API MAL pour attendre la réception d'un message sur un des end-points du poller (voir 7.1.6).
+### Message waiting trough the poller
 
-Déclaration :
+This function must conform to the virtual function defined by the MAL API allowing to wait a MAL message through a poller's end-point (see 7.1.6).
+
+Declaration:
 
 ```c
 int malzmq_ctx_poller_wait(
@@ -184,30 +199,32 @@ int malzmq_ctx_poller_wait(
     int timeout);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`self` : la référence du module de transport
-  -	`mal_poller` : poller MAL correspondant au poller physique du transport
-  -	`mal_endpoint` : le end-point sur lequel un message est en attente de réception
-  -	`timeout` : le temps d'attente maximum, éventuellement infini (-1)
+  - `self` : pointer to the transport component.
+  - `mal_poller` : MAL poller corresponding to the physical transport poller.
+  - `mal_endpoint` : MAL end-point that expect a message.
+  - `timeout` : the maximum waiting time, possibly unlimited (-1)
 
-Retour : 
+Result:
 
-Code d'erreur
+  - an error code.
 
-### Destruction du poller
+### Poller deletion
 
-Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour détruire un poller (voir 7.1.7).
+This function must conform to the virtual function defined by the MAL API to delete a poller (see 7.1.7).
 
-Déclaration :
+Declaration:
 
 ```c
 void <binding>_ctx_destroy_poller(void *self, void **poller_p);
 ```
 
-### Destructeur
+### Destructor
 
-Détruit le contexte MALZMQ.
+Delete the transport context.
+
+Declaration:
 
 ```c
 void <binding>_ctx_destroy(<binding>_ctx_t **self_p);
