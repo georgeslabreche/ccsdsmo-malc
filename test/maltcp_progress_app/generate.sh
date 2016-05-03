@@ -2,4 +2,7 @@
 
 gsl project.xml
 
-chmod +x autogen.sh version.sh
+chmod +x autogen.sh
+if [ -e version.sh ];then
+chmod +x version.sh
+fi
