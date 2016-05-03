@@ -1,14 +1,24 @@
 #!/bin/bash
 
-PROJECT_DIR=$HOME/cnes/malzmq/
+PROJECT_DIR="$(cd "$(dirname "$0")" && cd .. && pwd)"
+echo "### Generate MAL/C from $PROJECT_DIR"
 LIB_DIR=$PROJECT_DIR/local
-SRC_DIR=$PROJECT_DIR/ccsds.mo.mal.c
+SRC_DIR=$PROJECT_DIR/malc
 
 if  [ $# -ne 0 ]; then
-  ALL=$1
+  CMD=$1
 else
-  ALL="simple"
+  CMD="simple"
 fi
+
+genmake_clean() {
+  echo "=== clean : $PWD"
+  rm -f aclocal.m4 configure.ac libtool Makefile.in
+  rm -f autogen.sh config.log *.cmake
+  rm -f config.status Makefile
+  rm -f CMakeLists.txt configure Makefile.am test-suite.log
+  rm -rf config doc autom4te.cache
+}
 
 genmake_all() {
   echo "=== generate : $PWD"
@@ -44,11 +54,15 @@ genmake_simple() {
 }
 
 genmake() {
-if [ $ALL == "all" ]; then
-  genmake_all
-else
-  genmake_simple
-fi
+  if [ $CMD == "all" ]; then
+    genmake_all
+  else
+    if [ $CMD == "clean" ]; then
+      genmake_clean
+    else
+      genmake_simple
+    fi
+  fi
 }
 
 check() {
