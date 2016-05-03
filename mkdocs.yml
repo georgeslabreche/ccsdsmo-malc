@@ -1,17 +1,17 @@
 site_name: MAL C API
 pages:
-- Accueil: index.md
-- Tutoriel: tutorial.md
-- 'APIs MAL':
-    - 'Attributs': mal_attributes.md
-    - 'Encodage': mal_encoding.md
+- Home: index.md
+- Tutorial: tutorial.md
+- 'MAL APIs':
+    - 'Attributes': mal_attributes.md
+    - 'Encoding': mal_encoding.md
     - 'MAL': mal_api.md
     - 'Transport': mal_transport.md
     - 'Area': area.md
     - 'Actor': mal_actor.md
 - Transports:
     - 'MAL/CZMQ': mal_czmq.md
-- Générateurs:
-    - 'Stubs de service': stub_generator.md
+- Generators:
+    - 'Stubs generator': stub_generator.md
     - 'MalBinary': malbinary_generator.md
-- Annexes: annexes.md
+- Annexs: annexes.md
