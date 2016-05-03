@@ -13,11 +13,12 @@ fi
 
 genmake_clean() {
   echo "=== clean : $PWD"
+  make clean
   rm -f aclocal.m4 configure.ac libtool Makefile.in
   rm -f autogen.sh config.log *.cmake
-  rm -f config.status Makefile
+  rm -f config.status Makefile version.sh ci_build.sh
   rm -f CMakeLists.txt configure Makefile.am test-suite.log
-  rm -rf config doc autom4te.cache
+  rm -rf builds config doc autom4te.cache
 }
 
 genmake_all() {
