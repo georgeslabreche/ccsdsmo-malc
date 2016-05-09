@@ -18,13 +18,16 @@ Source code and comments in the source code are in English so you can proably ge
 
 ## INSTALLATION
 
-The module requires **zproject** to be installed. **zproject** can be found [here](https://github.com/zeromq/zproject).
+### REQUIREMENTS
 
-Before installing 'zproject', the file 'zproject_known_projects.xml' has to be updated
-in order to contain the right versions of czmq, and the definition of new projects such
-as 'mal':
+The project requires **zproject** to be installed. **zproject** can be found [here](https://github.com/zeromq/zproject).
+
+After installing 'zproject', the file 'zproject_known_projects.xml' (normally located in /usr/local/bin directory)
+has to be updated in order to contain the right versions of czmq, and the definition of new projects such as 'mal':
 
 ```xml
+    <!-- MAL/C Projects -->
+
     <use project = "util"
         repository = ""
         test = "clog_test"
@@ -55,6 +58,12 @@ as 'mal':
         cmake_name = "MALZMQ">
     </use>
 
+    <use project = "maltcp"
+        repository = ""
+        test = "maltcp_ctx_test"
+        cmake_name = "MALTCP">
+    </use>
+
     <use project = "testarea"
         repository = ""
         test = "testarea_testservice_testcomposite_test"
@@ -68,18 +77,73 @@ as 'mal':
     </use>
 ```
     
-The installed 'zproject_known_projects.xml' is in the directory:
+### MAL/C QUICK INSTALLATION
 
-    /usr/local/bin
+Download the sources from github (https://github.com/ccsdsmo/malc) in the MAL_HOME
+directory (for example ~/cnes/malc).
 
-Note: This document assumes that the project is in the $HOME/cnes/malzmq directory.
+Go to MAL_HOME directory and launch "./genmakeall" shell script. This script generates
+makefiles for each module then compiles and installs the different modules.The last
+module is a test for the PROGRESS interaction, currently it should be stopped by a
+CTRL-C after the message "###.progress\_app\_myprovider\_finalize".
 
-If a local library dir is used, the following environment properties
-have to be set:
+The genmakeall commands accept multiples targets: 
+  - all (default target): generates makefiles, then compiles and installs
+  all the modules.
+  - clean: cleans all the generated stuff.
+  - compile: compiles and tests each modules.
 
-    export CFLAGS=-I$HOME/cnes/malzmq/local/include
-    export LDFLAGS=-L$HOME/cnes/malzmq/local/lib
-    export LD_LIBRARY_PATH=/usr/local/lib:$HOME/cnes/malzmq/local/lib
+By default, the installation directory for MAL/C libraries and includes is "MAL_HOME/local".
+It can be changed in "MAL_HOME/bin/env.sh" shell script, this script defines various
+environment variables depending of the installation directory:
+
+    export MAL_LOCAL=$MAL_HOME/local
+    export CFLAGS=-I$MAL_LOCAL/include
+    export LDFLAGS=-L$MAL_LOCAL/lib
+    export LD_LIBRARY_PATH=/usr/local/lib:$MAL_LOCAL/lib
+
+### COMPILATION, INSTALLATION
+
+The project is composed of multiples modules:
+  - util: currently logging API.
+  - malattributes: The MAL attributes are extracted from the MAL API to avoid a circular
+  dependency between MAL API and encoding APIs.
+  - malbinary: An implementation of the SPP encoding.
+  - mal: The MAL/C API implementation.
+  - malactor: An actor framework on top of the MAL C API, it uses the notions of poller,
+  end-point and handler. It is based on the notion of CZMQ actor.
+  - malzmq: An implementation of the ZMTP transport
+
+The test directory contains examples of code for each MAL interaction: SEND, SUBMIT, REQUEST,
+INVOKE, PROGRESS and PUBLISH/SUBSCRIBE. Each test constitutes a module.
+
+Additionnaly there are two modules under development:
+  - malsplitbinary: An implementation of the split binary encoding.
+  - maltcp: An implementation of the TCP transport.
+
+Each module can be individually built using the genmake shell script in the corresponding
+directory. The genmake commands accept multiples targets: 
+  - all (default target): generates makefiles for the module, then compiles and installs
+  the generated libraries and includes.
+  - clean: cleans all the generated stuff.
+  - compile: compiles and tests the module.
+
+The module can be manually built as follows:
+
+    ./generate.sh
+    ./autogen.sh
+    ./configure --prefix=$MAL_LOCAL
+    make
+
+The command to launch the tests is:
+
+    make check
+
+The command to install the libraries and includes(in $MAL_LOCAL) is:
+
+    make install
+
+## OPTIONS
 
 In 'project.xml' all dependencies must be listed in the order of the dependence,
 even if a dependency depends on another. For example the project 'testarea' 
@@ -90,23 +154,6 @@ depends on:
     <use project = "malbinary" />
     <use project = "mal" />
 ```
-
-Each project is built as follows:
-
-    ./generate.sh
-    ./autogen.sh
-    ./configure --prefix=$HOME/cnes/malzmq/local
-    make
-
-For tests:
-
-    make check
-
-For installing the libraries (in $HOME/cnes/malzmq/local):
-
-    make install
-
-The script 'genmake' compiles all the projects.
 
 C99 is required.
 

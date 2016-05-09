@@ -1,0 +1,99 @@
+#!/bin/bash
+
+PROGDIR=`cd "$(dirname "$0")" >/dev/null; pwd`
+echo "##### genmake PROGDIR= ${PROGDIR}"
+
+# MAL_HOME should be the directory containing the MAL/C source directory.
+
+# Only set MAL_HOME if not already set
+[ -z "$MAL_HOME" ] && MAL_HOME=`cd "${PROGDIR}/.." >/dev/null; pwd`
+
+# MAL_LOCAL is the installation directory for MAL/C libraries and includes.
+# Normally it is $MAL_HOME/local for an installattion limited to the developer,
+# it could be /usr/local for a global installation. 
+
+# Only set MAL_LOCAL if not already set
+[ -z "$MAL_LOCAL" ] && MAL_LOCAL=${MAL_HOME}/local
+
+echo "##### -- MAL_HOME = $MAL_HOME"
+echo "##### -- MAL_LOCAL = $MAL_LOCAL"
+
+export CFLAGS=-"I$MAL_LOCAL/include -Wno-error=format-security"
+export LDFLAGS=-L$MAL_LOCAL/lib
+export LD_LIBRARY_PATH=/usr/local/lib:$MAL_LOCAL/lib
+
+echo "##### -- CFLAGS = $CFLAGS"
+echo "##### -- LDFLAGS = $LDFLAGS"
+echo "##### -- LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
+
+echo "### Generate MAL/C from $MAL_HOME to $MAL_LOCAL"
+
+if  [ $# -ne 0 ]; then
+  CMD=$1
+else
+  CMD="all"
+fi
+
+genmake_clean() {
+  echo "=== clean : $PWD"
+  make clean
+  rm -f aclocal.m4 configure.ac libtool Makefile.in
+  rm -f autogen.sh config.log *.cmake
+  rm -f config.status Makefile version.sh ci_build.sh
+  rm -f CMakeLists.txt configure Makefile.am test-suite.log
+  rm -rf builds config doc autom4te.cache
+}
+
+genmake_all() {
+  echo "=== generate : $PWD"
+  ./generate.sh
+  check
+  echo "=== autogen"
+  ./autogen.sh
+  check
+  echo "=== configure"
+  ./configure --prefix=$MAL_LOCAL
+  check
+  echo "=== make"
+  make
+  check
+  echo "=== make check"
+  make check
+  check
+  echo "=== make install"
+  make install
+  check
+}
+
+genmake_compile() {
+  echo "=== make"
+  make
+  check
+  echo "=== make check"
+  make check
+  check
+  echo "=== make install"
+  make install
+  check
+}
+
+genmake() {
+  if [ $CMD == "all" ]; then
+    genmake_all
+  else
+    if [ $CMD == "clean" ]; then
+      genmake_clean
+    else
+      genmake_compile
+    fi
+  fi
+}
+
+check() {
+if  [ $? -ne 0 ]; then
+    echo "ERROR in $PWD" 1>&2
+    exit 1
+fi
+}
+
+genmake
