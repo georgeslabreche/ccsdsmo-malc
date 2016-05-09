@@ -8,14 +8,8 @@ extern "C" {
 typedef int maltcp_md_get_key_fn(char *string, unsigned int *key);
 typedef int maltcp_md_get_string_fn(unsigned int key, char **string);
 typedef int maltcp_md_put_string_fn(char *string, unsigned int *key);
-typedef struct _maltcp_mapping_directory_t maltcp_mapping_directory_t;
-struct _maltcp_mapping_directory_t {
-  maltcp_md_get_key_fn *get_key_fn;
-  maltcp_md_get_string_fn *get_string_fn;
-  maltcp_md_put_string_fn *put_string_fn;
-};
 
-maltcp_header_t *maltcp_header_new(maltcp_mapping_directory_t *mapping_directory,
+maltcp_header_t *maltcp_header_new(
 	bool priority_flag, mal_uinteger_t priority,
     bool timestamp_flag, mal_identifier_t *network_zone,
     mal_identifier_t *session_name, mal_identifier_list_t *domain,
@@ -24,11 +18,6 @@ maltcp_header_t *maltcp_header_new(maltcp_mapping_directory_t *mapping_directory
 unsigned char maltcp_header_get_version(maltcp_header_t *self);
 
 void maltcp_header_set_version(maltcp_header_t *self, unsigned char version);
-
-maltcp_mapping_directory_t *maltcp_header_get_mapping_directory(maltcp_header_t *self);
-
-void maltcp_header_set_mapping_directory(maltcp_header_t *self,
-	maltcp_mapping_directory_t *mapping_directory);
 
 bool maltcp_header_get_priority_flag(maltcp_header_t *self);
 

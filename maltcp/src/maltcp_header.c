@@ -5,7 +5,6 @@
 
 struct _maltcp_header_t {
   unsigned char version;
-  maltcp_mapping_directory_t *mapping_directory;
   bool priority_flag;
   mal_uinteger_t priority;
   bool timestamp_flag;
@@ -19,7 +18,7 @@ struct _maltcp_header_t {
   mal_blob_t *authentication_id;
 };
 
-maltcp_header_t *maltcp_header_new(maltcp_mapping_directory_t *mapping_directory,
+maltcp_header_t *maltcp_header_new(
 	bool priority_flag, mal_uinteger_t priority,
     bool timestamp_flag, mal_identifier_t *network_zone,
     mal_identifier_t *session_name, mal_identifier_list_t *domain,
@@ -29,8 +28,6 @@ maltcp_header_t *maltcp_header_new(maltcp_mapping_directory_t *mapping_directory
     return NULL;
 
   self->version = MALTCP_PROTOCOL_VERSION;
-
-  self->mapping_directory = mapping_directory;
 
   self->priority_flag = priority_flag;
   self->priority = priority;
@@ -74,15 +71,6 @@ unsigned char maltcp_header_get_version(maltcp_header_t *self) {
 
 void maltcp_header_set_version(maltcp_header_t *self, unsigned char version) {
   self->version = version;
-}
-
-maltcp_mapping_directory_t *maltcp_header_get_mapping_directory(maltcp_header_t *self) {
-  return self->mapping_directory;
-}
-
-void maltcp_header_set_mapping_directory(maltcp_header_t *self,
-	maltcp_mapping_directory_t *mapping_directory) {
-  self->mapping_directory = mapping_directory;
 }
 
 bool maltcp_header_get_priority_flag(maltcp_header_t *self) {
