@@ -299,8 +299,7 @@ int maltcp_ctx_mal_standard_socket_handle(zloop_t *loop, zmq_pollitem_t *poller,
 
     if (rc >= HEADER_LENGTH && offset == 0) {
       mal_uinteger_t offset_body_length = 19;
-      int r = malbinary_decoder_decode_uinteger(self->decoder, (char *)zmq_msg_data(&msg), &offset_body_length, &mal_msg_bytes_length);
-      assert(r==0);
+      mal_msg_bytes_length = malbinary_read32((char *)zmq_msg_data(&msg), &offset_body_length);
       clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: message size = %d\n", mal_msg_bytes_length);
       if (rc == mal_msg_bytes_length) {
         clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: read size = %d, end.\n", rc);
