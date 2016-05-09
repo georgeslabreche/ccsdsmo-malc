@@ -199,52 +199,35 @@ static mal_uoctet_t convert_to_interaction_stage(int sduType) {
  }*/
 
 // internal functions, should not be visible from outside this module
-int maltcp_add_string_encoding_length(mal_string_t *to_encode,
-    maltcp_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
+int maltcp_add_string_encoding_length(mal_string_t *to_encode, malbinary_encoder_t *encoder,
     unsigned int *encoding_length) {
-  int rc = 0;
-  bool mdk_encode = false;
-  unsigned int md_key;
-  // find the string in the mapping directory
-  if (mapping_directory != NULL) {
-    rc = mapping_directory->get_key_fn(to_encode, &md_key);
-    if ((rc == 0) && (md_key > 0))
-      mdk_encode = true;
-  }
-  if (mdk_encode) {
-    (*encoding_length) += 4;
-  } else {
-    rc = malbinary_encoder_add_string_encoding_length(encoder, to_encode, encoding_length);
-  }
-  return rc;
+  return malbinary_encoder_add_string_encoding_length(encoder, to_encode, encoding_length);
 }
 
-int maltcp_add_uri_encoding_length(mal_uri_t *to_encode,
-    maltcp_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
+int maltcp_add_uri_encoding_length(mal_uri_t *to_encode, malbinary_encoder_t *encoder,
     unsigned int *encoding_length) {
-  return maltcp_add_string_encoding_length(to_encode, mapping_directory, encoder, encoding_length);
+  return maltcp_add_string_encoding_length(to_encode, encoder, encoding_length);
 }
 
-int maltcp_add_identifier_encoding_length(mal_identifier_t *to_encode,
-    maltcp_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
+int maltcp_add_identifier_encoding_length(mal_identifier_t *to_encode, malbinary_encoder_t *encoder,
     unsigned int *encoding_length) {
-  return maltcp_add_string_encoding_length(to_encode, mapping_directory, encoder, encoding_length);
+  return maltcp_add_string_encoding_length(to_encode, encoder, encoding_length);
 }
 
 int maltcp_add_identifier_list_encoding_length(mal_identifier_list_t *to_encode,
-    maltcp_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
-    unsigned int *encoding_length) {
+     malbinary_encoder_t *encoder, unsigned int *encoding_length) {
   int rc = 0;
   unsigned int list_size = mal_identifier_list_get_element_count(to_encode);
   malbinary_encoder_add_list_size_encoding_length(encoder, list_size,
       encoding_length);
   // Presence flags
-  (*encoding_length) += list_size;
+  (*encoding_length) += malbinary_encoder_add_uinteger_encoding_length(encoder, list_size,
+      encoding_length);
   mal_identifier_t **content = mal_identifier_list_get_content(to_encode);
   for (int i = 0; i < list_size; i++) {
     mal_identifier_t *list_element = content[i];
     if (list_element != NULL) {
-      rc = maltcp_add_identifier_encoding_length(list_element, mapping_directory, encoder, encoding_length);
+      rc = maltcp_add_identifier_encoding_length(list_element, encoder, encoding_length);
       if (rc < 0)
         return rc;
     }
@@ -272,11 +255,9 @@ int maltcp_add_message_encoding_length(maltcp_header_t *maltcp_header,
   (*encoding_length) += 1 + 2 * 3 + 1 + 1 + 8 + 1 + 1 + 4;
 
   // always encode 'URI From' and 'URI To'
-  rc = maltcp_add_uri_encoding_length(mal_message_get_uri_from(message),
-      maltcp_header_get_mapping_directory(maltcp_header), encoder, encoding_length);
+  rc = maltcp_add_uri_encoding_length(mal_message_get_uri_from(message), encoder, encoding_length);
   if (rc < 0) return rc;
-  rc = maltcp_add_uri_encoding_length(mal_message_get_uri_to(message),
-      maltcp_header_get_mapping_directory(maltcp_header), encoder, encoding_length);
+  rc = maltcp_add_uri_encoding_length(mal_message_get_uri_to(message), encoder, encoding_length);
   if (rc < 0) return rc;
 
   bool priority_flag = maltcp_header_get_priority_flag(maltcp_header);
@@ -301,19 +282,19 @@ int maltcp_add_message_encoding_length(maltcp_header_t *maltcp_header,
 
   if (network_zone_flag > 0) {
     rc = maltcp_add_identifier_encoding_length(mal_message_get_network_zone(message),
-        maltcp_header_get_mapping_directory(maltcp_header), encoder, encoding_length);
+        encoder, encoding_length);
     if (rc < 0) return rc;
   }
 
   if (session_name_flag > 0) {
     rc = maltcp_add_identifier_encoding_length(mal_message_get_session_name(message),
-        maltcp_header_get_mapping_directory(maltcp_header), encoder, encoding_length);
+        encoder, encoding_length);
     if (rc < 0) return rc;
   }
 
   if (domain_flag > 0) {
     rc = maltcp_add_identifier_list_encoding_length(mal_message_get_domain(message),
-        maltcp_header_get_mapping_directory(maltcp_header), encoder, encoding_length);
+        encoder, encoding_length);
     if (rc < 0) return rc;
   }
 
@@ -323,75 +304,25 @@ int maltcp_add_message_encoding_length(maltcp_header_t *maltcp_header,
     if (rc < 0) return rc;
   }
 
-  //encoding id
-  rc = malbinary_encoder_add_octet_encoding_length(encoder,
-      0, encoding_length);
-  if (rc < 0) return rc;
-
-  //body length
-  rc = malbinary_encoder_add_uinteger_encoding_length(encoder,
-      mal_message_get_body_length(message), encoding_length);
-  if (rc < 0) return rc;
-
   (*encoding_length) += mal_message_get_body_length(message);
 
   return rc;
 }
 
-// internal functions, should not be visible from outside this module
-int maltcp_encode_string(
-    mal_string_t *to_encode,
-    maltcp_mapping_directory_t *mapping_directory,
-    malbinary_encoder_t *encoder,
+int maltcp_encode_uri(mal_uri_t *to_encode, malbinary_encoder_t *encoder,
     char *bytes, unsigned int *offset) {
-  int rc = 0;
-  bool mdk_encode = false;
-  unsigned int md_key;
-  // find the string in the mapping directory
-  if (mapping_directory != NULL) {
-    rc = mapping_directory->get_key_fn(to_encode, &md_key);
-    if ((rc == 0) && (md_key > 0))
-      mdk_encode = true;
-  }
-  if (mdk_encode) {
-    int opt_mdk = - md_key;
-    // check opt_mdk is negative
-    if (! (opt_mdk < 0)) {
-      clog_error(maltcp_logger, "maltcp_encode_string, bad optional key: %d.", opt_mdk);
-      return -1;
-    }
-    // TODO: varint
-    malbinary_write32(opt_mdk, bytes, offset);
-  } else {
-    // check length is not too large
-    int len = strlen(to_encode);
-    if (! (len >= 0)) {
-      clog_error(maltcp_logger, "maltcp_encode_string, length too large: %d.", len);
-      return -1;
-    }
-    rc = malbinary_encoder_encode_string(encoder, bytes, offset, to_encode);
-  }
-  return rc;
+  return malbinary_encoder_encode_string(encoder, bytes, offset, to_encode);
 }
 
-int maltcp_encode_uri(mal_uri_t *to_encode,
-    maltcp_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
+int maltcp_encode_identifier(mal_identifier_t *to_encode, malbinary_encoder_t *encoder,
     char *bytes, unsigned int *offset) {
-  return maltcp_encode_string(to_encode, mapping_directory, encoder, bytes, offset);
-}
-
-int maltcp_encode_identifier(mal_identifier_t *to_encode,
-    maltcp_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
-    char *bytes, unsigned int *offset) {
-  return maltcp_encode_string(to_encode, mapping_directory, encoder, bytes, offset);
+  return malbinary_encoder_encode_string(encoder, bytes, offset, to_encode);
 }
 
 int maltcp_encode_identifier_list(mal_identifier_list_t *to_encode,
-    maltcp_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
-    char *bytes, unsigned int *offset) {
+    malbinary_encoder_t *encoder, char *bytes, unsigned int *offset) {
   int rc = 0;
   unsigned int list_size = mal_identifier_list_get_element_count(to_encode);
-  // TODO varint ?
   malbinary_encoder_encode_list_size(encoder, bytes, offset, list_size);
   mal_identifier_t **content = mal_identifier_list_get_content(to_encode);
   for (int i = 0; i < list_size; i++) {
@@ -402,7 +333,7 @@ int maltcp_encode_identifier_list(mal_identifier_list_t *to_encode,
     if (rc < 0)
       return rc;
     if (presence_flag) {
-      rc = maltcp_encode_identifier(list_element, mapping_directory, encoder, bytes, offset);
+      rc = maltcp_encode_identifier(list_element, encoder, bytes, offset);
       if (rc < 0)
         return rc;
     }
@@ -462,10 +393,8 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
 
   // always encode 'URI From' and 'URI To'
   // this ordering is not consistent with the blue book proposal
-  maltcp_encode_uri(mal_message_get_uri_from(message),
-      maltcp_header_get_mapping_directory(maltcp_header), encoder, bytes, offset);
-  maltcp_encode_uri(mal_message_get_uri_to(message),
-      maltcp_header_get_mapping_directory(maltcp_header), encoder, bytes, offset);
+  maltcp_encode_uri(mal_message_get_uri_from(message), encoder, bytes, offset);
+  maltcp_encode_uri(mal_message_get_uri_to(message), encoder, bytes, offset);
 
   if (priority_flag > 0) {
     malbinary_encoder_encode_uinteger(encoder, bytes, offset,
@@ -479,17 +408,17 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
 
   if (network_zone_flag > 0) {
     maltcp_encode_identifier(mal_message_get_network_zone(message),
-        maltcp_header_get_mapping_directory(maltcp_header), encoder, bytes, offset);
+        encoder, bytes, offset);
   }
 
   if (session_name_flag > 0) {
     maltcp_encode_identifier(mal_message_get_session_name(message),
-        maltcp_header_get_mapping_directory(maltcp_header), encoder, bytes, offset);
+        encoder, bytes, offset);
   }
 
   if (domain_flag > 0) {
     maltcp_encode_identifier_list(mal_message_get_domain(message),
-        maltcp_header_get_mapping_directory(maltcp_header), encoder, bytes, offset);
+       encoder, bytes, offset);
   }
 
   if (authentication_id_flag > 0) {
@@ -507,43 +436,15 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
   *(offset) += body_length;
 
   // encode the body length (message length)
-  malbinary_encoder_encode_uinteger(encoder, bytes, &offset_bl, *(offset));
+  malbinary_write32(*(offset), bytes, &offset_bl);
   printf("--- message_length = %u\n" , (*offset));//NTA tmp
 
   return 0;
 }
 
-// internal functions, should not be visible from outside this module
-int maltcp_decode_string(maltcp_mapping_directory_t *mapping_directory,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int *offset, mal_string_t **result) {
-  int rc = 0;
-  // TODO: varint
-  int opt_mdk = malbinary_read32(bytes, offset);
-  if (opt_mdk < 0) {
-    unsigned int md_key = - opt_mdk;
-    char *result_str;
-    // find the string in the mapping directory
-    if (mapping_directory == NULL)
-      return -1;
-    rc = mapping_directory->get_string_fn(md_key, &result_str);
-    if (rc < 0)
-      return rc;
-    (*result) = mal_string_new(result_str);
-  } else {
-    unsigned int length = opt_mdk;
-    (*result) = (char *) malloc(length + 1);
-    if ((*result) == NULL) return -1;
-    bcopy(& bytes[*offset], *result, length);
-    (*result)[length] = '\0';
-    (*offset) += length;
-  }
-  return rc;
-}
-
-int maltcp_decode_uri(maltcp_mapping_directory_t *mapping_directory,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int *offset,
-    mal_uri_t **result) {
-  return maltcp_decode_string(mapping_directory, decoder, bytes, offset, result);
+int maltcp_decode_uri(malbinary_decoder_t *decoder, char *bytes,
+    unsigned int *offset, mal_uri_t **result) {
+  return malbinary_decoder_decode_string(decoder, bytes, offset, result);
 }
 
 int maltcp_decode_uri_to(maltcp_header_t *maltcp_header,
@@ -564,22 +465,21 @@ int maltcp_decode_uri_to(maltcp_header_t *maltcp_header,
 
   // this ordering is not consistent with the blue book proposal
   // Read the 'URI From' length
-  int opt_mdk = malbinary_read32(bytes, offset);
+  mal_uinteger_t opt_mdk;
+  malbinary_decoder_decode_uinteger(decoder, bytes, offset, &opt_mdk);
   if (opt_mdk >= 0)
     (*offset) += opt_mdk;
 
-  return maltcp_decode_uri(maltcp_header_get_mapping_directory(maltcp_header),
-      decoder, bytes, offset, uri_to);
+  return maltcp_decode_uri(decoder, bytes, offset, uri_to);
 }
 
-int maltcp_decode_identifier(maltcp_mapping_directory_t *mapping_directory,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int *offset,
+int maltcp_decode_identifier(malbinary_decoder_t *decoder, char *bytes, unsigned int *offset,
     mal_identifier_t **result) {
-  return maltcp_decode_string(mapping_directory, decoder, bytes, offset, result);
+  int rc = malbinary_decoder_decode_string(decoder, bytes, offset, result);
+  return rc;
 }
 
-int maltcp_decode_identifier_list(maltcp_mapping_directory_t *mapping_directory,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int *offset,
+int maltcp_decode_identifier_list(malbinary_decoder_t *decoder, char *bytes, unsigned int *offset,
     mal_identifier_list_t **result) {
   int rc = 0;
   unsigned int list_size;
@@ -597,8 +497,7 @@ int maltcp_decode_identifier_list(maltcp_mapping_directory_t *mapping_directory,
     if (rc < 0)
       return rc;
     if (presence_flag) {
-      rc = maltcp_decode_identifier(mapping_directory,
-          decoder, bytes, offset, &list_content[i]);
+      rc = maltcp_decode_identifier(decoder, bytes, offset, &list_content[i]);
       if (rc < 0)
         return rc;
     } else {
@@ -675,21 +574,20 @@ int maltcp_decode_message(maltcp_header_t *maltcp_header,
   //TODO: mal_message_set_encoding_id(message, encoding_id);
 
   //mal_message_length
-  malbinary_decoder_decode_uinteger(decoder, bytes, offset, mal_message_length);
+   (*mal_message_length) = malbinary_read32(bytes, offset);
 
   // this ordering is not consistent with the blue book proposal
   mal_uri_t *uri_from;
   if (source_flag) {
-    maltcp_decode_uri(maltcp_header_get_mapping_directory(maltcp_header),
-        decoder, bytes, offset, &uri_from);
+    maltcp_decode_uri(decoder, bytes, offset, &uri_from);
     mal_message_set_free_uri_from(message, true);
     mal_message_set_uri_from(message, uri_from);
   }
 
+
   mal_uri_t *uri_to;
   if (destination_flag) {
-    maltcp_decode_uri(maltcp_header_get_mapping_directory(maltcp_header),
-        decoder, bytes, offset, &uri_to);
+    maltcp_decode_uri(decoder, bytes, offset, &uri_to);
     mal_message_set_free_uri_to(message, true);
     mal_message_set_uri_to(message, uri_to);
   }
@@ -710,8 +608,7 @@ int maltcp_decode_message(maltcp_header_t *maltcp_header,
 
   mal_identifier_t *network_zone;
   if (network_zone_flag) {
-    maltcp_decode_identifier(maltcp_header_get_mapping_directory(maltcp_header),
-        decoder, bytes, offset, &network_zone);
+    maltcp_decode_identifier(decoder, bytes, offset, &network_zone);
     mal_message_set_free_network_zone(message, true);
   } else {
     network_zone = maltcp_header_get_network_zone(maltcp_header);
@@ -721,8 +618,7 @@ int maltcp_decode_message(maltcp_header_t *maltcp_header,
 
   mal_identifier_t *session_name;
   if (session_name_flag) {
-    maltcp_decode_identifier(maltcp_header_get_mapping_directory(maltcp_header),
-        decoder, bytes, offset, &session_name);
+    maltcp_decode_identifier(decoder, bytes, offset, &session_name);
     mal_message_set_free_session_name(message, true);
   } else {
     session_name = maltcp_header_get_session_name(maltcp_header);
@@ -732,8 +628,7 @@ int maltcp_decode_message(maltcp_header_t *maltcp_header,
 
   mal_identifier_list_t *domain;
   if (domain_flag) {
-    maltcp_decode_identifier_list(maltcp_header_get_mapping_directory(maltcp_header),
-        decoder, bytes, offset, &domain);
+    maltcp_decode_identifier_list(decoder, bytes, offset, &domain);
     mal_message_set_free_domain(message, true);
   } else {
     domain = maltcp_header_get_domain(maltcp_header);
