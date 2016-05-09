@@ -55,6 +55,117 @@ void malbinary_write64(long long_value, char *bytes, unsigned int *offset) {
   (*offset) = index;
 }
 
+int malbinary_var_ushort_encoding_length(unsigned short value) {
+  if (value == 0) return 1;
+  int ret = 0;
+  for (int i = 0; i < 14; i += 7) {
+    if ((value >> i) == 0) {
+      break;
+    }
+    ret++;
+  }
+  return ret;
+}
+
+int malbinary_var_uinteger_encoding_length(unsigned int value) {
+  if (value == 0) return 1;
+  int ret = 0;
+  for (int i = 0; i < 28; i += 7) {
+    if ((value >> i) == 0) {
+      break;
+    }
+    ret++;
+  }
+  return ret;
+}
+
+int malbinary_var_ulong_encoding_length(unsigned long value) {
+  if (value == 0) return 1;
+  int ret = 0;
+  for (int i = 0; i < 63; i += 7) {
+    if ((value >> i) == 0) {
+      break;
+    }
+    ret++;
+  }
+  return ret;
+}
+
+int malbinary_var_short_encoding_length(short value) {
+  if (value > 0)
+    return malbinary_var_ushort_encoding_length(2 * value);
+  else
+    return malbinary_var_ushort_encoding_length(-2 * value - 1);
+}
+
+int malbinary_var_integer_encoding_length(int value) {
+  if (value > 0)
+    return malbinary_var_uinteger_encoding_length(2 * value);
+  else
+    return malbinary_var_uinteger_encoding_length(-2 * value - 1);
+}
+
+int malbinary_var_long_encoding_length(long value) {
+  if (value > 0)
+    return malbinary_var_ulong_encoding_length(2 * value);
+  else
+    return malbinary_var_ulong_encoding_length(-2 * value - 1);
+}
+
+void malbinary_write_uvarshort(unsigned short value, char *bytes, unsigned int *offset) {
+  unsigned int index = (*offset);
+  while (true) {
+    if ((value & ~0x7F) == 0) {
+      bytes[index++] = (char) value;
+      (*offset) = index;
+      return;
+    } else {
+      bytes[index++] = (char)((value & 0x7F) | 0x80);
+      value >>= 7;
+    }
+  }
+}
+
+void malbinary_write_uvarint(unsigned int value, char *bytes, unsigned int *offset) {
+  unsigned int index = (*offset);
+  while (true) {
+    if ((value & ~0x7F) == 0) {
+      bytes[index++] = (char) value;
+      (*offset) = index;
+      return;
+    } else {
+      bytes[index++] = (char)((value & 0x7F) | 0x80);
+      value >>= 7;
+    }
+  }
+}
+
+void malbinary_write_uvarlong(unsigned long value, char *bytes, unsigned int *offset) {
+  unsigned int index = (*offset);
+  while (true) {
+    if ((value & ~0x7FL) == 0) {
+      bytes[index++] = (char) value;
+      (*offset) = index;
+      return;
+    } else {
+      bytes[index++] = (char)(((int) value & 0x7F) | 0x80);
+      value >>= 7;
+    }
+  }
+}
+
+void malbinary_write_varshort(short value, char *bytes, unsigned int *offset) {
+  malbinary_write_uvarshort(value << 1 ^ value >> 15, bytes, offset);
+}
+
+void malbinary_write_varint(int value, char *bytes, unsigned int *offset) {
+  malbinary_write_uvarint(value << 1 ^ value >> 31, bytes, offset);
+}
+
+void malbinary_write_varlong(long value, char *bytes, unsigned int *offset) {
+  malbinary_write_uvarlong(value << 1 ^ value >> 63, bytes, offset);
+}
+
 void malbinary_write_array(char *array, unsigned int length, char *bytes,
     unsigned int *offset) {
   unsigned int index = (*offset);
@@ -73,7 +184,12 @@ void malbinary_write(char b, char *bytes, unsigned int *offset) {
 int malbinary_encoder_add_string_encoding_length(malbinary_encoder_t *self,
     mal_string_t *to_encode, unsigned int *encoding_length) {
   int rc = 0;
-  (*encoding_length) += 4 + mal_string_get_char_count(to_encode);
+  if (self->varint_supported) {
+    size_t length = mal_string_get_char_count(to_encode);
+    (*encoding_length) += malbinary_var_uinteger_encoding_length(length) + length;
+  } else {
+    (*encoding_length) += 4 + mal_string_get_char_count(to_encode);
+  }
   return rc;
 }
 
@@ -94,16 +210,20 @@ int malbinary_encoder_add_short_form_encoding_length(malbinary_encoder_t *self,
 int malbinary_encoder_add_integer_encoding_length(malbinary_encoder_t *self,
     mal_integer_t to_encode, unsigned int *encoding_length) {
   int rc = 0;
-// If varint is used, take into account the integer value
-  (*encoding_length) += 4;
+  if (self->varint_supported)
+    (*encoding_length) += malbinary_var_integer_encoding_length(to_encode);
+  else
+    (*encoding_length) += 4;
   return rc;
 }
 
 int malbinary_encoder_add_list_size_encoding_length(malbinary_encoder_t *self,
     unsigned int to_encode, unsigned int *encoding_length) {
   int rc = 0;
-// If varint is used, take into account the list size value
-  (*encoding_length) += 4;
+  if (self->varint_supported)
+    (*encoding_length) += malbinary_var_uinteger_encoding_length(to_encode);
+  else
+    (*encoding_length) += 4;
   return rc;
 }
 
@@ -131,22 +251,34 @@ int malbinary_encoder_add_large_enum_encoding_length(malbinary_encoder_t *self,
 int malbinary_encoder_add_identifier_encoding_length(malbinary_encoder_t *self,
     mal_identifier_t *to_encode, unsigned int *encoding_length) {
   int rc = 0;
-  (*encoding_length) += 4 + mal_identifier_get_char_count(to_encode);
+  if (self->varint_supported) {
+    size_t length = mal_identifier_get_char_count(to_encode);
+    (*encoding_length) += malbinary_var_uinteger_encoding_length(length) + length;
+  } else {
+    (*encoding_length) += 4 + mal_identifier_get_char_count(to_encode);
+  }
   return rc;
 }
 
 int malbinary_encoder_add_uinteger_encoding_length(malbinary_encoder_t *self,
     mal_uinteger_t to_encode, unsigned int *encoding_length) {
   int rc = 0;
-// If varint is used, take into account the list size value
-  (*encoding_length) += 4;
+  if (self->varint_supported)
+    (*encoding_length) += malbinary_var_uinteger_encoding_length(to_encode);
+  else
+    (*encoding_length) += 4;
   return rc;
 }
 
 int malbinary_encoder_add_uri_encoding_length(malbinary_encoder_t *self,
     mal_uri_t *to_encode, unsigned int *encoding_length) {
   int rc = 0;
-  (*encoding_length) += 4 + mal_uri_get_char_count(to_encode);
+  if (self->varint_supported) {
+    size_t length = mal_uri_get_char_count(to_encode);
+    (*encoding_length) += malbinary_var_uinteger_encoding_length(length) + length;
+  } else {
+    (*encoding_length) += 4 + mal_uri_get_char_count(to_encode);
+  }
   return rc;
 }
 
@@ -167,14 +299,20 @@ int malbinary_encoder_add_uoctet_encoding_length(malbinary_encoder_t *self,
 int malbinary_encoder_add_long_encoding_length(malbinary_encoder_t *self,
     mal_long_t to_encode, unsigned int *encoding_length) {
   int rc = 0;
-  (*encoding_length) += 8;
+  if (self->varint_supported)
+      (*encoding_length) += malbinary_var_long_encoding_length(to_encode);
+    else
+      (*encoding_length) += 8;
   return rc;
 }
 
 int malbinary_encoder_add_ushort_encoding_length(malbinary_encoder_t *self,
     mal_ushort_t to_encode, unsigned int *encoding_length) {
   int rc = 0;
-  (*encoding_length) += 2;
+  if (self->varint_supported)
+    (*encoding_length) += malbinary_var_ushort_encoding_length(to_encode);
+  else
+    (*encoding_length) += 2;
   return rc;
 }
 
@@ -188,7 +326,12 @@ int malbinary_encoder_add_boolean_encoding_length(malbinary_encoder_t *self,
 int malbinary_encoder_add_blob_encoding_length(malbinary_encoder_t *self,
     mal_blob_t *to_encode, unsigned int *encoding_length) {
   int rc = 0;
-  (*encoding_length) += 4 + mal_blob_get_length(to_encode);
+  if (self->varint_supported) {
+    unsigned int length = mal_blob_get_length(to_encode);
+    (*encoding_length) += malbinary_var_uinteger_encoding_length(length) + length;
+  } else {
+    (*encoding_length) += 4 + mal_blob_get_length(to_encode);
+  }
   return rc;
 }
 
@@ -196,8 +339,10 @@ int malbinary_encoder_encode_string(malbinary_encoder_t *self, char *bytes,
     unsigned int *offset, mal_string_t *to_encode) {
   int rc = 0;
   unsigned int length = mal_string_get_char_count(to_encode);
-  // TODO: varint
-  malbinary_write32(length, bytes, offset);
+  if (self->varint_supported)
+    malbinary_write_uvarint(length, bytes, offset);
+  else
+    malbinary_write32(length, bytes, offset);
   malbinary_write_array(to_encode, length, bytes, offset);
   return rc;
 }
@@ -216,21 +361,30 @@ int malbinary_encoder_encode_presence_flag(malbinary_encoder_t *self,
 int malbinary_encoder_encode_short_form(malbinary_encoder_t *self, char *bytes,
     unsigned int *offset, long to_encode) {
   int rc = 0;
-  malbinary_write64(to_encode, bytes, offset);
+  if (self->varint_supported)
+    malbinary_write_varlong(to_encode, bytes, offset);
+  else
+    malbinary_write64(to_encode, bytes, offset);
   return rc;
 }
 
 int malbinary_encoder_encode_integer(malbinary_encoder_t *self, char *bytes,
     unsigned int *offset, mal_integer_t to_encode) {
   int rc = 0;
-  malbinary_write32(to_encode, bytes, offset);
+  if (self->varint_supported)
+    malbinary_write_varint(to_encode, bytes, offset);
+  else
+    malbinary_write32(to_encode, bytes, offset);
   return rc;
 }
 
 int malbinary_encoder_encode_list_size(malbinary_encoder_t *self, char *bytes,
     unsigned int *offset, unsigned int list_size) {
   int rc = 0;
-  malbinary_write32(list_size, bytes, offset);
+  if (self->varint_supported)
+    malbinary_write_uvarint(list_size, bytes, offset);
+  else
+    malbinary_write32(list_size, bytes, offset);
   return rc;
 }
 
@@ -259,8 +413,10 @@ int malbinary_encoder_encode_uri(malbinary_encoder_t *self, char *bytes,
     unsigned int *offset, mal_uri_t *to_encode) {
   int rc = 0;
   unsigned int length = mal_uri_get_char_count(to_encode);
-  // TODO: varint
-  malbinary_write32(length, bytes, offset);
+  if (self->varint_supported)
+    malbinary_write_uvarint(length, bytes, offset);
+  else
+    malbinary_write32(length, bytes, offset);
   malbinary_write_array(to_encode, length, bytes, offset);
   return rc;
 }
@@ -269,8 +425,10 @@ int malbinary_encoder_encode_blob(malbinary_encoder_t *self, char *bytes,
     unsigned int *offset, mal_blob_t *to_encode) {
   int rc = 0;
   unsigned int length = mal_blob_get_length(to_encode);
-  // TODO: varint
-  malbinary_write32(length, bytes, offset);
+  if (self->varint_supported)
+    malbinary_write_uvarint(length, bytes, offset);
+  else
+    malbinary_write32(length, bytes, offset);
   malbinary_write_array(mal_blob_get_content(to_encode), length, bytes, offset);
   return rc;
 }
@@ -278,14 +436,20 @@ int malbinary_encoder_encode_blob(malbinary_encoder_t *self, char *bytes,
 int malbinary_encoder_encode_time(malbinary_encoder_t *self, char *bytes,
     unsigned int *offset, mal_time_t to_encode) {
   int rc = 0;
-  malbinary_write64(to_encode, bytes, offset);
+  if (self->varint_supported)
+    malbinary_write_uvarlong(to_encode, bytes, offset);
+  else
+    malbinary_write64(to_encode, bytes, offset);
   return rc;
 }
 
 int malbinary_encoder_encode_uinteger(malbinary_encoder_t *self, char *bytes,
     unsigned int *offset, mal_uinteger_t to_encode) {
   int rc = 0;
-  malbinary_write32(to_encode, bytes, offset);
+  if (self->varint_supported)
+      malbinary_write_uvarint(to_encode, bytes, offset);
+    else
+      malbinary_write32(to_encode, bytes, offset);
   return rc;
 }
 
@@ -293,8 +457,10 @@ int malbinary_encoder_encode_identifier(malbinary_encoder_t *self, char *bytes,
     unsigned int *offset, mal_identifier_t *to_encode) {
   int rc = 0;
   unsigned int length = mal_identifier_get_char_count(to_encode);
-  // TODO: varint
-  malbinary_write32(length, bytes, offset);
+  if (self->varint_supported)
+    malbinary_write_uvarint(length, bytes, offset);
+  else
+    malbinary_write32(length, bytes, offset);
   malbinary_write_array(to_encode, length, bytes, offset);
   return rc;
 }
@@ -309,14 +475,20 @@ int malbinary_encoder_encode_uoctet(malbinary_encoder_t *self, char *bytes,
 int malbinary_encoder_encode_long(malbinary_encoder_t *self, char *bytes,
     unsigned int *offset, mal_long_t to_encode) {
   int rc = 0;
-  malbinary_write64(to_encode, bytes, offset);
+  if (self->varint_supported)
+    malbinary_write_varlong(to_encode, bytes, offset);
+  else
+    malbinary_write64(to_encode, bytes, offset);
   return rc;
 }
 
 int malbinary_encoder_encode_ushort(malbinary_encoder_t *self, char *bytes,
     unsigned int *offset, mal_ushort_t to_encode) {
   int rc = 0;
-  malbinary_write16(to_encode, bytes, offset);
+  if (self->varint_supported)
+    malbinary_write_varshort(to_encode, bytes, offset);
+  else
+    malbinary_write16(to_encode, bytes, offset);
   return rc;
 }
 
@@ -345,17 +517,37 @@ int malbinary_encoder_add_duration_encoding_length(malbinary_encoder_t *self,
   return rc;
 }
 
+int floatToIntBits(float x) {
+  union {
+    float f;  // assuming 32-bit IEEE 754 single-precision
+    int i;    // assuming 32-bit 2's complement int
+  } u;
+  u.f = x;
+  return u.i;
+}
+
 int malbinary_encoder_add_float_encoding_length(malbinary_encoder_t *self,
     mal_float_t to_encode, unsigned int *encoding_length) {
   int rc = 0;
-  //TODO: malbinary_encoder_add_float_encoding_length
+  mal_integer_t i = floatToIntBits(to_encode);
+  rc = malbinary_encoder_add_integer_encoding_length(self, i, encoding_length);
   return rc;
+}
+
+long doubleToLongBits(double x) {
+  union {
+    double d;
+    long l;
+  } u;
+  u.d = x;
+  return u.l;
 }
 
 int malbinary_encoder_add_double_encoding_length(malbinary_encoder_t *self,
     mal_double_t to_encode, unsigned int *encoding_length) {
   int rc = 0;
-  //TODO: malbinary_encoder_add_double_encoding_length
+  mal_long_t l = doubleToLongBits(to_encode);
+  rc = malbinary_encoder_add_long_encoding_length(self, l, encoding_length);
   return rc;
 }
 
@@ -369,14 +561,20 @@ int malbinary_encoder_add_octet_encoding_length(malbinary_encoder_t *self,
 int malbinary_encoder_add_short_encoding_length(malbinary_encoder_t *self,
     mal_short_t to_encode, unsigned int *encoding_length) {
   int rc = 0;
-  (*encoding_length) += 2;
+  if (self->varint_supported)
+    (*encoding_length) += malbinary_var_short_encoding_length(to_encode);
+  else
+    (*encoding_length) += 2;
   return rc;
 }
 
 int malbinary_encoder_add_ulong_encoding_length(malbinary_encoder_t *self,
     mal_ulong_t to_encode, unsigned int *encoding_length) {
   int rc = 0;
-  (*encoding_length) += 8;
+  if (self->varint_supported)
+    (*encoding_length) += malbinary_var_ulong_encoding_length(to_encode);
+  else
+    (*encoding_length) += 8;
   return rc;
 }
 
@@ -397,14 +595,22 @@ int malbinary_encoder_encode_duration(malbinary_encoder_t *self, char *bytes,
 int malbinary_encoder_encode_float(malbinary_encoder_t *self, char *bytes,
     unsigned int *offset, mal_float_t to_encode) {
   int rc = 0;
-  //TODO: malbinary_encoder_encode_float
+  int i = floatToIntBits(to_encode);
+  if (self->varint_supported)
+    malbinary_write_varint(i, bytes, offset);
+  else
+    malbinary_write32(i, bytes, offset);
   return rc;
 }
 
 int malbinary_encoder_encode_double(malbinary_encoder_t *self, char *bytes,
     unsigned int *offset, mal_double_t to_encode) {
   int rc = 0;
-  //TODO: malbinary_encoder_encode_double
+  long l = doubleToLongBits(to_encode);
+  if (self->varint_supported)
+    malbinary_write_varlong(l, bytes, offset);
+  else
+    malbinary_write64(l, bytes, offset);
   return rc;
 }
 
@@ -418,14 +624,20 @@ int malbinary_encoder_encode_octet(malbinary_encoder_t *self, char *bytes,
 int malbinary_encoder_encode_short(malbinary_encoder_t *self, char *bytes,
     unsigned int *offset, mal_short_t to_encode) {
   int rc = 0;
-  malbinary_write16(to_encode, bytes, offset);
+  if (self->varint_supported)
+    malbinary_write_varshort(to_encode, bytes, offset);
+  else
+    malbinary_write16(to_encode, bytes, offset);
   return rc;
 }
 
 int malbinary_encoder_encode_ulong(malbinary_encoder_t *self, char *bytes,
     unsigned int *offset, mal_ulong_t to_encode) {
   int rc = 0;
-  malbinary_write64(to_encode, bytes, offset);
+  if (self->varint_supported)
+    malbinary_write_uvarlong(to_encode, bytes, offset);
+  else
+    malbinary_write64(to_encode, bytes, offset);
   return rc;
 }
 

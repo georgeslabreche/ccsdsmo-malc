@@ -58,9 +58,63 @@ long malbinary_read64(char *bytes, unsigned int *offset) {
   return res;
 }
 
-char *malbinary_read_str(char *bytes, unsigned int *offset) {
-  // TODO: varint
-  unsigned int length = malbinary_read32(bytes, offset);
+unsigned short malbinary_read_uvarshort(char *bytes, unsigned int *offset) {
+  unsigned int index = (*offset);
+  unsigned int value = 0;
+  int i;
+  int b;
+  for (i = 0; ((b = bytes[index++]) & 0x80) != 0; i += 7) {
+    value |= (b & 0x7f) << i;
+  }
+  (*offset) = index;
+  return (value | b << i) & 0xFFFF;
+}
+
+unsigned int malbinary_read_uvarint(char *bytes, unsigned int *offset) {
+  unsigned int index = (*offset);
+  unsigned int value = 0;
+  int i;
+  int b;
+  for (i = 0; ((b = bytes[index++]) & 0x80) != 0; i += 7) {
+    value |= (b & 0x7f) << i;
+  }
+  (*offset) = index;
+  return value | b << i;
+}
+
+unsigned long malbinary_read_uvarlong(char *bytes, unsigned int *offset) {
+  unsigned int index = (*offset);
+  unsigned long value = 0L;
+  int i;
+  long b;
+  for (i = 0; ((b = bytes[index++]) & 0x80L) != 0L; i += 7) {
+    value |= (b & 0x7fL) << i;
+  }
+  (*offset) = index;
+  return value | b << i;
+}
+
+short malbinary_read_varshort(char *bytes, unsigned int *offset) {
+  unsigned int i = malbinary_read_uvarint(bytes, offset);
+  return ((i >> 1) ^ -(i & 1));
+}
+
+int malbinary_read_varint(char *bytes, unsigned int *offset) {
+  unsigned int i = malbinary_read_uvarint(bytes, offset);
+  return ((i >> 1) ^ -(i & 1));
+}
+
+long malbinary_read_varlong(char *bytes, unsigned int *offset) {
+  unsigned long l = malbinary_read_uvarlong(bytes, offset);
+  return ((l >> 1) ^ -(l & 1));
+}
+
+char *malbinary_read_str(malbinary_decoder_t *self, char *bytes, unsigned int *offset) {
+  unsigned int length;
+  if (self->varint_supported)
+    length = malbinary_read_uvarint(bytes, offset);
+  else
+    length = malbinary_read32(bytes, offset);
 
   char *array = (char *) malloc(length + 1);
   if (array == NULL)
@@ -93,7 +147,7 @@ char malbinary_read(char *bytes, unsigned int *offset) {
 int malbinary_decoder_decode_string(malbinary_decoder_t *self, char *bytes,
     unsigned int *offset, mal_string_t **result) {
   int rc = 0;
-  (*result) = malbinary_read_str(bytes, offset);
+  (*result) = malbinary_read_str(self, bytes, offset);
   if (*result == NULL)
     return -1;
   return rc;
@@ -114,23 +168,30 @@ int malbinary_decoder_decode_presence_flag(malbinary_decoder_t *self,
 int malbinary_decoder_decode_integer(malbinary_decoder_t *self, char *bytes,
     unsigned int *offset, mal_integer_t *result) {
   int rc = 0;
-  // TODO: varint
-  (*result) = malbinary_read32(bytes, offset);
+  if (self->varint_supported)
+    (*result) = malbinary_read_varint(bytes, offset);
+  else
+    (*result) = malbinary_read32(bytes, offset);
   return rc;
 }
 
 int malbinary_decoder_decode_short_form(malbinary_decoder_t *self, char *bytes,
     unsigned int *offset, long *result) {
   int rc = 0;
-  (*result) = malbinary_read64(bytes, offset);
+  if (self->varint_supported)
+    (*result) = malbinary_read_varlong(bytes, offset);
+  else
+    (*result) = malbinary_read64(bytes, offset);
   return rc;
 }
 
 int malbinary_decoder_decode_list_size(malbinary_decoder_t *self, char *bytes,
     unsigned int *offset, unsigned int *result) {
   int rc = 0;
-  // TODO: varint
-  (*result) = malbinary_read32(bytes, offset);
+  if (self->varint_supported)
+    (*result) = malbinary_read_uvarint(bytes, offset);
+  else
+    (*result) = malbinary_read32(bytes, offset);
   return rc;
 }
 
@@ -158,15 +219,18 @@ int malbinary_decoder_decode_large_enum(malbinary_decoder_t *self, char *bytes,
 int malbinary_decoder_decode_uri(malbinary_decoder_t *self, char *bytes,
     unsigned int *offset, mal_uri_t **result) {
   int rc = 0;
-  (*result) = malbinary_read_str(bytes, offset);
+  (*result) = malbinary_read_str(self, bytes, offset);
   return rc;
 }
 
 int malbinary_decoder_decode_blob(malbinary_decoder_t *self, char *bytes,
     unsigned int *offset, mal_blob_t **result) {
   int rc = 0;
-  // TODO: varint
-  unsigned int length = malbinary_read32(bytes, offset);
+  unsigned int length;
+  if (self->varint_supported)
+    length = malbinary_read_uvarint(bytes, offset);
+  else
+    length = malbinary_read32(bytes, offset);
   mal_blob_t *blob = mal_blob_new(length);
   char *blob_content = mal_blob_get_content(blob);
   malbinary_read_array(blob_content, length, bytes, offset);
@@ -177,21 +241,27 @@ int malbinary_decoder_decode_blob(malbinary_decoder_t *self, char *bytes,
 int malbinary_decoder_decode_time(malbinary_decoder_t *self, char *bytes,
     unsigned int *offset, mal_time_t *result) {
   int rc = 0;
-  (*result) = malbinary_read64(bytes, offset);
+  if (self->varint_supported)
+    (*result) = malbinary_read_uvarlong(bytes, offset);
+  else
+    (*result) = malbinary_read64(bytes, offset);
   return rc;
 }
 
 int malbinary_decoder_decode_uinteger(malbinary_decoder_t *self, char *bytes,
     unsigned int *offset, mal_uinteger_t *result) {
   int rc = 0;
-  (*result) = malbinary_read32(bytes, offset);
+  if (self->varint_supported)
+    (*result) = malbinary_read_uvarint(bytes, offset);
+  else
+    (*result) = malbinary_read32(bytes, offset);
   return rc;
 }
 
 int malbinary_decoder_decode_identifier(malbinary_decoder_t *self, char *bytes,
     unsigned int *offset, mal_identifier_t **result) {
   int rc = 0;
-  (*result) = malbinary_read_str(bytes, offset);
+  (*result) = malbinary_read_str(self, bytes, offset);
   return rc;
 }
 
@@ -205,14 +275,20 @@ int malbinary_decoder_decode_uoctet(malbinary_decoder_t *self, char *bytes,
 int malbinary_decoder_decode_long(malbinary_decoder_t *self, char *bytes,
     unsigned int *offset, mal_long_t *result) {
   int rc = 0;
-  (*result) = malbinary_read64(bytes, offset);
+  if (self->varint_supported)
+    (*result) = malbinary_read_varlong(bytes, offset);
+  else
+    (*result) = malbinary_read64(bytes, offset);
   return rc;
 }
 
 int malbinary_decoder_decode_ushort(malbinary_decoder_t *self, char *bytes,
     unsigned int *offset, mal_ushort_t *result) {
   int rc = 0;
-  (*result) = malbinary_read16(bytes, offset);
+  if (self->varint_supported)
+    (*result) = malbinary_read_uvarshort(bytes, offset);
+  else
+    (*result) = malbinary_read16(bytes, offset);
   return rc;
 }
 
@@ -242,17 +318,39 @@ int malbinary_decoder_decode_duration(malbinary_decoder_t *self, char *bytes,
   return rc;
 }
 
+float intBitsToFloat(int x) {
+  union {
+    float f;  // assuming 32-bit IEEE 754 single-precision
+    int i;    // assuming 32-bit 2's complement int
+  } u;
+  u.i = x;
+  return u.f;
+}
+
 int malbinary_decoder_decode_float(malbinary_decoder_t *self, char *bytes,
     unsigned int *offset, mal_float_t *result) {
   int rc = 0;
-  //TODO: malbinary_decoder_decode_float
+  mal_integer_t i;
+  malbinary_decoder_decode_integer(self, bytes, offset, &i);
+  (*result) = intBitsToFloat(i);
   return rc;
+}
+
+double longBitsToDouble(long x) {
+  union {
+    double d;
+    long l;
+  } u;
+  u.l = x;
+  return u.d;
 }
 
 int malbinary_decoder_decode_double(malbinary_decoder_t *self, char *bytes,
     unsigned int *offset, mal_double_t *result) {
   int rc = 0;
-  //TODO: malbinary_decoder_decode_double
+  mal_long_t l;
+  malbinary_decoder_decode_long(self, bytes, offset, &l);
+  (*result) = longBitsToDouble(l);
   return rc;
 }
 
@@ -266,14 +364,20 @@ int malbinary_decoder_decode_octet(malbinary_decoder_t *self, char *bytes,
 int malbinary_decoder_decode_short(malbinary_decoder_t *self, char *bytes,
     unsigned int *offset, mal_short_t *result) {
   int rc = 0;
-  (*result) = malbinary_read16(bytes, offset);
+  if (self->varint_supported)
+    (*result) = malbinary_read_varshort(bytes, offset);
+  else
+    (*result) = malbinary_read16(bytes, offset);
   return rc;
 }
 
 int malbinary_decoder_decode_ulong(malbinary_decoder_t *self, char *bytes,
     unsigned int *offset, mal_ulong_t *result) {
   int rc = 0;
-  (*result) = malbinary_read64(bytes, offset);
+  if (self->varint_supported)
+    (*result) = malbinary_read_uvarlong(bytes, offset);
+  else
+    (*result) = malbinary_read64(bytes, offset);
   return rc;
 }
 
