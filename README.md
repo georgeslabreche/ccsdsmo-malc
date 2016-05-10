@@ -135,6 +135,10 @@ The module can be manually built as follows:
     ./configure --prefix=$MAL_LOCAL
     make
 
+The command to compile the source is:
+
+    make
+
 The command to launch the tests is:
 
     make check
