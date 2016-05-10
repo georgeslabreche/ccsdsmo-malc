@@ -25,17 +25,12 @@ typedef struct _malbinary_encoder_t malbinary_encoder_t;
 typedef struct _malbinary_decoder_t malbinary_decoder_t;
 
 struct _malbinary_cursor_t {
-  byte* body_ptr;
+  char* body_ptr;
   unsigned int body_length;
   unsigned int body_offset;
 };
 
 typedef struct _malbinary_cursor_t malbinary_cursor_t;
-
-struct _malbinary_cursor_t {
-  byte* body_ptr;
-  unsigned int body_offset;
-};
 
 // The format code must be unique among all the available encoding formats
 #define MALBINARY_FORMAT_CODE 0
