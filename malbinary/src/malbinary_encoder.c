@@ -7,8 +7,7 @@ struct _malbinary_encoder_t {
 };
 
 malbinary_encoder_t *malbinary_encoder_new(bool varint_supported, bool verbose) {
-  malbinary_encoder_t *self = (malbinary_encoder_t *) malloc(
-      sizeof(malbinary_encoder_t));
+  malbinary_encoder_t *self = (malbinary_encoder_t *) malloc(sizeof(malbinary_encoder_t));
   if (!self)
     return NULL;
 
