@@ -1,23 +1,25 @@
-API MAL
+MAL API
 =======
 
-L'API MAL permet d'utiliser les concepts de niveau MAL :
+MAL API allows the use of MAL-level concepts:
 
-  -	les concepts définis par la spécification MAL (Blue Book)
-  -	les concepts propres à l'API C, définis en section 2
+  - concepts defined by the MAL specification (Blue Book).
+  - specific concepts to the C API, defined in section 2.
 
-L'API MAL contient l'API d'Area générée à partir de la définition de l'Area MAL.
+The MAL API contains the Area API generated from the definition of the MAL Area.
 
-Définitions
------------
+Definition
+----------
 
 ```c
 mal.h
 ```
 
-### Fonction virtuelle de création d'URI
+### Virtual function to create an URI
 
-Déclaration :
+Function to be provided by a MAL binding to create a URI.
+
+Declaration:
 
 ```c
 typedef mal_uri_t *mal_binding_ctx_create_uri_fn(
@@ -25,18 +27,20 @@ typedef mal_uri_t *mal_binding_ctx_create_uri_fn(
   char *id);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`mal_binding_ctx` : contexte du transport (binding) utilisé par la couche MAL ; non typé pour permettre à la couche MAL d'utiliser plusieurs transports
-  -	`id` : identifiant unique devant être inclus dans l'URI
+  - `mal_binding_ctx`: transport context (binding) used by the MAL layer; untyped to allow the use of multiple bindings. 
+  - `id`: unique identifier to include in the created URI.
 
-Résultat : 
+Result: 
 
-L'URI créée
+  - Created URI.
 
-### Fonction virtuelle de création d'un end-point
+### Virtual function to create an end-point
 
-Déclaration :
+Function to be provided by a MAL binding to create an end-point.
+
+Declaration:
 
 ```c
 typedef void *mal_binding_ctx_create_endpoint_fn(
@@ -44,18 +48,20 @@ typedef void *mal_binding_ctx_create_endpoint_fn(
   mal_endpoint_t *mal_endpoint);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`mal_binding_ctx` : contexte du transport (binding) utilisé par la couche MAL ; non typé pour permettre à la couche MAL d'utiliser plusieurs transports
-  -	`mal_endpoint` : le end-point MAL correspondant au end-point physique du transport
+  - `mal_binding_ctx`: transport context (binding) used by the MAL layer; untyped to allow the use of multiple bindings.
+  - `mal_endpoint`: MAL end-point corresponding to the physical transport end-point to create.
 
-Résultat :
+Result:
 
-La référence du end-point physique créé (non typée pour éviter la dépendance avec les concepts physiques du transport, par exemple socket ZMQ).
+  - The pointer to the physical end-point created (untyped to allow the use of multiple bindings, for example ZMQ socket).
 
-### Fonction virtuelle de destruction d'un end-point
+### Virtual function to delete an end-point
 
-Déclaration :
+Function to be provided by a MAL binding to destroy an end-point.
+
+Declaration:
 
 ```c
 typedef void mal_binding_ctx_destroy_endpoint_fn(
@@ -63,14 +69,16 @@ typedef void mal_binding_ctx_destroy_endpoint_fn(
   void **endpoint_p);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`mal_binding_ctx` : contexte du transport (binding) utilisé par la couche MAL ; non typé pour permettre à la couche MAL d'utiliser plusieurs transports
-  -	`endpoint_p` : le end-point à détruire
+  - `mal_binding_ctx`: transport context (binding) used by the MAL layer; untyped to allow the use of multiple bindings.
+  - `endpoint_p`: the end-point to delete.
 
-### Fonction virtuelle de création d'un poller MAL
+### Virtual function to create a poller
 
-Déclaration :
+Function to be provided by a MAL binding to create a poller.
+
+Declaration:
 
 ```c
 typedef void *mal_binding_ctx_create_poller_fn(
@@ -78,18 +86,37 @@ typedef void *mal_binding_ctx_create_poller_fn(
   mal_poller_t *mal_poller);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`mal_binding_ctx` : contexte du transport (binding) utilisé par la couche MAL ; non typé pour permettre à la couche MAL d'utiliser plusieurs transports
-  -	`mal_poller` : le poller MAL correspondant au poller physique du transport
+  - `mal_binding_ctx`: transport context (binding) used by the MAL layer; untyped to allow the use of multiple bindings.
+  - `mal_poller`: the MAL poller corresponding to the physical transport poller to create.
 
-Résultat : 
+Result: 
 
-La référence du poller physique créé (non typée pour éviter la dépendance avec les concepts physiques du transport, par exemple zpoller ZMQ).
+  - The pointer to the physical poller created (untyped to allow the use of multiple bindings, for example ZMQ zpoller).
 
-### Fonction virtuelle d'ajout / suppression d'un end-point à un poller
+### Virtual function to destroy a poller
 
-Déclaration :
+Function to be provided by a MAL binding to destroy a poller.
+
+Declaration:
+
+```c
+typedef void mal_binding_ctx_destroy_poller_fn(
+  void *mal_binding_ctx,
+  void **poller_p);
+```
+
+Parameters:
+
+  - `mal_binding_ctx`: transport context (binding) used by the MAL layer; untyped to allow the use of multiple bindings.
+  - `poller_p`: poller to destroy.
+
+### Virtual function to add (resp. remove) an end-point to a poller
+
+Functions to be provided by a MAL binding to add or remove an end-point to a poller.
+
+Declaration:
 
 ```c
 typedef int mal_binding_ctx_poller_add_endpoint_fn(
@@ -103,19 +130,21 @@ typedef int mal_binding_ctx_poller_del_endpoint_fn(
     mal_endpoint_t *mal_endpoint);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`mal_binding_ctx` : contexte du transport (binding) utilisé par la couche MAL ; non typé pour permettre à la couche MAL d'utiliser plusieurs transports
-  -	`mal_poller` : le poller à utiliser
-  -	`mal_endpoint` : le end-point à ajouter ou supprimer au poller
+  - `mal_binding_ctx`: transport context (binding) used by the MAL layer; untyped to allow the use of multiple bindings.
+  - `mal_poller`: MAL poller to use.
+  - `mal_endpoint`: MAL end-point to add (resp. remove) to the specified poller.
 
-Résultat : 
+Result:
 
-Code d'erreur.
+  - an error code.
+  
+### Virtual function for waiting a message on a poller
 
-### Fonction virtuelle d'attente de message sur un poller MAL
+Function to be provided by a MAL binding to wait on a poller.
 
-Déclaration :
+Declaration:
 
 ```c
 typedef int mal_binding_ctx_poller_wait_fn(
@@ -125,37 +154,23 @@ typedef int mal_binding_ctx_poller_wait_fn(
     int timeout);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`mal_binding_ctx` : contexte du transport (binding) utilisé par la couche MAL ; non typé pour permettre à la couche MAL d'utiliser plusieurs transports
-  -	`mal_poller` : le poller sur lequel attendre
-  -	`mal_endpoint` : le end-point sur lequel un message est en attente de réception
-  -	`timeout` : le temps d'attente maximum, éventuellement infini (-1)
+  - `mal_binding_ctx`: transport context (binding) used by the MAL layer; untyped to allow the use of multiple bindings.
+  - `mal_poller`: MAL poller to use.
+  - `mal_endpoint`: MAL end-point on which a message is pending.
+  - `timeout`: the maximum waiting time, possibly infinite (-1).
 
-Résultat : 
+Result:
 
-Code d'erreur.
+  - an error code.
 
-### Fonction virtuelle de destruction d'un poller MAL
+### Virtual function to send a message
 
-Déclaration :
+Function to be provided by a MAL binding to send a message.
+This function is called by `mal_ctx_send_message` (see section 7.4.2).
 
-```c
-typedef void mal_binding_ctx_destroy_poller_fn(
-  void *mal_binding_ctx,
-  void **poller_p);
-```
-
-Paramètres :
-
-  -	`mal_binding_ctx` : contexte du transport (binding) utilisé par la couche MAL ; non typé pour permettre à la couche MAL d'utiliser plusieurs transports
-  -	`poller_p` : le poller à détruire
-
-### Fonction virtuelle d'envoi de message MAL
-
-Cette fonction est appelée par la fonction `mal_ctx_send_message` (section 7.4.2).
-
-Déclaration :
+Declaration:
 
 ```c
 typedef int mal_binding_ctx_send_message_fn(
@@ -164,57 +179,61 @@ typedef int mal_binding_ctx_send_message_fn(
     mal_message_t *message);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`mal_binding_ctx` : contexte du transport (binding) utilisé par la couche MAL ; non typé pour permettre à la couche MAL d'utiliser plusieurs transports
-  -	`mal_endpoint` : le end-point qui envoie le message
-  -	`message` : message MAL à envoyer
+  - `mal_binding_ctx`: transport context (binding) used by the MAL layer; untyped to allow the use of multiple bindings.
+  - `mal_endpoint`: MAL end-point sending the message.
+  - `message`: MAL message to send.
 
-Résultat : 
+Result:
 
-code d'erreur
+  - an error code.
 
-### Fonction virtuelle de réception de message MAL
+### Virtual function to receive a message
 
-Cette fonction est appelée par la fonction `mal_ctx_recv_message` (section 7.4.3).
+Function to be provided by a MAL binding to receive a message.
+This function is called by `mal_ctx_recv_message` (see section 7.4.3).
 
-Déclaration :
+Declaration:
 
 ```c
 typedef int mal_binding_ctx_recv_message_fn(
   void *mal_binding_ctx,
-  mal_endpoint_t *mal_endpoint, mal_message_t **message);
+  mal_endpoint_t *mal_endpoint,
+  mal_message_t **message);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`mal_binding_ctx` : contexte du transport (binding) utilisé par la couche MAL ; non typé pour permettre à la couche MAL d'utiliser plusieurs transports
-  -	`mal_endpoint` : le end-point qui reçoit le message
-  -	`message` : message MAL reçu
+  - `mal_binding_ctx`: transport context (binding) used by the MAL layer; untyped to allow the use of multiple bindings.
+  - `mal_endpoint`: MAL end-point receiving the message.
+  - `message`: receiving message.
 
-Résultat : 
+Result:
 
-Code d'erreur
+  - an error code.
 
-### Fonction virtuelle de destruction de message MAL
+### Virtual function to delete a MAL message
 
-Permet au transport d'associer des ressources au message MAL (champ `body_owner`) et de les libérer lors de la destruction du message.
+Function to be provided by a MAL binding to destroy a message.
+Allows the transport to free resources (field `body_owner`) that it has associated with the message before its destruction.
 
-Déclaration :
+Declaration:
 
 ```c
-typedef int mal_binding_ctx_destroy_message_fn(void *mal_binding_ctx,
+typedef int mal_binding_ctx_destroy_message_fn(
+    void *mal_binding_ctx,
     mal_message_t *message);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`mal_binding_ctx` : contexte du transport (binding) utilisé par la couche MAL ; non typé pour permettre à la couche MAL d'utiliser plusieurs transports
-  -	`message` : message MAL à détruire
+  - `mal_binding_ctx`: transport context (binding) used by the MAL layer; untyped to allow the use of multiple bindings.
+  - `message`: MAL message to delete.
 
-Résultat : 
+Result:
 
-Code d'erreur
+  - an error code.
 
 Contexte MAL
 ------------
@@ -223,38 +242,38 @@ Contexte MAL
 mal_ctx.h
 ```
 
-### Constructeur
+### Constructor
 
-Déclaration :
+Declaration:
 
 ```c
 mal_ctx_t *mal_ctx_new(void);
 ```
 
-Résultat : 
+Result: 
 
-Le contexte MAL créé
+  - The created MAL context.
 
-### Création d'URI
+### URI creation
 
-Déclaration :
+Declaration:
 
 ```c
 mal_uri_t *mal_ctx_create_uri(mal_ctx_t *self, char *id);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`self` : contexte MAL
-  -	`id` : identifiant unique devant être inclus dans l'URI
+  - `self`: MAL context.
+  - `id`: unique identifier in the transport context.
 
-Résultat : 
+Result: 
 
-L'URI créée
+  - The created URI.
 
-### Création d'un poller
+### Poller creation
 
-Déclaration :
+Declaration:
 
 ```c
 void *mal_ctx_create_poller(
@@ -262,18 +281,18 @@ void *mal_ctx_create_poller(
   mal_poller_t *poller);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`self`  : contexte MAL
-  -	`poller` : le poller MAL correspondant au poller physique créé
+  - `self`: MAL context.
+  - `poller`: MAL poller corresponding to the new physical poller.
 
-Résultat : 
+Result: 
 
-	La référence du poller physique créé (non typée pour éviter la dépendance avec les concepts physiques du transport, par exemple zpoller ZMQ).
+  - A pointer to the created physical poller (untyped to avoid dependence with physical concepts of transport, for example a ZMQ zpoller).
 
-### Création d'un end-point
+### end-point creation
 
-Déclaration :
+Declaration:
 
 ```c
 void *mal_ctx_create_endpoint(
@@ -281,22 +300,22 @@ void *mal_ctx_create_endpoint(
   mal_endpoint_t *endpoint);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`self` : contexte MAL
-  -	`endpoint` : le end-point MAL correspondant au end-point physique créé
+  - `self`: MAL context.
+  - `endpoint`: MAL end-point corresponding to the new physical end-point.
 
-Résultat : 
+Result: 
 
-La référence du end-point physique créé (non typée pour éviter la dépendance avec les concepts physiques du transport, par exemple socket ZMQ).
+  - A pointer to the created physical end-point (untyped to avoid dependence with physical concepts of transport, for example a ZMQ socket).
 
-### Envoi de message MAL
+### MAL message sending
 
-Cette fonction est appelée par les fonctions d'envoi de message MAL des end-points (section 7.4.2). Elle appelle la fonction virtuelle d'envoi de message offerte par le transport (section 7.1.8).
+This function is used by message sending functions of MAL end-points (section 7.4.2). It calls the message sending function offered by the underlying transport (section 7.1.8).
 
-L'usage de cette fonction est limitée aux end-point MAL.
+The use of this function is restricted to MAL end-point.
 
-Déclaration :
+Declaration:
 
 ```c
 int mal_ctx_send_message(
@@ -305,23 +324,23 @@ int mal_ctx_send_message(
   mal_message_t *message);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`self` : contexte MAL
-  -	`mal_endpoint` : end-point qui envoie le message
-  -	`message` : message MAL à envoyer
+  - `self`: MAL context.
+  - `mal_endpoint`: MAL end-point sending the message.
+  - `message`: MAL message to send.
 
-Résultat : 
+Result:
 
-Code d'erreur
+  - an error code.
 
-### Réception de message MAL
+### MAL message reception
 
-Cette fonction est appelée par les fonctions de réception de messages MAL des end-points (section 7.4.3). Elle appelle la fonction virtuelle de réception de messages offerte par le transport (section 7.1.9).
+This function is used by the message receiving functions of MAL end-points (section 7.4.3). It calls the message receiving function offered by underlying transport (7.1.9).
 
-L'usage de cette fonction est limitée aux end-point MAL.
+The use of this function is restricted to MAL end-point.
 
-Déclaration :
+Declaration:
 
 ```c
 int mal_ctx_recv_message(
@@ -330,36 +349,36 @@ int mal_ctx_recv_message(
   mal_message_t **message);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`self` : contexte MAL
-  -	`mal_endpoint` : end-point qui recoit le message
-  -	`message` : message MAL à envoyer
+  - `self`: MAL context.
+  - `mal_endpoint`: MAL end-point receiving the message.
+  - `message`: MAL message received.
 
-Résultat : 
+Result:
 
-Code d'erreur
+  - an error code.
 
-### Destructeur
+### Destructor
 
-Détruit le contexte MAL.
+Deletes the MAL context.
 
 ```c
-	void mal_ctx_destroy(mal_ctx_t **self_p);
+  void mal_ctx_destroy(mal_ctx_t **self_p);
 ```
 
-Paramètres :
+Parameters:
   
-  -	`self_p` : pointeur vers le contexte MAL à détruire
+  - `self_p`: Handle to the MAL context to delete.
 
-Message MAL
+MAL message
 -----------
 
-### Constructeur
+### Constructor
 
-Alloue la mémoire nécessaire pour le corps de message.
+Allocate the memory chunk needed for the message body.
 
-Déclaration :
+Declaration:
 
 ```c
 mal_message_t *mal_message_new(
@@ -369,16 +388,20 @@ mal_message_t *mal_message_new(
   mal_identifier_t *session_name, unsigned int body_length);
 ```
 
-Paramètres :
+Parameters:
 
-  -	Champs du header MAL
-  -	Taille du corps de message en octets
+  - MAL header fields.
+  - Message body size in bytes.
 
+Result:
+
+  - The new MAL message.
+  
 ### Initialisation
 
-Initialisation des champs propres à l'opération et à l'étape d'interaction :
+Initialization of the header fields corresponding to the operation and interaction stage.
 
-Déclaration :
+Declaration:
 
 ```c
 void mal_message_init(mal_message_t *self, mal_ushort_t service_area,
@@ -388,84 +411,83 @@ void mal_message_init(mal_message_t *self, mal_ushort_t service_area,
   mal_uoctet_t interaction_stage);
 ```
 
-Paramètres :
+Parameters:
 
-  -	Champs du header MAL
+  - `self`: a pointer to the MAL message to initialize.
+  - MAL header fields.
 
-### Destructeur
+### Destructor
 
-Détruit le message MAL et le contenu du corps de message.
-
-Appelle la fonction virtuelle de destruction de message MAL offerte par le transport (voir 7.1.10).
-
-Déclaration :
+Deletes the MAL message and the corresponding body.
+Calls the virtual function provided by the transport API.
+Declaration:
 
 ```c
 void mal_message_destroy(mal_message_t **self_p, mal_ctx_t *mal_ctx);
 ```
 
-Paramètres :
+Parameters:
 
-  -	Le message à détruire
-  -	Le contexte MAL pour éventuellement libérer des ressources au niveau transport (binding) associées au message
+  - `self`: an handle to the MAL message to destroy.
+  - The MAL context needed to free associated resources in transport binding if needed.
 
 ### Getters et setters
 
-Les champs définis dans le tableau suivant sont accessibles.
+The fields defined in the following table are accessible through getter and setter methods.
 
 Champ | Type | Description
 ------|------|-----------------
-`<mal header field>` | `<mal header field type>` | Les champs de header MAL sont décrits dans le livre MAL
-`free_<header field>` | `bool` | Flags indiquant si les champs de header MAL qui sont de type pointeur doivent être détruits (destroy) lorsque le message MAL est détruit.
-`body` | `char *` | Corps du message encodé
-`body_offset` | `unsigned int` | Index de début du corps du message
-`body_length` | `unsigned int` | Taille du corps de message
-`body_owner` | `void *` | Ressource associée au message par le transport et devant être libérée lors de la destruction du message
+`<mal header field>` | `<mal header field type>` | MAL header fields as described in the MAL blue book.
+`free_<header field>` | `bool` | Flags indicating whether the corresponding MAL header fields of type pointer must be destroyed when the MAL message is deleted.
+`body` | `char *` | Message Body encoded.
+`body_offset` | `unsigned int` | Start offset of the message body.
+`body_length` | `unsigned int` | Size of the message body.
+`body_owner` | `void *` | Resource associated with the message by the transport. Should be released during the destruction of the message.
 
-Les flags de présence s'appliquent aux champs suivants : `URI To`, `Authentication Id`, `URI From`, `Domain`, `Network Zone`, `Session Name`.
-Par défaut, le comportement est le suivant :
+Presence flags apply to the following fields: `URI To`, `Authentication Id`, `URI From`, `Domain`, `Network Zone`, `Session Name`.
+By default, the behavior is:
 
-  -	si le message MAL a été créé par le constructeur alors le flag est faux : les champs du header sont transmis lors de l'appel au constructeur, ils n'ont donc pas à être libérés
-  -	si le message MAL a été créé lors d'un décodage et si les champs de header ont été décodés (non récupérés d'un service de configuration) alors le flag est vrai : les champs du header appartiennent au message et doivent être détruits avec lui
-
+  - If the MAL message is created through the constructor then the flag is false. The MAL header fields are transmitted by the application when calling the constructor, so they do not have to be released.
+  - If the MAL message is created by the transport during a reception and if the header fields have been decoded (not recovered from a configuration service) then the flag is true. The MAL header fields are owned by the message and should be destroyed with it.
 
 End-Point MAL
 -------------
 
-Un end-point ne doit être manipulé que par un unique flot d'exécution.
+Each endpoint should be handled by a single execution flow.
 
-### Constructeur
+### Constructor
 
-Crée une instance de end-point identifiée par une URI MAL. Un compteur de `Transaction Id` est géré.
+Create an endpoint instance identified by a MAL URI.
+A `Transaction Id` counter is managed.
 
-Déclaration :
+Declaration:
 
 ```c
 mal_endpoint_t *mal_endpoint_new(mal_ctx_t *mal_ctx, mal_uri_t *uri);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`mal_ctx` : contexte MAL
-  -	`uri` : URI MAL identifiant le end-point MAL
+  - `mal_ctx`: a pointer to the MAL context.
+  - `uri`: MAL URI identifying the MAL endpoint.
 
-L'API offre deux fonctions permettant de retrouver l'URI et le contexte MAL correspondant au end-point :
+The API provides two functions to retrieve the URL and context MAL corresponding to an end-point:
 
 ```c
 mal_uri_t *mal_endpoint_get_uri(mal_endpoint_t *self);
 mal_ctx_t *mal_endpoint_get_mal_ctx(mal_endpoint_t *self);
 ```
 
-### Envoi de message MAL
+### MAL message sending
 
-Deux fonctions d'envoi de message sont définies :
+Two message sending functions are defined:
 
-  -	une fonction pour l'initiation d'une interaction (première étape). Cette fonction affecte les champs d'URI (l'URI de destination est affectée avec le paramètre `uri_to` et l'URI source est l'URI du end-point). Si le flag `set_tid` est égal à True, alors le champ `Transaction Id` est affecté avec la prochaine valeur du compteur de 'Transaction Id' géré par le end-point MAL. Sinon, la valeur du champ `Transaction Id` du message fourni n'est pas modifiée.
-  -	une fonction pour les étapes de résultat d'une interaction (seconde étape et suivantes). Cette fonction affecte les champs d'URI (`URI To` est affectée avec la valeur du champ `URI From` du message d'initiation, et `URI From` est l'URI du end-point). Le champ `Transaction Id` est affecté avec la valeur du champ `Transaction Id` du message d'initiation. Le champ `Is Error Message` est affecté avec la valeur passée par le paramètre `is_error_message`.
+  - A funtion to initiate an interaction (first stage). This function sets the URI fields of the message: the destination URI of the message is set with the `uri_to` parameter, and the source URI of the message is set with the endpoint URI. If the `set_tid` flag is true then the `Transaction Id` field is set with the next value of the `TransactionId` counter handled by the endpoint. Otherwise the original value of the `Transaction Id` field is left unchanged.
+  - A function for the next stages of the interaction. This function sets the URI fields of the message: the destination URI of the message is set with the `uri_from` field of the initiation message, and the source URI of the message is set with the endpoint URI. The `Transaction Id` field of the message is set with the `Transaction Id` field of the initiation message. The field `Is Error Message` is set with the value of the `is_error_message` parameter. counter.
+  
+The `mal_ctx_send_message` function (section 7.2.5) is called to send the MAL message.
 
-La fonction `mal_ctx_send_message` (section 7.2.5) est appelée pour envoyer le message MAL.
-
-Déclaration :
+Declaration:
 
 ```c
 int mal_endpoint_init_operation(
@@ -481,22 +503,25 @@ int mal_endpoint_return_operation(
   bool is_error_message);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`self` : le end-point qui envoie le message
-  -	`message` : message résultat de l'interaction (à envoyer)
-  -	`init_message` : message qui a initié l'interaction
-  -	`uri_to` : l'URI du destinataire du message
-  -	`set_tid` : flag indiquant si le champ 'Transaction Id' du message MAL doit être affecté ou non
-  -	`is_error_message` : flag indiquant si le message renvoie une erreur
+  - `self`: A pointer to the MAL endpoint sending the message.
+  - `message`: A pointer to the MAL message to send.
+  - `init_message`: A pointer to the MAL message initiating the interaction.
+  - `uri_to`: The MAL URI of the message recipient.
+  - `set_tid`: Boolean indicating whether the field 'Transaction ID' of the message MAL should be affected or not.
+  - `is_error_message`:  Boolean indicating whether the message returns an error
 
-Résultat : 
+Result: 
 
-Code d'erreur
+Error code.
 
-### Réception de message MAL
+### MAL message reception
 
-La fonction `mal_endpoint_recv_message` permet de recevoir un message sur le end-point, cette fonction est bloquante.
+The `mal_endpoint_recv_message` function allows to receive a message on the end-point.
+This function blocks until receiving a message.
+
+Declaration:
 
 ```c
 int mal_endpoint_recv_message(
@@ -504,53 +529,55 @@ int mal_endpoint_recv_message(
     mal_message_t **message);
 ```
 
-Paramètres :
+Parameters:
  
-  -	`self` : le end-point qui envoie le message
-  -	`message` : le message reçu
+  - `self`: A pointer to the MAL endpoint waiting for a message.
+  - `message`: The message received.
 
-Résultat : 
+Result: 
 
-Code d'erreur
+Error code.
 
-### Destructeur
+### Destructor
 
-Détruit le end-point.
+Delete the endpoint.
+
+Declaration:
 
 ```c
 void mal_endpoint_destroy(mal_endpoint_t **self_p);
 ```
 
-Poller MAL
+MAL Poller
 ----------
 
-Un poller ne doit être manipulé que par un unique flot d'exécution.
+Each MAL poller should be handled by a single execution flow.
 
-### Constructeur
+### Constructor
 
-Crée une instance de poller identifiée par une URI MAL.
+Create a poller instance identified by a MAL URI.
 
-Déclaration :
-
-```c
-	mal_poller_t *mal_poller_new(mal_ctx_t *mal_ctx);
-```
-
-Paramètres :
-
-  -	`mal_ctx` : contexte MAL
-
-L'API offre une fonction permettant de retrouver le contexte MAL correspondant au poller :
+Declaration:
 
 ```c
-mal_ctx_t *mal_endpoint_get_mal_ctx(mal_endpoint_t *self);
+  mal_poller_t *mal_poller_new(mal_ctx_t *mal_ctx);
 ```
 
-###Ajout/Suppression de end-point MAL
+Parameters:
 
-Deux fonctions permettent l'ajout et la suppression de end-point au poller.
+  - `mal_ctx`: A pointer to the MAL context.
 
-Déclaration :
+The API provides a function to retrieve the MAL context corresponding to the poller:
+
+```c
+mal_ctx_t *mal_poller_get_mal_ctx(mal_poller_t *self);
+```
+
+### Add / Remove MAL endpoint
+
+Twos functions allow to add and remove a endpoint to the poller.
+
+Declaration:
 
 ```c
 int mal_poller_add_endpoint(
@@ -562,18 +589,21 @@ int mal_poller_del_endpoint(
     mal_endpoint_t *mal_endpoint);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`self` : le poller
-  -	`endpoint` : le end-point à ajouter ou supprimer
+  - `self`: A pointer to the MAL poller.
+  - `endpoint`: A pointer to the MAL endpoint to add or remove.
 
-Résultat :
+Result:
 
-Code d'erreur
+Error code.
 
 ### Attente de message MAL
 
-La fonction mal_poller_wait permet d'attendre la réception d'un message sur l'un des end-points du poller. Cette fonction est bloquante prend en paramètre un time-out.
+La fonction `mal_poller_wait` allows to wait the reception of a MAL message on one of the endpoint handled by the poller.
+This is a blocking function, it takes a time-out parameter.
+
+Declaration:
 
 ```c
 int mal_poller_wait(
@@ -582,33 +612,51 @@ int mal_poller_wait(
     int timeout);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`self` : le poller en attente de message
-  -	`endpoint` : le end-point sur lequel un message est arrivé
-  -	`timeout` : le temps d'attente maximal, éventuellement infini (-1).
+  - `self`: A pointer to the poller waiting a MAL message.
+  - `endpoint`: An handle to the endpoint which received a message.
+  - `timeout`: The maximum waiting time, possibly infinite (-1).
 
-Résultat :
+Result:
 
-Code d'erreur
+Error code.
 
-### Destructeur
+### Destructor
 
-Détruit le poller, les éventuels end-points rattachés doivent être détruits séparément.
+
+Deletes the MAL poller. The associated endpoint should be destroyed explicitly.
+
+Declaration:
 
 ```c
-	void mal_poller_destroy(mal_oller_t **self_p);
+  void mal_poller_destroy(mal_oller_t **self_p);
 ```
 
-Handler et routage
-------------------
-Un Handler est une structure logique constituée d'un ensemble de fonctions de traitements de messages MAL, cet ensemble de fonctions dépend de son rôle (provider, consumer, etc.) et de l'interaction dans laquelle il intervient (send, submit, etc.). Les handlers s'exécutent dans le cadre d'une structure de routage (i;e ; un objet de la classe mal_routing, ou routeur).
+MAL Handler and routing
+-----------------------
+A handler is a logical structure composed of a set of MAL message processing functions.
+This set of functions depends of its role (provider, consumer, etc.) and interaction in
+which it operates (send, submit, etc.). Handlers run in the context of a routing structure
+(i e, an object of the class `mal_routing`, or router).
 
-Le routeur est lié à un end-point MAL, il permet d'enregistrer les handlers correspondants aux différentes interactions attendues, puis lors de la réception d'un message par le end-point d'activer explicitement le handler correspondant pour qu'il traite le message. Le routeur possède un état partagé par l'ensemble des handlers qu'il gère.
+The router is linked to the MAL endpoint: it allows to register the handlers corresponding
+to different expected interactions, then on a message receipt it allows the activatation of
+the corresponding handler to handle the message. The router shares its state with all its
+handlers.
 
 ### Handler
 
-Chaque fonction de traitement de messages des handlers prend en paramètre l'état du routeur, la référence du contexte MAL, la référence du end-point et le message à traiter. La signature correspondante est définie ci-dessous.
+Each message processing function of the handler has the same signature defined below.
+
+  - the state of the router,
+  - a pointer to the MAL context,
+  - a pointer the MAL endpoint,
+  - a pointer to the message to process.
+  
+The corresponding signature is.
+
+Declaration:
 
 ```c
 typedef int mal_routing_on_message_fn(
@@ -618,33 +666,35 @@ typedef int mal_routing_on_message_fn(
   mal_message_t *message);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`state` : état du routeur
-  -	`mal_ctx` : contexte MAL
-  -	`endpoint` : end-point MAL
-  -	`state` : état de du routeur, non typé pour permettre le polymorphisme
+  - `state`: The state of the router (untyped to allow polymorphism).
+  - `mal_ctx`: A pointer to the MAL context.
+  - `endpoint`: A pointer to the MAL endpoint.
+  - `message`: A pointer to the message to process.
 
-### Constructeur
+### Constructor
 
-Crée une instance de routeur identifiée par l'URI du end-point correspondant. Normalement un unique routeur doit être associé à une end-point donné.
+Create a router instance identified by the corresponding endpoint URI.
+Normally only a single router must be associated with a given MAL endpoint.
 
-Déclaration :
+Declaration:
 
 ```c
 mal_routing_t *mal_routing_new(mal_endpoint_t *endpoint, void *state);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`endpoint` : end-point MAL
-  -	`state` : état de du routeur, non typé pour permettre le polymorphisme
+  - `endpoint`: A pointer to the MAL endpoint.
+  - `state`: The state of the router (untyped to allow polymorphism).
 
-### Enregistrement des handlers
+### Handlers registering
 
-L'API du routeur MAL définit l'ensemble des fonctions permettant l'enregistrement des handlers d'interaction. Chacune de ces fonctions prend en paramètre le pointeur vers le routeur lui-même, l'identification de l'area, sa version, l’identité du service et de l'opération. En fonction du rôle du handler et du type de l'opération l'interface comprend des pointeurs vers les fonctions de traitement des messages correspondants de l'interaction.
+The MAL router interface defines the set of functions for registering the interaction's handlers.
+Each function takes as parameters a pointer to the router's state itself, the identification of the area, version, identity of service and operation. Depending on the role of the handler and the operation type, the interface includes pointers to the functions allowing to process the messages corresponding to the interaction.
 
-L'API définit une fonction pour enregistrer un provider d'interaction Send, et deux fonctions permettant d'enregistrer les handlers de consumer et provider de chacune des interactions *Submit*, *Request*, *Invoke* et *Progress*;
+L'interface defines a function to register an handler of *Send* interaction, and two functions to register the *provider* and *consumer* handlers of each interactions *Submit*, *Request*, *Invoke* et *Progress*:
 
 ```c
 int mal_routing_register_provider_send_handler(
@@ -705,7 +755,7 @@ int mal_routing_register_consumer_progress_handler(
     mal_routing_on_message_fn *on_response);
 ```
 
-L'API offre en outre 3 fonctions permettant d'enregistrer un handler de publisher, de subscriber et de broker pour une interaction *PubSub* :
+L'interface also offers three functions to register *publisher*, *subscriber* and *broker* handlers for *Publish/Subscribe* interaction:
 
 ```c
 int mal_routing_register_provider_pubsub_handler(
@@ -734,7 +784,7 @@ int mal_routing_register_broker_pubsub_handler(
     mal_routing_on_message_fn *on_publish);
 ```
 
-L'API offre aussi une fonction permettant de désenregistrer un Handler :
+Finally, the interface also provides a function to deregister a *handler*:
 
 ```c
 int mal_routing_remove_handler(
@@ -744,31 +794,35 @@ int mal_routing_remove_handler(
     mal_ushort_t service, mal_ushort_t operation);
 ```
 
-### Exécution des handlers
+### Handlers execution
 
-Le routeur offre une fonction permettant d'activer un handler donné en fonction du message MAL reçu. Lorsqu'elle est appelée cette fonction recherche le handler correspondant dans la liste des handlers  enregistrés. En cas de succès elle active cet handler en appelant la fonction correspondant au message reçu.
+The *router* interface provides a function to activate the rigth handler when receiving a MAL message.
+When called this function search the right handler in the list of registered handlers. If successful it
+activates the handler by calling the function corresponding to the received message.
+
+Declaration:
 
 ```c
 int mal_routing_handle(mal_routing_t *self, mal_message_t *message);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`self` : le routeur
-  -	`message` : le message reçu
+  - `self`: A pointer to the *router*.
+  - `message`: A pointer to the received message.
 
-### Destructeur
+### Destructor
 
-Détruit le routeur et son état.
+Deletes the *router* and its state.
 
 ```c
 void mal_routing_destroy(mal_routing_t **self_p);
 ```
 
-Union des éléments
-------------------
+Element union
+-------------
 
-Une union `mal_element_t` est définie pour permettre le polymorphisme d'élément.
+A `mal_element_t`  union is defined to allow the polymorphism of *Element*.
 
 ```c
 union mal_element_t {
@@ -796,20 +850,22 @@ union mal_element_t {
 };
 ```
 
-Holder d'élément
-----------------
+Element holder
+--------------
 
-Cette structure permet de gérer le décodage en cas de polymorphisme d'élément.
+This structure allows to manage the decoding in case of element polymorphism.
 
-### Constructeur
+### Constructor
 
-Déclaration :
+Declaration:
 
 ```c
 mal_element_holder_t *mal_element_holder_new(void);
 ```
 
 ### Getters et setters
+
+Declaration:
 
 ```c
 bool mal_element_holder_get_presence_flag(mal_element_holder_t *self);
@@ -829,42 +885,45 @@ void mal_element_holder_set_value(mal_element_holder_t *self,
   union mal_element_t value);
 ```
 
-### Destructeur
+### Destructor
+
+This destructor frees only space allocated for the structure itself, not the union elements.
+
+Declaration:
 
 ```c
 void mal_element_holder_destroy(mal_element_holder_t **self_p);
 ```
 
-Ce destructeur ne libère que l'espace alloué pour la structure elle-même, mais pas les éléments de l'union.
+List of non-pointer attribute
+-----------------------------
 
-Listes d'Attribut non pointeur
-------------------------------
+Data structures defined to represent lists of *attribute* types which are not represented by a *C* pointer
+(see section 2.6). These lists are specific to each type of non-pointer *Attribute*.
+For each list, two tables are defined:
 
-Structures de donnée définies pour représenter les listes des types d'Attribut qui ne sont pas représentés par un type C pointeur (voir section 2.6).
-Ces listes sont spécifiques à chaque type d'Attribut non pointeur.
-Pour chaque liste, deux tableaux sont définis :
+  - `presence_flags`: Table of presence flags for each of the items in the list.
+  - `content`: Table containing the values of each item of the list; if an item is null, its value in the
+  table can be assigned with any value.
 
-  -	`presence_flags` : tableau des flags de présence pour chacun des éléments de la liste
-  -	`content` : tableau contenant les valeurs des éléments de la liste ; si un élément est nul, sa valeur dans le tableau doit être affectée avec n'importe quelle valeur.
+The size of `presence_flags` and `content` tables should be the same.
 
-La taille des tableaux `presence_flags` et `content` doit être la même.
+### Constructor
 
-### Constructeur
-
-Déclaration :
+Declaration:
 
 ```c
 mal_<attribute>_list_t *mal_<attribute>_list_new(
   unsigned int element_count);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`element_count` : nombre d'éléments dans la liste
+  - `element_count`: Number of items in the list.
 
 ### Getter
 
-Des fonctions « getters » sont définies pour accéder aux champs :
+Getter functions are defined to access the fields:
 
 ```c
 unsigned int mal_<attribute>_list_get_element_count(
@@ -877,34 +936,38 @@ mal_<attribute>_t *mal_<attribute>_list_get_content(
   mal_<attribute>_list_t *self);
 ```
 
-### Destructeur
+### Destructor
 
-Détruit la liste et son contenu (tableau des flags de présence et tableau des valeurs).
+Deletes the list and its contents (`presence_flags` and `content` tables).
+
+Declaration:
 
 ```c
 void mal_<attribute>_list_destroy(mal_<attribute>_list_t **self_p);
 ```
 
-Listes d'Attribut pointeur
---------------------------
+List of pointer attribute
+-------------------------
 
-Structures de donnée définies pour représenter les listes des types d'Attribut qui sont représentés par un type C pointeur (voir section 2.6).
+Data structures defined to represent lists of *attribute* types which are represented by a *C* pointer
+(see section 2.6).
 
-### Constructeur
+### Constructor
 
-Déclaration :
+Declaration:
 
 ```c
 mal_<attribute>_list_t *mal_<attribute>_list_new(
   unsigned int element_count);
 ```
 
-Paramètres :
+Parameters:
 
-  -	`element_count` : nombre d'éléments dans la liste
+  - `element_count`: Number of items in the list.
 
 ### Getters
-Des fonctions « getters » sont définies pour accéder aux champs :
+
+Getter functions are defined to access the fields:
 
 ```c
 unsigned int mal_<attribute>_list_get_element_count(
@@ -914,26 +977,28 @@ mal_<attribute>_t **mal_<attribute>_list_get_content(
   mal_<attribute>_list_t *self);
 ```
 
-### Destructeur
+### Destructor
 
-Détruit la liste, son contenu (tableau de pointeurs) et les éléments de la liste.
+Deletes the list, its contents (pointers table) and the list items.
+
+Declaration:
 
 ```c
 void mal_<attribute>_list_destroy(mal_<attribute>_list_t **self_p);
 ```
 
-Listes de Composite
--------------------
-Voir section 9.6.
+List of Composite
+-----------------
+Cf section 9.6.
 
-Listes d'énuméré
-----------------
-Voir section 9.7.
+List of Enumerated
+------------------
+Cf section 9.7.
 
-Etapes d'interaction
---------------------
+Interaction stage
+-----------------
 
-Une constante est définie pour chaque étape d'interaction :
+A constant is defined for each stage of each interaction:
 
 ```c
 #define MAL_IP_STAGE_SEND 1
