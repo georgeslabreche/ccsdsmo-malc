@@ -62,6 +62,7 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
     
+    <class name = "malbinary" />
     <class name = "malbinary_encoder" />
     <class name = "malbinary_decoder" />
 
