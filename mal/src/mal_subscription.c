@@ -24,7 +24,7 @@ void mal_subscription_destroy(mal_subscription_t **self_p) {
 }
 
 int mal_subscription_add_encoding_length_malbinary(mal_subscription_t *self,
-    malbinary_encoder_t *encoder, unsigned int *encoding_length) {
+    malbinary_encoder_t *encoder, void *cursor) {
   int rc = 0;
   if (self == NULL) {
     rc = -1;
@@ -32,23 +32,19 @@ int mal_subscription_add_encoding_length_malbinary(mal_subscription_t *self,
   }
 
   // Field 'subscriptionid' (canBeNull='true')
-  rc = malbinary_encoder_add_presence_flag_encoding_length(encoder,
-      encoding_length);
+  rc = malbinary_encoder_add_presence_flag_encoding_length(encoder, cursor);
   if (self->subscriptionid != NULL) {
-    rc = malbinary_encoder_add_identifier_encoding_length(encoder,
-        self->subscriptionid, encoding_length);
+    rc = malbinary_encoder_add_identifier_encoding_length(encoder, self->subscriptionid, cursor);
     if (rc < 0)
       return rc;
   }
 
   // Field 'entities' (canBeNull='true')
-  rc = malbinary_encoder_add_presence_flag_encoding_length(encoder,
-      encoding_length);
+  rc = malbinary_encoder_add_presence_flag_encoding_length(encoder, cursor);
   if (rc < 0)
     return rc;
   if (self->entities != NULL) {
-    rc = mal_entityrequest_list_add_encoding_length_malbinary(self->entities,
-        encoder, encoding_length);
+    rc = mal_entityrequest_list_add_encoding_length_malbinary(self->entities, encoder, cursor);
     if (rc < 0)
       return rc;
   }
@@ -57,25 +53,24 @@ int mal_subscription_add_encoding_length_malbinary(mal_subscription_t *self,
 
 // 'binary' refers to the "binary encoding" specified in MAL/SPP BB
 int mal_subscription_encode_malbinary(mal_subscription_t *self,
-    malbinary_encoder_t *encoder, char *bytes, unsigned int *offset) {
+    malbinary_encoder_t *encoder, void *cursor) {
   int rc = 0;
 
   bool is_present = (self->subscriptionid != NULL);
-  rc = malbinary_encoder_encode_presence_flag(encoder, bytes, offset,
+  rc = malbinary_encoder_encode_presence_flag(encoder, cursor,
       is_present);
   if (is_present) {
-    rc = malbinary_encoder_encode_identifier(encoder, bytes, offset,
+    rc = malbinary_encoder_encode_identifier(encoder, cursor,
         self->subscriptionid);
     if (rc < 0)
       return rc;
   }
 
   is_present = (self->entities != NULL);
-  rc = malbinary_encoder_encode_presence_flag(encoder, bytes, offset,
+  rc = malbinary_encoder_encode_presence_flag(encoder, cursor,
       is_present);
   if (is_present) {
-    rc = mal_entityrequest_list_encode_malbinary(self->entities, encoder, bytes,
-        offset);
+    rc = mal_entityrequest_list_encode_malbinary(self->entities, encoder, cursor);
     if (rc < 0)
       return rc;
   }
@@ -85,26 +80,25 @@ int mal_subscription_encode_malbinary(mal_subscription_t *self,
 
 // 'binary' refers to the "binary encoding" specified in MAL/SPP BB
 int mal_subscription_decode_malbinary(mal_subscription_t *self,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int *offset) {
+    malbinary_decoder_t *decoder, void *cursor) {
   int rc = 0;
   bool is_present;
-  rc = malbinary_decoder_decode_presence_flag(decoder, bytes, offset,
+  rc = malbinary_decoder_decode_presence_flag(decoder, cursor,
       &is_present);
   if (rc < 0)
     return rc;
   if (is_present) {
-    rc = malbinary_decoder_decode_identifier(decoder, bytes, offset,
+    rc = malbinary_decoder_decode_identifier(decoder, cursor,
         &(self->subscriptionid));
   }
 
-  rc = malbinary_decoder_decode_presence_flag(decoder, bytes, offset,
+  rc = malbinary_decoder_decode_presence_flag(decoder, cursor,
       &is_present);
   if (rc < 0)
     return rc;
   if (is_present) {
     self->entities = mal_entityrequest_list_new(0);
-    rc = mal_entityrequest_list_decode_malbinary(self->entities, decoder, bytes,
-        offset);
+    rc = mal_entityrequest_list_decode_malbinary(self->entities, decoder, cursor);
   }
 
   return rc;

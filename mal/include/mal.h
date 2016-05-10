@@ -191,42 +191,35 @@ typedef int mal_binding_ctx_poller_wait_fn(
 typedef int mal_binding_ctx_destroy_message_fn(void *mal_binding_ctx, mal_message_t *message);
 
 int mal_register_add_encoding_length(int encoding_format_code, void *encoder,
-    mal_subscription_t *element, unsigned int *encoding_length);
+    mal_subscription_t *element, void *cursor);
 
-int mal_register_encode(int encoding_format_code, char *bytes,
-    unsigned int *offset, void *encoder, mal_subscription_t *element);
+int mal_register_encode(int encoding_format_code, void *cursor, void *encoder, mal_subscription_t *element);
 
-int mal_register_decode(int encoding_format_code, char *bytes,
-    unsigned int *offset, void *decoder, mal_subscription_t **res);
+int mal_register_decode(int encoding_format_code, void *cursor, void *decoder, mal_subscription_t **res);
 
 int mal_publish_register_add_encoding_length_entitykey_list(
     int encoding_format_code, void *encoder, mal_entitykey_list_t *element,
-    unsigned int *encoding_length);
+    void *cursor);
 
 int mal_publish_register_encode_entitykey_list(int encoding_format_code,
-    char *bytes, unsigned int *offset, void *encoder,
+    void *cursor, void *encoder,
     mal_entitykey_list_t *element);
 
-int mal_publish_decode_entitykey_list(int encoding_format_code, char *bytes,
-    unsigned int *offset, void *decoder, mal_entitykey_list_t **res);
+int mal_publish_decode_entitykey_list(int encoding_format_code, void *cursor, void *decoder, mal_entitykey_list_t **res);
 
-int mal_publish_add_encoding_length_updateheader_list(int encoding_format_code,
-    void *encoder, mal_updateheader_list_t *element,
-    unsigned int *encoding_length);
+int mal_publish_add_encoding_length_updateheader_list(int encoding_format_code, void *encoder, mal_updateheader_list_t *element,
+    void *cursor);
 
-int mal_publish_encode_updateheader_list(int encoding_format_code, char *bytes,
-    unsigned int *offset, void *encoder, mal_updateheader_list_t *element);
+int mal_publish_encode_updateheader_list(int encoding_format_code, void *cursor, void *encoder, mal_updateheader_list_t *element);
 
-int mal_publish_decode_updateheader_list(int encoding_format_code, char *bytes,
-    unsigned int *offset, void *decoder, mal_updateheader_list_t **res);
+int mal_publish_decode_updateheader_list(int encoding_format_code, void *cursor, void *decoder, mal_updateheader_list_t **res);
 
 /*
 int mal_notify_decode_subscriptionid(int encoding_format_code, char *bytes,
     unsigned int *offset, void *decoder, mal_identifier_t **res);
 */
 
-int mal_notify_decode_updateheader_list(int encoding_format_code, char *bytes,
-    unsigned int *offset, void *decoder, mal_updateheader_list_t **res);
+int mal_notify_decode_updateheader_list(int encoding_format_code, void *cursor, void *decoder, mal_updateheader_list_t **res);
 
 #define MAL_ERROR       0x01000000
 #define MALZMQ_ERROR    0x02000000

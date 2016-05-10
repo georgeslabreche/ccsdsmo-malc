@@ -19,13 +19,13 @@ bool *mal_integer_list_get_presence_flags(mal_integer_list_t *self);
 mal_integer_t *mal_integer_list_get_content(mal_integer_list_t *self);
 
 int mal_integer_list_add_encoding_length_malbinary(mal_integer_list_t *self,
-    malbinary_encoder_t *encoder, unsigned int *encoding_length);
+    malbinary_encoder_t *encoder, void *cursor);
 
 int mal_integer_list_encode_malbinary(mal_integer_list_t *self,
-    malbinary_encoder_t *encoder, char *bytes, unsigned int *offset);
+    malbinary_encoder_t *encoder, void *cursor);
 
 int mal_integer_list_decode_malbinary(mal_integer_list_t *self,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int *offset);
+    malbinary_decoder_t *decoder, void *cursor);
 
 //  Self test of this class
 void mal_integer_list_test(bool verbose);

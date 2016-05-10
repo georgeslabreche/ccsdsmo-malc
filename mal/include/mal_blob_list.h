@@ -17,13 +17,13 @@ unsigned int mal_blob_list_get_element_count(mal_blob_list_t *self);
 mal_blob_t **mal_blob_list_get_content(mal_blob_list_t *self);
 
 int mal_blob_list_add_encoding_length_malbinary(mal_blob_list_t *self,
-    malbinary_encoder_t *encoder, unsigned int *encoding_length);
+    malbinary_encoder_t *encoder, void *cursor);
 
 int mal_blob_list_encode_malbinary(mal_blob_list_t *self,
-    malbinary_encoder_t *encoder, char *bytes, unsigned int *offset);
+    malbinary_encoder_t *encoder, void *cursor);
 
 int mal_blob_list_decode_malbinary(mal_blob_list_t *self,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int *offset);
+    malbinary_decoder_t *decoder, void *cursor);
 
 //  Self test of this class
 void mal_blob_list_test(bool verbose);

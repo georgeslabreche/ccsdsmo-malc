@@ -30,69 +30,69 @@ void mal_updateheader_destroy(mal_updateheader_t **self_p) {
 }
 
 int mal_updateheader_add_encoding_length_malbinary(mal_updateheader_t *self,
-    malbinary_encoder_t *encoder, unsigned int *encoding_length) {
+    malbinary_encoder_t *encoder, void *cursor) {
   int rc = 0;
   if (self == NULL) {
     rc = -1;
     return rc;
   }
   // timestamp
-  rc = malbinary_encoder_add_time_encoding_length(encoder, self->timestamp, encoding_length);
+  rc = malbinary_encoder_add_time_encoding_length(encoder, self->timestamp, cursor);
   if (rc < 0)
     return rc;
   // source_uri
-  rc = malbinary_encoder_add_uri_encoding_length(encoder, self->source_uri, encoding_length);
+  rc = malbinary_encoder_add_uri_encoding_length(encoder, self->source_uri, cursor);
   if (rc < 0)
     return rc;
   // enum updatetype
-  (*encoding_length) += 1;
+  ((malbinary_cursor_t *) cursor)->body_length += 1;
   // entitykey
-  rc = mal_entitykey_add_encoding_length_malbinary(self->entitykey, encoder, encoding_length);
+  rc = mal_entitykey_add_encoding_length_malbinary(self->entitykey, encoder, cursor);
   return rc;
 }
 
 // 'binary' refers to the "binary encoding" specified in MAL/SPP BB
 int mal_updateheader_encode_malbinary(mal_updateheader_t *self,
-    malbinary_encoder_t *encoder, char *bytes, unsigned int *offset) {
+    malbinary_encoder_t *encoder, void *cursor) {
   int rc = 0;
   // encode timestamp
-  rc = malbinary_encoder_encode_time(encoder, bytes, offset, self->timestamp);
+  rc = malbinary_encoder_encode_time(encoder, cursor, self->timestamp);
   if (rc < 0)
     return rc;
   // encode source_uri
-  rc = malbinary_encoder_encode_uri(encoder, bytes, offset, self->source_uri);
+  rc = malbinary_encoder_encode_uri(encoder, cursor, self->source_uri);
   if (rc < 0)
     return rc;
   // encode updatetype
-  rc = malbinary_encoder_encode_small_enum(encoder, bytes, offset, self->updatetype);
+  rc = malbinary_encoder_encode_small_enum(encoder, cursor, self->updatetype);
   if (rc < 0)
     return rc;
   // encode entitykey
-  rc = mal_entitykey_encode_malbinary(self->entitykey, encoder, bytes, offset);
+  rc = mal_entitykey_encode_malbinary(self->entitykey, encoder, cursor);
   return rc;
 }
 
 // 'binary' refers to the "binary encoding" specified in MAL/SPP BB
 int mal_updateheader_decode_malbinary(mal_updateheader_t *self,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int *offset) {
+    malbinary_decoder_t *decoder, void *cursor) {
   int rc = 0;
   // decode timestamp
-  rc = malbinary_decoder_decode_time(decoder, bytes, offset, &self->timestamp);
+  rc = malbinary_decoder_decode_time(decoder, cursor, &self->timestamp);
   if (rc < 0)
     return rc;
   // decode source_uri
-  rc = malbinary_decoder_decode_uri(decoder, bytes, offset, &self->source_uri);
+  rc = malbinary_decoder_decode_uri(decoder, cursor, &self->source_uri);
   if (rc < 0)
     return rc;
   // decode updatetype
   int result;
-  rc = malbinary_decoder_decode_small_enum(decoder, bytes, offset, &result);
+  rc = malbinary_decoder_decode_small_enum(decoder, cursor, &result);
   self->updatetype = (mal_updatetype_t) result;
   if (rc < 0)
     return rc;
   // decode entitykey
   self->entitykey = mal_entitykey_new();
-  rc = mal_entitykey_decode_malbinary(self->entitykey, decoder, bytes, offset);
+  rc = mal_entitykey_decode_malbinary(self->entitykey, decoder, cursor);
   return rc;
 }
 

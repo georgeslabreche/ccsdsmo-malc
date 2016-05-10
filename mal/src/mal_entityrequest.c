@@ -26,7 +26,7 @@ void mal_entityrequest_destroy(mal_entityrequest_t **self_p) {
 }
 
 int mal_entityrequest_add_encoding_length_malbinary(mal_entityrequest_t *self,
-    malbinary_encoder_t *encoder, unsigned int *encoding_length) {
+    malbinary_encoder_t *encoder, void *cursor) {
   int rc = 0;
   if (self == NULL) {
     rc = -1;
@@ -37,14 +37,14 @@ int mal_entityrequest_add_encoding_length_malbinary(mal_entityrequest_t *self,
 
 // 'binary' refers to the "binary encoding" specified in MAL/SPP BB
 int mal_entityrequest_encode_malbinary(mal_entityrequest_t *self,
-    malbinary_encoder_t *encoder, char *bytes, unsigned int *offset) {
+    malbinary_encoder_t *encoder, void *cursor) {
   int rc = 0;
   return rc;
 }
 
 // 'binary' refers to the "binary encoding" specified in MAL/SPP BB
 int mal_entityrequest_decode_malbinary(mal_entityrequest_t *self,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int *offset) {
+    malbinary_decoder_t *decoder, void *cursor) {
   int rc = 0;
   return rc;
 }

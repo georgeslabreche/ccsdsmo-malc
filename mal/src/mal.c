@@ -10,18 +10,16 @@ void mal_set_log_level(int level) {
 }
 
 int mal_register_add_encoding_length(int encoding_format_code, void *encoder,
-    mal_subscription_t *element, unsigned int *encoding_length) {
+    mal_subscription_t *element, void *cursor) {
   int rc = 0;
   switch (encoding_format_code) {
   case MALBINARY_FORMAT_CODE: {
     malbinary_encoder_t *binary_encoder = (malbinary_encoder_t *) encoder;
-    rc = malbinary_encoder_add_presence_flag_encoding_length(binary_encoder,
-        encoding_length);
+    rc = malbinary_encoder_add_presence_flag_encoding_length(binary_encoder, cursor);
     if (rc < 0)
       return rc;
     if (element != NULL) {
-      rc = mal_subscription_add_encoding_length_malbinary(element,
-          binary_encoder, encoding_length);
+      rc = mal_subscription_add_encoding_length_malbinary(element, binary_encoder, cursor);
       if (rc < 0)
         return rc;
     }
@@ -33,21 +31,17 @@ int mal_register_add_encoding_length(int encoding_format_code, void *encoder,
   return rc;
 }
 
-
-int mal_register_encode(int encoding_format_code, char *bytes,
-    unsigned int *offset, void *encoder, mal_subscription_t *element) {
+int mal_register_encode(int encoding_format_code, void *cursor, void *encoder, mal_subscription_t *element) {
   int rc = 0;
   switch (encoding_format_code) {
   case MALBINARY_FORMAT_CODE: {
     malbinary_encoder_t *binary_encoder = (malbinary_encoder_t *) encoder;
     bool presence_flag = (element != NULL);
-    rc = malbinary_encoder_encode_presence_flag(binary_encoder, bytes, offset,
-        presence_flag);
+    rc = malbinary_encoder_encode_presence_flag(binary_encoder, cursor, presence_flag);
     if (rc < 0)
       return rc;
     if (element != NULL) {
-      rc = mal_subscription_encode_malbinary(element, binary_encoder, bytes,
-          offset);
+      rc = mal_subscription_encode_malbinary(element, binary_encoder, cursor);
       if (rc < 0)
         return rc;
     }
@@ -59,22 +53,19 @@ int mal_register_encode(int encoding_format_code, char *bytes,
   return rc;
 }
 
-int mal_register_decode(int encoding_format_code, char *bytes,
-    unsigned int *offset, void *decoder, mal_subscription_t **res) {
+int mal_register_decode(int encoding_format_code, void *cursor, void *decoder, mal_subscription_t **res) {
   int rc = 0;
   switch (encoding_format_code) {
   case MALBINARY_FORMAT_CODE: {
     malbinary_decoder_t *binary_decoder = (malbinary_decoder_t *) decoder;
     bool presence_flag;
-    rc = malbinary_decoder_decode_presence_flag(binary_decoder, bytes, offset,
-        &presence_flag);
+    rc = malbinary_decoder_decode_presence_flag(binary_decoder, cursor, &presence_flag);
     if (rc < 0)
       return rc;
     mal_subscription_t *element;
     if (presence_flag) {
       element = mal_subscription_new();
-      rc = mal_subscription_decode_malbinary(element, binary_decoder, bytes,
-          offset);
+      rc = mal_subscription_decode_malbinary(element, binary_decoder, cursor);
       if (rc < 0)
         return rc;
     } else {
@@ -91,18 +82,16 @@ int mal_register_decode(int encoding_format_code, char *bytes,
 
 int mal_publish_register_add_encoding_length_entitykey_list(
     int encoding_format_code, void *encoder, mal_entitykey_list_t *element,
-    unsigned int *encoding_length) {
+    void *cursor) {
   int rc = 0;
   switch (encoding_format_code) {
   case MALBINARY_FORMAT_CODE: {
     malbinary_encoder_t *binary_encoder = (malbinary_encoder_t *) encoder;
-    rc = malbinary_encoder_add_presence_flag_encoding_length(binary_encoder,
-        encoding_length);
+    rc = malbinary_encoder_add_presence_flag_encoding_length(binary_encoder, cursor);
     if (rc < 0)
       return rc;
     if (element != NULL) {
-      rc = mal_entitykey_list_add_encoding_length_malbinary(element,
-          binary_encoder, encoding_length);
+      rc = mal_entitykey_list_add_encoding_length_malbinary(element, binary_encoder, cursor);
       if (rc < 0)
         return rc;
     }
@@ -115,20 +104,18 @@ int mal_publish_register_add_encoding_length_entitykey_list(
 }
 
 int mal_publish_register_encode_entitykey_list(int encoding_format_code,
-    char *bytes, unsigned int *offset, void *encoder,
+    void *cursor, void *encoder,
     mal_entitykey_list_t *element) {
   int rc = 0;
   switch (encoding_format_code) {
   case MALBINARY_FORMAT_CODE: {
     malbinary_encoder_t *binary_encoder = (malbinary_encoder_t *) encoder;
     bool presence_flag = (element != NULL);
-    rc = malbinary_encoder_encode_presence_flag(binary_encoder, bytes, offset,
-        presence_flag);
+    rc = malbinary_encoder_encode_presence_flag(binary_encoder, cursor, presence_flag);
     if (rc < 0)
       return rc;
     if (element != NULL) {
-      rc = mal_entitykey_list_encode_malbinary(element, binary_encoder, bytes,
-          offset);
+      rc = mal_entitykey_list_encode_malbinary(element, binary_encoder, cursor);
       if (rc < 0)
         return rc;
     }
@@ -140,22 +127,19 @@ int mal_publish_register_encode_entitykey_list(int encoding_format_code,
   return rc;
 }
 
-int mal_publish_decode_entitykey_list(int encoding_format_code, char *bytes,
-    unsigned int *offset, void *decoder, mal_entitykey_list_t **res) {
+int mal_publish_decode_entitykey_list(int encoding_format_code, void *cursor, void *decoder, mal_entitykey_list_t **res) {
   int rc = 0;
   switch (encoding_format_code) {
   case MALBINARY_FORMAT_CODE: {
     malbinary_decoder_t *binary_decoder = (malbinary_decoder_t *) decoder;
     bool presence_flag;
-    rc = malbinary_decoder_decode_presence_flag(binary_decoder, bytes, offset,
-        &presence_flag);
+    rc = malbinary_decoder_decode_presence_flag(binary_decoder, cursor, &presence_flag);
     if (rc < 0)
       return rc;
     mal_entitykey_list_t *element;
     if (presence_flag) {
       element = mal_entitykey_list_new(1);
-      rc = mal_entitykey_list_decode_malbinary(element, binary_decoder, bytes,
-          offset);
+      rc = mal_entitykey_list_decode_malbinary(element, binary_decoder, cursor);
       if (rc < 0)
         return rc;
     } else {
@@ -172,18 +156,18 @@ int mal_publish_decode_entitykey_list(int encoding_format_code, char *bytes,
 
 int mal_publish_add_encoding_length_updateheader_list(int encoding_format_code,
     void *encoder, mal_updateheader_list_t *element,
-    unsigned int *encoding_length) {
+    void *cursor) {
   int rc = 0;
   switch (encoding_format_code) {
   case MALBINARY_FORMAT_CODE: {
     malbinary_encoder_t *binary_encoder = (malbinary_encoder_t *) encoder;
     rc = malbinary_encoder_add_presence_flag_encoding_length(binary_encoder,
-        encoding_length);
+        cursor);
     if (rc < 0)
       return rc;
     if (element != NULL) {
       rc = mal_updateheader_list_add_encoding_length_malbinary(element,
-          binary_encoder, encoding_length);
+          binary_encoder, cursor);
       if (rc < 0)
         return rc;
     }
@@ -195,20 +179,17 @@ int mal_publish_add_encoding_length_updateheader_list(int encoding_format_code,
   return rc;
 }
 
-int mal_publish_encode_updateheader_list(int encoding_format_code, char *bytes,
-    unsigned int *offset, void *encoder, mal_updateheader_list_t *element) {
+int mal_publish_encode_updateheader_list(int encoding_format_code, void *cursor, void *encoder, mal_updateheader_list_t *element) {
   int rc = 0;
   switch (encoding_format_code) {
   case MALBINARY_FORMAT_CODE: {
     malbinary_encoder_t *binary_encoder = (malbinary_encoder_t *) encoder;
     bool presence_flag = (element != NULL);
-    rc = malbinary_encoder_encode_presence_flag(binary_encoder, bytes, offset,
-        presence_flag);
+    rc = malbinary_encoder_encode_presence_flag(binary_encoder, cursor, presence_flag);
     if (rc < 0)
       return rc;
     if (element != NULL) {
-      rc = mal_updateheader_list_encode_malbinary(element, binary_encoder,
-          bytes, offset);
+      rc = mal_updateheader_list_encode_malbinary(element, binary_encoder, cursor);
       if (rc < 0)
         return rc;
     }
@@ -220,22 +201,19 @@ int mal_publish_encode_updateheader_list(int encoding_format_code, char *bytes,
   return rc;
 }
 
-int mal_publish_decode_updateheader_list(int encoding_format_code, char *bytes,
-    unsigned int *offset, void *decoder, mal_updateheader_list_t **res) {
+int mal_publish_decode_updateheader_list(int encoding_format_code, void *cursor, void *decoder, mal_updateheader_list_t **res) {
   int rc = 0;
   switch (encoding_format_code) {
   case MALBINARY_FORMAT_CODE: {
     malbinary_decoder_t *binary_decoder = (malbinary_decoder_t *) decoder;
     bool presence_flag;
-    rc = malbinary_decoder_decode_presence_flag(binary_decoder, bytes, offset,
-        &presence_flag);
+    rc = malbinary_decoder_decode_presence_flag(binary_decoder, cursor, &presence_flag);
     if (rc < 0)
       return rc;
     mal_updateheader_list_t *element;
     if (presence_flag) {
       element = mal_updateheader_list_new(1);
-      rc = mal_updateheader_list_decode_malbinary(element, binary_decoder,
-          bytes, offset);
+      rc = mal_updateheader_list_decode_malbinary(element, binary_decoder, cursor);
       if (rc < 0)
         return rc;
     } else {
@@ -251,8 +229,7 @@ int mal_publish_decode_updateheader_list(int encoding_format_code, char *bytes,
 }
 
 /*
-int mal_notify_decode_subscriptionid(int encoding_format_code, char *bytes,
-    unsigned int *offset, void *decoder, mal_identifier_t **res) {
+int mal_notify_decode_subscriptionid(int encoding_format_code, void *cursor, void *decoder, mal_identifier_t **res) {
   int rc = 0;
   switch (encoding_format_code) {
   case MALBINARY_FORMAT_CODE: {
@@ -282,22 +259,19 @@ int mal_notify_decode_subscriptionid(int encoding_format_code, char *bytes,
 }
 */
 
-int mal_notify_decode_updateheader_list(int encoding_format_code, char *bytes,
-    unsigned int *offset, void *decoder, mal_updateheader_list_t **res) {
+int mal_notify_decode_updateheader_list(int encoding_format_code, void *cursor, void *decoder, mal_updateheader_list_t **res) {
   int rc = 0;
   switch (encoding_format_code) {
   case MALBINARY_FORMAT_CODE: {
     malbinary_decoder_t *binary_decoder = (malbinary_decoder_t *) decoder;
     bool presence_flag;
-    rc = malbinary_decoder_decode_presence_flag(binary_decoder, bytes, offset,
-        &presence_flag);
+    rc = malbinary_decoder_decode_presence_flag(binary_decoder, cursor, &presence_flag);
     if (rc < 0)
       return rc;
     mal_updateheader_list_t *element;
     if (presence_flag) {
       element = mal_updateheader_list_new(1);
-      rc = mal_updateheader_list_decode_malbinary(element, binary_decoder,
-          bytes, offset);
+      rc = mal_updateheader_list_decode_malbinary(element, binary_decoder, cursor);
       if (rc < 0)
         return rc;
     } else {

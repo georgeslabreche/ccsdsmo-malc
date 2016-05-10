@@ -13,13 +13,13 @@ mal_entityrequest_t *mal_entityrequest_new(void);
 void mal_entityrequest_destroy(mal_entityrequest_t **self_p);
 
 int mal_entityrequest_add_encoding_length_malbinary(mal_entityrequest_t *self,
-    malbinary_encoder_t *encoder, unsigned int *encoding_length);
+    malbinary_encoder_t *encoder, void *cursor);
 
 int mal_entityrequest_encode_malbinary(mal_entityrequest_t *self,
-    malbinary_encoder_t *encoder, char *bytes, unsigned int *offset);
+    malbinary_encoder_t *encoder, void *cursor);
 
 int mal_entityrequest_decode_malbinary(mal_entityrequest_t *self,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int *offset);
+    malbinary_decoder_t *decoder, void *cursor);
 
 void mal_entityrequest_test(bool verbose);
 

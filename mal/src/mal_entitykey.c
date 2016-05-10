@@ -27,7 +27,7 @@ void mal_entitykey_destroy(mal_entitykey_t **self_p) {
 }
 
 int mal_entitykey_add_encoding_length_malbinary(mal_entitykey_t *self,
-    malbinary_encoder_t *encoder, unsigned int *encoding_length) {
+    malbinary_encoder_t *encoder, void *cursor) {
   int rc = 0;
   if (self == NULL) {
     rc = -1;
@@ -35,47 +35,39 @@ int mal_entitykey_add_encoding_length_malbinary(mal_entitykey_t *self,
   }
 
   // Field 'firstsubkey' (canBeNull='true')
-  rc = malbinary_encoder_add_presence_flag_encoding_length(encoder,
-      encoding_length);
+  rc = malbinary_encoder_add_presence_flag_encoding_length(encoder, cursor);
   if (self->firstsubkey != NULL) {
-    rc = malbinary_encoder_add_string_encoding_length(encoder,
-        self->firstsubkey, encoding_length);
+    rc = malbinary_encoder_add_string_encoding_length(encoder, self->firstsubkey, cursor);
     if (rc < 0)
       return rc;
   }
 
   // Field 'secondsubkey' (canBeNull='true')
-  rc = malbinary_encoder_add_presence_flag_encoding_length(encoder,
-      encoding_length);
+  rc = malbinary_encoder_add_presence_flag_encoding_length(encoder, cursor);
   if (rc < 0)
     return rc;
   if (self->secondsubkey_is_present) {
-    rc = malbinary_encoder_add_long_encoding_length(encoder, self->secondsubkey,
-        encoding_length);
+    rc = malbinary_encoder_add_long_encoding_length(encoder, self->secondsubkey, cursor);
     if (rc < 0)
       return rc;
   }
 
   // Field 'thirdsubkey' (canBeNull='true')
-  rc = malbinary_encoder_add_presence_flag_encoding_length(encoder,
-      encoding_length);
+  rc = malbinary_encoder_add_presence_flag_encoding_length(encoder, cursor);
   if (rc < 0)
     return rc;
   if (self->thirdsubkey_is_present) {
-    rc = malbinary_encoder_add_long_encoding_length(encoder, self->thirdsubkey,
-        encoding_length);
+    rc = malbinary_encoder_add_long_encoding_length(encoder, self->thirdsubkey, cursor);
     if (rc < 0)
       return rc;
   }
 
   // Field 'fourthsubkey' (canBeNull='true')
-  rc = malbinary_encoder_add_presence_flag_encoding_length(encoder,
-      encoding_length);
+  rc = malbinary_encoder_add_presence_flag_encoding_length(encoder, cursor);
   if (rc < 0)
     return rc;
   if (self->fourthsubkey_is_present) {
-    rc = malbinary_encoder_add_long_encoding_length(encoder, self->fourthsubkey,
-        encoding_length);
+    rc = malbinary_encoder_add_long_encoding_length(encoder, self->fourthsubkey, cursor);
     if (rc < 0)
       return rc;
   }
@@ -85,43 +77,43 @@ int mal_entitykey_add_encoding_length_malbinary(mal_entitykey_t *self,
 
 // 'binary' refers to the "binary encoding" specified in MAL/SPP BB
 int mal_entitykey_encode_malbinary(mal_entitykey_t *self,
-    malbinary_encoder_t *encoder, char *bytes, unsigned int *offset) {
+    malbinary_encoder_t *encoder, void *cursor) {
   int rc = 0;
 
   bool is_present = (self->firstsubkey != NULL);
-  rc = malbinary_encoder_encode_presence_flag(encoder, bytes, offset,
+  rc = malbinary_encoder_encode_presence_flag(encoder, cursor,
       is_present);
   if (is_present) {
-    rc = malbinary_encoder_encode_identifier(encoder, bytes, offset,
+    rc = malbinary_encoder_encode_identifier(encoder, cursor,
         self->firstsubkey);
     if (rc < 0)
       return rc;
   }
 
-  rc = malbinary_encoder_encode_presence_flag(encoder, bytes, offset,
+  rc = malbinary_encoder_encode_presence_flag(encoder, cursor,
       self->secondsubkey_is_present);
   if (rc < 0)
     return rc;
   if (self->secondsubkey_is_present) {
-    rc = malbinary_encoder_encode_long(encoder, bytes, offset,
+    rc = malbinary_encoder_encode_long(encoder, cursor,
         self->secondsubkey);
   }
 
-  rc = malbinary_encoder_encode_presence_flag(encoder, bytes, offset,
+  rc = malbinary_encoder_encode_presence_flag(encoder, cursor,
       self->thirdsubkey_is_present);
   if (rc < 0)
     return rc;
   if (self->thirdsubkey_is_present) {
-    rc = malbinary_encoder_encode_long(encoder, bytes, offset,
+    rc = malbinary_encoder_encode_long(encoder, cursor,
         self->thirdsubkey);
   }
 
-  rc = malbinary_encoder_encode_presence_flag(encoder, bytes, offset,
+  rc = malbinary_encoder_encode_presence_flag(encoder, cursor,
       self->fourthsubkey_is_present);
   if (rc < 0)
     return rc;
   if (self->fourthsubkey_is_present) {
-    rc = malbinary_encoder_encode_long(encoder, bytes, offset,
+    rc = malbinary_encoder_encode_long(encoder, cursor,
         self->fourthsubkey);
   }
 
@@ -130,43 +122,43 @@ int mal_entitykey_encode_malbinary(mal_entitykey_t *self,
 
 // 'binary' refers to the "binary encoding" specified in MAL/SPP BB
 int mal_entitykey_decode_malbinary(mal_entitykey_t *self,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int *offset) {
+    malbinary_decoder_t *decoder, void *cursor) {
   int rc = 0;
-  rc = malbinary_decoder_decode_presence_flag(decoder, bytes, offset,
+  rc = malbinary_decoder_decode_presence_flag(decoder, cursor,
       &(self->secondsubkey_is_present));
   if (rc < 0)
     return rc;
   if (self->secondsubkey_is_present) {
-    rc = malbinary_decoder_decode_identifier(decoder, bytes, offset,
+    rc = malbinary_decoder_decode_identifier(decoder, cursor,
         &(self->firstsubkey));
     if (rc < 0)
       return rc;
   }
 
-  rc = malbinary_decoder_decode_presence_flag(decoder, bytes, offset,
+  rc = malbinary_decoder_decode_presence_flag(decoder, cursor,
       &(self->secondsubkey_is_present));
   if (rc < 0)
     return rc;
   if (self->secondsubkey_is_present) {
-    rc = malbinary_decoder_decode_long(decoder, bytes, offset,
+    rc = malbinary_decoder_decode_long(decoder, cursor,
         &(self->secondsubkey));
   }
 
-  rc = malbinary_decoder_decode_presence_flag(decoder, bytes, offset,
+  rc = malbinary_decoder_decode_presence_flag(decoder, cursor,
       &(self->thirdsubkey_is_present));
   if (rc < 0)
     return rc;
   if (self->thirdsubkey_is_present) {
-    rc = malbinary_decoder_decode_long(decoder, bytes, offset,
+    rc = malbinary_decoder_decode_long(decoder, cursor,
         &(self->thirdsubkey));
   }
 
-  rc = malbinary_decoder_decode_presence_flag(decoder, bytes, offset,
+  rc = malbinary_decoder_decode_presence_flag(decoder, cursor,
       &(self->fourthsubkey_is_present));
   if (rc < 0)
     return rc;
   if (self->fourthsubkey_is_present) {
-    rc = malbinary_decoder_decode_long(decoder, bytes, offset,
+    rc = malbinary_decoder_decode_long(decoder, cursor,
         &(self->fourthsubkey));
   }
   return rc;
