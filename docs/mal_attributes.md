@@ -1,21 +1,21 @@
-API d'Attributs MAL
-===================
+MAL Attribute API
+=================
 
-L'API d'Attributs MAL définit les types C utilisés pour représenter les Attributs MAL.
+The MAL Attribute API defines the *C* types used to represent the MAL attributes.
 
-Type booléen
+Boolean type
 ------------
 
-Définition du type `MAL::Boolean` :
+Definition of type `MAL::Boolean`:
 
 ```c
 	typedef bool mal_boolean_t;
 ```
 
-Types numériques entiers
-------------------------
+Integer types
+-------------
 
-Définition des types `MAL::Octet`, `MAL::UOctet`, `MAL::Short`, `MAL::UShort`, `MAL::Integer`, `MAL::UInteger`, `MAL::Long`, `MAL::ULong` :
+Definition of types `MAL::Octet`, `MAL::UOctet`, `MAL::Short`, `MAL::UShort`, `MAL::Integer`, `MAL::UInteger`, `MAL::Long`, `MAL::ULong`:
 
 ```c
 	typedef char mal_octet_t;
@@ -28,10 +28,10 @@ Définition des types `MAL::Octet`, `MAL::UOctet`, `MAL::Short`, `MAL::UShort`, 
 	typedef unsigned long mal_ulong_t;
 ```
 
-Types numériques flotants
--------------------------
+Floating point types
+--------------------
 
-Définition des types `MAL::Float`, `MAL::Double`.
+Definition of types `MAL::Float`, `MAL::Double`.
 
 ```c
 	typedef float mal_float_t;
@@ -41,28 +41,30 @@ Définition des types `MAL::Float`, `MAL::Double`.
 Dates
 -----
 
-Définition des types `MAL::Time`, `MAL::FineTime` :
+Definition of types `MAL::Time`, `MAL::FineTime`:
 
 ```c
 	typedef unsigned long mal_time_t;
 	typedef unsigned long mal_finetime_t;
 ```
 
-Durée
------
+Duration
+--------
 
-Définition du type `MAL::Duration` :
+Definition of type `MAL::Duration`:
 
 ```c
 	typedef float mal_duration_t;
 ```
 
-Types chaîne de caractères
---------------------------
+Character types
+---------------
 
-Le type `char` est utilisé pour représenter les chaînes de caractères. Si les caractères n'appartiennent pas au format ASCII (MAL spécifie le format Unicode), alors un même caractère peut être représenté par plusieurs octets . Dans ce cas, les fonctions C traitant les chaînes ASCII ne sont plus applicables.
+The `char` type is used to represent strings. If the characters are not in the ASCII format
+(MAL specifies Unicode), then a character may be represented by several bytes. In this case,
+the *C* functions dealing ASCII strings are no longer usable.
 
-Définition des types `MAL::String`, `MAL::Identifier`, `MAL::URI` :
+Definition of types `MAL::String`, `MAL::Identifier`, `MAL::URI`:
 
 ```c
 	typedef char mal_string_t;
@@ -70,25 +72,27 @@ Définition des types `MAL::String`, `MAL::Identifier`, `MAL::URI` :
 	typedef char mal_uri_t;
 ```
 
-### Constructeur
+### Constructor
 
-Alloue dynamiquement une nouvelle chaîne de caractères à partir d'une chaîne existante. Cette fonction doit être appelée quand une chaîne MAL est construite à partir d'une chaîne définie statiquement.
+
+Dynamically allocates a new string from an existing string. 
+This function should be called when a MAL string is built from a statically defined chain.
 
 ```c
 	mal_<attribute>_t *mal_<attribute>_new(char *char_content);
 ```
 
-### Nombre de caractères (ASCII)
+### String length (ASCII)
 
-Retourne le nombre de caractères (encodés sur 1 octet) dans la chaîne, avant le caractère nul final (`\0`).
+Returns the number of characters (encoded on 1 byte) in the string before the final null character (`\0`).
 
 ```c
 	size_t mal_<attribute>_get_char_count(mal_<attribute>_t *self)
 ```
 
-### Copie
+### String copy
 
-Lorsqu'une même chaîne de caractères doit être affectée à deux champs distincts d'une même structure MAL ou de deux structures MAL distinctes (composite, liste), alors il est nécessaire de dupliquer la chaîne MAL. Il ne faut pas affecter la même chaîne MAL aux deux champs.
+When the same string must be used in two different fields of the same MAL structure or in two different MAL structures (composite, list), then it is necessary to duplicate the MAL string. Do never assign the same MAL string to different fields.
 
 ```c
 	mal_<attribute>_t *attribute2 = mal_<attribute>_new(attribute1);
@@ -96,7 +100,7 @@ Lorsqu'une même chaîne de caractères doit être affectée à deux champs dist
 
 ### Destructeur
 
-Détruit la chaîne de caractères.
+Deletes the string.
 
 ```c
 	mal_<attribute>_destroy(mal_<attribute>_t **self_p);
@@ -105,23 +109,23 @@ Détruit la chaîne de caractères.
 Blob
 ----
 
-Une classe est définie pour le type Blob afin de conserver la taille du tableau d'octets (non accessible en C).
+A class is defined for the type Blob in order to keep the size of the corresponding byte array (not accessible in C).
 
 ### Constructeur
 
-Déclaration :
+Declaration:
 
 ```c
 	mal_blob_t *mal_blob_new(unsigned int length);
 ```
 
-Paramètres :
+Parameter:
 
-  -	`length` : nombre d'octets dans le Blob
+  -	`length`: Number of bytes in the Blob.
 
 ### Getters
 
-Des fonctions sont définies pour accéder aux champs de Blob :
+Two functions are defined to access the fields of Blob:
 
 ```c
 	char *mal_blob_get_content(mal_blob_t *self);
@@ -130,24 +134,24 @@ Des fonctions sont définies pour accéder aux champs de Blob :
 
 ### Destructeur
 
-Détruit le Blob et son contenu.
+Deletes the Blob and its content.
 
 ```c
 	void mal_blob_destroy(mal_blob_t **self_p);
 ```
 
-Polymorphisme d'Attribut
-------------------------
+MAL Attribute polymorphism
+--------------------------
 
-Pour gérer le cas du polymorphisme d'Attribut MAL, on définit une classe avec les éléments suivants :
+To handle the case of MAL Attribute polymorphism, a class is defined with the following elements:
 
-  -	des tags qui permettent d'identifier le type concret de l'attribut,
-  -	un type C union qui permet de manipuler la valeur de l'attribut typée en fonction du tag associé,
-  -	un destructeur.
+  -	tags that identify the real type of the attribute,
+  -	a *C* union allowing the manipulation of the value of the attribute according to the associated tag,
+  -	a destructor.
 
-### Union des Attributs
+### Attribute union
 
-Une union `mal_attribute_t` est définie pour permettre le polymorphisme d'Attribut.
+A *C* union `mal_attribute_t` is defined to allow the MAL attribute polymorphism.
 
 ```c
 	union mal_attribute_t {
@@ -172,9 +176,10 @@ Une union `mal_attribute_t` est définie pour permettre le polymorphisme d'Attri
 	};
 ```
 
-### Tags d'Attribut
+### Attribute tags
 
-Ces identifiants sont transmis en cas de polymorphisme d'Attribut.
+
+These identifiers are transmitted in case of *MAL Attribute* polymorphism.
 
 ```c
 	#define MAL_BLOB_ATTRIBUTE_TAG 0
@@ -197,19 +202,20 @@ Ces identifiants sont transmis en cas de polymorphisme d'Attribut.
 	#define MAL_URI_ATTRIBUTE_TAG 17
 ```
 
-### Destructeur
+### Destructor
 
-Détruit le contenu de l'union. Ne détruit pas l'union elle-même qui n'est pas une structure allouée.
+Deletes the union content.
+Do not destroy the union itself which is not an allocated structure.
 
 ```c
 	void mal_attribute_destroy(union mal_attribute_t *self_p,
 	    unsigned char attribute_tag);
 ```
 
-Short forms d'Attribut
-----------------------
+Attribute short forms
+---------------------
 
-Ces identifiants sont transmis en cas de polymorphisme d'élément MAL.
+These identifiers are transmitted in case of *MAL Element* polymorphism.
 
 ```c
 	#define MAL_BLOB_SHORT_FORM 0x1000001000001L
