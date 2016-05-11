@@ -21,6 +21,10 @@ unsigned int malbinary_cursor_get_body_length(malbinary_cursor_t *cursor){
   return cursor->body_length;
 }
 
+unsigned int malbinary_cursor_get_body_offset(malbinary_cursor_t *cursor){
+  return cursor->body_offset;
+}
+
 void malbinary_test(bool verbose) {
   printf(" * malbinary: ");
   if (verbose)

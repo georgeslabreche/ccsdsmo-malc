@@ -25,6 +25,7 @@ typedef struct _malbinary_encoder_t malbinary_encoder_t;
 typedef struct _malbinary_decoder_t malbinary_decoder_t;
 
 struct _malbinary_cursor_t {
+  // TODO (AF): Rename fields without 'body' reference
   char* body_ptr;
   unsigned int body_length;
   unsigned int body_offset;
@@ -38,7 +39,9 @@ void malbinary_cursor_init(malbinary_cursor_t *cursor,
 
 void malbinary_cursor_assert(malbinary_cursor_t *cursor);
 
+// TODO (AF): Rename getters without 'body' reference
 unsigned int malbinary_cursor_get_body_length(malbinary_cursor_t *cursor);
+unsigned int malbinary_cursor_get_body_offset(malbinary_cursor_t *cursor);
 
 // The format code must be unique among all the available encoding formats
 #define MALBINARY_FORMAT_CODE 0
