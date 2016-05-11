@@ -36,19 +36,17 @@ typedef struct _maltcp_header_t maltcp_header_t;
 
 int maltcp_add_message_encoding_length(maltcp_header_t *maltcp_header,
     mal_message_t *message, malbinary_encoder_t *encoder,
-    unsigned int *encoding_length);
+    void *cursor);
 
 int maltcp_encode_message(maltcp_header_t *maltcp_header,
-    mal_message_t *message, malbinary_encoder_t *encoder, char *bytes,
-    unsigned int *offset);
+    mal_message_t *message, malbinary_encoder_t *encoder, void *cursor);
 
 int maltcp_decode_message(maltcp_header_t *maltcp_header,
-    mal_message_t *message, malbinary_decoder_t *decoder, char *bytes,
-    unsigned int *offset, unsigned int length,
+    mal_message_t *message, malbinary_decoder_t *decoder, void *cursor,
     mal_uoctet_t *encoding_id, mal_uinteger_t *mal_message_length);
 
 int maltcp_decode_uri_to(maltcp_header_t *maltcp_header,
-	malbinary_decoder_t *decoder, char *bytes, unsigned int *offset, mal_uri_t **uri_to);
+	malbinary_decoder_t *decoder, char *bytes, unsigned int length, mal_uri_t **uri_to);
 
 void maltcp_test(bool verbose);
 
