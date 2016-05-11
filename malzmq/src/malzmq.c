@@ -232,8 +232,7 @@ int malzmq_add_identifier_encoding_length(mal_identifier_t *to_encode,
 }
 
 int malzmq_add_identifier_list_encoding_length(mal_identifier_list_t *to_encode,
-    malzmq_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
-    void *cursor) {
+    malzmq_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder, void *cursor) {
   int rc = 0;
   unsigned int list_size = mal_identifier_list_get_element_count(to_encode);
   malbinary_encoder_add_list_size_encoding_length(encoder, list_size, cursor);
@@ -428,8 +427,7 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
   bool network_zone_flag = malzmq_header_get_network_zone_flag(malzmq_header);
   bool session_name_flag = malzmq_header_get_session_name_flag(malzmq_header);
   bool domain_flag = malzmq_header_get_domain_flag(malzmq_header);
-  bool authentication_id_flag = malzmq_header_get_authentication_id_flag(
-      malzmq_header);
+  bool authentication_id_flag = malzmq_header_get_authentication_id_flag(malzmq_header);
 
   ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++] = (char) (priority_flag << 5) | (timestamp_flag << 4)
           | (network_zone_flag << 3) | (session_name_flag << 2) | (domain_flag << 1)
@@ -476,7 +474,7 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
   unsigned int body_offset = mal_message_get_body_offset(message);
   unsigned int body_length = mal_message_get_body_length(message);
 
-  char *bytes= ((malbinary_cursor_t *) cursor)->body_ptr;
+  char *bytes = ((malbinary_cursor_t *) cursor)->body_ptr;
   unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
 
   memcpy(bytes + index, body + body_offset, body_length);
@@ -519,7 +517,8 @@ int malzmq_decode_uri(malzmq_mapping_directory_t *mapping_directory,
 }
 
 int malzmq_decode_uri_to(malzmq_header_t *malzmq_header,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int length, mal_uri_t **uri_to) {
+    malbinary_decoder_t *decoder, char *bytes, unsigned int length,
+    mal_uri_t **uri_to) {
   // TODO (AF): Use virtual allocation and initialization functions from encoder.
   malbinary_cursor_t cursor;
   malbinary_cursor_init(&cursor, bytes, length, 0);
@@ -535,8 +534,9 @@ int malzmq_decode_uri_to(malzmq_header_t *malzmq_header,
   // +1 bytes: flags
   cursor.body_offset += 1 + 2 * 3 + 1 + 1 + 8 + 1;
 
-  // this ordering is not consistent with the blue book proposal
-  // Read the 'URI From' length
+  // Note: this ordering is not consistent with the blue book proposal
+
+  // Go beyond the 'URI From'
   int opt_mdk = malbinary_read32(&cursor);
   if (opt_mdk >= 0)
     cursor.body_offset += opt_mdk;
