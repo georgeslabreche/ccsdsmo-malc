@@ -118,24 +118,31 @@ int pubsub_app_mypublisher_initialize(void *self, mal_actor_t *mal_actor) {
   // TODO: add missing parameters in EntityKey constructor
   entitykey_list_content[0] = mal_entitykey_new();
 
-  unsigned int body_length = 0;
+  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+  malbinary_cursor_t cursor_pubreg;
+  malbinary_cursor_reset(&cursor_pubreg);
+
   rc = mal_publish_register_add_encoding_length_entitykey_list(
       publisher->encoding_format_code, publisher->encoder, entitykey_list,
-      &body_length);
+      &cursor_pubreg);
   if (rc < 0)
     return rc;
 
   mal_message_t *publish_register_message = mal_message_new(
       publisher->authentication_id, publisher->qoslevel, publisher->priority,
       publisher->domain, publisher->network_zone, publisher->session,
-      publisher->session_name, body_length);
+      publisher->session_name, malbinary_cursor_get_body_length(&cursor_pubreg));
 
-  unsigned int offset = mal_message_get_body_offset(publish_register_message);
-  char *bytes = mal_message_get_body(publish_register_message);
+  // TODO (AF): Use a virtual function
+  malbinary_cursor_init(&cursor_pubreg,
+      mal_message_get_body(publish_register_message),
+      malbinary_cursor_get_body_length(&cursor_pubreg),
+      mal_message_get_body_offset(publish_register_message));
 
   rc = mal_publish_register_encode_entitykey_list(
-      publisher->encoding_format_code, bytes, &offset, publisher->encoder,
+      publisher->encoding_format_code, &cursor_pubreg, publisher->encoder,
       entitykey_list);
+  malbinary_cursor_assert(&cursor_pubreg);
   if (rc < 0)
     return rc;
 
@@ -146,8 +153,7 @@ int pubsub_app_mypublisher_initialize(void *self, mal_actor_t *mal_actor) {
     return rc;
 
   // Keep the Publish Register transaction id
-  long initial_publish_register_tid = mal_message_get_transaction_id(
-      publish_register_message);
+  long initial_publish_register_tid = mal_message_get_transaction_id(publish_register_message);
 
   mal_entitykey_list_destroy(&entitykey_list);
 
@@ -179,37 +185,43 @@ int pubsub_app_mypublisher_initialize(void *self, mal_actor_t *mal_actor) {
       testarea_testservice_testupdate_list_get_content(testupdate_list);
   update_list_content[0] = update;
 
-  body_length = 0;
+  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+  malbinary_cursor_t cursor_pub;
+  malbinary_cursor_reset(&cursor_pub);
+
   rc = mal_publish_add_encoding_length_updateheader_list(
       publisher->encoding_format_code, publisher->encoder, updateheader_list,
-      &body_length);
+      &cursor_pub);
   if (rc < 0)
     return rc;
 
   rc = testarea_testservice_testmonitor_update_add_encoding_length_0(
       publisher->encoding_format_code, publisher->encoder, testupdate_list,
-      &body_length);
+      &cursor_pub);
   if (rc < 0)
     return rc;
 
   mal_message_t *publish_message = mal_message_new(publisher->authentication_id,
       publisher->qoslevel, publisher->priority, publisher->domain,
       publisher->network_zone, publisher->session, publisher->session_name,
-      body_length);
+      malbinary_cursor_get_body_length(&cursor_pub));
 
-  //unsigned int offset;
-  //char *bytes;
-  offset = mal_message_get_body_offset(publish_message);
-  bytes = mal_message_get_body(publish_message);
+  // TODO (AF): Use a virtual function
+  malbinary_cursor_init(&cursor_pub,
+      mal_message_get_body(publish_message),
+      malbinary_cursor_get_body_length(&cursor_pub),
+      mal_message_get_body_offset(publish_message));
 
   rc = mal_publish_encode_updateheader_list(publisher->encoding_format_code,
-      bytes, &offset, publisher->encoder, updateheader_list);
+      &cursor_pub, publisher->encoder, updateheader_list);
+  malbinary_cursor_assert(&cursor_pub);
   if (rc < 0)
     return rc;
 
   rc = testarea_testservice_testmonitor_update_encode_0(
-      publisher->encoding_format_code, bytes, &offset, publisher->encoder,
+      publisher->encoding_format_code, &cursor_pub, publisher->encoder,
       testupdate_list);
+  malbinary_cursor_assert(&cursor_pub);
   if (rc < 0)
     return rc;
 

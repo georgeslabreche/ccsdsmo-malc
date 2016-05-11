@@ -334,12 +334,19 @@ int pubsub_app_broker_on_register(void *self, mal_ctx_t *mal_ctx,
   pubsub_app_broker_t *broker = (pubsub_app_broker_t *) self;
 
   // Get response parameter.
-  unsigned int offset = mal_message_get_body_offset(message);
-  char *bytes = mal_message_get_body(message);
-  printf("pubsub_app_broker_on_register: offset=%d\n", offset);
+
+  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+  malbinary_cursor_t cursor;
+  malbinary_cursor_init(&cursor,
+      mal_message_get_body(message),
+      mal_message_get_body_offset(message) + mal_message_get_body_length(message),
+      mal_message_get_body_offset(message));
+
+  printf("pubsub_app_broker_on_register: offset=%d\n", mal_message_get_body_offset(message));
 
   mal_subscription_t *mal_subscription = mal_subscription_new();
-  rc = mal_register_decode(broker->encoding_format_code, bytes, &offset, broker->decoder, &mal_subscription);
+  rc = mal_register_decode(broker->encoding_format_code, &cursor, broker->decoder, &mal_subscription);
+  malbinary_cursor_assert(&cursor);
   assert(rc == 0);
 
   mal_identifier_t *subscriptionid = mal_subscription_get_subscriptionid(mal_subscription);
@@ -380,12 +387,18 @@ int pubsub_app_broker_on_deregister(void *self, mal_ctx_t *mal_ctx,
    pubsub_app_broker_t *broker = (pubsub_app_broker_t *) self;
 
    // Get response parameter.
-   unsigned int offset = mal_message_get_body_offset(message);
-   char *bytes = mal_message_get_body(message);
-   printf("pubsub_app_broker_on_register: offset=%d\n", offset);
+
+   // TODO (AF): Use virtual allocation and initialization functions from encoder.
+   malbinary_cursor_t cursor;
+   malbinary_cursor_init(&cursor,
+       mal_message_get_body(message),
+       mal_message_get_body_offset(message) + mal_message_get_body_length(message),
+       mal_message_get_body_offset(message));
+
+   printf("pubsub_app_broker_on_register: offset=%d\n", mal_message_get_body_offset(message));
 
    mal_subscription_t *mal_subscription = mal_subscription_new();
-   rc = mal_register_decode(broker->encoding_format_code, bytes, &offset, broker->decoder, &mal_subscription);
+   rc = mal_register_decode(broker->encoding_format_code, &cursor, broker->decoder, &mal_subscription);
    assert(rc == 0);
 
    mal_identifier_t *subscriptionid = mal_subscription_get_subscriptionid(mal_subscription);

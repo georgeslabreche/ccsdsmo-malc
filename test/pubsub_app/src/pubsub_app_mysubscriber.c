@@ -130,22 +130,27 @@ int pubsub_app_mysubscriber_initialize(void *self, mal_actor_t *mal_actor) {
   */
   mal_subscription_set_entities(subscription, entities);
 
-  unsigned int body_length = 0;
+  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+  malbinary_cursor_t register_cursor;
+  malbinary_cursor_reset(&register_cursor);
 
   rc = mal_register_add_encoding_length(subscriber->encoding_format_code,
-      subscriber->encoder, subscription, &body_length);
+      subscriber->encoder, subscription, &register_cursor);
   if (rc < 0)
     return rc;
 
   mal_message_t *register_message = mal_message_new(
       subscriber->authentication_id, subscriber->qoslevel, subscriber->priority,
       subscriber->domain, subscriber->network_zone, subscriber->session,
-      subscriber->session_name, body_length);
+      subscriber->session_name, malbinary_cursor_get_body_length(&register_cursor));
 
-  unsigned int offset = mal_message_get_body_offset(register_message);
-  char *bytes = mal_message_get_body(register_message);
+  // TODO (AF): Use a virtual function
+  malbinary_cursor_init(&register_cursor,
+      mal_message_get_body(register_message),
+      malbinary_cursor_get_body_length(&register_cursor),
+      mal_message_get_body_offset(register_message));
 
-  rc = mal_register_encode(subscriber->encoding_format_code, bytes, &offset, subscriber->encoder, subscription);
+  rc = mal_register_encode(subscriber->encoding_format_code, &register_cursor, subscriber->encoder, subscription);
   assert(rc == 0);
 
   printf("=== register send... %s\n", broker_uri);
@@ -188,9 +193,12 @@ int pubsub_app_mysubscriber_testnotify(void *self, mal_ctx_t *mal_ctx,
       mal_message_get_interaction_stage(message),
       mal_message_is_error_message(message));
 
-  // Get response parameter.
-  unsigned int offset = mal_message_get_body_offset(message);
-  char *bytes = mal_message_get_body(message);
+  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+  malbinary_cursor_t cursor;
+  malbinary_cursor_init(&cursor,
+      mal_message_get_body(message),
+      mal_message_get_body_offset(message) + mal_message_get_body_length(message),
+      mal_message_get_body_offset(message));
 
   /*
   mal_identifier_t *subscriptionid;
@@ -202,7 +210,8 @@ int pubsub_app_mysubscriber_testnotify(void *self, mal_ctx_t *mal_ctx,
 
   mal_updateheader_list_t *updateheader_list;
   rc = mal_publish_decode_updateheader_list(subscriber->encoding_format_code,
-      bytes, &offset, subscriber->decoder, &updateheader_list);
+      &cursor, subscriber->decoder, &updateheader_list);
+  malbinary_cursor_assert(&cursor);
   if (rc < 0)
     return rc;
 
@@ -216,7 +225,8 @@ int pubsub_app_mysubscriber_testnotify(void *self, mal_ctx_t *mal_ctx,
   printf("== testupdate_list\n");
   testarea_testservice_testupdate_list_t *parameter_0;
   rc = testarea_testservice_testmonitor_update_decode_0(subscriber->encoding_format_code,
-      bytes, &offset, subscriber->decoder, &parameter_0);
+      &cursor, subscriber->decoder, &parameter_0);
+  malbinary_cursor_assert(&cursor);
   assert(rc == 0);
 
   // process the update list
