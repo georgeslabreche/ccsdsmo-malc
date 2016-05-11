@@ -13,6 +13,10 @@ void malbinary_cursor_init(malbinary_cursor_t *cursor,
   cursor->body_offset = offset;
 }
 
+void malbinary_cursor_assert(malbinary_cursor_t *cursor) {
+  assert(cursor->body_offset <= cursor->body_length);
+}
+
 unsigned int malbinary_cursor_get_body_length(malbinary_cursor_t *cursor){
   return cursor->body_length;
 }
