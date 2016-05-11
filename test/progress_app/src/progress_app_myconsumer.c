@@ -123,7 +123,7 @@ int progress_app_myconsumer_initialize(void *self, mal_actor_t *mal_actor) {
 
   // TODO (AF): Use virtual allocation and initialization functions from encoder.
   malbinary_cursor_t cursor;
-  malbinary_cursor_initialize(&cursor);
+  malbinary_cursor_reset(&cursor);
 
   printf("progress_app_myconsumer: encoding_length_0\n");
   rc = testarea_testservice_testprogress_progress_add_encoding_length_0(
@@ -224,10 +224,10 @@ int progress_app_myconsumer_testarea_testservice_testprogress_response(
 //	char *bytes = mal_message_get_body(message);
   // TODO (AF): Use virtual allocation and initialization functions from encoder.
   malbinary_cursor_t cursor;
-  malbinary_cursor_initialize(&cursor);
-  cursor.body_ptr = mal_message_get_body(message);
-  cursor.body_offset = mal_message_get_body_offset(message);
-  cursor.body_length = mal_message_get_body_offset(message) + mal_message_get_body_length(message);
+  malbinary_cursor_init(&cursor,
+      mal_message_get_body(message),
+      mal_message_get_body_offset(message) + mal_message_get_body_length(message),
+      mal_message_get_body_offset(message));
 
 	printf("progress_app_myprovider: offset=%d\n", mal_message_get_body_offset(message));
 

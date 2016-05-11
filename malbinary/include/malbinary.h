@@ -32,9 +32,10 @@ struct _malbinary_cursor_t {
 
 typedef struct _malbinary_cursor_t malbinary_cursor_t;
 
-void  malbinary_cursor_initialize(malbinary_cursor_t *cursor);
+void malbinary_cursor_reset(malbinary_cursor_t *cursor);
+void malbinary_cursor_init(malbinary_cursor_t *cursor,
+    char *bytes, unsigned int length, unsigned int offset);
 unsigned int malbinary_cursor_get_body_length(malbinary_cursor_t *cursor);
-//void malbinary_cursor_map_message(malbinary_cursor_t *cursor, mal_message_t *message);
 
 // The format code must be unique among all the available encoding formats
 #define MALBINARY_FORMAT_CODE 0

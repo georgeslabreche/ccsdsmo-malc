@@ -1,15 +1,17 @@
 #include "malbinary.h"
 
-void  malbinary_cursor_initialize(malbinary_cursor_t *cursor) {
+void  malbinary_cursor_reset(malbinary_cursor_t *cursor) {
   cursor->body_ptr = (char *) 0;
   cursor->body_length = 0;
   cursor->body_offset = 0;
 }
 
-//void malbinary_cursor_map_message(malbinary_cursor_t *cursor, mal_message_t *message) {
-//  cursor->body_ptr = mal_message_get_body(message);
-//  cursor->body_offset = mal_message_get_body_offset(message);
-//}
+void malbinary_cursor_init(malbinary_cursor_t *cursor,
+    char *bytes, unsigned int length, unsigned int offset) {
+  cursor->body_ptr = bytes;
+  cursor->body_length = length;
+  cursor->body_offset = offset;
+}
 
 unsigned int malbinary_cursor_get_body_length(malbinary_cursor_t *cursor){
   return cursor->body_length;

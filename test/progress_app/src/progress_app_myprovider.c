@@ -98,10 +98,10 @@ int progress_app_myprovider_testarea_testservice_testprogress(
 //  char *bytes = mal_message_get_body(message);
   // TODO (AF): Use virtual allocation and initialization functions from encoder.
   malbinary_cursor_t cursor;
-  malbinary_cursor_initialize(&cursor);
-  cursor.body_ptr = mal_message_get_body(message);
-  cursor.body_offset = mal_message_get_body_offset(message);
-  cursor.body_length = mal_message_get_body_offset(message) + mal_message_get_body_length(message);
+  malbinary_cursor_init(&cursor,
+      mal_message_get_body(message),
+      mal_message_get_body_offset(message) + mal_message_get_body_length(message),
+      mal_message_get_body_offset(message));
 
   printf("progress_app_myprovider: offset=%d\n", mal_message_get_body_offset(message));
 
@@ -181,7 +181,7 @@ int progress_app_myprovider_testarea_testservice_testprogress(
 
   // TODO (AF): Use virtual allocation and initialization functions from encoder.
   malbinary_cursor_t cursor_r;
-  malbinary_cursor_initialize(&cursor_r);
+  malbinary_cursor_reset(&cursor_r);
 //  unsigned int body_length = 0;
 
   printf("progress_app_myprovider: encoding_length_0\n");
@@ -201,11 +201,11 @@ int progress_app_myprovider_testarea_testservice_testprogress(
 		  mal_message_get_session_name(message),
 		  malbinary_cursor_get_body_length(&cursor_r));
 
-    // TODO (AF): Use a virtual function
-  cursor_r.body_ptr = mal_message_get_body(result_message);
-  cursor_r.body_offset = mal_message_get_body_offset(result_message);
-//  unsigned int offset_r = mal_message_get_body_offset(result_message);
-//  char *bytes_r = mal_message_get_body(result_message);
+  // TODO (AF): Use a virtual function
+  malbinary_cursor_init(&cursor_r,
+      mal_message_get_body(result_message),
+      mal_message_get_body_offset(result_message) + mal_message_get_body_length(result_message),
+      mal_message_get_body_offset(result_message));
 
   printf("progress_app_myprovider: encode 0\n");
   rc = testarea_testservice_testprogress_progress_response_encode_0(

@@ -496,7 +496,7 @@ int malzmq_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
 
   // TODO (AF): Use virtual allocation and initialization functions from encoder.
   malbinary_cursor_t cursor;
-  malbinary_cursor_initialize(&cursor);
+  malbinary_cursor_reset(&cursor);
 //  unsigned int encoding_length = 0;
 
   // TODO: In a first time we should separate the header and body size in order to send them
@@ -582,9 +582,7 @@ int malzmq_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
     // may be used at the application layer for the message body).
     // TODO (AF): Use virtual allocation and initialization functions from encoder.
     malbinary_cursor_t cursor;
-    malbinary_cursor_initialize(&cursor);
-    cursor.body_ptr = (char *) mal_msg_bytes;
-    cursor.body_length = mal_msg_bytes_length;
+	  malbinary_cursor_init(&cursor, (char *) mal_msg_bytes, mal_msg_bytes_length, 0);
 
     // 'malzmq' encoding format of the MAL header
     if (malzmq_decode_message(malzmq_ctx->malzmq_header, *message,

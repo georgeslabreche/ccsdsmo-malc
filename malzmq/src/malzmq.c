@@ -522,10 +522,8 @@ int malzmq_decode_uri_to(malzmq_header_t *malzmq_header,
     malbinary_decoder_t *decoder, char *bytes, unsigned int length, mal_uri_t **uri_to) {
   // TODO (AF): Use virtual allocation and initialization functions from encoder.
   malbinary_cursor_t cursor;
-  malbinary_cursor_initialize(&cursor);
-  cursor.body_ptr = bytes;
-  cursor.body_length = length;
-
+  malbinary_cursor_init(&cursor, bytes, length, 0);
+  
   // 'URI To' offset
   // +1 byte: version + sdu type
   // +2 bytes: service area
