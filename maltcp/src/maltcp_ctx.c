@@ -271,63 +271,95 @@ mal_uri_t *get_ps_uri(maltcp_ctx_t *self, mal_uri_t *uri) {
 }
 */
 
+mal_uinteger_t maltcp_decode_body_length(char *bytes, unsigned int length) {
+  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+  malbinary_cursor_t cursor;
+
+  // 'URI To' offset
+  // +1 byte: version + sdu type
+  // +2 bytes: service area
+  // +2 bytes: service
+  // +2 bytes: operation
+  // +1 bytes: area version
+  // +1 bytes: is error message + qos level + session
+  // +8 bytes: transaction id
+  // +1 bytes: flags
+  // +1 bytes: encoding id
+  // +4 bytes: body length
+
+  malbinary_cursor_init(&cursor, bytes, length, 1 + 2 * 3 + 1 + 1 + 8 + 1 + 1);
+  return malbinary_read32(&cursor);
+}
+
 // zloop_fn interface for standard socket
 int maltcp_ctx_mal_standard_socket_handle(zloop_t *loop, zmq_pollitem_t *poller, void *arg) {
   maltcp_ctx_t *self = (maltcp_ctx_t *) arg;
 
-  mal_uoctet_t id [256];
+  mal_uoctet_t id[256];
   mal_uinteger_t id_size = 0;
 
-  mal_uinteger_t mal_msg_bytes_length;
+  mal_uinteger_t mal_msg_bytes_length = -1;
   zmq_msg_t zmsg;
-  mal_uinteger_t offset =0;
-  while (true) {
-    id_size = zmq_recv (self->mal_socket, id, 256, 0);
-    assert (id_size > 0);
+  char *data;
+  mal_uinteger_t offset = 0;
 
+  while (true) {
+    id_size = zmq_recv(self->mal_socket, id, 256, 0);
+    assert(id_size > 0);
+
+    // Create an empty ØMQ message to hold the message part
     zmq_msg_t msg;
-    //  Create an empty ØMQ message to hold the message part
     int rc = zmq_msg_init(&msg);
     assert (rc == 0);
 
     //  Block until a message is available to be received from socket
     rc = zmq_recvmsg(self->mal_socket, &msg, 0);
+    clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: receive = %d bytes\n", rc);
     assert (rc != -1);
 
     if (rc == 0)
       return 0;
 
-    if (rc >= HEADER_LENGTH && offset == 0) {
-      mal_uinteger_t offset_body_length = 19;
-      mal_msg_bytes_length = malbinary_read32((char *)zmq_msg_data(&msg), &offset_body_length);
-      clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: message size = %d\n", mal_msg_bytes_length);
+    // TODO (AF): There is an issue if the first read returns less than HEADER_LENGTH bytes !!
+    if (mal_msg_bytes_length == -1) {
+      assert(rc >= HEADER_LENGTH);
+
+      // First read, get the message size in the header
+      mal_msg_bytes_length = maltcp_decode_body_length((char *) zmq_msg_data(&msg), offset+rc);
+      clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: should read = %d bytes\n", mal_msg_bytes_length);
+
       if (rc == mal_msg_bytes_length) {
-        clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: read size = %d, end.\n", rc);
+        // The message is completely received in one shot.
+        clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: whole message received, end.\n", rc);
         zmsg = msg;
+        // Returns without closing the incoming message
         break;
+      } else {
+        // There is more data to read allocates a message to contain the whole message.
+        zmq_msg_init_size(&zmsg, mal_msg_bytes_length);
+        data = (char*)zmq_msg_data(&zmsg);
+        offset = 0;
       }
     }
 
-    if ((offset+rc) < mal_msg_bytes_length) {
-      clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: read size = %d, more (continue)\n", rc);
-      zmq_msg_init_size(&zmsg, mal_msg_bytes_length);
-      char *data = (char*)zmq_msg_data(&zmsg);
-      memcpy(data+offset, zmq_msg_data(&msg), rc);
-    } else {
-      //last read
-      clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: read size = %d, last.\n", rc);
-      char *data = (char*)zmq_msg_data(&zmsg);
-      memcpy(data+offset, zmq_msg_data(&msg), rc);
+    // Copy data to the message
+    memcpy(data+offset, zmq_msg_data(&msg), rc);
+    offset += rc;
+    clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: %d bytes received\n", offset);
+    zmq_msg_close(&msg);
+
+    if (offset == mal_msg_bytes_length) {
+      // The message is entirely read, return.
+      clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: whole message received, end.\n");
       break;
     }
-    offset += rc;
-    zmq_msg_close(&msg);
   }
 
   if (zmq_msg_size(&zmsg) > 0) {
-    clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: received size = %d\n", zmq_msg_size(&zmsg));
+    clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: receive message, size = %d\n", zmq_msg_size(&zmsg));
     return maltcp_ctx_mal_socket_handle(loop, poller, self, &zmsg, mal_msg_bytes_length, false);
   }
+
   return 0;
 }
 
@@ -353,10 +385,9 @@ int maltcp_ctx_mal_socket_handle(zloop_t *loop, zmq_pollitem_t *poller,
   if (zmsg != NULL) {
     clog_debug(maltcp_logger, "maltcp_ctx: received msg, decoding...\n");
 
-    unsigned int offset = 0;
     mal_uri_t *uri_to;
     if (maltcp_decode_uri_to(self->maltcp_header,
-        self->decoder, (char *)zmq_msg_data(zmsg), &offset, &uri_to) != 0) {
+        self->decoder, (char *) zmq_msg_data(zmsg), zmq_msg_size(zmsg), &uri_to) != 0) {
       clog_error(maltcp_logger, "maltcp_ctx_mal_socket_handle, could not decode uri_to\n");
       return -1;
     }
@@ -557,7 +588,9 @@ int maltcp_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
 
   clog_debug(maltcp_logger, "maltcp_ctx: mal_message_add_encoding_length_malbinary\n");
 
-  unsigned int encoding_length = 0;
+  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+  malbinary_cursor_t cursor;
+  malbinary_cursor_reset(&cursor);
 
   // TODO: In a first time we should separate the header and body size in order to send them
   // in separate frames. In a second time we should cut the message in multiples frames.
@@ -568,25 +601,30 @@ int maltcp_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
   // we should creates and send 2 frames
 
   // 'maltcp' encoding format of the MAL header
-  rc = maltcp_add_message_encoding_length(maltcp_ctx->maltcp_header, mal_message, maltcp_ctx->encoder, &encoding_length);
+  rc = maltcp_add_message_encoding_length(maltcp_ctx->maltcp_header, mal_message, maltcp_ctx->encoder, &cursor);
   if (rc < 0)
     return rc;
 
-  clog_debug(maltcp_logger, "maltcp_ctx: encoding_length=%d\n", encoding_length);
+  clog_debug(maltcp_logger, "maltcp_ctx: encoding_length=%d\n", malbinary_cursor_get_body_length(&cursor));
 
-  char *bytes = (char *) malloc(encoding_length);
+  // TODO (AF): Replace by a virtual function
+  malbinary_cursor_init(&cursor,
+      (char *) malloc(malbinary_cursor_get_body_length(&cursor)),
+      malbinary_cursor_get_body_length(&cursor),
+      0);
+  // TODO (AF): to remove
+//  char *bytes = (char *) malloc(encoding_length);
+//  unsigned int offset = 0;
 
   clog_debug(maltcp_logger, "maltcp_ctx: mal_message_encode_malbinary\n");
 
-  unsigned int offset = 0;
-
   // 'maltcp' encoding format of the MAL header
-  rc = maltcp_encode_message(maltcp_ctx->maltcp_header, mal_message,
-      maltcp_ctx->encoder, bytes, &offset);
+  rc = maltcp_encode_message(maltcp_ctx->maltcp_header, mal_message, maltcp_ctx->encoder, &cursor);
+  assert(cursor.body_length == cursor.body_offset);
   if (rc < 0)
     return rc;
 
-  clog_debug(maltcp_logger, "maltcp_ctx: message is encoded: %d bytes\n", offset);
+  clog_debug(maltcp_logger, "maltcp_ctx: message is encoded: %d bytes\n", malbinary_cursor_get_body_offset(&cursor));
 
   //zframe_t *frame = zframe_new(bytes, encoding_length);
   clog_debug(maltcp_logger, "maltcp_ctx: send zmq message\n");
@@ -606,8 +644,8 @@ int maltcp_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
 
     /* Sends the ID frame followed by the response */
     zmq_send (socket, id, id_size, ZMQ_SNDMORE);
-    zmq_send (socket, (char *) bytes, offset, 0);
-    clog_debug(maltcp_logger, "maltcp_ctx: zmq message (%d) sended.\n", offset);
+    zmq_send (socket, cursor.body_ptr, malbinary_cursor_get_body_length(&cursor), 0);
+    clog_debug(maltcp_logger, "maltcp_ctx: zmq message (%d) sended.\n", malbinary_cursor_get_body_length(&cursor));
 
     /* TODO: use zmq_msg_* ?
     zmq_msg_t msg;
@@ -668,18 +706,22 @@ int maltcp_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
 
     // MALTCP always uses the 'malbinary' encoding format for the messages encoding (another format
     // may be used at the application layer for the message body).
-    unsigned int offset = 0;
+
+    // TODO (AF): Use virtual allocation and initialization functions from encoder.
+    malbinary_cursor_t cursor;
+    malbinary_cursor_init(&cursor, (char *) mal_msg_bytes, mal_msg_bytes_length, 0);
 
     mal_uoctet_t encoding_id;
     mal_uinteger_t mal_message_length;
 
     // 'maltcp' encoding format of the MAL header
     if (maltcp_decode_message(maltcp_ctx->maltcp_header, *message,
-        maltcp_ctx->decoder, (char *) mal_msg_bytes, &offset,
-        mal_msg_bytes_length, &encoding_id, &mal_message_length) != 0) {
+        maltcp_ctx->decoder, &cursor, &encoding_id, &mal_message_length) != 0) {
       clog_error(maltcp_logger, "maltcp_ctx_recv_message, cannot decode message\n");
       return -1;
     }
+    // TODO (AF): Remove mal_message_length
+    assert(mal_msg_bytes_length == mal_message_length);
 
     // Destroy must free the tcp frame
     mal_message_set_body_owner(*message, frame);
