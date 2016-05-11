@@ -36,6 +36,7 @@ typedef struct _malbinary_cursor_t malbinary_cursor_t;
 void malbinary_cursor_reset(malbinary_cursor_t *cursor);
 void malbinary_cursor_init(malbinary_cursor_t *cursor,
     char *bytes, unsigned int length, unsigned int offset);
+void malbinary_cursor_copy(malbinary_cursor_t *from, malbinary_cursor_t *to);
 
 void malbinary_cursor_assert(malbinary_cursor_t *cursor);
 

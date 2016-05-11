@@ -13,6 +13,12 @@ void malbinary_cursor_init(malbinary_cursor_t *cursor,
   cursor->body_offset = offset;
 }
 
+void malbinary_cursor_copy(malbinary_cursor_t *from, malbinary_cursor_t *to) {
+  to->body_ptr = from->body_ptr;
+  to->body_length = from->body_length;
+  to->body_offset = from->body_offset;
+}
+
 void malbinary_cursor_assert(malbinary_cursor_t *cursor) {
   assert(cursor->body_offset <= cursor->body_length);
 }
