@@ -201,7 +201,7 @@ static mal_uoctet_t convert_to_interaction_stage(int sduType) {
 // internal functions, should not be visible from outside this module
 int malzmq_add_string_encoding_length(mal_string_t *to_encode,
     malzmq_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
-    unsigned int *encoding_length) {
+    void *cursor) {
   int rc = 0;
   bool mdk_encode = false;
   unsigned int md_key;
@@ -212,39 +212,38 @@ int malzmq_add_string_encoding_length(mal_string_t *to_encode,
       mdk_encode = true;
   }
   if (mdk_encode) {
-    (*encoding_length) += 4;
+    ((malbinary_cursor_t *) cursor)->body_length += 4;
   } else {
-    rc = malbinary_encoder_add_string_encoding_length(encoder, to_encode, encoding_length);
+    rc = malbinary_encoder_add_string_encoding_length(encoder, to_encode, cursor);
   }
   return rc;
 }
 
 int malzmq_add_uri_encoding_length(mal_uri_t *to_encode,
     malzmq_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
-    unsigned int *encoding_length) {
-  return malzmq_add_string_encoding_length(to_encode, mapping_directory, encoder, encoding_length);
+    void *cursor) {
+  return malzmq_add_string_encoding_length(to_encode, mapping_directory, encoder, cursor);
 }
 
 int malzmq_add_identifier_encoding_length(mal_identifier_t *to_encode,
     malzmq_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
-    unsigned int *encoding_length) {
-  return malzmq_add_string_encoding_length(to_encode, mapping_directory, encoder, encoding_length);
+    void *cursor) {
+  return malzmq_add_string_encoding_length(to_encode, mapping_directory, encoder, cursor);
 }
 
 int malzmq_add_identifier_list_encoding_length(mal_identifier_list_t *to_encode,
     malzmq_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
-    unsigned int *encoding_length) {
+    void *cursor) {
   int rc = 0;
   unsigned int list_size = mal_identifier_list_get_element_count(to_encode);
-  malbinary_encoder_add_list_size_encoding_length(encoder, list_size,
-      encoding_length);
+  malbinary_encoder_add_list_size_encoding_length(encoder, list_size, cursor);
   // Presence flags
-  (*encoding_length) += list_size;
+  ((malbinary_cursor_t *) cursor)->body_length += list_size;
   mal_identifier_t **content = mal_identifier_list_get_content(to_encode);
   for (int i = 0; i < list_size; i++) {
     mal_identifier_t *list_element = content[i];
     if (list_element != NULL) {
-      rc = malzmq_add_identifier_encoding_length(list_element, mapping_directory, encoder, encoding_length);
+      rc = malzmq_add_identifier_encoding_length(list_element, mapping_directory, encoder, cursor);
       if (rc < 0)
         return rc;
     }
@@ -254,7 +253,7 @@ int malzmq_add_identifier_list_encoding_length(mal_identifier_list_t *to_encode,
 
 int malzmq_add_message_encoding_length(malzmq_header_t *malzmq_header,
     mal_message_t *message, malbinary_encoder_t *encoder,
-    unsigned int *encoding_length) {
+    void *cursor) {
   int rc = 0;
 
   clog_debug(malbinary_encoder_get_logger(encoder), "malzmq_add_message_encoding_length()\n");
@@ -267,14 +266,14 @@ int malzmq_add_message_encoding_length(malzmq_header_t *malzmq_header,
   // +1 bytes: is error message + qos level + session
   // +8 bytes: transaction id
   // +1 byte: flags
-  (*encoding_length) += 1 + 2 * 3 + 1 + 1 + 8 + 1;
+  ((malbinary_cursor_t *) cursor)->body_length += 1 + 2 * 3 + 1 + 1 + 8 + 1;
 
   // always encode 'URI From' and 'URI To'
   rc = malzmq_add_uri_encoding_length(mal_message_get_uri_from(message),
-      malzmq_header_get_mapping_directory(malzmq_header), encoder, encoding_length);
+      malzmq_header_get_mapping_directory(malzmq_header), encoder, cursor);
   if (rc < 0) return rc;
   rc = malzmq_add_uri_encoding_length(mal_message_get_uri_to(message),
-      malzmq_header_get_mapping_directory(malzmq_header), encoder, encoding_length);
+      malzmq_header_get_mapping_directory(malzmq_header), encoder, cursor);
   if (rc < 0) return rc;
 
   bool priority_flag = malzmq_header_get_priority_flag(malzmq_header);
@@ -287,41 +286,41 @@ int malzmq_add_message_encoding_length(malzmq_header_t *malzmq_header,
 
   if (priority_flag > 0) {
     rc = malbinary_encoder_add_uinteger_encoding_length(encoder,
-        mal_message_get_priority(message), encoding_length);
+        mal_message_get_priority(message), cursor);
     if (rc < 0) return rc;
   }
 
   if (timestamp_flag > 0) {
     rc = malbinary_encoder_add_time_encoding_length(encoder,
-        mal_message_get_timestamp(message), encoding_length);
+        mal_message_get_timestamp(message), cursor);
     if (rc < 0) return rc;
   }
 
   if (network_zone_flag > 0) {
     rc = malzmq_add_identifier_encoding_length(mal_message_get_network_zone(message),
-        malzmq_header_get_mapping_directory(malzmq_header), encoder, encoding_length);
+        malzmq_header_get_mapping_directory(malzmq_header), encoder, cursor);
     if (rc < 0) return rc;
   }
 
   if (session_name_flag > 0) {
     rc = malzmq_add_identifier_encoding_length(mal_message_get_session_name(message),
-        malzmq_header_get_mapping_directory(malzmq_header), encoder, encoding_length);
+        malzmq_header_get_mapping_directory(malzmq_header), encoder, cursor);
     if (rc < 0) return rc;
   }
 
   if (domain_flag > 0) {
     rc = malzmq_add_identifier_list_encoding_length(mal_message_get_domain(message),
-        malzmq_header_get_mapping_directory(malzmq_header), encoder, encoding_length);
+        malzmq_header_get_mapping_directory(malzmq_header), encoder, cursor);
     if (rc < 0) return rc;
   }
 
   if (authentication_id_flag > 0) {
     rc = malbinary_encoder_add_blob_encoding_length(encoder,
-        mal_message_get_authentication_id(message), encoding_length);
+        mal_message_get_authentication_id(message), cursor);
     if (rc < 0) return rc;
   }
 
-  (*encoding_length) += mal_message_get_body_length(message);
+  ((malbinary_cursor_t *) cursor)->body_length += mal_message_get_body_length(message);
 
   return rc;
 }
@@ -331,7 +330,7 @@ int malzmq_encode_string(
     mal_string_t *to_encode,
     malzmq_mapping_directory_t *mapping_directory,
     malbinary_encoder_t *encoder,
-    char *bytes, unsigned int *offset) {
+    void *cursor) {
   int rc = 0;
   bool mdk_encode = false;
   unsigned int md_key;
@@ -349,7 +348,7 @@ int malzmq_encode_string(
       return -1;
     }
     // TODO: varint
-    malbinary_write32(opt_mdk, bytes, offset);
+    malbinary_write32(opt_mdk, cursor);
   } else {
     // check length is not too large
     int len = strlen(to_encode);
@@ -357,40 +356,39 @@ int malzmq_encode_string(
       clog_error(malzmq_logger, "malzmq_encode_string, length too large: %d.", len);
       return -1;
     }
-    rc = malbinary_encoder_encode_string(encoder, bytes, offset, to_encode);
+    rc = malbinary_encoder_encode_string(encoder, cursor, to_encode);
   }
   return rc;
 }
 
 int malzmq_encode_uri(mal_uri_t *to_encode,
     malzmq_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
-    char *bytes, unsigned int *offset) {
-  return malzmq_encode_string(to_encode, mapping_directory, encoder, bytes, offset);
+    void *cursor) {
+  return malzmq_encode_string(to_encode, mapping_directory, encoder, cursor);
 }
 
 int malzmq_encode_identifier(mal_identifier_t *to_encode,
     malzmq_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
-    char *bytes, unsigned int *offset) {
-  return malzmq_encode_string(to_encode, mapping_directory, encoder, bytes, offset);
+    void *cursor) {
+  return malzmq_encode_string(to_encode, mapping_directory, encoder, cursor);
 }
 
 int malzmq_encode_identifier_list(mal_identifier_list_t *to_encode,
     malzmq_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
-    char *bytes, unsigned int *offset) {
+    void *cursor) {
   int rc = 0;
   unsigned int list_size = mal_identifier_list_get_element_count(to_encode);
   // TODO varint ?
-  malbinary_encoder_encode_list_size(encoder, bytes, offset, list_size);
+  malbinary_encoder_encode_list_size(encoder, cursor, list_size);
   mal_identifier_t **content = mal_identifier_list_get_content(to_encode);
   for (int i = 0; i < list_size; i++) {
     mal_identifier_t *list_element = content[i];
     bool presence_flag = (list_element != NULL);
-    rc = malbinary_encoder_encode_presence_flag(encoder, bytes, offset,
-        presence_flag);
+    rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
     if (rc < 0)
       return rc;
     if (presence_flag) {
-      rc = malzmq_encode_identifier(list_element, mapping_directory, encoder, bytes, offset);
+      rc = malzmq_encode_identifier(list_element, mapping_directory, encoder, cursor);
       if (rc < 0)
         return rc;
     }
@@ -399,8 +397,7 @@ int malzmq_encode_identifier_list(mal_identifier_list_t *to_encode,
 }
 
 int malzmq_encode_message(malzmq_header_t *malzmq_header,
-    mal_message_t *message, malbinary_encoder_t *encoder, char *bytes,
-    unsigned int *offset) {
+    mal_message_t *message, malbinary_encoder_t *encoder, void *cursor) {
   clog_debug(malbinary_encoder_get_logger(encoder), "malzmq_encode_message()\n");
 
   int sdu_type = convert_to_sdu_type(
@@ -412,19 +409,19 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
     return MALZMQ_BAD_SDU_TYPE;
   }
 
-  bytes[(*offset)++] = (char) ((malzmq_header_get_version(malzmq_header) << 5)
+  ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++] = (char) ((malzmq_header_get_version(malzmq_header) << 5)
       | sdu_type);
 
-  malbinary_write16(mal_message_get_service_area(message), bytes, offset);
-  malbinary_write16(mal_message_get_service(message), bytes, offset);
-  malbinary_write16(mal_message_get_operation(message), bytes, offset);
-  bytes[(*offset)++] = mal_message_get_area_version(message);
+  malbinary_write16(mal_message_get_service_area(message), cursor);
+  malbinary_write16(mal_message_get_service(message), cursor);
+  malbinary_write16(mal_message_get_operation(message), cursor);
+  ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++] = mal_message_get_area_version(message);
 
-  bytes[(*offset)++] = (char) ((mal_message_is_error_message(message) << 7)
+  ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++] = (char) ((mal_message_is_error_message(message) << 7)
       | (mal_message_get_qoslevel(message) << 4)
       | (mal_message_get_session(message)));
 
-  malbinary_write64(mal_message_get_transaction_id(message), bytes, offset);
+  malbinary_write64(mal_message_get_transaction_id(message), cursor);
 
   bool priority_flag = malzmq_header_get_priority_flag(malzmq_header);
   bool timestamp_flag = malzmq_header_get_timestamp_flag(malzmq_header);
@@ -434,7 +431,7 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
   bool authentication_id_flag = malzmq_header_get_authentication_id_flag(
       malzmq_header);
 
-  bytes[(*offset)++] = (char) (priority_flag << 5) | (timestamp_flag << 4)
+  ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++] = (char) (priority_flag << 5) | (timestamp_flag << 4)
           | (network_zone_flag << 3) | (session_name_flag << 2) | (domain_flag << 1)
           | (authentication_id_flag << 0);
 
@@ -442,58 +439,58 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
   // this ordering is not consistent with the blue book proposal,
   // but closer with the TCP/IP blue book proposal.
   malzmq_encode_uri(mal_message_get_uri_from(message),
-      malzmq_header_get_mapping_directory(malzmq_header), encoder, bytes, offset);
+      malzmq_header_get_mapping_directory(malzmq_header), encoder, cursor);
   malzmq_encode_uri(mal_message_get_uri_to(message),
-      malzmq_header_get_mapping_directory(malzmq_header), encoder, bytes, offset);
+      malzmq_header_get_mapping_directory(malzmq_header), encoder, cursor);
 
   if (priority_flag > 0) {
-    malbinary_encoder_encode_uinteger(encoder, bytes, offset,
-        mal_message_get_priority(message));
+    malbinary_encoder_encode_uinteger(encoder, cursor, mal_message_get_priority(message));
   }
 
   if (timestamp_flag > 0) {
-    malbinary_encoder_encode_time(encoder, bytes, offset,
-        mal_message_get_timestamp(message));
+    malbinary_encoder_encode_time(encoder, cursor, mal_message_get_timestamp(message));
   }
 
   if (network_zone_flag > 0) {
     malzmq_encode_identifier(mal_message_get_network_zone(message),
-        malzmq_header_get_mapping_directory(malzmq_header), encoder, bytes, offset);
+        malzmq_header_get_mapping_directory(malzmq_header), encoder, cursor);
   }
 
   if (session_name_flag > 0) {
     malzmq_encode_identifier(mal_message_get_session_name(message),
-        malzmq_header_get_mapping_directory(malzmq_header), encoder, bytes, offset);
+        malzmq_header_get_mapping_directory(malzmq_header), encoder, cursor);
   }
 
   if (domain_flag > 0) {
     malzmq_encode_identifier_list(mal_message_get_domain(message),
-        malzmq_header_get_mapping_directory(malzmq_header), encoder, bytes, offset);
+        malzmq_header_get_mapping_directory(malzmq_header), encoder, cursor);
   }
 
   if (authentication_id_flag > 0) {
-    malbinary_encoder_encode_blob(encoder, bytes, offset,
-        mal_message_get_authentication_id(message));
+    malbinary_encoder_encode_blob(encoder, cursor, mal_message_get_authentication_id(message));
   }
+
+  // Copy the body in the frame.
 
   char *body = mal_message_get_body(message);
   unsigned int body_offset = mal_message_get_body_offset(message);
   unsigned int body_length = mal_message_get_body_length(message);
 
-  unsigned int index = *(offset);
-  memcpy(bytes + index, body + body_offset, body_length);
+  char *bytes= ((malbinary_cursor_t *) cursor)->body_ptr;
+  unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
 
-  *(offset) += body_length;
+  memcpy(bytes + index, body + body_offset, body_length);
+  ((malbinary_cursor_t *) cursor)->body_offset += body_length;
 
   return 0;
 }
 
 // internal functions, should not be visible from outside this module
 int malzmq_decode_string(malzmq_mapping_directory_t *mapping_directory,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int *offset, mal_string_t **result) {
+    malbinary_decoder_t *decoder, void *cursor, mal_string_t **result) {
   int rc = 0;
   // TODO: varint
-  int opt_mdk = malbinary_read32(bytes, offset);
+  int opt_mdk = malbinary_read32(cursor);
   if (opt_mdk < 0) {
     unsigned int md_key = - opt_mdk;
     char *result_str;
@@ -508,22 +505,27 @@ int malzmq_decode_string(malzmq_mapping_directory_t *mapping_directory,
     unsigned int length = opt_mdk;
     (*result) = (char *) malloc(length + 1);
     if ((*result) == NULL) return -1;
-    bcopy(& bytes[*offset], *result, length);
+    bcopy(& ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset], *result, length);
     (*result)[length] = '\0';
-    (*offset) += length;
+    ((malbinary_cursor_t *) cursor)->body_offset += length;
   }
   return rc;
 }
 
 int malzmq_decode_uri(malzmq_mapping_directory_t *mapping_directory,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int *offset,
+    malbinary_decoder_t *decoder, void *cursor,
     mal_uri_t **result) {
-  return malzmq_decode_string(mapping_directory, decoder, bytes, offset, result);
+  return malzmq_decode_string(mapping_directory, decoder, cursor, result);
 }
 
 int malzmq_decode_uri_to(malzmq_header_t *malzmq_header,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int *offset,
-    mal_uri_t **uri_to) {
+    malbinary_decoder_t *decoder, char *bytes, unsigned int length, mal_uri_t **uri_to) {
+  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+  malbinary_cursor_t cursor;
+  malbinary_cursor_initialize(&cursor);
+  cursor.body_ptr = bytes;
+  cursor.body_length = length;
+
   // 'URI To' offset
   // +1 byte: version + sdu type
   // +2 bytes: service area
@@ -533,31 +535,31 @@ int malzmq_decode_uri_to(malzmq_header_t *malzmq_header,
   // +1 bytes: is error message + qos level + session
   // +8 bytes: transaction id
   // +1 bytes: flags
-  (*offset) += 1 + 2 * 3 + 1 + 1 + 8 + 1;
+  cursor.body_offset += 1 + 2 * 3 + 1 + 1 + 8 + 1;
 
   // this ordering is not consistent with the blue book proposal
   // Read the 'URI From' length
-  int opt_mdk = malbinary_read32(bytes, offset);
+  int opt_mdk = malbinary_read32(&cursor);
   if (opt_mdk >= 0)
-    (*offset) += opt_mdk;
+    cursor.body_offset += opt_mdk;
 
   return malzmq_decode_uri(malzmq_header_get_mapping_directory(malzmq_header),
-      decoder, bytes, offset, uri_to);
+      decoder, &cursor, uri_to);
 }
 
 int malzmq_decode_identifier(malzmq_mapping_directory_t *mapping_directory,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int *offset,
+    malbinary_decoder_t *decoder, void *cursor,
     mal_identifier_t **result) {
-  return malzmq_decode_string(mapping_directory, decoder, bytes, offset, result);
+  return malzmq_decode_string(mapping_directory, decoder, cursor, result);
 }
 
 int malzmq_decode_identifier_list(malzmq_mapping_directory_t *mapping_directory,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int *offset,
+    malbinary_decoder_t *decoder, void *cursor,
     mal_identifier_list_t **result) {
   int rc = 0;
   unsigned int list_size;
   mal_identifier_t **list_content;
-  rc = malbinary_decoder_decode_list_size(decoder, bytes, offset, &list_size);
+  rc = malbinary_decoder_decode_list_size(decoder, cursor, &list_size);
   if (rc < 0)
     return rc;
   (*result) = mal_identifier_list_new(list_size);
@@ -565,13 +567,13 @@ int malzmq_decode_identifier_list(malzmq_mapping_directory_t *mapping_directory,
 
   for (int i = 0; i < list_size; i++) {
     bool presence_flag;
-    rc = malbinary_decoder_decode_presence_flag(decoder, bytes, offset,
+    rc = malbinary_decoder_decode_presence_flag(decoder, cursor,
         &presence_flag);
     if (rc < 0)
       return rc;
     if (presence_flag) {
       rc = malzmq_decode_identifier(mapping_directory,
-          decoder, bytes, offset, &list_content[i]);
+          decoder, cursor, &list_content[i]);
       if (rc < 0)
         return rc;
     } else {
@@ -582,10 +584,8 @@ int malzmq_decode_identifier_list(malzmq_mapping_directory_t *mapping_directory,
 }
 
 int malzmq_decode_message(malzmq_header_t *malzmq_header,
-    mal_message_t *message, malbinary_decoder_t *decoder, char *bytes,
-    unsigned int *offset, unsigned int length) {
-
-  char b = bytes[(*offset)++];
+    mal_message_t *message, malbinary_decoder_t *decoder, void *cursor) {
+  char b = ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++];
 
   unsigned char version = (b >> 5) & 0x07;
   if (version != 1)
@@ -607,19 +607,19 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
   }
   mal_message_set_interaction_stage(message, interaction_stage);
 
-  mal_ushort_t service_area = malbinary_read16(bytes, offset) & 0xFFFF;
+  mal_ushort_t service_area = malbinary_read16(cursor) & 0xFFFF;
   mal_message_set_service_area(message, service_area);
 
-  mal_ushort_t service = malbinary_read16(bytes, offset) & 0xFFFF;
+  mal_ushort_t service = malbinary_read16(cursor) & 0xFFFF;
   mal_message_set_service(message, service);
 
-  int operation = malbinary_read16(bytes, offset) & 0xFFFF;
+  int operation = malbinary_read16(cursor) & 0xFFFF;
   mal_message_set_operation(message, operation);
 
-  byte area_version = bytes[(*offset)++];
+  byte area_version = ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++];
   mal_message_set_area_version(message, area_version);
 
-  b = bytes[(*offset)++];
+  b = ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++];
   bool is_error_message = (b >> 7) & 0x01;
   mal_message_set_is_error_message(message, is_error_message);
 
@@ -629,10 +629,10 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
   int session = (b >> 3) & 0x03;
   mal_message_set_session(message, (mal_sessiontype_t) session);
 
-  long transaction_id = malbinary_read64(bytes, offset);
+  long transaction_id = malbinary_read64(cursor);
   mal_message_set_transaction_id(message, transaction_id);
 
-  b = bytes[(*offset)++];
+  b = ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++];
   bool priority_flag = (b >> 5) & 0x01;
   bool timestamp_flag = (b >> 4) & 0x01;
   bool network_zone_flag = (b >> 3) & 0x01;
@@ -643,19 +643,19 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
   // this ordering is not consistent with the blue book proposal
   mal_uri_t *uri_from;
   malzmq_decode_uri(malzmq_header_get_mapping_directory(malzmq_header),
-      decoder, bytes, offset, &uri_from);
+      decoder, cursor, &uri_from);
   mal_message_set_free_uri_from(message, true);
   mal_message_set_uri_from(message, uri_from);
 
   mal_uri_t *uri_to;
   malzmq_decode_uri(malzmq_header_get_mapping_directory(malzmq_header),
-      decoder, bytes, offset, &uri_to);
+      decoder, cursor, &uri_to);
   mal_message_set_free_uri_to(message, true);
   mal_message_set_uri_to(message, uri_to);
 
   mal_uinteger_t priority;
   if (priority_flag) {
-    malbinary_decoder_decode_uinteger(decoder, bytes, offset, &priority);
+    malbinary_decoder_decode_uinteger(decoder, cursor, &priority);
   } else {
     priority = malzmq_header_get_priority(malzmq_header);
   }
@@ -663,14 +663,14 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
 
   mal_time_t timestamp;
   if (timestamp_flag) {
-    malbinary_decoder_decode_time(decoder, bytes, offset, &timestamp);
+    malbinary_decoder_decode_time(decoder, cursor, &timestamp);
   }
   mal_message_set_timestamp(message, timestamp);
 
   mal_identifier_t *network_zone;
   if (network_zone_flag) {
     malzmq_decode_identifier(malzmq_header_get_mapping_directory(malzmq_header),
-        decoder, bytes, offset, &network_zone);
+        decoder, cursor, &network_zone);
     mal_message_set_free_network_zone(message, true);
   } else {
     network_zone = malzmq_header_get_network_zone(malzmq_header);
@@ -681,7 +681,7 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
   mal_identifier_t *session_name;
   if (session_name_flag) {
     malzmq_decode_identifier(malzmq_header_get_mapping_directory(malzmq_header),
-        decoder, bytes, offset, &session_name);
+        decoder, cursor, &session_name);
     mal_message_set_free_session_name(message, true);
   } else {
     session_name = malzmq_header_get_session_name(malzmq_header);
@@ -692,7 +692,7 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
   mal_identifier_list_t *domain;
   if (domain_flag) {
     malzmq_decode_identifier_list(malzmq_header_get_mapping_directory(malzmq_header),
-        decoder, bytes, offset, &domain);
+        decoder, cursor, &domain);
     mal_message_set_free_domain(message, true);
   } else {
     domain = malzmq_header_get_domain(malzmq_header);
@@ -702,7 +702,7 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
 
   mal_blob_t *authentication_id;
   if (authentication_id_flag) {
-    malbinary_decoder_decode_blob(decoder, bytes, offset, &authentication_id);
+    malbinary_decoder_decode_blob(decoder, cursor, &authentication_id);
     mal_message_set_free_authentication_id(message, true);
   } else {
     authentication_id = malzmq_header_get_authentication_id(malzmq_header);
@@ -710,9 +710,10 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
   }
   mal_message_set_authentication_id(message, authentication_id);
 
-  unsigned int body_offset = (*offset);
-  unsigned int body_length = length - body_offset;
+  unsigned int body_offset = ((malbinary_cursor_t *) cursor)->body_offset;
+  unsigned int body_length = ((malbinary_cursor_t *) cursor)->body_length - body_offset;
 
+  char *bytes = ((malbinary_cursor_t *) cursor)->body_ptr;
   char *body = (char *) malloc(sizeof(char) * body_length);
 
   memcpy(body, bytes + body_offset, body_length);

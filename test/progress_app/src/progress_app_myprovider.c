@@ -94,22 +94,28 @@ int progress_app_myprovider_testarea_testservice_testprogress(
 
   // application code (may decode only a part of the message body)
 
-  unsigned int offset = mal_message_get_body_offset(message);
-  char *bytes = mal_message_get_body(message);
+//  unsigned int offset = mal_message_get_body_offset(message);
+//  char *bytes = mal_message_get_body(message);
+  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+  malbinary_cursor_t cursor;
+  malbinary_cursor_initialize(&cursor);
+  cursor.body_ptr = mal_message_get_body(message);
+  cursor.body_offset = mal_message_get_body_offset(message);
+  cursor.body_length = mal_message_get_body_offset(message) + mal_message_get_body_length(message);
 
-  printf("progress_app_myprovider: offset=%d\n", offset);
+  printf("progress_app_myprovider: offset=%d\n", mal_message_get_body_offset(message));
 
   mal_string_list_t *parameter_0;
   printf("progress_app_myprovider: decode first parameter\n");
   rc = testarea_testservice_testprogress_progress_decode_0(provider->encoding_format_code,
-      bytes, &offset, provider->decoder, &parameter_0);
+      &cursor, provider->decoder, &parameter_0);
   if (rc < 0)
     return rc;
   printf("parameter_0=");
   mal_string_list_print(parameter_0);
   printf("\n");
 
-  printf("progress_app_myprovider: offset=%d\n", offset);
+  printf("progress_app_myprovider: offset=%d\n", cursor.body_offset);
 
   // parameter_0 may be NULL
   if (parameter_0 == NULL) {
@@ -173,11 +179,15 @@ int progress_app_myprovider_testarea_testservice_testprogress(
   mal_string_t **string_list_content = mal_string_list_get_content(string_list);
   string_list_content[0] = mal_string_new("response-list-element-1");
 
-  unsigned int body_length = 0;
+  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+  malbinary_cursor_t cursor_r;
+  malbinary_cursor_initialize(&cursor_r);
+//  unsigned int body_length = 0;
+
   printf("progress_app_myprovider: encoding_length_0\n");
   rc = testarea_testservice_testprogress_progress_response_add_encoding_length_0(
 		  progress_app_myprovider_get_encoding_format_code(provider),
-		  progress_app_myprovider_get_encoder(provider), string_list, &body_length);
+		  progress_app_myprovider_get_encoder(provider), string_list, &cursor_r);
   if (rc < 0)
     return rc;
 
@@ -189,14 +199,17 @@ int progress_app_myprovider_testarea_testservice_testprogress(
 		  mal_message_get_network_zone(message),
 		  mal_message_get_session(message),
 		  mal_message_get_session_name(message),
-		  body_length);
+		  malbinary_cursor_get_body_length(&cursor_r));
 
-  unsigned int offset_r = mal_message_get_body_offset(result_message);
-  char *bytes_r = mal_message_get_body(result_message);
+    // TODO (AF): Use a virtual function
+  cursor_r.body_ptr = mal_message_get_body(result_message);
+  cursor_r.body_offset = mal_message_get_body_offset(result_message);
+//  unsigned int offset_r = mal_message_get_body_offset(result_message);
+//  char *bytes_r = mal_message_get_body(result_message);
 
   printf("progress_app_myprovider: encode 0\n");
   rc = testarea_testservice_testprogress_progress_response_encode_0(
-		  progress_app_myprovider_get_encoding_format_code(provider), bytes_r, &offset_r,
+		  progress_app_myprovider_get_encoding_format_code(provider), &cursor_r,
 		  progress_app_myprovider_get_encoder(provider), string_list);
   if (rc < 0)
     return rc;

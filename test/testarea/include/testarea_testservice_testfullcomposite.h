@@ -40,9 +40,9 @@ void testarea_testservice_testfullcomposite_attributefield_set_attribute_tag(tes
 testarea_testservice_testfullcomposite_t * testarea_testservice_testfullcomposite_new(void);
 
 // encoding functions related to transport malbinary
-int testarea_testservice_testfullcomposite_add_encoding_length_malbinary(testarea_testservice_testfullcomposite_t * self, malbinary_encoder_t * malbinary_encoder, unsigned int * encoding_length);
-int testarea_testservice_testfullcomposite_encode_malbinary(testarea_testservice_testfullcomposite_t * self, malbinary_encoder_t * malbinary_encoder, char * bytes, unsigned int * offset);
-int testarea_testservice_testfullcomposite_decode_malbinary(testarea_testservice_testfullcomposite_t * self, malbinary_decoder_t * malbinary_decoder, char * bytes, unsigned int * offset);
+int testarea_testservice_testfullcomposite_add_encoding_length_malbinary(testarea_testservice_testfullcomposite_t * self, malbinary_encoder_t * malbinary_encoder, void *cursor);
+int testarea_testservice_testfullcomposite_encode_malbinary(testarea_testservice_testfullcomposite_t * self, malbinary_encoder_t * malbinary_encoder, void *cursor);
+int testarea_testservice_testfullcomposite_decode_malbinary(testarea_testservice_testfullcomposite_t * self, malbinary_decoder_t * malbinary_decoder, void *cursor);
 
 // destructor
 void testarea_testservice_testfullcomposite_destroy(testarea_testservice_testfullcomposite_t ** self_p);

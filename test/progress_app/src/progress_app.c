@@ -82,8 +82,7 @@ void progress_app_test(bool verbose) {
   malbinary_decoder_t *decoder = malbinary_decoder_new(false, true);
 
   // All the MAL header fields are passed
-  malzmq_header_t *malzmq_header = malzmq_header_new(NULL, true, 0, true, NULL, NULL,
-      NULL, NULL);
+  malzmq_header_t *malzmq_header = malzmq_header_new(NULL, true, 0, true, NULL, NULL, NULL, NULL);
 
   // This test uses the same encoding configuration at the MAL/ZMQ transport
   // level (MAL header encoding) and at the application

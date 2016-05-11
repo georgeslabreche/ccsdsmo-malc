@@ -21,15 +21,15 @@ void testarea_testservice_testfinalcompositea_destroy(
 
 int testarea_testservice_testfinalcompositea_add_encoding_length_malbinary(
     testarea_testservice_testfinalcompositea_t *self,
-    malbinary_encoder_t *encoder, unsigned int *encoding_length);
+    malbinary_encoder_t *encoder, void *cursor);
 
 int testarea_testservice_testfinalcompositea_encode_malbinary(
     testarea_testservice_testfinalcompositea_t *self,
-    malbinary_encoder_t *encoder, char *bytes, unsigned int *offset);
+    malbinary_encoder_t *encoder, void *cursor);
 
 int testarea_testservice_testfinalcompositea_decode_malbinary(
     testarea_testservice_testfinalcompositea_t *self,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int *offset);
+    malbinary_decoder_t *decoder, void *cursor);
 
 mal_integer_t testarea_testservice_testfinalcompositea_get_intfield(
     testarea_testservice_testfinalcompositea_t *self);

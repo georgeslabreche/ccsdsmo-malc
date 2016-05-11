@@ -307,14 +307,12 @@ int malzmq_ctx_mal_socket_handle(zloop_t *loop, zmq_pollitem_t *poller,
 
     clog_debug(malzmq_logger, "malzmq_ctx: frame size: %d\n", zframe_size(frame));
 
-    unsigned int offset = 0;
     mal_uri_t *uri_to;
     if (malzmq_decode_uri_to(self->malzmq_header,
-        self->decoder, (char *) zframe_data(frame), &offset, &uri_to) != 0) {
+        self->decoder, (char *) zframe_data(frame), zframe_size(frame), &uri_to) != 0) {
       clog_error(malzmq_logger, "malzmq_ctx_mal_socket_handle, could not decode uri_to\n");
       return -1;
     }
-
 
     clog_debug(malzmq_logger, "malzmq_ctx: zmsg decoded.\n");
 
@@ -496,7 +494,10 @@ int malzmq_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
 
   clog_debug(malzmq_logger, "malzmq_ctx: mal_message_add_encoding_length_malbinary\n");
 
-  unsigned int encoding_length = 0;
+  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+  malbinary_cursor_t cursor;
+  malbinary_cursor_initialize(&cursor);
+//  unsigned int encoding_length = 0;
 
   // TODO: In a first time we should separate the header and body size in order to send them
   // in separate frames. In a second time we should cut the message in multiples frames.
@@ -507,27 +508,28 @@ int malzmq_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
   // we should creates and send 2 frames
 
   // 'malzmq' encoding format of the MAL header
-  rc = malzmq_add_message_encoding_length(malzmq_ctx->malzmq_header, mal_message, malzmq_ctx->encoder, &encoding_length);
+  rc = malzmq_add_message_encoding_length(malzmq_ctx->malzmq_header, mal_message, malzmq_ctx->encoder, &cursor);
   if (rc < 0)
     return rc;
 
-  clog_debug(malzmq_logger, "malzmq_ctx: encoding_length=%d\n", encoding_length);
+  clog_debug(malzmq_logger, "malzmq_ctx: encoding_length=%d\n", malbinary_cursor_get_body_length(&cursor));
 
-  char *bytes = (char *) malloc(encoding_length);
+  // TODO (AF): Replace by a virtual function
+  cursor.body_ptr = (char *) malloc(malbinary_cursor_get_body_length(&cursor));
+  cursor.body_offset = 0;
 
   clog_debug(malzmq_logger, "malzmq_ctx: mal_message_encode_malbinary\n");
 
-  unsigned int offset = 0;
+//  unsigned int offset = 0;
 
   // 'malzmq' encoding format of the MAL header
-  rc = malzmq_encode_message(malzmq_ctx->malzmq_header, mal_message,
-      malzmq_ctx->encoder, bytes, &offset);
+  rc = malzmq_encode_message(malzmq_ctx->malzmq_header, mal_message, malzmq_ctx->encoder, &cursor);
   if (rc < 0)
     return rc;
 
-  clog_debug(malzmq_logger, "malzmq_ctx: message is encoded: %d bytes\n", offset);
+  clog_debug(malzmq_logger, "malzmq_ctx: message is encoded: %d bytes\n", cursor.body_offset);
 
-  zframe_t *frame = zframe_new(bytes, encoding_length);
+  zframe_t *frame = zframe_new(cursor.body_ptr, malbinary_cursor_get_body_length(&cursor));
 
   clog_debug(malzmq_logger, "malzmq_ctx: send zmq message\n");
 
@@ -578,12 +580,15 @@ int malzmq_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
 
     // MALZMQ always uses the 'malbinary' encoding format for the messages encoding (another format
     // may be used at the application layer for the message body).
-    unsigned int offset = 0;
+    // TODO (AF): Use virtual allocation and initialization functions from encoder.
+    malbinary_cursor_t cursor;
+    malbinary_cursor_initialize(&cursor);
+    cursor.body_ptr = (char *) mal_msg_bytes;
+    cursor.body_length = mal_msg_bytes_length;
 
     // 'malzmq' encoding format of the MAL header
     if (malzmq_decode_message(malzmq_ctx->malzmq_header, *message,
-        malzmq_ctx->decoder, (char *) mal_msg_bytes, &offset,
-        mal_msg_bytes_length) != 0) {
+        malzmq_ctx->decoder, &cursor) != 0) {
       clog_error(malzmq_logger, "malzmq_ctx_recv_message, cannot decode message\n");
       return -1;
     }
