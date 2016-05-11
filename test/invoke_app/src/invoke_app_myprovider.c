@@ -94,7 +94,7 @@ int invoke_app_myprovider_testarea_testservice_testinvoke(
   mal_string_list_print(parameter_0);
   printf("\n");
 
-  printf("invoke_app_myprovider: offset=%d\n", cursor.body_offset);
+  printf("invoke_app_myprovider: offset=%d\n", malbinary_cursor_get_body_offset(&cursor));
 
   // parameter_0 may be NULL
   if (parameter_0 == NULL) {

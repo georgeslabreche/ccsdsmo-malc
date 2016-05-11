@@ -114,7 +114,7 @@ int progress_app_myprovider_testarea_testservice_testprogress(
   mal_string_list_print(parameter_0);
   printf("\n");
 
-  printf("progress_app_myprovider: offset=%d\n", cursor.body_offset);
+  printf("progress_app_myprovider: offset=%d\n", malbinary_cursor_get_body_offset(&cursor));
 
   // parameter_0 may be NULL
   if (parameter_0 == NULL) {

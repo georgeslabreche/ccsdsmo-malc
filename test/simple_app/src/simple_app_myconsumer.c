@@ -165,8 +165,10 @@ void simple_app_myconsumer_run(zsock_t *pipe, void *self) {
       malbinary_cursor_get_body_length(&cursor));
 
   // TODO (AF): Use a virtual function
-  cursor.body_ptr = mal_message_get_body(message);
-  cursor.body_offset = mal_message_get_body_offset(message);
+  malbinary_cursor_init(&cursor,
+      mal_message_get_body(message),
+      malbinary_cursor_get_body_length(&cursor),
+      mal_message_get_body_offset(message));
 
   printf("simple_app_myconsumer: encode 0\n");
   rc = testarea_testservice_testsend_send_encode_0(

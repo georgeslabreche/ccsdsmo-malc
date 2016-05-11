@@ -109,7 +109,7 @@ int send_app_myprovider_testarea_testservice_testsend(
   testarea_testservice_testcomposite_print(parameter_0);
   printf("\n");
 
-  printf("send_app_myprovider: offset=%d", cursor.body_offset);
+  printf("send_app_myprovider: offset=%d", malbinary_cursor_get_body_offset(&cursor));
 
   mal_string_list_t *parameter_1;
   printf("send_app_myprovider: decode second parameter\n");
@@ -122,7 +122,7 @@ int send_app_myprovider_testarea_testservice_testsend(
   mal_string_list_print(parameter_1);
   printf("\n");
 
-  printf("send_app_myprovider: offset=%d", cursor.body_offset);
+  printf("send_app_myprovider: offset=%d", malbinary_cursor_get_body_offset(&cursor));
 
   long short_form;
   void *parameter_2;
@@ -133,7 +133,7 @@ int send_app_myprovider_testarea_testservice_testsend(
   if (rc < 0)
     return rc;
 
-  printf("send_app_myprovider: offset=%d", cursor.body_offset);
+  printf("send_app_myprovider: offset=%d", malbinary_cursor_get_body_offset(&cursor));
   printf("send_app_myprovider: decoding done, short form=%lu\n",
       short_form);
 

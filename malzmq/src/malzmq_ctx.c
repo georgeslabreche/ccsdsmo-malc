@@ -515,19 +515,21 @@ int malzmq_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
   clog_debug(malzmq_logger, "malzmq_ctx: encoding_length=%d\n", malbinary_cursor_get_body_length(&cursor));
 
   // TODO (AF): Replace by a virtual function
-  cursor.body_ptr = (char *) malloc(malbinary_cursor_get_body_length(&cursor));
-  cursor.body_offset = 0;
+  malbinary_cursor_init(&cursor,
+      (char *) malloc(malbinary_cursor_get_body_length(&cursor)),
+      malbinary_cursor_get_body_length(&cursor),
+      0);
+//  cursor.body_ptr = (char *) malloc(malbinary_cursor_get_body_length(&cursor));
+//  cursor.body_offset = 0;
 
   clog_debug(malzmq_logger, "malzmq_ctx: mal_message_encode_malbinary\n");
-
-//  unsigned int offset = 0;
 
   // 'malzmq' encoding format of the MAL header
   rc = malzmq_encode_message(malzmq_ctx->malzmq_header, mal_message, malzmq_ctx->encoder, &cursor);
   if (rc < 0)
     return rc;
 
-  clog_debug(malzmq_logger, "malzmq_ctx: message is encoded: %d bytes\n", cursor.body_offset);
+  clog_debug(malzmq_logger, "malzmq_ctx: message is encoded: %d bytes\n", malbinary_cursor_get_body_offset(&cursor));
 
   zframe_t *frame = zframe_new(cursor.body_ptr, malbinary_cursor_get_body_length(&cursor));
 
