@@ -120,11 +120,13 @@ int invoke_app_myconsumer_initialize(void *self, mal_actor_t *mal_actor) {
   string_list_content[2] = mal_string_new("list-element-2");
   string_list_content[3] = mal_string_new("list-element-3");
 
-  unsigned int body_length = 0;
+  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+  malbinary_cursor_t cursor;
+  malbinary_cursor_reset(&cursor);
   printf("invoke_app_myconsumer: encoding_length_0\n");
   rc = testarea_testservice_testinvoke_invoke_add_encoding_length_0(
       consumer->encoding_format_code,
-      consumer->encoder, string_list, &body_length);
+      consumer->encoder, string_list, &cursor);
   if (rc < 0)
     return rc;
 
@@ -132,15 +134,17 @@ int invoke_app_myconsumer_initialize(void *self, mal_actor_t *mal_actor) {
   mal_message_t *message = mal_message_new(consumer->authentication_id,
       consumer->qoslevel, consumer->priority, consumer->domain,
       consumer->network_zone, consumer->session, consumer->session_name,
-      body_length);
+      malbinary_cursor_get_body_length(&cursor));
 
-  unsigned int offset = mal_message_get_body_offset(message);
-  char *bytes = mal_message_get_body(message);
+  // TODO (AF): Use a virtual function
+  cursor.body_ptr = mal_message_get_body(message);
+  cursor.body_offset = mal_message_get_body_offset(message);
 
   printf("invoke_app_myconsumer: encode 0\n");
   rc = testarea_testservice_testinvoke_invoke_encode_0(
-      consumer->encoding_format_code, bytes, &offset,
+      consumer->encoding_format_code, &cursor,
       invoke_app_myconsumer_get_encoder(consumer), string_list);
+  malbinary_cursor_assert(&cursor);
   if (rc < 0)
     return rc;
 
@@ -189,15 +193,21 @@ int invoke_app_myconsumer_testarea_testservice_testinvoke_response(
 			mal_message_get_interaction_stage(message), mal_message_is_error_message(message));
 
 	// Get response parameter.
-	unsigned int offset = mal_message_get_body_offset(message);
-	char *bytes = mal_message_get_body(message);
 
-	printf("invoke_app_myprovider: offset=%d\n", offset);
+  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+  malbinary_cursor_t cursor;
+  malbinary_cursor_init(&cursor,
+      mal_message_get_body(message),
+      mal_message_get_body_offset(message) + mal_message_get_body_length(message),
+      mal_message_get_body_offset(message));
+
+	printf("invoke_app_myprovider: offset=%d\n", mal_message_get_body_offset(message));
 
 	mal_string_list_t *parameter_0;
 	printf("invoke_app_myprovider: decode first parameter\n");
 	rc = testarea_testservice_testinvoke_invoke_response_decode_0(consumer->encoding_format_code,
-			bytes, &offset, consumer->decoder, &parameter_0);
+			&cursor, consumer->decoder, &parameter_0);
+  malbinary_cursor_assert(&cursor);
 	if (rc < 0)
 		return rc;
 	printf("parameter_0=");
