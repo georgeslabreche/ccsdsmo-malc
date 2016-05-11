@@ -28,6 +28,9 @@ cd $PROGDIR/mal;
 cd $PROGDIR/malzmq;
 ./genmake $*
 
+cd $PROGDIR/maltcp;
+./genmake $*
+
 cd $PROGDIR/malactor;
 ./genmake $*
 
