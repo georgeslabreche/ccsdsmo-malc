@@ -129,11 +129,13 @@ void simple_app_myconsumer_run(zsock_t *pipe, void *self) {
   testarea_testservice_testfinalcompositea_set_intfield(testfinalcompositea, 20);
   testarea_testservice_testfinalcompositea_set_intfield2(testfinalcompositea, 30);
 
-  unsigned int body_length = 0;
+  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+  malbinary_cursor_t cursor;
+  malbinary_cursor_reset(&cursor);
+
   printf("simple_app_myconsumer: encoding_length_0\n");
   rc = testarea_testservice_testsend_send_add_encoding_length_0(
-      consumer->encoding_format_code, consumer->encoder, testcomposite,
-      &body_length);
+      consumer->encoding_format_code, consumer->encoder, testcomposite, &cursor);
   if (rc < 0) {
     printf("ERROR during encoding_length\n");
     return;
@@ -141,8 +143,7 @@ void simple_app_myconsumer_run(zsock_t *pipe, void *self) {
 
   printf("simple_app_myconsumer: encoding_length_1\n");
   rc = testarea_testservice_testsend_send_add_encoding_length_1(
-      consumer->encoding_format_code, consumer->encoder, string_list,
-      &body_length);
+      consumer->encoding_format_code, consumer->encoder, string_list, &cursor);
   if (rc < 0) {
     printf("ERROR during encoding_length\n");
     return;
@@ -151,7 +152,7 @@ void simple_app_myconsumer_run(zsock_t *pipe, void *self) {
   printf("simple_app_myconsumer: encoding_length_2\n");
   rc = testarea_testservice_testsend_send_add_encoding_length_2_testarea_testservice_testfinalcompositea(
           consumer->encoding_format_code, consumer->encoder,
-          testfinalcompositea, &body_length);
+          testfinalcompositea, &cursor);
   if (rc < 0) {
     printf("ERROR during encoding_length\n");
     return;
@@ -161,15 +162,17 @@ void simple_app_myconsumer_run(zsock_t *pipe, void *self) {
   mal_message_t *message = mal_message_new(consumer->authentication_id,
       consumer->qoslevel, consumer->priority, consumer->domain,
       consumer->network_zone, consumer->session, consumer->session_name,
-      body_length);
+      malbinary_cursor_get_body_length(&cursor));
 
-  unsigned int offset = mal_message_get_body_offset(message);
-  char *bytes = mal_message_get_body(message);
+  // TODO (AF): Use a virtual function
+  cursor.body_ptr = mal_message_get_body(message);
+  cursor.body_offset = mal_message_get_body_offset(message);
 
   printf("simple_app_myconsumer: encode 0\n");
   rc = testarea_testservice_testsend_send_encode_0(
-      consumer->encoding_format_code, bytes, &offset,
+      consumer->encoding_format_code, &cursor,
       simple_app_myconsumer_get_encoder(consumer), testcomposite);
+  malbinary_cursor_assert(&cursor);
   if (rc < 0) {
     printf("ERROR during encoding\n");
     return;
@@ -177,18 +180,19 @@ void simple_app_myconsumer_run(zsock_t *pipe, void *self) {
 
   printf("simple_app_myconsumer: encode 1\n");
   rc = testarea_testservice_testsend_send_encode_1(
-      consumer->encoding_format_code, bytes, &offset,
+      consumer->encoding_format_code, &cursor,
       simple_app_myconsumer_get_encoder(consumer), string_list);
+  malbinary_cursor_assert(&cursor);
   if (rc < 0) {
     printf("ERROR during encoding\n");
     return;
   }
 
   printf("simple_app_myconsumer: encode 2\n");
-  rc =
-      testarea_testservice_testsend_send_encode_2_testarea_testservice_testfinalcompositea(
-          consumer->encoding_format_code, bytes, &offset,
+  rc = testarea_testservice_testsend_send_encode_2_testarea_testservice_testfinalcompositea(
+          consumer->encoding_format_code, &cursor,
           simple_app_myconsumer_get_encoder(consumer), testfinalcompositea);
+  malbinary_cursor_assert(&cursor);
   if (rc < 0) {
     printf("ERROR during encoding\n");
     return;
