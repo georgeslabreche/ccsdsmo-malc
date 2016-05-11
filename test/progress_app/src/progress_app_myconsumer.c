@@ -138,8 +138,6 @@ int progress_app_myconsumer_initialize(void *self, mal_actor_t *mal_actor) {
       consumer->network_zone, consumer->session, consumer->session_name,
       malbinary_cursor_get_body_length(&cursor));
 
-//  unsigned int offset = mal_message_get_body_offset(message);
-//  char *bytes = mal_message_get_body(message);
   // TODO (AF): Use a virtual function
   cursor.body_ptr = mal_message_get_body(message);
   cursor.body_offset = mal_message_get_body_offset(message);
@@ -148,6 +146,7 @@ int progress_app_myconsumer_initialize(void *self, mal_actor_t *mal_actor) {
   rc = testarea_testservice_testprogress_progress_encode_0(
       consumer->encoding_format_code, &cursor,
       progress_app_myconsumer_get_encoder(consumer), string_list);
+  malbinary_cursor_assert(&cursor);
   if (rc < 0)
     return rc;
 
@@ -220,9 +219,8 @@ int progress_app_myconsumer_testarea_testservice_testprogress_response(
 			mal_message_is_error_message(message));
 
   // Get response parameter.
-//	unsigned int offset = mal_message_get_body_offset(message);
-//	char *bytes = mal_message_get_body(message);
-  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+
+	// TODO (AF): Use virtual allocation and initialization functions from encoder.
   malbinary_cursor_t cursor;
   malbinary_cursor_init(&cursor,
       mal_message_get_body(message),
@@ -235,6 +233,7 @@ int progress_app_myconsumer_testarea_testservice_testprogress_response(
 	printf("progress_app_myprovider: decode first parameter\n");
 	rc = testarea_testservice_testprogress_progress_response_decode_0(consumer->encoding_format_code,
 			&cursor, consumer->decoder, &parameter_0);
+  malbinary_cursor_assert(&cursor);
 	if (rc < 0)
 		return rc;
 	printf("parameter_0=");

@@ -94,8 +94,6 @@ int progress_app_myprovider_testarea_testservice_testprogress(
 
   // application code (may decode only a part of the message body)
 
-//  unsigned int offset = mal_message_get_body_offset(message);
-//  char *bytes = mal_message_get_body(message);
   // TODO (AF): Use virtual allocation and initialization functions from encoder.
   malbinary_cursor_t cursor;
   malbinary_cursor_init(&cursor,
@@ -109,6 +107,7 @@ int progress_app_myprovider_testarea_testservice_testprogress(
   printf("progress_app_myprovider: decode first parameter\n");
   rc = testarea_testservice_testprogress_progress_decode_0(provider->encoding_format_code,
       &cursor, provider->decoder, &parameter_0);
+  malbinary_cursor_assert(&cursor);
   if (rc < 0)
     return rc;
   printf("parameter_0=");
@@ -182,7 +181,6 @@ int progress_app_myprovider_testarea_testservice_testprogress(
   // TODO (AF): Use virtual allocation and initialization functions from encoder.
   malbinary_cursor_t cursor_r;
   malbinary_cursor_reset(&cursor_r);
-//  unsigned int body_length = 0;
 
   printf("progress_app_myprovider: encoding_length_0\n");
   rc = testarea_testservice_testprogress_progress_response_add_encoding_length_0(
@@ -211,6 +209,7 @@ int progress_app_myprovider_testarea_testservice_testprogress(
   rc = testarea_testservice_testprogress_progress_response_encode_0(
 		  progress_app_myprovider_get_encoding_format_code(provider), &cursor_r,
 		  progress_app_myprovider_get_encoder(provider), string_list);
+  malbinary_cursor_assert(&cursor_r);
   if (rc < 0)
     return rc;
 
