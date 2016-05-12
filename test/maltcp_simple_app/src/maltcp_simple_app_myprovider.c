@@ -112,47 +112,54 @@ int maltcp_simple_app_myprovider_testarea_testservice_testsend(
 
   // application code (may decode only a part of the message body)
 
-  unsigned int offset = mal_message_get_body_offset(message);
-  char *bytes = mal_message_get_body(message);
+  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+  malbinary_cursor_t cursor;
+  malbinary_cursor_init(&cursor,
+      mal_message_get_body(message),
+      mal_message_get_body_offset(message) + mal_message_get_body_length(message),
+      mal_message_get_body_offset(message));
 
-  printf("maltcp_simple_app_myprovider: offset=%d", offset);
+  printf("maltcp_simple_app_myprovider: offset=%d", mal_message_get_body_offset(message));
 
   testarea_testservice_testcomposite_t *parameter_0;
   printf("maltcp_simple_app_myprovider: decode first parameter\n");
   rc = testarea_testservice_testsend_send_decode_0(
       provider->encoding_format_code,
-      bytes, &offset,
+      &cursor,
       provider->decoder,
       &parameter_0);
+  malbinary_cursor_assert(&cursor);
   if (rc < 0)
     return rc;
   printf("parameter_0=\n");
   testarea_testservice_testcomposite_print(parameter_0);
   printf("\n");
 
-  printf("maltcp_simple_app_myprovider: offset=%d", offset);
+  printf("maltcp_simple_app_myprovider: offset=%d", malbinary_cursor_get_body_offset(&cursor));
 
   mal_string_list_t *parameter_1;
   printf("maltcp_simple_app_myprovider: decode second parameter\n");
   rc = testarea_testservice_testsend_send_decode_1(provider->encoding_format_code,
-      bytes, &offset, provider->decoder, &parameter_1);
+      &cursor, provider->decoder, &parameter_1);
+  malbinary_cursor_assert(&cursor);
   if (rc < 0)
     return rc;
   printf("parameter_1=\n");
   mal_string_list_print(parameter_1);
   printf("\n");
 
-  printf("maltcp_simple_app_myprovider: offset=%d", offset);
+  printf("maltcp_simple_app_myprovider: offset=%d\n", malbinary_cursor_get_body_offset(&cursor));
 
   long short_form;
   void *parameter_2;
   printf("maltcp_simple_app_myprovider: decode third parameter\n");
   rc = testarea_testservice_testsend_send_decode_2(provider->encoding_format_code,
-      bytes, &offset, provider->decoder, &short_form, &parameter_2);
+      &cursor, provider->decoder, &short_form, &parameter_2);
+  malbinary_cursor_assert(&cursor);
   if (rc < 0)
     return rc;
 
-  printf("maltcp_simple_app_myprovider: offset=%d", offset);
+  printf("maltcp_simple_app_myprovider: offset=%d\n", malbinary_cursor_get_body_offset(&cursor));
   printf("maltcp_simple_app_myprovider: decoding done, short form=%lu\n",
       short_form);
 

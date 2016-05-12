@@ -69,7 +69,7 @@ void maltcp_simple_app_test(bool verbose) {
   malbinary_decoder_t *decoder = malbinary_decoder_new(false, true);
 
   // All the MAL header fields are passed
-  maltcp_header_t *maltcp_header = maltcp_header_new(NULL, true, 0, true, NULL, NULL, NULL, NULL);
+  maltcp_header_t *maltcp_header = maltcp_header_new(true, 0, true, NULL, NULL, NULL, NULL);
 
   // This test uses the same encoding configuration at the MAL/ZMQ transport
   // level (MAL header encoding) and at the application
