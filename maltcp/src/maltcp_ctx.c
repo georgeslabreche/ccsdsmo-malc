@@ -296,7 +296,6 @@ int maltcp_ctx_mal_standard_socket_handle(zloop_t *loop, zmq_pollitem_t *poller,
   maltcp_ctx_t *self = (maltcp_ctx_t *) arg;
 
   mal_uoctet_t id[256];
-  mal_uinteger_t id_size = 0;
 
   mal_uinteger_t mal_msg_bytes_length = -1;
   zmq_msg_t zmsg;
@@ -304,18 +303,19 @@ int maltcp_ctx_mal_standard_socket_handle(zloop_t *loop, zmq_pollitem_t *poller,
   mal_uinteger_t offset = 0;
 
   while (true) {
-    id_size = zmq_recv(self->mal_socket, id, 256, 0);
-    assert(id_size > 0);
+    int rc = zmq_recv(self->mal_socket, id, 256, 0);
+    clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: zmq_recv (identity) = %d bytes\n", rc);
+    if (rc <= 0) return -1;
 
     // Create an empty ØMQ message to hold the message part
     zmq_msg_t msg;
-    int rc = zmq_msg_init(&msg);
-    assert (rc == 0);
+    rc = zmq_msg_init(&msg);
+    assert(rc == 0);
 
     //  Block until a message is available to be received from socket
     rc = zmq_recvmsg(self->mal_socket, &msg, 0);
     clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: receive = %d bytes\n", rc);
-    assert (rc != -1);
+    if (rc < 0) return -1;
 
     if (rc == 0)
       return 0;
