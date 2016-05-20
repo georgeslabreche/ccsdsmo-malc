@@ -171,7 +171,7 @@ For NULL Macro:
 
 ## UPDATING DOCUMENTATION
 
-Project documentation in entirely in Markdown and lives in the `docs` directory. It is compiled into a static site thanks to [mkdocs](http://www.mkdocs.org/).
+Project documentation is entirely in Markdown and lives in the `docs` directory. It is compiled into a static site thanks to [mkdocs](http://www.mkdocs.org/).
 
 After updating the content of the `docs` directory in the `master` branch, you can autmatically upload the docs to Github Pages with the following command:
 
