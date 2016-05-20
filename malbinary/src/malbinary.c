@@ -8,9 +8,9 @@ void  malbinary_cursor_reset(malbinary_cursor_t *cursor) {
 
 void malbinary_cursor_init(malbinary_cursor_t *cursor,
     char *bytes, unsigned int length, unsigned int offset) {
-  cursor->body_ptr = bytes;
+  cursor->body_ptr = &bytes[offset];
   cursor->body_length = length;
-  cursor->body_offset = offset;
+  cursor->body_offset = 0;
 }
 
 void malbinary_cursor_copy(malbinary_cursor_t *from, malbinary_cursor_t *to) {

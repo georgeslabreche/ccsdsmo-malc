@@ -25,9 +25,14 @@ typedef struct _malbinary_encoder_t malbinary_encoder_t;
 typedef struct _malbinary_decoder_t malbinary_decoder_t;
 
 struct _malbinary_cursor_t {
-  // TODO (AF): Rename fields without 'body' reference
+  // Pointer to the first byte of the body, calculated in malbinary_cursor_init from the ptr and
+  // offset of the allocated MAL message bytes array.
+  // Should never be modified anywhere
   char* body_ptr;
+  // Length of the body part, calculated then fixed in malbinary_cursor_init
+  // Should never be modified during encoding or decoding
   unsigned int body_length;
+  // Current offset during encoding/decoding in the body part, initialized to 0 in malbinary_cursor_init
   unsigned int body_offset;
 };
 
