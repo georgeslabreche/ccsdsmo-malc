@@ -47,7 +47,7 @@ int mal_blob_list_add_encoding_length_malbinary(mal_blob_list_t *self,
   unsigned int list_size = self->element_count;
   malbinary_encoder_add_list_size_encoding_length(encoder, list_size, cursor);
   // Presence flags
-  ((malbinary_cursor_t *) cursor)->body_length += list_size;
+  malbinary_add_length(cursor, list_size);
   mal_blob_t **content = self->content;
   for (int i = 0; i < list_size; i++) {
     mal_blob_t *list_element = content[i];
