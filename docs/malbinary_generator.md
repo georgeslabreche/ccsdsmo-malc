@@ -18,10 +18,8 @@ Les paramÃ¨tres suivants doivent Ãªtre transmis par le code appelant :
 
 Ajout de la taille du champ de prÃ©sence :
 
-NOTE (AF): Ce code devrait être modifié pour préserver l'isolation du module d'encodage.
-
 ```c
-(*encoding_length) += MALBINARY_PRESENCE_FLAG_SIZE;
+malbinary_add_length(cursor, MALBINARY_PRESENCE_FLAG_SIZE);
 ```
 
 Si le champ est de type pointeur :
@@ -46,18 +44,16 @@ Ajout de la taille de l'Ã©lÃ©ment encodÃ©. Voir section 11.1.2.
 
 #### Polymorphisme
 
-NOTE (AF): Ce code devrait être modifié pour préserver l'isolation du module d'encodage.
-
 En cas de polymorphisme d'Attribut :
+
 ```c
-(*encoding_length) += MALBINARY_ATTRIBUTE_TAG_SIZE;
+malbinary_add_length(cursor, MALBINARY_ATTRIBUTE_TAG_SIZE);
 ```
 
-NOTE (AF): Ce code devrait être modifié pour préserver l'isolation du module d'encodage.
-
 En cas de polymorphisme d'Ã©lÃ©ment :
+
 ```c
-(*encoding_length) += MALBINARY_SHORT_FORM_SIZE;
+malbinary_add_length(cursor, MALBINARY_SHORT_FORM_SIZE);
 ```
 
 
@@ -95,26 +91,20 @@ Si l'Ã©lÃ©ment est de type Enumeration :
 
   -	Si la taille de l'Ã©numÃ©ration est infÃ©rieure Ã  2^8 :
 
-NOTE (AF): Ce code devrait être modifié pour préserver l'isolation du module d'encodage.
-
 ```c
-(*encoding_length) += MALBINARY_SMALL_ENUM_SIZE;
+malbinary_add_length(cursor, MALBINARY_SMALL_ENUM_SIZE);
 ```
 
   -	Si la taille de l'Ã©numÃ©ration est infÃ©rieure Ã  2^16 :
   
-NOTE (AF): Ce code devrait être modifié pour préserver l'isolation du module d'encodage.
-
 ```c
-(*encoding_length) += MALBINARY_MEDIUM_ENUM_SIZE;
+malbinary_add_length(cursor, MALBINARY_MEDIUM_ENUM_SIZE);
 ```
 
   -	Si la taille de l'Ã©numÃ©ration est infÃ©rieure Ã  2^32 :
 
-NOTE (AF): Ce code devrait être modifié pour préserver l'isolation du module d'encodage.
-
 ```c
-(*encoding_length) += MALBINARY_LARGE_ENUM_SIZE;
+malbinary_add_length(cursor, MALBINARY_LARGE_ENUM_SIZE);
 ```
 Test du code d'erreur :
 ```c
