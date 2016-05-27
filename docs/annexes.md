@@ -1,17 +1,18 @@
 Annexes
 =======
 
-Exemple d'Area « TestArea »
----------------------------
+"TestArea" area example
+-----------------------
 
-Cet exemple permet de tester les aspects suivants du livre MAL :
+This example (see https://github.com/ccsdsmo/malc/blob/master/xml/TestArea.xml) allows to test
+various aspects of the MAL specification:
 
-  -	pattern d'interaction SEND
-  -	structure Composite
-  -	liste d'éléments
-  -	corps de message avec de multiples éléments
-  -	champ optionnel ('canBeNull=true')
-  -	polymorphisme du dernier élément de corps de message
+  -	Interaction patterns: SEND, SUBMIT, INVOKE, REQUEST, PROGRESS and PUBSUB.
+  -	Composite structure.
+  -	Element list.
+  -	Message body with multiples elements.
+  -	Optional field ('canBeNull=true')
+  -	Polymorphism of the last element of the message body.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -79,14 +80,16 @@ Cet exemple permet de tester les aspects suivants du livre MAL :
 </mal:specification>
 ```
 
-Risques de collision
---------------------
+Names collision
+---------------
 
-Cette annexe liste des risques de collision de noms qui pourraient survenir lors de la génération de code. Des solutions sont proposées. Elles ne sont pour l'instant pas appliquée à la génération de code.
+This annex lists the different name collisions that could occur during the code generation.
+Solutions are proposed. They are currently not applied to the code generation.
 
-### Champ dans un composite
+### Composite fields
 
-Ajout du suffixe `_f` au nom du champ de valeur pour éviter une collision possible avec le champ de présence, par exemple pour deux champs MAL nommés `toto` et `toto_is_present`.
+Add a `_f` suffix to the name of the field to avoid a possible collusion with the presence field
+if it exists. For example, two MAL fields named `toto` and `toto_is_present`.
 
 ```c
 bool <field>_is_present;
@@ -94,9 +97,10 @@ unsigned int <field>_attribute_tag;
 <field type> <field>_f;
 ```
 
-Format d'encodage du header MALZMQ
-----------------------------------
-Pour simplifier le format d'encodage du header MAL, les champs `URI From` et `URI To` sont encodés systématiquement et entièrement. 
+Encoding format of the MALZMQ header
+------------------------------------
+
+To simplify the encoding format of the MAL header, the `From URI` and `To URI` fields are encoded systematically and completely.
 
 Version Number | SDU Type | Service Area | Service | Operation | Area Version | Is Error Message | QoSlevel | Session | Transaction Id
 ---------------|----------|--------------|---------|-----------|--------------|------------------|----------|---------|---------------
@@ -116,12 +120,12 @@ Timestamp                   | Network Zone                        | Session Name
 Time (var., mult. of octet) | Optional MDK (var., mult. of octet) | Optional MDK (var., mult. of octet) | List<Optional MDK> (var., mult. of octet) | Blob (var., mult. of octet)
 If ‘Timestamp Flag’ is ‘1’  | If ‘Network Flag’ is ‘1’            | If ‘Session Flag’ is ‘1’            | If ‘Domain Flag’ is ‘1’                   | If ‘Authentication Id Flag’ is ‘1’
 
-Schéma de description des « classes »
--------------------------------------
+Classes description diagram
+--------------------------
 
-Le schéma ci-dessous décrit les différentes classes de l'implantation et leurs relations, les classes sont séparées en deux espaces MAL et transport MAL/CZMQ. La plupart des ces relations sont unitaires, seule la classe malzmq_poller_data_t contient une liste de référence vers la classe `malzmq_endpoint_data_t`.
+The diagram below shows the different implementation classes and their relationships. Classes are separated in two spaces: MAL/C and MAL/ZMQ transport. Most of these relationships are unitary, only `malzmq_poller_data_t` class contains a reference list to the `malzmq_endpoint_data_t` class.
 
 ![Class Diagram](img/class_diagram.png)
 
-*Figure 1 - Description des "classes" du MAL*
+*Figure 1 - MAL classes diagram
 
