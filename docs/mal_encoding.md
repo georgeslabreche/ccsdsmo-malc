@@ -101,29 +101,28 @@ Déclaration :
 
 ```c
 	int <format>_encoder_encode_<data>(<format>_encoder_t *self,
-	  char *bytes, int *offset, mal_<data type>_t to_encode);
+	  void *cursor, mal_<data type>_t to_encode);
 ```
 
   - Si la donnée est de type pointeur (Attributs pointeurs ou données spécifiques) :
 
 ```c
 	int <format>_encoder_encode_<data>(<format>_encoder_t *self,
-	  char *bytes, int *offset, mal_<data type>_t *to_encode);
+	  void *cursor, mal_<data type>_t *to_encode);
 ```
 
   - Pour le type `MAL::Attribute` (polymorphisme d'Attribut) :
 
 ```c
 	int <format>_encoder_encode_attribute(
-	  <format>_encoder_t *self, char *bytes, int *offset,
+	  <format>_encoder_t *self, void *cursor,
 	  unsigned char attribute_tag, mal_attribute_t to_encode);
 ```
 
 Paramètres :
 
   -	`self` : le contexte d'encodage
-  -	`bytes` : le tableau d'octets où doit être encodée la donnée
-  -	`offset` : l'index à partir duquel la donnée doit être encodée, augmenté en résultat du nombre d'octets encodés
+  -	`cursor` : un index virtuel dans les structures d'encodage
   -	`attribute_tag` : l'identifiant du type d'Attribut (en cas de polymorphisme d'Attribut)
   -	`to_encode` : la donnée à encoder
 
@@ -146,29 +145,28 @@ Déclaration :
 
 ```c
 	int <format>_decoder_decode_<data>(<format>_decoder_t *self,
-	  char *bytes, int *offset, mal_<data type>_t *result);
+	  void *cursor, mal_<data type>_t *result);
 ```
 
   - Si la donnée est de type pointeur (Attributs pointeurs ou données spécifiques) :
 
 ```c
 	int <format>_decoder_decode_<data>(<format>_decoder_t *self,
-	  char *bytes, int *offset, mal_<data type>_t **result);
+	  void *cursor, mal_<data type>_t **result);
 ```
 
   - Pour le type `MAL::Attribute` (polymorphisme d'Attribut) :
 
 ```c
 	int <format>_decoder_decode_attribute(
-	  <format>_decoder_t *self, char *bytes, int *offset,
+	  <format>_decoder_t *self, void *cursor,
 	  unsigned char attribute_tag, mal_attribute_t *result);
 ```
 
 Paramètres :
   
   -	`self` : le contexte de décodage
-  -	`bytes` : le tableau d'octets qui contient la donnée encodée
-  -	`offset` : l'index à partir duquel la donnée doit être décodée, augmenté en résultat du nombre d'octets décodés
+  -	`cursor` : un index virtuel dans les structures de d�codage
   -	`result` : la donnée décodée
 
 Résultat : 
