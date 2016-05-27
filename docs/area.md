@@ -259,7 +259,7 @@ Déclaration :
 
 ```c
 int <qfop>_<stage|error>_encode[_<index>][_<qftype>](
-  int encoding_format_code, char *bytes, unsigned int *offset,
+  int encoding_format_code, char *bytes, void *cursor,
   void *encoder, bool presence_flag, unsigned char attribute_tag,
   union mal_attribute_t element);
 ```
@@ -269,7 +269,7 @@ int <qfop>_<stage|error>_encode[_<index>][_<qftype>](
 
 ```c
 int <qfop>_<stage|error>_encode[_<index>][_<qftype>](
-  int encoding_format_code, char *bytes, unsigned int *offset,
+  int encoding_format_code, void *cursor,
   void *encoder, bool presence_flag, <qftype>_t element);
 ```
 
@@ -277,7 +277,7 @@ int <qfop>_<stage|error>_encode[_<index>][_<qftype>](
 
 ```c
 int <qfop>_<stage|error>_encode[_<index>][_<qftype>](
-  int encoding_format_code, char *bytes, unsigned int *offset,
+  int encoding_format_code, void *cursor,
   void *encoder, <qftype>_[list_]t *element);
 ```
 
@@ -285,15 +285,14 @@ int <qfop>_<stage|error>_encode[_<index>][_<qftype>](
 
 ```c
 int <qfop>_update_encode[_<index>][_<qftype>_list](
-    int encoding_format_code, char *bytes,
-    unsigned int *offset, void *encoder, <qftype>_list_t *element) {
+    int encoding_format_code, void *cursor,
+    void *encoder, <qftype>_list_t *element) {
 ```
 
 Paramètres :
 
   -	`encoding_format_code` : code du format d'encodage
-  -	`bytes` : le tableau d'octets dans lequel l'élément doit être encodé
-  -	`offset` : index à partir duquel l'élément est encodé, augmenté en résultat du nombre d'octets encodés
+  -	`cursor` : un index virtuel du fromat d'encodage
   -	`encoder` : configuration du module d'encodage
   -	`presence_flag` : flag de présence à encoder
   -	`attribute_tag` : tag d'Attribut à encoder
@@ -308,7 +307,7 @@ Déclaration :
 
 ```c
 int <qfop>_<stage>_decode[_<index>](
-  int encoding_format_code, char *bytes, unsigned int *offset,
+  int encoding_format_code, void *cursor,
   void *decoder, bool *presence_flag_res,
   unsigned char *attribute_tag_res, union mal_attribute_t *element_res);
 ```
@@ -318,7 +317,7 @@ int <qfop>_<stage>_decode[_<index>](
 ```c
 int <qfop>_<stage|error>_decode[_<index>](
   int encoding_format_code,
-  char *bytes, unsigned int *offset, void *decoder,
+  void *cursor, void *decoder,
   mal_element_holder_t *element_holder);
 ```
 
@@ -327,7 +326,7 @@ int <qfop>_<stage|error>_decode[_<index>](
 
 ```c
 int <qfop>_<stage>_decode[_<index>](
-  int encoding_format_code, char *bytes, unsigned int *offset,
+  int encoding_format_code, void *cursor,
   void *decoder, bool *presence_flag_res, <qftype>_t *element_res);
 ```
   
@@ -335,7 +334,7 @@ int <qfop>_<stage>_decode[_<index>](
 
 ```c
 int <qfop>_<stage>_decode[_<index>](
-  int encoding_format_code, char *bytes, unsigned int *offset,
+  int encoding_format_code, void *cursor,
   void *decoder, <qftype>_[list_]t **element_res);
 ```
 
@@ -344,7 +343,7 @@ int <qfop>_<stage>_decode[_<index>](
 
 ```c
 int <qfop>_update_decode[_<index>](int encoding_format_code,
-  char *bytes, unsigned int *offset, void *decoder,
+  void *cursor, void *decoder,
   mal_element_holder_t *element_holder);
 ```
 
@@ -352,15 +351,14 @@ int <qfop>_update_decode[_<index>](int encoding_format_code,
 
 ```c
 int <qfop>_update_decode[_<index>](int encoding_format_code,
-  char *bytes, unsigned int *offset, void *decoder,
+  void *cursor, void *decoder,
   <qftype>_list_t **element_res);
 ```
 
 Paramètres :
 
   -	`encoding_format_code` : code du format d'encodage
-  -	`bytes` : le tableau d'octets à partir duquel l'élément doit être décodé
-  -	`offset` : index à partir duquel l'élément est décodé, augmenté en résultat du nombre d'octets décodés
+  -	`cursor` : un index virtuel du format d'encodage
   -	`decoder` : configuration du module de décodage
   -	`presence_flag_res` : flag de présence décodé
   -	`attribute_tag_res` : tag d'Attribut décodé
