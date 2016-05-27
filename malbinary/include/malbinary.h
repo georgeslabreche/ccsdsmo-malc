@@ -43,6 +43,8 @@ void malbinary_cursor_init(malbinary_cursor_t *cursor,
     char *bytes, unsigned int length, unsigned int offset);
 void malbinary_cursor_copy(malbinary_cursor_t *from, malbinary_cursor_t *to);
 
+void malbinary_add_length(malbinary_cursor_t *cursor, unsigned int length);
+
 void malbinary_cursor_assert(malbinary_cursor_t *cursor);
 
 // TODO (AF): Rename getters without 'body' reference
