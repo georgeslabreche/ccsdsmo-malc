@@ -54,7 +54,7 @@ int mal_integer_list_add_encoding_length_malbinary(mal_integer_list_t *self,
   bool *presence_flags = self->presence_flags;
   mal_integer_t *content = self->content;
   // Presence flags
-  malbinary_add_length((void *) cursor, list_size);
+  malbinary_add_length((malbinary_cursor_t *) cursor, list_size);
   for (int i = 0; i < list_size; i++) {
     if (presence_flags[i]) {
       mal_integer_t list_element = content[i];

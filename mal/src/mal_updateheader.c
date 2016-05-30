@@ -45,7 +45,7 @@ int mal_updateheader_add_encoding_length_malbinary(mal_updateheader_t *self,
   if (rc < 0)
     return rc;
   // enum updatetype
-  malbinary_add_length(cursor, 1);
+  malbinary_add_length((malbinary_cursor_t *) cursor, 1);
   // entitykey
   rc = mal_entitykey_add_encoding_length_malbinary(self->entitykey, encoder, cursor);
   return rc;

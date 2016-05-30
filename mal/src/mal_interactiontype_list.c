@@ -57,12 +57,12 @@ int mal_interactiontype_list_add_encoding_length_malbinary(
   malbinary_encoder_add_list_size_encoding_length(encoder, list_size, cursor);
   bool *presence_flags = self->presence_flags;
   // Presence flags
-  malbinary_add_length(cursor, list_size);
+  malbinary_add_length((malbinary_cursor_t *) cursor, list_size);
   for (int i = 0; i < list_size; i++) {
     bool presence_flag = presence_flags[i];
     if (presence_flag) {
       // Small enum
-      (malbinary_add_length(cursor, 1);
+      malbinary_add_length((malbinary_cursor_t *) cursor, 1);
     }
   }
   return rc;
