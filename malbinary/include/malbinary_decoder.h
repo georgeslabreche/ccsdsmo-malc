@@ -81,9 +81,6 @@ int malbinary_decoder_decode_attribute(malbinary_decoder_t *malbinary_decoder, v
 
 int malbinary_decoder_decode_attribute_tag(malbinary_decoder_t *self, void *cursor, unsigned char *result);
 
-// bitfield length
-unsigned int malbinary_read_uvarinteger(char *bytes);
-
 void malbinary_decoder_test(bool verbose);
 
 #ifdef __cplusplus

@@ -69,18 +69,6 @@ unsigned short malbinary_read_uvarshort(void *cursor) {
   return (value | b << i) & 0xFFFF;
 }
 
-//decode bitfield most significant
-unsigned int malbinary_read_uvarinteger(char *bytes) {
-  unsigned int index = 0;
-  unsigned int value = 0;
-  int i;
-  int b;
-  for (i = 0; ((b = bytes[index++]) & 0x80) != 0; i += 7) {
-    value |= (b & 0x7f) << i;
-  }
-  return value | b << i;
-}
-
 unsigned int malbinary_read_uvarint(void *cursor) {
   unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
   unsigned int value = 0;

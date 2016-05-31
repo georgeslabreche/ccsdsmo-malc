@@ -13,10 +13,6 @@ void malbinary_encoder_set_log_level(malbinary_encoder_t *decoder, int level);
 
 clog_logger_t malbinary_encoder_get_logger(malbinary_encoder_t *decoder);
 
-// bitfield length
-int malbinary_var_uinteger_encoding_length(unsigned int value);
-void malbinary_write_uvarinteger(unsigned int value, char *bytes);
-
 /*
  * Encoding length functions.
  */
