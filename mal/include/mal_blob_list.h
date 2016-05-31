@@ -16,6 +16,8 @@ unsigned int mal_blob_list_get_element_count(mal_blob_list_t *self);
 
 mal_blob_t **mal_blob_list_get_content(mal_blob_list_t *self);
 
+void mal_blob_list_add_element(mal_blob_list_t *self, int index, mal_blob_t *element);
+
 int mal_blob_list_add_encoding_length_malbinary(mal_blob_list_t *self,
     malbinary_encoder_t *encoder, void *cursor);
 

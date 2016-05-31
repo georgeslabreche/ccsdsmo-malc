@@ -21,6 +21,8 @@ mal_interactiontype_t *mal_interactiontype_list_get_content();
 bool *mal_interactiontype_list_get_presence_flags(
     mal_interactiontype_list_t *self);
 
+void mal_interactiontype_list_add_element(mal_interactiontype_list_t *self, int index, mal_interactiontype_t element);
+
 int mal_interactiontype_list_add_encoding_length_malbinary(
     mal_interactiontype_list_t *self,
     malbinary_encoder_t *encoder, void *cursor);

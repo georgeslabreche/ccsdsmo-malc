@@ -21,6 +21,8 @@ mal_boolean_t *mal_boolean_list_get_content(mal_boolean_list_t *self);
 int mal_boolean_list_add_encoding_length_malbinary(mal_boolean_list_t *self,
     malbinary_encoder_t *encoder, void *cursor);
 
+void mal_boolean_list_add_element(mal_boolean_list_t *self, int index, mal_boolean_t element);
+
 int mal_boolean_list_encode_malbinary(mal_boolean_list_t *self,
     malbinary_encoder_t *encoder, void *cursor);
 

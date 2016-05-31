@@ -16,6 +16,8 @@ unsigned int mal_updateheader_list_get_element_count(mal_updateheader_list_t *se
 
 mal_updateheader_t **mal_updateheader_list_get_content(mal_updateheader_list_t *self);
 
+void mal_updateheader_list_add_element(mal_updateheader_list_t *self, int index, mal_updateheader_t *element);
+
 int mal_updateheader_list_add_encoding_length_malbinary(mal_updateheader_list_t *self,
     malbinary_encoder_t *encoder, void *cursor);
 

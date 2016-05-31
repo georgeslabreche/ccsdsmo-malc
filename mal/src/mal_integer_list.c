@@ -46,6 +46,11 @@ mal_integer_t *mal_integer_list_get_content(mal_integer_list_t *self) {
   return self->content;
 }
 
+void mal_integer_list_add_element(mal_integer_list_t *self, int index, mal_integer_t element) {
+  self->content[index] = element;
+  self->presence_flags[index] = true;
+}
+
 int mal_integer_list_add_encoding_length_malbinary(mal_integer_list_t *self,
     malbinary_encoder_t *encoder, void *cursor) {
   int rc = 0;

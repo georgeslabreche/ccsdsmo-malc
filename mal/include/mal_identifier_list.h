@@ -16,6 +16,8 @@ unsigned int mal_identifier_list_get_element_count(mal_identifier_list_t *self);
 
 mal_identifier_t **mal_identifier_list_get_content(mal_identifier_list_t *self);
 
+void mal_identifier_list_add_element(mal_identifier_list_t *self, int index, mal_identifier_t *element);
+
 int mal_identifier_list_add_encoding_length_malbinary(mal_identifier_list_t *self,
     malbinary_encoder_t *encoder, void *cursor);
 
