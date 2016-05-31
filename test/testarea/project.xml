@@ -67,8 +67,11 @@
     <class name = "testarea_testservice_testcomposite" />
     <class name = "testarea_testservice_testcomposite_list" />
     <class name = "testarea_testservice_testfinalcompositea" />
+    <class name = "testarea_testservice_testfinalcompositeb" />
     <class name = "testarea_testservice_testupdate" />
     <class name = "testarea_testservice_testupdate_list" />
+    <class name = "testarea_testservice_testfinalcompositea_list" />
+    <class name = "testarea_testservice_testfinalcompositeb_list" />
     <class name = "testarea" />
     
     <!--
