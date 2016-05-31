@@ -5,6 +5,12 @@
 extern "C" {
 #endif
 
+struct _mal_element_holder_t {
+  bool presence_flag;
+  long short_form;
+  union mal_element_t value;
+};
+
 mal_element_holder_t *mal_element_holder_new(void);
 
 void mal_element_holder_destroy(mal_element_holder_t **self_p);

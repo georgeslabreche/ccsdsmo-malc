@@ -3,12 +3,6 @@
 
 #include "mal.h"
 
-struct _mal_element_holder_t {
-  bool presence_flag;
-  long short_form;
-  union mal_element_t value;
-};
-
 mal_element_holder_t *mal_element_holder_new() {
   mal_element_holder_t *self = (mal_element_holder_t *) calloc(
       1, sizeof(mal_element_holder_t));
