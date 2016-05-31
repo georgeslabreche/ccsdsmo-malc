@@ -67,12 +67,23 @@
     <class name = "mal_routing" />
     <class name = "mal_endpoint" />
     <class name = "mal_poller" />
-    <class name = "mal_list" />
-    <class name = "mal_enum_list" />
     <class name = "mal_integer_list" />
+    <class name = "mal_uinteger_list" />
+    <class name = "mal_double_list" />
+    <class name = "mal_float_list" />
+    <class name = "mal_long_list" />
+    <class name = "mal_ulong_list" />
+    <class name = "mal_short_list" />
+    <class name = "mal_ushort_list" />
+    <class name = "mal_octet_list" />
+    <class name = "mal_uoctet_list" />
     <class name = "mal_boolean_list" /> 
     <class name = "mal_string_list" />
     <class name = "mal_blob_list" />
+    <class name = "mal_time_list" />
+    <class name = "mal_finetime_list" />
+    <class name = "mal_duration_list" />
+    <class name = "mal_uri_list" />
     <class name = "mal_interactiontype_list" />
     <class name = "mal_identifier_list" /> 
     <class name = "mal_message" />
@@ -83,7 +94,19 @@
     <class name = "mal_updateheader" />
     <class name = "mal_updateheader_list" />
     <class name = "mal_subscription" />
+    <class name = "mal_subscription_list" />
     <class name = "mal_element_holder" />
+    <class name =  "mal_file" />
+	<class name =  "mal_file_list" />
+	<class name =  "mal_idbooleanpair" />
+	<class name =  "mal_idbooleanpair_list" />
+	<class name =  "mal_namedvalue" />
+	<class name =  "mal_namedvalue_list" />
+	<class name =  "mal_pair" />
+	<class name =  "mal_pair_list" />
+	<class name =  "mal_sessiontype_list" />
+	<class name =  "mal_updatetype_list" />
+	<class name =  "mal_qoslevel_list" />
     <class name = "mal" />
 
     <!--
