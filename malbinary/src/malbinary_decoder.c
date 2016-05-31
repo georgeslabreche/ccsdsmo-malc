@@ -1,7 +1,6 @@
 #include "malbinary.h"
 
 struct _malbinary_decoder_t {
-  // TODO: varint limited to the last parameter in the MAL body
   bool varint_supported;
   clog_logger_t logger;
 };
@@ -68,6 +67,18 @@ unsigned short malbinary_read_uvarshort(void *cursor) {
   }
   ((malbinary_cursor_t *) cursor)->body_offset = index;
   return (value | b << i) & 0xFFFF;
+}
+
+//decode bitfield most significant
+unsigned int malbinary_read_uvarinteger(char *bytes) {
+  unsigned int index = 0;
+  unsigned int value = 0;
+  int i;
+  int b;
+  for (i = 0; ((b = bytes[index++]) & 0x80) != 0; i += 7) {
+    value |= (b & 0x7f) << i;
+  }
+  return value | b << i;
 }
 
 unsigned int malbinary_read_uvarint(void *cursor) {
@@ -198,13 +209,19 @@ int malbinary_decoder_decode_small_enum(malbinary_decoder_t *self, void *cursor,
 
 int malbinary_decoder_decode_medium_enum(malbinary_decoder_t *self, void *cursor, int *result) {
   int rc = 0;
-  (*result) = malbinary_read16(cursor);
+  if (self->varint_supported)
+    (*result) = malbinary_read_uvarshort(cursor);
+  else
+    (*result) = malbinary_read16(cursor);
   return rc;
 }
 
 int malbinary_decoder_decode_large_enum(malbinary_decoder_t *self, void *cursor, int *result) {
   int rc = 0;
-  (*result) = malbinary_read32(cursor);
+  if (self->varint_supported)
+    (*result) = malbinary_read_uvarint(cursor);
+  else
+    (*result) = malbinary_read32(cursor);
   return rc;
 }
 
@@ -289,7 +306,10 @@ int malbinary_decoder_decode_boolean(malbinary_decoder_t *self, void *cursor, ma
 
 int malbinary_decoder_decode_attribute_tag(malbinary_decoder_t *self, void *cursor, unsigned char *result) {
   int rc = 0;
-  (*result) = malbinary_read32(cursor);
+  if (self->varint_supported)
+    (*result) = malbinary_read_varint(cursor);
+  else
+    (*result) = malbinary_read32(cursor);
   return rc;
 }
 

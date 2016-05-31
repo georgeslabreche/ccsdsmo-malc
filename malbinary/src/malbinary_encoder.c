@@ -1,7 +1,6 @@
 #include "malbinary.h"
 
 struct _malbinary_encoder_t {
-  // TODO: varint limited to the last parameter in the MAL body
   bool varint_supported;
   clog_logger_t logger;
 };
@@ -23,6 +22,10 @@ void malbinary_encoder_set_log_level(malbinary_encoder_t *encoder, int level) {
 
 clog_logger_t malbinary_encoder_get_logger(malbinary_encoder_t *encoder) {
   return encoder->logger;
+}
+
+bool malbinary_encoder_is_varint(malbinary_encoder_t *encoder) {
+  return encoder->varint_supported;
 }
 
 void malbinary_write16(int int_value, void *cursor) {
@@ -69,7 +72,7 @@ int malbinary_var_ushort_encoding_length(unsigned short value) {
 int malbinary_var_uinteger_encoding_length(unsigned int value) {
   if (value == 0) return 1;
   int ret = 0;
-  for (int i = 0; i < 28; i += 7) {
+  for (int i = 0; i < 32; i += 7) {
     if ((value >> i) == 0) {
       break;
     }
@@ -81,7 +84,7 @@ int malbinary_var_uinteger_encoding_length(unsigned int value) {
 int malbinary_var_ulong_encoding_length(unsigned long value) {
   if (value == 0) return 1;
   int ret = 0;
-  for (int i = 0; i < 63; i += 7) {
+  for (int i = 0; i < 64; i += 7) {
     if ((value >> i) == 0) {
       break;
     }
@@ -120,6 +123,19 @@ void malbinary_write_uvarshort(unsigned short value, void *cursor) {
       return;
     } else {
       ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char)((value & 0x7F) | 0x80);
+      value >>= 7;
+    }
+  }
+}
+
+void malbinary_write_uvarinteger(unsigned int value, char *bytes) {
+  unsigned int index = 0;
+  while (true) {
+    if ((value & ~0x7F) == 0) {
+      bytes[index++] = (char) value;
+      return;
+    } else {
+      bytes[index++] = (char)((value & 0x7F) | 0x80);
       value >>= 7;
     }
   }
@@ -196,9 +212,12 @@ int malbinary_encoder_add_presence_flag_encoding_length(malbinary_encoder_t *sel
   return rc;
 }
 
-int malbinary_encoder_add_short_form_encoding_length(malbinary_encoder_t *self, void *cursor) {
+int malbinary_encoder_add_short_form_encoding_length(malbinary_encoder_t *self, long to_encode, void *cursor) {
   int rc = 0;
-  ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_SHORT_FORM_SIZE;
+  if (self->varint_supported)
+    ((malbinary_cursor_t *) cursor)->body_length += malbinary_var_long_encoding_length(to_encode);
+  else
+    ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_SHORT_FORM_SIZE;
   return rc;
 }
 
@@ -231,14 +250,20 @@ int malbinary_encoder_add_small_enum_encoding_length(malbinary_encoder_t *self,
 int malbinary_encoder_add_medium_enum_encoding_length(malbinary_encoder_t *self,
     unsigned int to_encode, void *cursor) {
   int rc = 0;
-  ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_MEDIUM_ENUM_SIZE;
+  if (self->varint_supported)
+    ((malbinary_cursor_t *) cursor)->body_length += malbinary_var_ushort_encoding_length(to_encode);
+  else
+    ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_MEDIUM_ENUM_SIZE;
   return rc;
 }
 
 int malbinary_encoder_add_large_enum_encoding_length(malbinary_encoder_t *self,
     unsigned int to_encode, void *cursor) {
   int rc = 0;
-  ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_LARGE_ENUM_SIZE;
+  if (self->varint_supported)
+    ((malbinary_cursor_t *) cursor)->body_length += malbinary_var_uinteger_encoding_length(to_encode);
+  else
+    ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_LARGE_ENUM_SIZE;
   return rc;
 }
 
@@ -386,13 +411,19 @@ int malbinary_encoder_encode_small_enum(malbinary_encoder_t *self, void *cursor,
 
 int malbinary_encoder_encode_medium_enum(malbinary_encoder_t *self, void *cursor, int to_encode) {
   int rc = 0;
-  malbinary_write16(to_encode, cursor);
+  if (self->varint_supported)
+    malbinary_write_uvarshort(to_encode, cursor);
+  else
+    malbinary_write16(to_encode, cursor);
   return rc;
 }
 
 int malbinary_encoder_encode_large_enum(malbinary_encoder_t *self, void *cursor, int to_encode) {
   int rc = 0;
-  malbinary_write32(to_encode, cursor);
+  if (self->varint_supported)
+    malbinary_write_uvarint(to_encode, cursor);
+  else
+    malbinary_write32(to_encode, cursor);
   return rc;
 }
 
@@ -481,9 +512,12 @@ int malbinary_encoder_encode_boolean(malbinary_encoder_t *self, void *cursor, ma
   return rc;
 }
 
-int malbinary_encoder_encode_attribute_tag(malbinary_encoder_t *malbinary_encoder, void *cursor, unsigned char to_encode) {
+int malbinary_encoder_encode_attribute_tag(malbinary_encoder_t *self, void *cursor, unsigned char to_encode) {
   int rc = 0;
-  malbinary_write32(to_encode, cursor);
+  if (self->varint_supported)
+    malbinary_write_uvarint(to_encode, cursor);
+  else
+    malbinary_write32(to_encode, cursor);
   return rc;
 }
 

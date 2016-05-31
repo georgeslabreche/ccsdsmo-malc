@@ -13,6 +13,10 @@ void malbinary_encoder_set_log_level(malbinary_encoder_t *decoder, int level);
 
 clog_logger_t malbinary_encoder_get_logger(malbinary_encoder_t *decoder);
 
+// bitfield length
+int malbinary_var_uinteger_encoding_length(unsigned int value);
+void malbinary_write_uvarinteger(unsigned int value, char *bytes);
+
 /*
  * Encoding length functions.
  */
@@ -24,7 +28,7 @@ int malbinary_encoder_add_presence_flag_encoding_length(
     malbinary_encoder_t *self, void *cursor);
 
 int malbinary_encoder_add_short_form_encoding_length(malbinary_encoder_t *self,
-    void *cursor);
+    long to_encode, void *cursor);
 
 int malbinary_encoder_add_integer_encoding_length(malbinary_encoder_t *self,
     mal_integer_t to_encode, void *cursor);
@@ -153,6 +157,7 @@ int malbinary_encoder_encode_attribute_tag(malbinary_encoder_t *malbinary_encode
  */
 
 bool malbinary_encoder_is_verbose(malbinary_encoder_t *self);
+bool malbinary_encoder_is_varint(malbinary_encoder_t *encoder);
 
 void malbinary_encoder_test(bool verbose);
 
