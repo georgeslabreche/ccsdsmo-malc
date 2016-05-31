@@ -144,7 +144,7 @@ testarea_testservice_testfullcomposite_t * testarea_testservice_testfullcomposit
 }
 
 // encoding functions related to transport malbinary
-int testarea_testservice_testfullcomposite_add_encoding_length_malbinary(testarea_testservice_testfullcomposite_t * self, malbinary_encoder_t * malbinary_encoder, void *cursor)
+int testarea_testservice_testfullcomposite_add_encoding_length_malbinary(testarea_testservice_testfullcomposite_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor)
 {
   int rc = 0;
   rc = malbinary_encoder_add_boolean_encoding_length(malbinary_encoder, self->boolfield, cursor);
@@ -211,7 +211,7 @@ int testarea_testservice_testfullcomposite_add_encoding_length_malbinary(testare
     return rc;
   return rc;
 }
-int testarea_testservice_testfullcomposite_encode_malbinary(testarea_testservice_testfullcomposite_t * self, malbinary_encoder_t * malbinary_encoder, void *cursor)
+int testarea_testservice_testfullcomposite_encode_malbinary(testarea_testservice_testfullcomposite_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor)
 {
   int rc = 0;
   bool presence_flag;
@@ -301,7 +301,7 @@ int testarea_testservice_testfullcomposite_encode_malbinary(testarea_testservice
     return rc;
   return rc;
 }
-int testarea_testservice_testfullcomposite_decode_malbinary(testarea_testservice_testfullcomposite_t * self, malbinary_decoder_t * malbinary_decoder, void *cursor)
+int testarea_testservice_testfullcomposite_decode_malbinary(testarea_testservice_testfullcomposite_t * self, malbinary_decoder_t * malbinary_decoder, void * cursor)
 {
   int rc = 0;
   bool presence_flag;

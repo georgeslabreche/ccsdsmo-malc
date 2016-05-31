@@ -48,7 +48,7 @@ testarea_testservice_testcomposite_t ** testarea_testservice_testcomposite_list_
 }
 
 // encoding functions related to transport malbinary
-int testarea_testservice_testcomposite_list_add_encoding_length_malbinary(testarea_testservice_testcomposite_list_t * self, malbinary_encoder_t * malbinary_encoder, void *cursor)
+int testarea_testservice_testcomposite_list_add_encoding_length_malbinary(testarea_testservice_testcomposite_list_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor)
 {
   int rc = 0;
   unsigned int list_size = self->element_count;
@@ -67,7 +67,7 @@ int testarea_testservice_testcomposite_list_add_encoding_length_malbinary(testar
   }
   return rc;
 }
-int testarea_testservice_testcomposite_list_encode_malbinary(testarea_testservice_testcomposite_list_t * self, malbinary_encoder_t * malbinary_encoder, void *cursor)
+int testarea_testservice_testcomposite_list_encode_malbinary(testarea_testservice_testcomposite_list_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor)
 {
   int rc = 0;
   unsigned int list_size = self->element_count;
@@ -91,7 +91,7 @@ int testarea_testservice_testcomposite_list_encode_malbinary(testarea_testservic
   }
   return rc;
 }
-int testarea_testservice_testcomposite_list_decode_malbinary(testarea_testservice_testcomposite_list_t * self, malbinary_decoder_t * malbinary_decoder, void *cursor)
+int testarea_testservice_testcomposite_list_decode_malbinary(testarea_testservice_testcomposite_list_t * self, malbinary_decoder_t * malbinary_decoder, void * cursor)
 {
   int rc = malbinary_decoder_decode_list_size(malbinary_decoder, cursor, &self->element_count);
   if (rc < 0)

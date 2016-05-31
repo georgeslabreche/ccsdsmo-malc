@@ -58,7 +58,7 @@ testarea_testenumeration_t * testarea_testenumeration_list_get_content(testarea_
 }
 
 // encoding functions related to transport malbinary
-int testarea_testenumeration_list_add_encoding_length_malbinary(testarea_testenumeration_list_t * self, malbinary_encoder_t * malbinary_encoder, void *cursor)
+int testarea_testenumeration_list_add_encoding_length_malbinary(testarea_testenumeration_list_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor)
 {
   int rc = 0;
   unsigned int list_size = self->element_count;
@@ -75,7 +75,7 @@ int testarea_testenumeration_list_add_encoding_length_malbinary(testarea_testenu
   }
   return rc;
 }
-int testarea_testenumeration_list_encode_malbinary(testarea_testenumeration_list_t * self, malbinary_encoder_t * malbinary_encoder, void *cursor)
+int testarea_testenumeration_list_encode_malbinary(testarea_testenumeration_list_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor)
 {
   int rc = 0;
   unsigned int list_size = self->element_count;
@@ -98,7 +98,7 @@ int testarea_testenumeration_list_encode_malbinary(testarea_testenumeration_list
   }
   return rc;
 }
-int testarea_testenumeration_list_decode_malbinary(testarea_testenumeration_list_t * self, malbinary_decoder_t * malbinary_decoder, void *cursor)
+int testarea_testenumeration_list_decode_malbinary(testarea_testenumeration_list_t * self, malbinary_decoder_t * malbinary_decoder, void * cursor)
 {
   int rc = 0;
   unsigned int list_size;

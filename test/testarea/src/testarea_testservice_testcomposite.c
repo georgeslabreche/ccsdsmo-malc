@@ -5,10 +5,10 @@
 struct _testarea_testservice_testcomposite_t {
   mal_string_t * stringfield;
   bool intfield_is_present;
-  bool floatfield_is_present;
-  bool doublefield_is_present;
   mal_integer_t intfield;
+  bool floatfield_is_present;
   mal_float_t floatfield;
+  bool doublefield_is_present;
   mal_double_t doublefield;
 };
 
@@ -25,25 +25,9 @@ bool testarea_testservice_testcomposite_intfield_is_present(testarea_testservice
 {
   return self->intfield_is_present;
 }
-bool testarea_testservice_testcomposite_floatfield_is_present(testarea_testservice_testcomposite_t * self)
-{
-  return self->floatfield_is_present;
-}
-bool testarea_testservice_testcomposite_doublefield_is_present(testarea_testservice_testcomposite_t * self)
-{
-  return self->doublefield_is_present;
-}
 void testarea_testservice_testcomposite_intfield_set_present(testarea_testservice_testcomposite_t * self, bool is_present)
 {
   self->intfield_is_present = is_present;
-}
-void testarea_testservice_testcomposite_floatfield_set_present(testarea_testservice_testcomposite_t * self, bool is_present)
-{
-  self->floatfield_is_present = is_present;
-}
-void testarea_testservice_testcomposite_doublefield_set_present(testarea_testservice_testcomposite_t * self, bool is_present)
-{
-  self->doublefield_is_present = is_present;
 }
 mal_integer_t testarea_testservice_testcomposite_get_intfield(testarea_testservice_testcomposite_t * self)
 {
@@ -53,6 +37,14 @@ void testarea_testservice_testcomposite_set_intfield(testarea_testservice_testco
 {
   self->intfield = intfield;
 }
+bool testarea_testservice_testcomposite_floatfield_is_present(testarea_testservice_testcomposite_t * self)
+{
+  return self->floatfield_is_present;
+}
+void testarea_testservice_testcomposite_floatfield_set_present(testarea_testservice_testcomposite_t * self, bool is_present)
+{
+  self->floatfield_is_present = is_present;
+}
 mal_float_t testarea_testservice_testcomposite_get_floatfield(testarea_testservice_testcomposite_t * self)
 {
   return self->floatfield;
@@ -60,6 +52,14 @@ mal_float_t testarea_testservice_testcomposite_get_floatfield(testarea_testservi
 void testarea_testservice_testcomposite_set_floatfield(testarea_testservice_testcomposite_t * self, mal_float_t floatfield)
 {
   self->floatfield = floatfield;
+}
+bool testarea_testservice_testcomposite_doublefield_is_present(testarea_testservice_testcomposite_t * self)
+{
+  return self->doublefield_is_present;
+}
+void testarea_testservice_testcomposite_doublefield_set_present(testarea_testservice_testcomposite_t * self, bool is_present)
+{
+  self->doublefield_is_present = is_present;
 }
 mal_double_t testarea_testservice_testcomposite_get_doublefield(testarea_testservice_testcomposite_t * self)
 {
@@ -80,7 +80,7 @@ testarea_testservice_testcomposite_t * testarea_testservice_testcomposite_new(vo
 }
 
 // encoding functions related to transport malbinary
-int testarea_testservice_testcomposite_add_encoding_length_malbinary(testarea_testservice_testcomposite_t * self, malbinary_encoder_t * malbinary_encoder, void *cursor)
+int testarea_testservice_testcomposite_add_encoding_length_malbinary(testarea_testservice_testcomposite_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor)
 {
   int rc = 0;
   ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
@@ -113,7 +113,7 @@ int testarea_testservice_testcomposite_add_encoding_length_malbinary(testarea_te
   }
   return rc;
 }
-int testarea_testservice_testcomposite_encode_malbinary(testarea_testservice_testcomposite_t * self, malbinary_encoder_t * malbinary_encoder, void *cursor)
+int testarea_testservice_testcomposite_encode_malbinary(testarea_testservice_testcomposite_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor)
 {
   int rc = 0;
   bool presence_flag;
@@ -159,7 +159,7 @@ int testarea_testservice_testcomposite_encode_malbinary(testarea_testservice_tes
   }
   return rc;
 }
-int testarea_testservice_testcomposite_decode_malbinary(testarea_testservice_testcomposite_t * self, malbinary_decoder_t * malbinary_decoder, void *cursor)
+int testarea_testservice_testcomposite_decode_malbinary(testarea_testservice_testcomposite_t * self, malbinary_decoder_t * malbinary_decoder, void * cursor)
 {
   int rc = 0;
   bool presence_flag;
