@@ -69,8 +69,8 @@ void testarea_testservice_testcomposite_print(
 void testarea_testservice_testfinalcompositea_print(
     testarea_testservice_testfinalcompositea_t *self) {
   printf("testarea_testservice_testfinalcompositea_print(");
-  printf("intfield=%d", self->intfield);
-  printf(",intfield1=%d", self->intfield2);
+  printf("intfield=%d", testarea_testservice_testfinalcompositea_get_intfield(self));
+  printf(",intfield1=%d", testarea_testservice_testfinalcompositea_get_intfield2(self));
   printf(")");
 }
 
@@ -124,18 +124,16 @@ int send_app_myprovider_testarea_testservice_testsend(
 
   printf("send_app_myprovider: offset=%d", malbinary_cursor_get_body_offset(&cursor));
 
-  long short_form;
-  void *parameter_2;
+  mal_element_holder_t element_holder;
   printf("send_app_myprovider: decode third parameter\n");
   rc = testarea_testservice_testsend_send_decode_2(provider->encoding_format_code,
-      &cursor, provider->decoder, &short_form, &parameter_2);
+      &cursor, provider->decoder, &element_holder);
   malbinary_cursor_assert(&cursor);
   if (rc < 0)
     return rc;
 
   printf("send_app_myprovider: offset=%d", malbinary_cursor_get_body_offset(&cursor));
-  printf("send_app_myprovider: decoding done, short form=%lu\n",
-      short_form);
+  printf("send_app_myprovider: decoding done, short form=%lu\n", element_holder.short_form);
 
   // parameter_0 may be NULL
   if (parameter_0 == NULL) {
@@ -152,12 +150,12 @@ int send_app_myprovider_testarea_testservice_testsend(
   }
 
   // parameter_2 may be NULL
-  if (parameter_2 == NULL) {
+  if (element_holder.value.composite_value == NULL) {
 
   } else {
-    if (short_form == TESTAREA_TESTSERVICE_TESTFINALCOMPOSITEA_SHORT_FORM) {
+    if (element_holder.short_form == TESTAREA_TESTSERVICE_TESTFINALCOMPOSITEA_SHORT_FORM) {
       testarea_testservice_testfinalcompositea_t *testfinalcompositea =
-          (testarea_testservice_testfinalcompositea_t *) parameter_2;
+          (testarea_testservice_testfinalcompositea_t *) element_holder.value.composite_value;
       mal_integer_t int_value =
           testarea_testservice_testfinalcompositea_get_intfield2(
               testfinalcompositea);
