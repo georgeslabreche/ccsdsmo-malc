@@ -107,6 +107,8 @@
 	<class name =  "mal_sessiontype_list" />
 	<class name =  "mal_updatetype_list" />
 	<class name =  "mal_qoslevel_list" />
+    <class name = "mal_encoder" />
+    <class name = "mal_decoder" />
     <class name = "mal" />
 
     <!--
