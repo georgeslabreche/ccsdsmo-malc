@@ -33,17 +33,17 @@ typedef struct _malzmq_ctx_t malzmq_ctx_t;
 typedef struct _malzmq_header_t malzmq_header_t;
 
 int malzmq_add_message_encoding_length(malzmq_header_t *malzmq_header,
-    mal_message_t *message, malbinary_encoder_t *encoder,
+    mal_message_t *message, mal_encoder_t *encoder,
     void *cursor);
 
 int malzmq_encode_message(malzmq_header_t *malzmq_header,
-    mal_message_t *message, malbinary_encoder_t *encoder, void *cursor);
+    mal_message_t *message, mal_encoder_t *encoder, void *cursor);
 
 int malzmq_decode_message(malzmq_header_t *malzmq_header,
-    mal_message_t *message, malbinary_decoder_t *decoder, void *cursor);
+    mal_message_t *message, mal_decoder_t *decoder, void *cursor);
 
 int malzmq_decode_uri_to(malzmq_header_t *malzmq_header,
-	malbinary_decoder_t *decoder, char *bytes, unsigned int length, mal_uri_t **uri_to);
+	mal_decoder_t *decoder, char *bytes, unsigned int length, mal_uri_t **uri_to);
 
 void malzmq_test(bool verbose);
 
