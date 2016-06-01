@@ -79,22 +79,23 @@ void progress_app_test(bool verbose) {
   //  @selftest
   mal_ctx_t *mal_ctx = mal_ctx_new();
 
-  mal_encoder_t *encoder = malbinary_encoder_new(false, true);
-  mal_decoder_t *decoder = malbinary_decoder_new(false, true);
+  mal_encoder_t *encoder = malbinary_encoder_new(false);
+  mal_decoder_t *decoder = malbinary_decoder_new(false);
 
   // All the MAL header fields are passed
   malzmq_header_t *malzmq_header = malzmq_header_new(NULL, true, 0, true, NULL, NULL, NULL, NULL);
 
-  // This test uses the same encoding configuration at the MAL/ZMQ transport
-  // level (MAL header encoding) and at the application
-  // level (MAL message body encoding)
   malzmq_ctx_t *malzmq_ctx = malzmq_ctx_new(
       mal_ctx,
       NULL,                 // Use default transformation of MAL URI to ZMQ URI
       "localhost", "6666",
       malzmq_header,
-      encoder, decoder,
       true);
+
+  // Change the logging level of malzmq encoding
+  mal_encoder_set_log_level(malzmq_get_encoder(malzmq_ctx), CLOG_WARN_LEVEL);
+  mal_decoder_set_log_level(malzmq_get_decoder(malzmq_ctx), CLOG_WARN_LEVEL);
+
 
   mal_uri_t *provider_uri = mal_ctx_create_uri(mal_ctx, "progress_app/myprovider");
   printf("progress_app: provider URI: %s\n", provider_uri);

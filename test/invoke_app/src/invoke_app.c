@@ -65,8 +65,8 @@ void invoke_app_test(bool verbose) {
   //  @selftest
   mal_ctx_t *mal_ctx = mal_ctx_new();
 
-  mal_encoder_t *encoder = malbinary_encoder_new(false, true);
-  mal_decoder_t *decoder = malbinary_decoder_new(false, true);
+  mal_encoder_t *encoder = malbinary_encoder_new(false);
+  mal_decoder_t *decoder = malbinary_decoder_new(false);
 
   // All the MAL header fields are passed
   malzmq_header_t *malzmq_header = malzmq_header_new(NULL, true, 0, true, NULL, NULL, NULL, NULL);
@@ -79,7 +79,6 @@ void invoke_app_test(bool verbose) {
       NULL,                 // Use default transformation of MAL URI to ZMQ URI
       "localhost", "6666",
 		  malzmq_header,
-		  encoder, decoder,
 		  true);
 
   mal_uri_t *provider_uri = mal_ctx_create_uri(mal_ctx, "invoke_app/myprovider");
