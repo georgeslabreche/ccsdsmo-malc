@@ -172,6 +172,10 @@ union mal_element_t {
   void *list_value;
 };
 
+/* ***** ***** ***** ***** ***** ***** ***** ***** ***** *****
+ * Transport SPI
+ * ***** ***** ***** ***** ***** ***** ***** ***** ***** ******/
+
 // Function to be provided by a MAL binding to create a URI
 typedef mal_uri_t *mal_binding_ctx_create_uri_fn(void *mal_binding_ctx, char *id);
 
@@ -217,6 +221,10 @@ typedef int mal_binding_ctx_poller_wait_fn(
 
 // Function to be provided by a MAL binding to destroy a message
 typedef int mal_binding_ctx_destroy_message_fn(void *mal_binding_ctx, mal_message_t *message);
+
+/* ***** ***** ***** ***** ***** ***** ***** ***** ***** *****
+ * Encoding API
+ * ***** ***** ***** ***** ***** ***** ***** ***** ***** ******/
 
 int mal_register_add_encoding_length(mal_encoder_t *encoder,
     mal_subscription_t *element, void *cursor);

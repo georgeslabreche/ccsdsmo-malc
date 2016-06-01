@@ -9,6 +9,10 @@ void mal_set_log_level(int level) {
   mal_logger = level;
 }
 
+/* ***** ***** ***** ***** ***** ***** ***** ***** ***** *****
+ * Encoding API
+ * ***** ***** ***** ***** ***** ***** ***** ***** ***** ******/
+
 int mal_register_add_encoding_length(mal_encoder_t *encoder,
     mal_subscription_t *element, void *cursor) {
   int rc = 0;
