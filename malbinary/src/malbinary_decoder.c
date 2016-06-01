@@ -1,28 +1,26 @@
 #include "malbinary.h"
 
-struct _malbinary_decoder_t {
-  bool varint_supported;
-  clog_logger_t logger;
-};
-
-malbinary_decoder_t *malbinary_decoder_new(bool varint_supported, bool verbose) {
-  malbinary_decoder_t *self = (malbinary_decoder_t *) malloc(
-      sizeof(malbinary_decoder_t));
+mal_decoder_t *malbinary_decoder_new(bool varint_supported, bool verbose) {
+  mal_decoder_t *self = (mal_decoder_t *) malloc(sizeof(mal_decoder_t));
   if (!self)
     return NULL;
 
+  self->encoding_format_code = MALBINARY_FORMAT_CODE;
   self->varint_supported = varint_supported;
   self->logger = CLOG_WARN_LEVEL;
+
+  malbinary_init_decode_functions(self);
 
   return self;
 }
 
-void malbinary_decoder_set_log_level(malbinary_decoder_t *decoder, int level) {
-  clog_set_level(&decoder->logger, level);
-}
+void *malbinary_decoder_new_cursor(char *bytes, unsigned int length, unsigned int offset) {
+  malbinary_cursor_t *cursor = (malbinary_cursor_t *) malloc(sizeof(malbinary_cursor_t));
+  if (! cursor) return NULL;
 
-clog_logger_t malbinary_decoder_get_logger(malbinary_decoder_t *decoder) {
-  return decoder->logger;
+  malbinary_cursor_init(cursor, bytes, length, offset);
+
+  return (void *) cursor;
 }
 
 short malbinary_read16(void *cursor) {
@@ -108,7 +106,7 @@ long malbinary_read_varlong(void *cursor) {
   return ((l >> 1) ^ -(l & 1));
 }
 
-char *malbinary_read_str(malbinary_decoder_t *self, void *cursor) {
+char *malbinary_read_str(mal_decoder_t *self, void *cursor) {
   unsigned int length;
   if (self->varint_supported)
     length = malbinary_read_uvarint(cursor);
@@ -142,7 +140,7 @@ char malbinary_read(void *cursor) {
   return res;
 }
 
-int malbinary_decoder_decode_string(malbinary_decoder_t *self, void *cursor, mal_string_t **result) {
+int malbinary_decoder_decode_string(mal_decoder_t *self, void *cursor, mal_string_t **result) {
   int rc = 0;
   (*result) = malbinary_read_str(self, cursor);
   if (*result == NULL)
@@ -150,7 +148,7 @@ int malbinary_decoder_decode_string(malbinary_decoder_t *self, void *cursor, mal
   return rc;
 }
 
-int malbinary_decoder_decode_presence_flag(malbinary_decoder_t *self,
+int malbinary_decoder_decode_presence_flag(mal_decoder_t *self,
     void *cursor, bool *result) {
   int rc = 0;
   char flag = malbinary_read(cursor);
@@ -162,7 +160,7 @@ int malbinary_decoder_decode_presence_flag(malbinary_decoder_t *self,
   return rc;
 }
 
-int malbinary_decoder_decode_integer(malbinary_decoder_t *self, void *cursor, mal_integer_t *result) {
+int malbinary_decoder_decode_integer(mal_decoder_t *self, void *cursor, mal_integer_t *result) {
   int rc = 0;
   if (self->varint_supported)
     (*result) = malbinary_read_varint(cursor);
@@ -171,7 +169,7 @@ int malbinary_decoder_decode_integer(malbinary_decoder_t *self, void *cursor, ma
   return rc;
 }
 
-int malbinary_decoder_decode_short_form(malbinary_decoder_t *self, void *cursor, long *result) {
+int malbinary_decoder_decode_short_form(mal_decoder_t *self, void *cursor, long *result) {
   int rc = 0;
   if (self->varint_supported)
     (*result) = malbinary_read_varlong(cursor);
@@ -180,7 +178,7 @@ int malbinary_decoder_decode_short_form(malbinary_decoder_t *self, void *cursor,
   return rc;
 }
 
-int malbinary_decoder_decode_list_size(malbinary_decoder_t *self, void *cursor, unsigned int *result) {
+int malbinary_decoder_decode_list_size(mal_decoder_t *self, void *cursor, unsigned int *result) {
   int rc = 0;
   if (self->varint_supported)
     (*result) = malbinary_read_uvarint(cursor);
@@ -189,13 +187,13 @@ int malbinary_decoder_decode_list_size(malbinary_decoder_t *self, void *cursor, 
   return rc;
 }
 
-int malbinary_decoder_decode_small_enum(malbinary_decoder_t *self, void *cursor, int *result) {
+int malbinary_decoder_decode_small_enum(mal_decoder_t *self, void *cursor, int *result) {
   int rc = 0;
   (*result) = malbinary_read(cursor);
   return rc;
 }
 
-int malbinary_decoder_decode_medium_enum(malbinary_decoder_t *self, void *cursor, int *result) {
+int malbinary_decoder_decode_medium_enum(mal_decoder_t *self, void *cursor, int *result) {
   int rc = 0;
   if (self->varint_supported)
     (*result) = malbinary_read_uvarshort(cursor);
@@ -204,7 +202,7 @@ int malbinary_decoder_decode_medium_enum(malbinary_decoder_t *self, void *cursor
   return rc;
 }
 
-int malbinary_decoder_decode_large_enum(malbinary_decoder_t *self, void *cursor, int *result) {
+int malbinary_decoder_decode_large_enum(mal_decoder_t *self, void *cursor, int *result) {
   int rc = 0;
   if (self->varint_supported)
     (*result) = malbinary_read_uvarint(cursor);
@@ -213,13 +211,13 @@ int malbinary_decoder_decode_large_enum(malbinary_decoder_t *self, void *cursor,
   return rc;
 }
 
-int malbinary_decoder_decode_uri(malbinary_decoder_t *self, void *cursor, mal_uri_t **result) {
+int malbinary_decoder_decode_uri(mal_decoder_t *self, void *cursor, mal_uri_t **result) {
   int rc = 0;
   (*result) = malbinary_read_str(self, cursor);
   return rc;
 }
 
-int malbinary_decoder_decode_blob(malbinary_decoder_t *self, void *cursor, mal_blob_t **result) {
+int malbinary_decoder_decode_blob(mal_decoder_t *self, void *cursor, mal_blob_t **result) {
   int rc = 0;
   unsigned int length;
   if (self->varint_supported)
@@ -233,7 +231,7 @@ int malbinary_decoder_decode_blob(malbinary_decoder_t *self, void *cursor, mal_b
   return rc;
 }
 
-int malbinary_decoder_decode_time(malbinary_decoder_t *self, void *cursor, mal_time_t *result) {
+int malbinary_decoder_decode_time(mal_decoder_t *self, void *cursor, mal_time_t *result) {
   int rc = 0;
   if (self->varint_supported)
     (*result) = malbinary_read_uvarlong(cursor);
@@ -242,7 +240,7 @@ int malbinary_decoder_decode_time(malbinary_decoder_t *self, void *cursor, mal_t
   return rc;
 }
 
-int malbinary_decoder_decode_uinteger(malbinary_decoder_t *self, void *cursor, mal_uinteger_t *result) {
+int malbinary_decoder_decode_uinteger(mal_decoder_t *self, void *cursor, mal_uinteger_t *result) {
   int rc = 0;
   if (self->varint_supported)
     (*result) = malbinary_read_uvarint(cursor);
@@ -251,19 +249,19 @@ int malbinary_decoder_decode_uinteger(malbinary_decoder_t *self, void *cursor, m
   return rc;
 }
 
-int malbinary_decoder_decode_identifier(malbinary_decoder_t *self, void *cursor, mal_identifier_t **result) {
+int malbinary_decoder_decode_identifier(mal_decoder_t *self, void *cursor, mal_identifier_t **result) {
   int rc = 0;
   (*result) = malbinary_read_str(self, cursor);
   return rc;
 }
 
-int malbinary_decoder_decode_uoctet(malbinary_decoder_t *self, void *cursor, mal_uoctet_t *result) {
+int malbinary_decoder_decode_uoctet(mal_decoder_t *self, void *cursor, mal_uoctet_t *result) {
   int rc = 0;
   (*result) = malbinary_read(cursor);
   return rc;
 }
 
-int malbinary_decoder_decode_long(malbinary_decoder_t *self, void *cursor, mal_long_t *result) {
+int malbinary_decoder_decode_long(mal_decoder_t *self, void *cursor, mal_long_t *result) {
   int rc = 0;
   if (self->varint_supported)
     (*result) = malbinary_read_varlong(cursor);
@@ -272,7 +270,7 @@ int malbinary_decoder_decode_long(malbinary_decoder_t *self, void *cursor, mal_l
   return rc;
 }
 
-int malbinary_decoder_decode_ushort(malbinary_decoder_t *self, void *cursor, mal_ushort_t *result) {
+int malbinary_decoder_decode_ushort(mal_decoder_t *self, void *cursor, mal_ushort_t *result) {
   int rc = 0;
   if (self->varint_supported)
     (*result) = malbinary_read_uvarshort(cursor);
@@ -281,7 +279,7 @@ int malbinary_decoder_decode_ushort(malbinary_decoder_t *self, void *cursor, mal
   return rc;
 }
 
-int malbinary_decoder_decode_boolean(malbinary_decoder_t *self, void *cursor, mal_boolean_t *result) {
+int malbinary_decoder_decode_boolean(mal_decoder_t *self, void *cursor, mal_boolean_t *result) {
   int rc = 0;
   char flag = malbinary_read(cursor);
   if (flag == 1) {
@@ -292,7 +290,7 @@ int malbinary_decoder_decode_boolean(malbinary_decoder_t *self, void *cursor, ma
   return rc;
 }
 
-int malbinary_decoder_decode_attribute_tag(malbinary_decoder_t *self, void *cursor, unsigned char *result) {
+int malbinary_decoder_decode_attribute_tag(mal_decoder_t *self, void *cursor, unsigned char *result) {
   int rc = 0;
   if (self->varint_supported)
     (*result) = malbinary_read_varint(cursor);
@@ -301,7 +299,7 @@ int malbinary_decoder_decode_attribute_tag(malbinary_decoder_t *self, void *curs
   return rc;
 }
 
-int malbinary_decoder_decode_duration(malbinary_decoder_t *self, void *cursor, mal_duration_t *result) {
+int malbinary_decoder_decode_duration(mal_decoder_t *self, void *cursor, mal_duration_t *result) {
   int rc = 0;
   //TODO: malbinary_decoder_decode_duration
   return rc;
@@ -316,7 +314,7 @@ float intBitsToFloat(int x) {
   return u.f;
 }
 
-int malbinary_decoder_decode_float(malbinary_decoder_t *self, void *cursor, mal_float_t *result) {
+int malbinary_decoder_decode_float(mal_decoder_t *self, void *cursor, mal_float_t *result) {
   int rc = 0;
   mal_integer_t i;
   malbinary_decoder_decode_integer(self, cursor, &i);
@@ -333,7 +331,7 @@ double longBitsToDouble(long x) {
   return u.d;
 }
 
-int malbinary_decoder_decode_double(malbinary_decoder_t *self, void *cursor, mal_double_t *result) {
+int malbinary_decoder_decode_double(mal_decoder_t *self, void *cursor, mal_double_t *result) {
   int rc = 0;
   mal_long_t l;
   malbinary_decoder_decode_long(self, cursor, &l);
@@ -341,13 +339,13 @@ int malbinary_decoder_decode_double(malbinary_decoder_t *self, void *cursor, mal
   return rc;
 }
 
-int malbinary_decoder_decode_octet(malbinary_decoder_t *self, void *cursor, mal_octet_t *result) {
+int malbinary_decoder_decode_octet(mal_decoder_t *self, void *cursor, mal_octet_t *result) {
   int rc = 0;
   (*result) = malbinary_read(cursor);
   return rc;
 }
 
-int malbinary_decoder_decode_short(malbinary_decoder_t *self, void *cursor, mal_short_t *result) {
+int malbinary_decoder_decode_short(mal_decoder_t *self, void *cursor, mal_short_t *result) {
   int rc = 0;
   if (self->varint_supported)
     (*result) = malbinary_read_varshort(cursor);
@@ -356,7 +354,7 @@ int malbinary_decoder_decode_short(malbinary_decoder_t *self, void *cursor, mal_
   return rc;
 }
 
-int malbinary_decoder_decode_ulong(malbinary_decoder_t *self, void *cursor, mal_ulong_t *result) {
+int malbinary_decoder_decode_ulong(mal_decoder_t *self, void *cursor, mal_ulong_t *result) {
   int rc = 0;
   if (self->varint_supported)
     (*result) = malbinary_read_uvarlong(cursor);
@@ -365,69 +363,69 @@ int malbinary_decoder_decode_ulong(malbinary_decoder_t *self, void *cursor, mal_
   return rc;
 }
 
-int malbinary_decoder_decode_finetime(malbinary_decoder_t *self, void *cursor, mal_finetime_t *result) {
+int malbinary_decoder_decode_finetime(mal_decoder_t *self, void *cursor, mal_finetime_t *result) {
   int rc = 0;
   //TODO: malbinary_decoder_decode_finetime
   return rc;
 }
 
-int malbinary_decoder_decode_attribute(malbinary_decoder_t *malbinary_decoder, void *cursor,
+int malbinary_decoder_decode_attribute(mal_decoder_t *decoder, void *cursor,
     unsigned char attribute_tag, union mal_attribute_t self) {
   int rc = 0;
   switch (attribute_tag) {
   case MAL_BLOB_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_blob(malbinary_decoder, cursor, &self.blob_value);
+    rc = malbinary_decoder_decode_blob(decoder, cursor, &self.blob_value);
     break;
   case MAL_BOOLEAN_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_boolean(malbinary_decoder, cursor, &self.boolean_value);
+    rc = malbinary_decoder_decode_boolean(decoder, cursor, &self.boolean_value);
     break;
   case MAL_DURATION_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_duration(malbinary_decoder, cursor, &self.duration_value);
+    rc = malbinary_decoder_decode_duration(decoder, cursor, &self.duration_value);
     break;
   case MAL_FLOAT_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_float(malbinary_decoder, cursor, &self.float_value);
+    rc = malbinary_decoder_decode_float(decoder, cursor, &self.float_value);
     break;
   case MAL_DOUBLE_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_double(malbinary_decoder, cursor, &self.double_value);
+    rc = malbinary_decoder_decode_double(decoder, cursor, &self.double_value);
     break;
   case MAL_IDENTIFIER_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_identifier(malbinary_decoder, cursor, &self.identifier_value);
+    rc = malbinary_decoder_decode_identifier(decoder, cursor, &self.identifier_value);
     break;
   case MAL_OCTET_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_octet(malbinary_decoder, cursor, &self.octet_value);
+    rc = malbinary_decoder_decode_octet(decoder, cursor, &self.octet_value);
     break;
   case MAL_UOCTET_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_uoctet(malbinary_decoder, cursor, &self.uoctet_value);
+    rc = malbinary_decoder_decode_uoctet(decoder, cursor, &self.uoctet_value);
     break;
   case MAL_SHORT_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_short(malbinary_decoder, cursor, &self.short_value);
+    rc = malbinary_decoder_decode_short(decoder, cursor, &self.short_value);
     break;
   case MAL_USHORT_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_ushort(malbinary_decoder, cursor, &self.ushort_value);
+    rc = malbinary_decoder_decode_ushort(decoder, cursor, &self.ushort_value);
     break;
   case MAL_INTEGER_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_integer(malbinary_decoder, cursor, &self.integer_value);
+    rc = malbinary_decoder_decode_integer(decoder, cursor, &self.integer_value);
     break;
   case MAL_UINTEGER_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_uinteger(malbinary_decoder, cursor, &self.uinteger_value);
+    rc = malbinary_decoder_decode_uinteger(decoder, cursor, &self.uinteger_value);
     break;
   case MAL_LONG_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_long(malbinary_decoder, cursor, &self.long_value);
+    rc = malbinary_decoder_decode_long(decoder, cursor, &self.long_value);
     break;
   case MAL_ULONG_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_ulong(malbinary_decoder, cursor, &self.ulong_value);
+    rc = malbinary_decoder_decode_ulong(decoder, cursor, &self.ulong_value);
     break;
   case MAL_STRING_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_string(malbinary_decoder, cursor, &self.string_value);
+    rc = malbinary_decoder_decode_string(decoder, cursor, &self.string_value);
     break;
   case MAL_TIME_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_time(malbinary_decoder, cursor, &self.time_value);
+    rc = malbinary_decoder_decode_time(decoder, cursor, &self.time_value);
     break;
   case MAL_FINETIME_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_finetime(malbinary_decoder, cursor, &self.finetime_value);
+    rc = malbinary_decoder_decode_finetime(decoder, cursor, &self.finetime_value);
     break;
   case MAL_URI_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_uri(malbinary_decoder, cursor, &self.uri_value);
+    rc = malbinary_decoder_decode_uri(decoder, cursor, &self.uri_value);
     break;
   default:
     //nothing to do
@@ -435,6 +433,91 @@ int malbinary_decoder_decode_attribute(malbinary_decoder_t *malbinary_decoder, v
   }
   return rc;
 }
+
+// TODO (AF): The malbinary decoding functions should be private and only used through
+// the mal_decoder_t structure.
+
+void malbinary_init_decode_functions(mal_decoder_t *self) {
+  // TODO (AF): Currently the use of this initialization function below causes
+  // a circular dependance with the mal module.
+//  mal_decoder_initialize_functions(self,
+//      malbinary_decoder_new_cursor,
+//      malbinary_cursor_destroy,
+//      malbinary_cursor_init,
+//      malbinary_cursor_reset,
+//      malbinary_cursor_get_length,
+//      malbinary_cursor_get_offset,
+//      malbinary_cursor_assert,
+//      malbinary_read16,
+//      malbinary_read32,
+//      malbinary_read64,
+//      malbinary_decoder_decode_string,
+//      malbinary_decoder_decode_presence_flag,
+//      malbinary_decoder_decode_short_form,
+//      malbinary_decoder_decode_small_enum,
+//      malbinary_decoder_decode_medium_enum,
+//      malbinary_decoder_decode_large_enum,
+//      malbinary_decoder_decode_integer,
+//      malbinary_decoder_decode_list_size,
+//      malbinary_decoder_decode_uri,
+//      malbinary_decoder_decode_blob,
+//      malbinary_decoder_decode_time,
+//      malbinary_decoder_decode_uinteger,
+//      malbinary_decoder_decode_identifier,
+//      malbinary_decoder_decode_uoctet,
+//      malbinary_decoder_decode_long,
+//      malbinary_decoder_decode_ushort,
+//      malbinary_decoder_decode_boolean,
+//      malbinary_decoder_decode_duration,
+//      malbinary_decoder_decode_float,
+//      malbinary_decoder_decode_double,
+//      malbinary_decoder_decode_octet,
+//      malbinary_decoder_decode_short,
+//      malbinary_decoder_decode_ulong,
+//      malbinary_decoder_decode_finetime,
+//      malbinary_decoder_decode_attribute,
+//      malbinary_decoder_decode_attribute_tag);
+
+  self->new_cursor = malbinary_decoder_new_cursor;
+  self->cursor_destroy = malbinary_cursor_destroy;
+  self->cursor_init = malbinary_cursor_init;
+  self->cursor_reset = malbinary_cursor_reset;
+  self->cursor_get_length = malbinary_cursor_get_length;
+  self->cursor_get_offset = malbinary_cursor_get_offset;
+  self->cursor_assert = malbinary_cursor_assert;
+
+  self->mal_read16 = malbinary_read16;
+  self->mal_read32 = malbinary_read32;
+  self->mal_read64 = malbinary_read64;
+  self->mal_decoder_decode_string = malbinary_decoder_decode_string;
+  self->mal_decoder_decode_presence_flag = malbinary_decoder_decode_presence_flag;
+  self->mal_decoder_decode_short_form = malbinary_decoder_decode_short_form;
+  self->mal_decoder_decode_small_enum = malbinary_decoder_decode_small_enum;
+  self->mal_decoder_decode_medium_enum = malbinary_decoder_decode_medium_enum;
+  self->mal_decoder_decode_large_enum = malbinary_decoder_decode_large_enum;
+  self->mal_decoder_decode_integer = malbinary_decoder_decode_integer;
+  self->mal_decoder_decode_list_size = malbinary_decoder_decode_list_size;
+  self->mal_decoder_decode_uri = malbinary_decoder_decode_uri;
+  self->mal_decoder_decode_blob = malbinary_decoder_decode_blob;
+  self->mal_decoder_decode_time = malbinary_decoder_decode_time;
+  self->mal_decoder_decode_uinteger = malbinary_decoder_decode_uinteger;
+  self->mal_decoder_decode_identifier = malbinary_decoder_decode_identifier;
+  self->mal_decoder_decode_uoctet = malbinary_decoder_decode_uoctet;
+  self->mal_decoder_decode_long = malbinary_decoder_decode_long;
+  self->mal_decoder_decode_ushort = malbinary_decoder_decode_ushort;
+  self->mal_decoder_decode_boolean = malbinary_decoder_decode_boolean;
+  self->mal_decoder_decode_duration = malbinary_decoder_decode_duration;
+  self->mal_decoder_decode_float = malbinary_decoder_decode_float;
+  self->mal_decoder_decode_double = malbinary_decoder_decode_double;
+  self->mal_decoder_decode_octet = malbinary_decoder_decode_octet;
+  self->mal_decoder_decode_short = malbinary_decoder_decode_short;
+  self->mal_decoder_decode_ulong = malbinary_decoder_decode_ulong;
+  self->mal_decoder_decode_finetime = malbinary_decoder_decode_finetime;
+  self->mal_decoder_decode_attribute = malbinary_decoder_decode_attribute;
+  self->mal_decoder_decode_attribute_tag = malbinary_decoder_decode_attribute_tag;
+}
+
+// Test
 
 void malbinary_decoder_test(bool verbose) {
   printf(" * malbinary_decoder: ");
