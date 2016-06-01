@@ -150,13 +150,13 @@ void *mal_message_get_body_owner(mal_message_t *self);
 void mal_message_set_body_owner(mal_message_t *self, void *body_owner);
 
 int mal_message_add_encoding_length_malbinary(mal_message_t *self,
-    malbinary_encoder_t *encoder, unsigned int *encoding_length);
+    mal_encoder_t *encoder, unsigned int *encoding_length);
 
 int mal_message_encode_malbinary(mal_message_t *self,
-    malbinary_encoder_t *encoder, char *bytes, unsigned int *offset);
+    mal_encoder_t *encoder, char *bytes, unsigned int *offset);
 
 int mal_message_decode_malbinary(mal_message_t *self,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int *offset,
+    mal_decoder_t *decoder, char *bytes, unsigned int *offset,
     unsigned int length);
 
 void mal_message_print(mal_message_t *self);

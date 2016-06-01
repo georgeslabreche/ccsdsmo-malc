@@ -19,13 +19,13 @@ mal_uri_t **mal_uri_list_get_content(mal_uri_list_t *self);
 void mal_uri_list_add_element(mal_uri_list_t *self, int index, mal_uri_t *element);
 
 int mal_uri_list_add_encoding_length_malbinary(mal_uri_list_t *self,
-    malbinary_encoder_t *encoder, void *cursor);
+    mal_encoder_t *encoder, void *cursor);
 
 int mal_uri_list_encode_malbinary(mal_uri_list_t *self,
-    malbinary_encoder_t *encoder, void *cursor);
+    mal_encoder_t *encoder, void *cursor);
 
 int mal_uri_list_decode_malbinary(mal_uri_list_t *self,
-    malbinary_decoder_t *decoder, void *cursor);
+    mal_decoder_t *decoder, void *cursor);
 
 void mal_uri_list_print(mal_uri_list_t *self);
 

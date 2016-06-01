@@ -55,14 +55,14 @@ mal_pair_t * mal_pair_new(void)
 }
 
 // encoding functions related to transport malbinary
-int mal_pair_add_encoding_length_malbinary(mal_pair_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor)
+int mal_pair_add_encoding_length_malbinary(mal_pair_t * self, mal_encoder_t * mal_encoder, void * cursor)
 {
   int rc = 0;
   ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
   if (self->first_is_present)
   {
     ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_ATTRIBUTE_TAG_SIZE;
-    rc = malbinary_encoder_add_attribute_encoding_length(malbinary_encoder, self->first_attribute_tag, self->first, cursor);
+    rc = malbinary_encoder_add_attribute_encoding_length(mal_encoder, self->first_attribute_tag, self->first, cursor);
     if (rc < 0)
       return rc;
   }
@@ -70,70 +70,70 @@ int mal_pair_add_encoding_length_malbinary(mal_pair_t * self, malbinary_encoder_
   if (self->second_is_present)
   {
     ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_ATTRIBUTE_TAG_SIZE;
-    rc = malbinary_encoder_add_attribute_encoding_length(malbinary_encoder, self->second_attribute_tag, self->second, cursor);
+    rc = malbinary_encoder_add_attribute_encoding_length(mal_encoder, self->second_attribute_tag, self->second, cursor);
     if (rc < 0)
       return rc;
   }
   return rc;
 }
-int mal_pair_encode_malbinary(mal_pair_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor)
+int mal_pair_encode_malbinary(mal_pair_t * self, mal_encoder_t * mal_encoder, void * cursor)
 {
   int rc = 0;
   bool presence_flag;
   presence_flag = self->first_is_present;
-  rc = malbinary_encoder_encode_presence_flag(malbinary_encoder, cursor, presence_flag);
+  rc = malbinary_encoder_encode_presence_flag(mal_encoder, cursor, presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_encoder_encode_attribute_tag(malbinary_encoder, cursor, self->first_attribute_tag);
+    rc = malbinary_encoder_encode_attribute_tag(mal_encoder, cursor, self->first_attribute_tag);
     if (rc < 0)
       return rc;
-    rc = malbinary_encoder_encode_attribute(malbinary_encoder, cursor, self->first_attribute_tag, self->first);
+    rc = malbinary_encoder_encode_attribute(mal_encoder, cursor, self->first_attribute_tag, self->first);
     if (rc < 0)
       return rc;
   }
   presence_flag = self->second_is_present;
-  rc = malbinary_encoder_encode_presence_flag(malbinary_encoder, cursor, presence_flag);
+  rc = malbinary_encoder_encode_presence_flag(mal_encoder, cursor, presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_encoder_encode_attribute_tag(malbinary_encoder, cursor, self->second_attribute_tag);
+    rc = malbinary_encoder_encode_attribute_tag(mal_encoder, cursor, self->second_attribute_tag);
     if (rc < 0)
       return rc;
-    rc = malbinary_encoder_encode_attribute(malbinary_encoder, cursor, self->second_attribute_tag, self->second);
+    rc = malbinary_encoder_encode_attribute(mal_encoder, cursor, self->second_attribute_tag, self->second);
     if (rc < 0)
       return rc;
   }
   return rc;
 }
-int mal_pair_decode_malbinary(mal_pair_t * self, malbinary_decoder_t * malbinary_decoder, void * cursor)
+int mal_pair_decode_malbinary(mal_pair_t * self, mal_decoder_t * mal_decoder, void * cursor)
 {
   int rc = 0;
   bool presence_flag;
-  rc = malbinary_decoder_decode_presence_flag(malbinary_decoder, cursor, &presence_flag);
+  rc = malbinary_decoder_decode_presence_flag(mal_decoder, cursor, &presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_decoder_decode_attribute_tag(malbinary_decoder, cursor, &self->first_attribute_tag);
+    rc = malbinary_decoder_decode_attribute_tag(mal_decoder, cursor, &self->first_attribute_tag);
     if (rc < 0)
       return rc;
-    rc = malbinary_decoder_decode_attribute(malbinary_decoder, cursor, self->first_attribute_tag, self->first);
+    rc = malbinary_decoder_decode_attribute(mal_decoder, cursor, self->first_attribute_tag, self->first);
     if (rc < 0)
       return rc;
   }
   self->first_is_present = presence_flag;
-  rc = malbinary_decoder_decode_presence_flag(malbinary_decoder, cursor, &presence_flag);
+  rc = malbinary_decoder_decode_presence_flag(mal_decoder, cursor, &presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_decoder_decode_attribute_tag(malbinary_decoder, cursor, &self->second_attribute_tag);
+    rc = malbinary_decoder_decode_attribute_tag(mal_decoder, cursor, &self->second_attribute_tag);
     if (rc < 0)
       return rc;
-    rc = malbinary_decoder_decode_attribute(malbinary_decoder, cursor, self->second_attribute_tag, self->second);
+    rc = malbinary_decoder_decode_attribute(mal_decoder, cursor, self->second_attribute_tag, self->second);
     if (rc < 0)
       return rc;
   }

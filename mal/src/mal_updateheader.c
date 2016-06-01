@@ -30,7 +30,7 @@ void mal_updateheader_destroy(mal_updateheader_t **self_p) {
 }
 
 int mal_updateheader_add_encoding_length_malbinary(mal_updateheader_t *self,
-    malbinary_encoder_t *encoder, void *cursor) {
+    mal_encoder_t *encoder, void *cursor) {
   int rc = 0;
   if (self == NULL) {
     rc = -1;
@@ -53,7 +53,7 @@ int mal_updateheader_add_encoding_length_malbinary(mal_updateheader_t *self,
 
 // 'binary' refers to the "binary encoding" specified in MAL/SPP BB
 int mal_updateheader_encode_malbinary(mal_updateheader_t *self,
-    malbinary_encoder_t *encoder, void *cursor) {
+    mal_encoder_t *encoder, void *cursor) {
   int rc = 0;
   // encode timestamp
   rc = malbinary_encoder_encode_time(encoder, cursor, self->timestamp);
@@ -74,7 +74,7 @@ int mal_updateheader_encode_malbinary(mal_updateheader_t *self,
 
 // 'binary' refers to the "binary encoding" specified in MAL/SPP BB
 int mal_updateheader_decode_malbinary(mal_updateheader_t *self,
-    malbinary_decoder_t *decoder, void *cursor) {
+    mal_decoder_t *decoder, void *cursor) {
   int rc = 0;
   // decode timestamp
   rc = malbinary_decoder_decode_time(decoder, cursor, &self->timestamp);

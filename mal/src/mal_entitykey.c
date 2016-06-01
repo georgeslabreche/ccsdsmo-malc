@@ -27,7 +27,7 @@ void mal_entitykey_destroy(mal_entitykey_t **self_p) {
 }
 
 int mal_entitykey_add_encoding_length_malbinary(mal_entitykey_t *self,
-    malbinary_encoder_t *encoder, void *cursor) {
+    mal_encoder_t *encoder, void *cursor) {
   int rc = 0;
   if (self == NULL) {
     rc = -1;
@@ -77,7 +77,7 @@ int mal_entitykey_add_encoding_length_malbinary(mal_entitykey_t *self,
 
 // 'binary' refers to the "binary encoding" specified in MAL/SPP BB
 int mal_entitykey_encode_malbinary(mal_entitykey_t *self,
-    malbinary_encoder_t *encoder, void *cursor) {
+    mal_encoder_t *encoder, void *cursor) {
   int rc = 0;
 
   bool is_present = (self->firstsubkey != NULL);
@@ -122,7 +122,7 @@ int mal_entitykey_encode_malbinary(mal_entitykey_t *self,
 
 // 'binary' refers to the "binary encoding" specified in MAL/SPP BB
 int mal_entitykey_decode_malbinary(mal_entitykey_t *self,
-    malbinary_decoder_t *decoder, void *cursor) {
+    mal_decoder_t *decoder, void *cursor) {
   int rc = 0;
   rc = malbinary_decoder_decode_presence_flag(decoder, cursor,
       &(self->secondsubkey_is_present));

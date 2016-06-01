@@ -32,9 +32,9 @@ void mal_file_set_metadata(mal_file_t * self, mal_namedvalue_list_t * metadata);
 mal_file_t * mal_file_new(void);
 
 // encoding functions related to transport malbinary
-int mal_file_add_encoding_length_malbinary(mal_file_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor);
-int mal_file_encode_malbinary(mal_file_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor);
-int mal_file_decode_malbinary(mal_file_t * self, malbinary_decoder_t * malbinary_decoder, void * cursor);
+int mal_file_add_encoding_length_malbinary(mal_file_t * self, mal_encoder_t *encoder, void * cursor);
+int mal_file_encode_malbinary(mal_file_t * self, mal_encoder_t *encoder, void * cursor);
+int mal_file_decode_malbinary(mal_file_t * self, mal_decoder_t *decoder, void * cursor);
 
 // destructor
 void mal_file_destroy(mal_file_t ** self_p);

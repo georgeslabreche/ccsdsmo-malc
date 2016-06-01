@@ -18,9 +18,9 @@ void mal_namedvalue_value_set_attribute_tag(mal_namedvalue_t * self, unsigned ch
 mal_namedvalue_t * mal_namedvalue_new(void);
 
 // encoding functions related to transport malbinary
-int mal_namedvalue_add_encoding_length_malbinary(mal_namedvalue_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor);
-int mal_namedvalue_encode_malbinary(mal_namedvalue_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor);
-int mal_namedvalue_decode_malbinary(mal_namedvalue_t * self, malbinary_decoder_t * malbinary_decoder, void * cursor);
+int mal_namedvalue_add_encoding_length_malbinary(mal_namedvalue_t * self, mal_encoder_t *encoder, void * cursor);
+int mal_namedvalue_encode_malbinary(mal_namedvalue_t * self, mal_encoder_t *encoder, void * cursor);
+int mal_namedvalue_decode_malbinary(mal_namedvalue_t * self, mal_decoder_t *decoder, void * cursor);
 
 // destructor
 void mal_namedvalue_destroy(mal_namedvalue_t ** self_p);

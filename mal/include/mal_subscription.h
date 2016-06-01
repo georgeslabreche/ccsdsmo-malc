@@ -13,13 +13,13 @@ mal_subscription_t *mal_subscription_new(void);
 void mal_subscription_destroy(mal_subscription_t **self_p);
 
 int mal_subscription_add_encoding_length_malbinary(mal_subscription_t *self,
-    malbinary_encoder_t *encoder, void *cursor);
+    mal_encoder_t *encoder, void *cursor);
 
 int mal_subscription_encode_malbinary(mal_subscription_t *self,
-    malbinary_encoder_t *encoder, void *cursor);
+    mal_encoder_t *encoder, void *cursor);
 
 int mal_subscription_decode_malbinary(mal_subscription_t *self,
-    malbinary_decoder_t *decoder, void *cursor);
+    mal_decoder_t *decoder, void *cursor);
 
 mal_identifier_t *mal_subscription_get_subscriptionid(mal_subscription_t *self);
 

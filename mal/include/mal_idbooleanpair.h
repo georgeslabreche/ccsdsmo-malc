@@ -18,9 +18,9 @@ void mal_idbooleanpair_set_value(mal_idbooleanpair_t * self, mal_boolean_t value
 mal_idbooleanpair_t * mal_idbooleanpair_new(void);
 
 // encoding functions related to transport malbinary
-int mal_idbooleanpair_add_encoding_length_malbinary(mal_idbooleanpair_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor);
-int mal_idbooleanpair_encode_malbinary(mal_idbooleanpair_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor);
-int mal_idbooleanpair_decode_malbinary(mal_idbooleanpair_t * self, malbinary_decoder_t * malbinary_decoder, void * cursor);
+int mal_idbooleanpair_add_encoding_length_malbinary(mal_idbooleanpair_t * self, mal_encoder_t * mal_encoder, void * cursor);
+int mal_idbooleanpair_encode_malbinary(mal_idbooleanpair_t * self, mal_encoder_t * mal_encoder, void * cursor);
+int mal_idbooleanpair_decode_malbinary(mal_idbooleanpair_t * self, mal_decoder_t * mal_decoder, void * cursor);
 
 // destructor
 void mal_idbooleanpair_destroy(mal_idbooleanpair_t ** self_p);

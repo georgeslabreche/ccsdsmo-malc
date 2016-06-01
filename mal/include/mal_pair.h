@@ -20,9 +20,9 @@ void mal_pair_second_set_attribute_tag(mal_pair_t * self, unsigned char attribut
 mal_pair_t * mal_pair_new(void);
 
 // encoding functions related to transport malbinary
-int mal_pair_add_encoding_length_malbinary(mal_pair_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor);
-int mal_pair_encode_malbinary(mal_pair_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor);
-int mal_pair_decode_malbinary(mal_pair_t * self, malbinary_decoder_t * malbinary_decoder, void * cursor);
+int mal_pair_add_encoding_length_malbinary(mal_pair_t * self, mal_encoder_t * mal_encoder, void * cursor);
+int mal_pair_encode_malbinary(mal_pair_t * self, mal_encoder_t * mal_encoder, void * cursor);
+int mal_pair_decode_malbinary(mal_pair_t * self, mal_decoder_t * mal_decoder, void * cursor);
 
 // destructor
 void mal_pair_destroy(mal_pair_t ** self_p);

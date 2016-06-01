@@ -18,9 +18,9 @@ bool * mal_sessiontype_list_get_presence_flags(mal_sessiontype_list_t * self);
 mal_sessiontype_t * mal_sessiontype_list_get_content(mal_sessiontype_list_t * self);
 
 // encoding functions related to transport malbinary
-int mal_sessiontype_list_add_encoding_length_malbinary(mal_sessiontype_list_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor);
-int mal_sessiontype_list_encode_malbinary(mal_sessiontype_list_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor);
-int mal_sessiontype_list_decode_malbinary(mal_sessiontype_list_t * self, malbinary_decoder_t * malbinary_decoder, void * cursor);
+int mal_sessiontype_list_add_encoding_length_malbinary(mal_sessiontype_list_t * self, mal_encoder_t * mal_encoder, void * cursor);
+int mal_sessiontype_list_encode_malbinary(mal_sessiontype_list_t * self, mal_encoder_t * mal_encoder, void * cursor);
+int mal_sessiontype_list_decode_malbinary(mal_sessiontype_list_t * self, mal_decoder_t * mal_decoder, void * cursor);
 
 // test function
 void mal_sessiontype_list_test(bool verbose);

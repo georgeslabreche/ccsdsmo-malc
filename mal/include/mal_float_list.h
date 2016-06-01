@@ -21,13 +21,13 @@ mal_float_t *mal_float_list_get_content(mal_float_list_t *self);
 void mal_float_list_add_element(mal_float_list_t *self, int index, mal_float_t element);
 
 int mal_float_list_add_encoding_length_malbinary(mal_float_list_t *self,
-    malbinary_encoder_t *encoder, void *cursor);
+    mal_encoder_t *encoder, void *cursor);
 
 int mal_float_list_encode_malbinary(mal_float_list_t *self,
-    malbinary_encoder_t *encoder, void *cursor);
+    mal_encoder_t *encoder, void *cursor);
 
 int mal_float_list_decode_malbinary(mal_float_list_t *self,
-    malbinary_decoder_t *decoder, void *cursor);
+    mal_decoder_t *decoder, void *cursor);
 
 //  Self test of this class
 void mal_float_list_test(bool verbose);

@@ -13,13 +13,13 @@ mal_updateheader_t *mal_updateheader_new(void);
 void mal_updateheader_destroy(mal_updateheader_t **self_p);
 
 int mal_updateheader_add_encoding_length_malbinary(mal_updateheader_t *self,
-    malbinary_encoder_t *encoder, void *cursor);
+    mal_encoder_t *encoder, void *cursor);
 
 int mal_updateheader_encode_malbinary(mal_updateheader_t *self,
-    malbinary_encoder_t *encoder, void *cursor);
+    mal_encoder_t *encoder, void *cursor);
 
 int mal_updateheader_decode_malbinary(mal_updateheader_t *self,
-    malbinary_decoder_t *decoder, void *cursor);
+    mal_decoder_t *decoder, void *cursor);
 
 void mal_updateheader_set_source_uri(mal_updateheader_t *self, mal_uri_t *source_uri);
 mal_uri_t *mal_updateheader_get_source_uri(mal_updateheader_t *self);

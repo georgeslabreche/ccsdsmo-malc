@@ -5,15 +5,15 @@ mal_entitykey_t *mal_entitykey_new(void);
 void mal_entitykey_destroy(mal_entitykey_t **self_p);
 
 int mal_entitykey_add_encoding_length_malbinary(mal_entitykey_t *self,
-    malbinary_encoder_t *encoder, void *cursor);
+    mal_encoder_t *encoder, void *cursor);
 
 // 'binary' refers to the "binary encoding" specified in MAL/SPP BB
 int mal_entitykey_encode_malbinary(mal_entitykey_t *self,
-    malbinary_encoder_t *encoder, void *cursor);
+    mal_encoder_t *encoder, void *cursor);
 
 // 'binary' refers to the "binary encoding" specified in MAL/SPP BB
 int mal_entitykey_decode_malbinary(mal_entitykey_t *self,
-    malbinary_decoder_t *decoder, void *cursor);
+    mal_decoder_t *decoder, void *cursor);
 
 mal_identifier_t *mal_entitykey_get_firstsubkey(mal_entitykey_t *self);
 

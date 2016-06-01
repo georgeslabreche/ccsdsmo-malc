@@ -21,13 +21,13 @@ mal_short_t *mal_short_list_get_content(mal_short_list_t *self);
 void mal_short_list_add_element(mal_short_list_t *self, int index, mal_short_t element);
 
 int mal_short_list_add_encoding_length_malbinary(mal_short_list_t *self,
-    malbinary_encoder_t *encoder, void *cursor);
+    mal_encoder_t *encoder, void *cursor);
 
 int mal_short_list_encode_malbinary(mal_short_list_t *self,
-    malbinary_encoder_t *encoder, void *cursor);
+    mal_encoder_t *encoder, void *cursor);
 
 int mal_short_list_decode_malbinary(mal_short_list_t *self,
-    malbinary_decoder_t *decoder, void *cursor);
+    mal_decoder_t *decoder, void *cursor);
 
 //  Self test of this class
 void mal_short_list_test(bool verbose);

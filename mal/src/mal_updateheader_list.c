@@ -50,7 +50,7 @@ void mal_updateheader_list_add_element(mal_updateheader_list_t *self, int index,
 }
 
 int mal_updateheader_list_add_encoding_length_malbinary(
-    mal_updateheader_list_t *self, malbinary_encoder_t *encoder,
+    mal_updateheader_list_t *self, mal_encoder_t *encoder,
     void *cursor) {
   int rc = 0;
   unsigned int list_size = self->element_count;
@@ -70,7 +70,7 @@ int mal_updateheader_list_add_encoding_length_malbinary(
 }
 
 int mal_updateheader_list_encode_malbinary(mal_updateheader_list_t *self,
-    malbinary_encoder_t *encoder, void *cursor) {
+    mal_encoder_t *encoder, void *cursor) {
   int rc = 0;
   unsigned int list_size = self->element_count;
   malbinary_encoder_encode_list_size(encoder, cursor, list_size);
@@ -92,7 +92,7 @@ int mal_updateheader_list_encode_malbinary(mal_updateheader_list_t *self,
 }
 
 int mal_updateheader_list_decode_malbinary(mal_updateheader_list_t *self,
-    malbinary_decoder_t *decoder, void *cursor) {
+    mal_decoder_t *decoder, void *cursor) {
   int rc = 0;
   unsigned int list_size;
   malbinary_decoder_decode_list_size(decoder, cursor, &list_size);

@@ -24,7 +24,7 @@ void mal_subscription_destroy(mal_subscription_t **self_p) {
 }
 
 int mal_subscription_add_encoding_length_malbinary(mal_subscription_t *self,
-    malbinary_encoder_t *encoder, void *cursor) {
+    mal_encoder_t *encoder, void *cursor) {
   int rc = 0;
   if (self == NULL) {
     rc = -1;
@@ -53,7 +53,7 @@ int mal_subscription_add_encoding_length_malbinary(mal_subscription_t *self,
 
 // 'binary' refers to the "binary encoding" specified in MAL/SPP BB
 int mal_subscription_encode_malbinary(mal_subscription_t *self,
-    malbinary_encoder_t *encoder, void *cursor) {
+   mal_encoder_t *encoder, void *cursor) {
   int rc = 0;
 
   bool is_present = (self->subscriptionid != NULL);
@@ -80,7 +80,7 @@ int mal_subscription_encode_malbinary(mal_subscription_t *self,
 
 // 'binary' refers to the "binary encoding" specified in MAL/SPP BB
 int mal_subscription_decode_malbinary(mal_subscription_t *self,
-    malbinary_decoder_t *decoder, void *cursor) {
+    mal_decoder_t *decoder, void *cursor) {
   int rc = 0;
   bool is_present;
   rc = malbinary_decoder_decode_presence_flag(decoder, cursor,

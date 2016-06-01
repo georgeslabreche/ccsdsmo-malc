@@ -58,7 +58,7 @@ mal_updatetype_t * mal_updatetype_list_get_content(mal_updatetype_list_t * self)
 }
 
 // encoding functions related to transport malbinary
-int mal_updatetype_list_add_encoding_length_malbinary(mal_updatetype_list_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor)
+int mal_updatetype_list_add_encoding_length_malbinary(mal_updatetype_list_t * self, mal_encoder_t * malbinary_encoder, void * cursor)
 {
   int rc = 0;
   unsigned int list_size = self->element_count;
@@ -75,7 +75,7 @@ int mal_updatetype_list_add_encoding_length_malbinary(mal_updatetype_list_t * se
   }
   return rc;
 }
-int mal_updatetype_list_encode_malbinary(mal_updatetype_list_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor)
+int mal_updatetype_list_encode_malbinary(mal_updatetype_list_t * self, mal_encoder_t * malbinary_encoder, void * cursor)
 {
   int rc = 0;
   unsigned int list_size = self->element_count;
@@ -98,7 +98,7 @@ int mal_updatetype_list_encode_malbinary(mal_updatetype_list_t * self, malbinary
   }
   return rc;
 }
-int mal_updatetype_list_decode_malbinary(mal_updatetype_list_t * self, malbinary_decoder_t * malbinary_decoder, void * cursor)
+int mal_updatetype_list_decode_malbinary(mal_updatetype_list_t * self, mal_decoder_t * malbinary_decoder, void * cursor)
 {
   int rc = 0;
   unsigned int list_size;

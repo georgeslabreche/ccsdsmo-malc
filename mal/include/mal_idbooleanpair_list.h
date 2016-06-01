@@ -17,9 +17,9 @@ unsigned int mal_idbooleanpair_list_get_element_count(mal_idbooleanpair_list_t *
 mal_idbooleanpair_t ** mal_idbooleanpair_list_get_content(mal_idbooleanpair_list_t * self);
 
 // encoding functions related to transport malbinary
-int mal_idbooleanpair_list_add_encoding_length_malbinary(mal_idbooleanpair_list_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor);
-int mal_idbooleanpair_list_encode_malbinary(mal_idbooleanpair_list_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor);
-int mal_idbooleanpair_list_decode_malbinary(mal_idbooleanpair_list_t * self, malbinary_decoder_t * malbinary_decoder, void * cursor);
+int mal_idbooleanpair_list_add_encoding_length_malbinary(mal_idbooleanpair_list_t * self, mal_encoder_t * mal_encoder, void * cursor);
+int mal_idbooleanpair_list_encode_malbinary(mal_idbooleanpair_list_t * self, mal_encoder_t * mal_encoder, void * cursor);
+int mal_idbooleanpair_list_decode_malbinary(mal_idbooleanpair_list_t * self, mal_decoder_t * mal_decoder, void * cursor);
 
 // test function
 void mal_idbooleanpair_list_test(bool verbose);
