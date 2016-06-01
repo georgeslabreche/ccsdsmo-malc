@@ -2,6 +2,7 @@
 #include "simple_app.h"
 
 #include "clog.h"
+#include "malbinary.h"
 
 //  --------------------------------------------------------------------------
 //  Selftest
@@ -10,8 +11,8 @@ simple_app_myprovider_t *simple_app_create_provider(
     bool verbose,
     mal_ctx_t *mal_ctx,
     mal_uri_t *provider_uri,
-    malbinary_encoder_t *encoder,
-    malbinary_decoder_t *decoder) {
+    mal_encoder_t *encoder,
+    mal_decoder_t *decoder) {
   printf(" * simple_app_create_provider: \n");
 
   mal_endpoint_t *provider_endpoint = mal_endpoint_new(mal_ctx, provider_uri);
@@ -19,7 +20,7 @@ simple_app_myprovider_t *simple_app_create_provider(
   mal_poller_t *provider_poller = mal_poller_new(mal_ctx);
   mal_poller_add_endpoint(provider_poller, provider_endpoint);
 
-  simple_app_myprovider_t *provider = simple_app_myprovider_new(provider_poller, provider_endpoint, MALBINARY_FORMAT_CODE, encoder, decoder);
+  simple_app_myprovider_t *provider = simple_app_myprovider_new(provider_poller, provider_endpoint, encoder, decoder);
 
   return provider;
 }
@@ -28,8 +29,8 @@ simple_app_myconsumer_t *simple_app_create_consumer(
     bool verbose,
     mal_ctx_t *mal_ctx,
     mal_uri_t *provider_uri,
-    malbinary_encoder_t *encoder,
-    malbinary_decoder_t *decoder) {
+    mal_encoder_t *encoder,
+    mal_decoder_t *decoder) {
   printf(" * simple_app_create_consumer: \n");
 
   mal_uri_t *consumer_uri = mal_ctx_create_uri(mal_ctx, "simple_app/myconsumer");
@@ -48,7 +49,7 @@ simple_app_myconsumer_t *simple_app_create_consumer(
       consumer_endpoint,
       provider_uri,
       authentication_id, qoslevel, priority, domain, network_zone, session,
-      session_name, MALBINARY_FORMAT_CODE, encoder, decoder);
+      session_name, encoder, decoder);
 
   return consumer;
 }
@@ -65,8 +66,8 @@ void simple_app_test(bool verbose) {
   // @selftest
   mal_ctx_t *mal_ctx = mal_ctx_new();
 
-  malbinary_encoder_t *encoder = malbinary_encoder_new(false, true);
-  malbinary_decoder_t *decoder = malbinary_decoder_new(false, true);
+  mal_encoder_t *encoder = malbinary_encoder_new(false, true);
+  mal_decoder_t *decoder = malbinary_decoder_new(false, true);
 
   // All the MAL header fields are passed
   malzmq_header_t *malzmq_header = malzmq_header_new(NULL, true, 0, true, NULL, NULL, NULL, NULL);

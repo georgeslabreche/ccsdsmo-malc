@@ -9,8 +9,8 @@ invoke_app_myconsumer_t *invoke_app_myconsumer_new(mal_uri_t *provider_uri,
     mal_blob_t *authentication_id, mal_qoslevel_t qoslevel,
     mal_uinteger_t priority, mal_identifier_list_t *domain,
     mal_identifier_t *network_zone, mal_sessiontype_t session,
-    mal_identifier_t *session_name, int encoding_format_code, void *encoder,
-    void *decoder);
+    mal_identifier_t *session_name,
+    mal_encoder_t *encoder, mal_decoder_t *decoder);
 
 int invoke_app_myconsumer_initialize(void *self, mal_actor_t *mal_actor);
 
@@ -26,15 +26,8 @@ int invoke_app_myconsumer_testarea_testservice_testinvoke_response(
 
 mal_uri_t *invoke_app_myconsumer_get_provider_uri(invoke_app_myconsumer_t *self);
 
-int invoke_app_myconsumer_get_encoding_format_code(
-		invoke_app_myconsumer_t *self);
-
 mal_identifier_list_t *invoke_app_myconsumer_get_domain(
 		invoke_app_myconsumer_t *self);
-
-void *invoke_app_myconsumer_get_encoder(invoke_app_myconsumer_t *self);
-
-void *invoke_app_myconsumer_get_decoder(invoke_app_myconsumer_t *self);
 
 mal_blob_t *invoke_app_myconsumer_get_authentication_id(
 		invoke_app_myconsumer_t *self);

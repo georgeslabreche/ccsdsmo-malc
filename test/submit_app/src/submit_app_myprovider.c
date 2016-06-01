@@ -3,36 +3,20 @@
 
 // state
 struct _submit_app_myprovider_t {
-  int encoding_format_code;
-  void *encoder;
-  void *decoder;
+  mal_encoder_t *encoder;
+  mal_decoder_t *decoder;
 };
 
-submit_app_myprovider_t *submit_app_myprovider_new(int encoding_format_code,
-    void *encoder, void *decoder) {
+submit_app_myprovider_t *submit_app_myprovider_new(
+    mal_encoder_t *encoder, mal_decoder_t *decoder) {
   submit_app_myprovider_t *self = (submit_app_myprovider_t *) malloc(
       sizeof(submit_app_myprovider_t));
   if (!self)
     return NULL;
 
-  self->encoding_format_code = encoding_format_code;
   self->encoder = encoder;
   self->decoder = decoder;
   return self;
-}
-
-int submit_app_myprovider_get_encoding_format_code(
-    submit_app_myprovider_t *self) {
-  return self->encoding_format_code;
-}
-
-void submit_app_myprovider_set_decoder(submit_app_myprovider_t *self,
-    void *decoder) {
-  self->decoder = decoder;
-}
-
-void *submit_app_myprovider_get_decoder(submit_app_myprovider_t *self) {
-  return self->decoder;
 }
 
 int submit_app_myprovider_initialize(void *self, mal_actor_t *mal_actor) {
@@ -69,8 +53,8 @@ void testarea_testservice_testcomposite_print(
 void testarea_testservice_testfinalcompositea_print(
     testarea_testservice_testfinalcompositea_t *self) {
   printf("testarea_testservice_testfinalcompositea_print(");
-  printf("intfield=%d", self->intfield);
-  printf(",intfield1=%d", self->intfield2);
+  printf("intfield=%d", testarea_testservice_testfinalcompositea_get_intfield(self));
+  printf(",intfield1=%d", testarea_testservice_testfinalcompositea_get_intfield2(self));
   printf(")");
 }
 
@@ -85,9 +69,8 @@ int submit_app_myprovider_testarea_testservice_testsubmit(
 
   // application code (may decode only a part of the message body)
 
-  // TODO (AF): Use virtual allocation and initialization functions from encoder.
-  malbinary_cursor_t cursor;
-  malbinary_cursor_init(&cursor,
+  void *cursor = mal_decoder_new_cursor(
+      provider->decoder,
       mal_message_get_body(message),
       mal_message_get_body_offset(message) + mal_message_get_body_length(message),
       mal_message_get_body_offset(message));
@@ -96,9 +79,9 @@ int submit_app_myprovider_testarea_testservice_testsubmit(
 
   testarea_testservice_testcomposite_t *parameter_0;
   printf("submit_app_myprovider: decode first parameter\n");
-  rc = testarea_testservice_testsend_send_decode_0(provider->encoding_format_code,
-      &cursor, provider->decoder, &parameter_0);
-  malbinary_cursor_assert(&cursor);
+  rc = testarea_testservice_testsend_send_decode_0(
+      cursor, provider->decoder, &parameter_0);
+  mal_decoder_cursor_assert(provider->decoder, cursor);
   if (rc < 0)
     return rc;
 
@@ -106,13 +89,13 @@ int submit_app_myprovider_testarea_testservice_testsubmit(
   testarea_testservice_testcomposite_print(parameter_0);
   printf("\n");
 
-  printf("submit_app_myprovider: offset=%d", malbinary_cursor_get_body_offset(&cursor));
+  printf("submit_app_myprovider: offset=%d", mal_decoder_cursor_get_offset(provider->decoder, cursor));
 
   mal_string_list_t *parameter_1;
   printf("submit_app_myprovider: decode second parameter\n");
-  rc = testarea_testservice_testsend_send_decode_1(provider->encoding_format_code,
-      &cursor, provider->decoder, &parameter_1);
-  malbinary_cursor_assert(&cursor);
+  rc = testarea_testservice_testsend_send_decode_1(
+      cursor, provider->decoder, &parameter_1);
+  mal_decoder_cursor_assert(provider->decoder, cursor);
   if (rc < 0)
     return rc;
 
@@ -120,19 +103,21 @@ int submit_app_myprovider_testarea_testservice_testsubmit(
   mal_string_list_print(parameter_1);
   printf("\n");
 
-  printf("submit_app_myprovider: offset=%d", malbinary_cursor_get_body_offset(&cursor));
+  printf("submit_app_myprovider: offset=%d", mal_decoder_cursor_get_offset(provider->decoder, cursor));
 
-  long short_form;
-  void *parameter_2;
+  mal_element_holder_t parameter_2;
   printf("submit_app_myprovider: decode third parameter\n");
-  rc = testarea_testservice_testsend_send_decode_2(provider->encoding_format_code,
-      &cursor, provider->decoder, &short_form, &parameter_2);
-  malbinary_cursor_assert(&cursor);
+  rc = testarea_testservice_testsend_send_decode_2(
+      cursor, provider->decoder, &parameter_2);
+  mal_decoder_cursor_assert(provider->decoder, cursor);
   if (rc < 0)
     return rc;
 
-  printf("submit_app_myprovider: offset=%d", malbinary_cursor_get_body_offset(&cursor));
-  printf("submit_app_myprovider: decoding done, short form=%lu\n", short_form);
+  printf("submit_app_myprovider: offset=%d", mal_decoder_cursor_get_offset(provider->decoder, cursor));
+  if (parameter_2.presence_flag)
+    printf("submit_app_myprovider: decoding done, short form=%lu\n", parameter_2.short_form);
+  else
+    printf("submit_app_myprovider: decoding done, presence_flag false\n");
 
   // parameter_0 may be NULL
   if (parameter_0 == NULL) {
@@ -145,11 +130,11 @@ int submit_app_myprovider_testarea_testservice_testsubmit(
   }
 
   // parameter_2 may be NULL
-  if (parameter_2 == NULL) {
+  if (! parameter_2.presence_flag) {
   } else {
-    if (short_form == TESTAREA_TESTSERVICE_TESTFINALCOMPOSITEA_SHORT_FORM) {
+    if (parameter_2.short_form == TESTAREA_TESTSERVICE_TESTFINALCOMPOSITEA_SHORT_FORM) {
       testarea_testservice_testfinalcompositea_t *testfinalcompositea =
-          (testarea_testservice_testfinalcompositea_t *) parameter_2;
+          (testarea_testservice_testfinalcompositea_t *) &parameter_2.value;
       mal_integer_t int_value =
           testarea_testservice_testfinalcompositea_get_intfield2(testfinalcompositea);
       printf("int_value=%d\n", int_value);
@@ -160,6 +145,8 @@ int submit_app_myprovider_testarea_testservice_testsubmit(
 
       printf("destroy parameter_2\n");
       testarea_testservice_testfinalcompositea_destroy(&testfinalcompositea);
+    } else {
+      printf("parameter_2 unknown\n");
     }
   }
 

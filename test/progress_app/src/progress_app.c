@@ -1,5 +1,6 @@
 /**/
 #include "progress_app.h"
+#include "malbinary.h"
 
 mal_actor_t *consumer_actor = NULL;
 mal_actor_t *provider_actor = NULL;
@@ -10,8 +11,8 @@ int progress_app_create_provider(
     bool verbose,
     mal_ctx_t *mal_ctx,
     mal_uri_t *provider_uri,
-    malbinary_encoder_t *encoder,
-    malbinary_decoder_t *decoder) {
+    mal_encoder_t *encoder,
+    mal_decoder_t *decoder) {
   int rc = 0;
 
   printf(" * progress_app_create_provider: \n");
@@ -26,7 +27,7 @@ int progress_app_create_provider(
 
   progress_app_myprovider_t *provider = progress_app_myprovider_new(provider_uri,
       authentication_id, qoslevel, priority, domain, network_zone, session,
-      session_name, MALBINARY_FORMAT_CODE, encoder, decoder);
+      session_name, encoder, decoder);
 
   provider_actor = mal_actor_new(
       mal_ctx,
@@ -40,8 +41,8 @@ int progress_app_create_consumer(
     bool verbose,
     mal_ctx_t *mal_ctx,
     mal_uri_t *provider_uri,
-    malbinary_encoder_t *encoder,
-    malbinary_decoder_t *decoder) {
+    mal_encoder_t *encoder,
+    mal_decoder_t *decoder) {
   int rc = 0;
 
   printf(" * progress_app_create_consumer: \n");
@@ -56,7 +57,7 @@ int progress_app_create_consumer(
 
   progress_app_myconsumer_t *consumer = progress_app_myconsumer_new(provider_uri,
       authentication_id, qoslevel, priority, domain, network_zone, session,
-      session_name, MALBINARY_FORMAT_CODE, encoder, decoder);
+      session_name, encoder, decoder);
 
   mal_uri_t *consumer_uri = mal_ctx_create_uri(mal_ctx, "progress_app/myconsumer");
   printf("progress_app: consumer URI: %s\n", consumer_uri);
@@ -78,8 +79,8 @@ void progress_app_test(bool verbose) {
   //  @selftest
   mal_ctx_t *mal_ctx = mal_ctx_new();
 
-  malbinary_encoder_t *encoder = malbinary_encoder_new(false, true);
-  malbinary_decoder_t *decoder = malbinary_decoder_new(false, true);
+  mal_encoder_t *encoder = malbinary_encoder_new(false, true);
+  mal_decoder_t *decoder = malbinary_decoder_new(false, true);
 
   // All the MAL header fields are passed
   malzmq_header_t *malzmq_header = malzmq_header_new(NULL, true, 0, true, NULL, NULL, NULL, NULL);

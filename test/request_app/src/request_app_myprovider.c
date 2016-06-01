@@ -3,40 +3,20 @@
 
 // state
 struct _request_app_myprovider_t {
-  int encoding_format_code;
-  void *encoder;
-  void *decoder;
+  mal_encoder_t *encoder;
+  mal_decoder_t *decoder;
 };
 
-request_app_myprovider_t *request_app_myprovider_new(int encoding_format_code,
-    void *encoder, void *decoder) {
+request_app_myprovider_t *request_app_myprovider_new(
+    mal_encoder_t *encoder, mal_decoder_t *decoder) {
   request_app_myprovider_t *self = (request_app_myprovider_t *) malloc(
       sizeof(request_app_myprovider_t));
   if (!self)
     return NULL;
 
-  self->encoding_format_code = encoding_format_code;
   self->encoder = encoder;
   self->decoder = decoder;
   return self;
-}
-
-int request_app_myprovider_get_encoding_format_code(
-    request_app_myprovider_t *self) {
-  return self->encoding_format_code;
-}
-
-void request_app_myprovider_set_decoder(request_app_myprovider_t *self,
-    void *decoder) {
-  self->decoder = decoder;
-}
-
-void *request_app_myprovider_get_decoder(request_app_myprovider_t *self) {
-  return self->decoder;
-}
-
-void *request_app_myprovider_get_encoder(request_app_myprovider_t *self) {
-  return self->encoder;
 }
 
 int request_app_myprovider_initialize(void *self, mal_actor_t *mal_actor) {
@@ -81,9 +61,8 @@ int request_app_myprovider_testarea_testservice_testrequest(
 
   // application code (may decode only a part of the message body)
 
-  // TODO (AF): Use virtual allocation and initialization functions from encoder.
-  malbinary_cursor_t cursor;
-  malbinary_cursor_init(&cursor,
+  void *cursor = mal_decoder_new_cursor(
+      provider->decoder,
       mal_message_get_body(message),
       mal_message_get_body_offset(message) + mal_message_get_body_length(message),
       mal_message_get_body_offset(message));
@@ -92,9 +71,9 @@ int request_app_myprovider_testarea_testservice_testrequest(
 
   testarea_testservice_testcomposite_t *parameter_0;
   printf("request_app_myprovider: decode first parameter\n");
-  rc = testarea_testservice_testrequest_request_decode_0(provider->encoding_format_code,
-      &cursor, provider->decoder, &parameter_0);
-  malbinary_cursor_assert(&cursor);
+  rc = testarea_testservice_testrequest_request_decode_0(
+      cursor, provider->decoder, &parameter_0);
+  mal_decoder_cursor_assert(provider->decoder, cursor);
   if (rc < 0)
     return rc;
 
@@ -102,13 +81,13 @@ int request_app_myprovider_testarea_testservice_testrequest(
   testarea_testservice_testcomposite_print(parameter_0);
   printf("\n");
 
-  printf("request_app_myprovider: offset=%d\n", malbinary_cursor_get_body_offset(&cursor));
+  printf("request_app_myprovider: offset=%d\n", mal_decoder_cursor_get_offset(provider->decoder, cursor));
 
   mal_string_list_t *parameter_1;
   printf("request_app_myprovider: decode second parameter\n");
-  rc = testarea_testservice_testrequest_request_decode_1(provider->encoding_format_code,
-      &cursor, provider->decoder, &parameter_1);
-  malbinary_cursor_assert(&cursor);
+  rc = testarea_testservice_testrequest_request_decode_1(
+      cursor, provider->decoder, &parameter_1);
+  mal_decoder_cursor_assert(provider->decoder, cursor);
   if (rc < 0)
     return rc;
 
@@ -116,7 +95,7 @@ int request_app_myprovider_testarea_testservice_testrequest(
   mal_string_list_print(parameter_1);
   printf("\n");
 
-  printf("request_app_myprovider: offset=%d\n", malbinary_cursor_get_body_offset(&cursor));
+  printf("request_app_myprovider: offset=%d\n", mal_decoder_cursor_get_offset(provider->decoder, cursor));
 
   // parameter_0 may be NULL
   if (parameter_0 == NULL) {
@@ -137,14 +116,11 @@ int request_app_myprovider_testarea_testservice_testrequest(
   string_list_content[1] = mal_string_new("response-list-element-2");
   string_list_content[2] = mal_string_new("response-list-element-3");
 
-  // TODO (AF): Use virtual allocation and initialization functions from encoder.
-  malbinary_cursor_t cursor_r;
-  malbinary_cursor_reset(&cursor_r);
+  void *cursor_r = mal_encoder_new_cursor(provider->encoder);
 
   printf("request_app_myprovider: encoding_length_0\n");
   rc = testarea_testservice_testrequest_request_response_add_encoding_length_0(
-		  request_app_myprovider_get_encoding_format_code(provider),
-		  request_app_myprovider_get_encoder(provider), string_list, &cursor_r);
+		  provider->encoder, string_list, cursor_r);
   if (rc < 0)
     return rc;
 
@@ -156,19 +132,18 @@ int request_app_myprovider_testarea_testservice_testrequest(
 		  mal_message_get_network_zone(message),
 		  mal_message_get_session(message),
 		  mal_message_get_session_name(message),
-		  malbinary_cursor_get_body_length(&cursor_r));
+		  mal_encoder_cursor_get_length(provider->encoder, cursor_r));
 
-  // TODO (AF): Use a virtual function
-  malbinary_cursor_init(&cursor_r,
+  mal_encoder_cursor_init(
+      provider->encoder, cursor_r,
       mal_message_get_body(result_message),
       mal_message_get_body_offset(result_message) + mal_message_get_body_length(result_message),
       mal_message_get_body_offset(result_message));
 
   printf("request_app_myprovider: encode 0\n");
   rc = testarea_testservice_testrequest_request_response_encode_0(
-		  request_app_myprovider_get_encoding_format_code(provider), &cursor_r,
-		  request_app_myprovider_get_encoder(provider), string_list);
-  malbinary_cursor_assert(&cursor_r);
+      cursor_r, provider->encoder, string_list);
+  mal_encoder_cursor_assert(provider->encoder, cursor_r);
   if (rc < 0)
     return rc;
 

@@ -3,36 +3,20 @@
 
 // state
 struct _send_app_myprovider_t {
-  int encoding_format_code;
-  void *encoder;
-  void *decoder;
+  mal_encoder_t *encoder;
+  mal_decoder_t *decoder;
 };
 
-send_app_myprovider_t *send_app_myprovider_new(int encoding_format_code,
-    void *encoder, void *decoder) {
+send_app_myprovider_t *send_app_myprovider_new(
+    mal_encoder_t *encoder, mal_decoder_t *decoder) {
   send_app_myprovider_t *self = (send_app_myprovider_t *) malloc(
       sizeof(send_app_myprovider_t));
   if (!self)
     return NULL;
 
-  self->encoding_format_code = encoding_format_code;
   self->encoder = encoder;
   self->decoder = decoder;
   return self;
-}
-
-int send_app_myprovider_get_encoding_format_code(
-    send_app_myprovider_t *self) {
-  return self->encoding_format_code;
-}
-
-void send_app_myprovider_set_decoder(send_app_myprovider_t *self,
-    void *decoder) {
-  self->decoder = decoder;
-}
-
-void *send_app_myprovider_get_decoder(send_app_myprovider_t *self) {
-  return self->decoder;
 }
 
 int send_app_myprovider_initialize(void *self, mal_actor_t *mal_actor) {
@@ -86,9 +70,8 @@ int send_app_myprovider_testarea_testservice_testsend(
 
   // application code (may decode only a part of the message body)
 
-  // TODO (AF): Use virtual allocation and initialization functions from encoder.
-  malbinary_cursor_t cursor;
-  malbinary_cursor_init(&cursor,
+  void *cursor = mal_decoder_new_cursor(
+      provider->decoder,
       mal_message_get_body(message),
       mal_message_get_body_offset(message) + mal_message_get_body_length(message),
       mal_message_get_body_offset(message));
@@ -98,60 +81,54 @@ int send_app_myprovider_testarea_testservice_testsend(
   testarea_testservice_testcomposite_t *parameter_0;
   printf("send_app_myprovider: decode first parameter\n");
   rc = testarea_testservice_testsend_send_decode_0(
-      provider->encoding_format_code,
-      &cursor,
+      cursor,
       provider->decoder,
       &parameter_0);
-  malbinary_cursor_assert(&cursor);
+  mal_decoder_cursor_assert(provider->decoder, cursor);
   if (rc < 0)
     return rc;
   printf("parameter_0=\n");
   testarea_testservice_testcomposite_print(parameter_0);
   printf("\n");
 
-  printf("send_app_myprovider: offset=%d", malbinary_cursor_get_body_offset(&cursor));
+  printf("send_app_myprovider: offset=%d", mal_decoder_cursor_get_offset(provider->decoder, cursor));
 
   mal_string_list_t *parameter_1;
   printf("send_app_myprovider: decode second parameter\n");
-  rc = testarea_testservice_testsend_send_decode_1(provider->encoding_format_code,
-      &cursor, provider->decoder, &parameter_1);
-  malbinary_cursor_assert(&cursor);
+  rc = testarea_testservice_testsend_send_decode_1(
+      cursor, provider->decoder, &parameter_1);
+  mal_decoder_cursor_assert(provider->decoder, cursor);
   if (rc < 0)
     return rc;
   printf("parameter_1=\n");
   mal_string_list_print(parameter_1);
   printf("\n");
 
-  printf("send_app_myprovider: offset=%d", malbinary_cursor_get_body_offset(&cursor));
+  printf("send_app_myprovider: offset=%d", mal_decoder_cursor_get_offset(provider->decoder, cursor));
 
   mal_element_holder_t element_holder;
   printf("send_app_myprovider: decode third parameter\n");
-  rc = testarea_testservice_testsend_send_decode_2(provider->encoding_format_code,
-      &cursor, provider->decoder, &element_holder);
-  malbinary_cursor_assert(&cursor);
+  rc = testarea_testservice_testsend_send_decode_2(
+      cursor, provider->decoder, &element_holder);
+  mal_decoder_cursor_assert(provider->decoder, cursor);
   if (rc < 0)
     return rc;
 
-  printf("send_app_myprovider: offset=%d", malbinary_cursor_get_body_offset(&cursor));
+  printf("send_app_myprovider: offset=%d", mal_decoder_cursor_get_offset(provider->decoder, cursor));
   printf("send_app_myprovider: decoding done, short form=%lu\n", element_holder.short_form);
 
   // parameter_0 may be NULL
   if (parameter_0 == NULL) {
-
   } else {
-
   }
 
   // parameter_1 may be NULL
   if (parameter_1 == NULL) {
-
   } else {
-
   }
 
   // parameter_2 may be NULL
   if (element_holder.value.composite_value == NULL) {
-
   } else {
     if (element_holder.short_form == TESTAREA_TESTSERVICE_TESTFINALCOMPOSITEA_SHORT_FORM) {
       testarea_testservice_testfinalcompositea_t *testfinalcompositea =

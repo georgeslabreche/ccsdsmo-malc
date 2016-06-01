@@ -11,12 +11,8 @@ extern "C" {
 simple_app_myprovider_t *simple_app_myprovider_new(
     mal_poller_t *poller,
     mal_endpoint_t *endpoint,
-    int encoding_format_code,
-    void *encoder, void *decoder);
-
-void simple_app_myprovider_set_decoder(simple_app_myprovider_t *self, void *decoder);
-
-int simple_app_myprovider_get_encoding_format_code(simple_app_myprovider_t *self);
+    mal_encoder_t *encoder,
+    mal_decoder_t *decoder);
 
 void simple_app_myprovider_run(zsock_t *pipe, void *args);
 

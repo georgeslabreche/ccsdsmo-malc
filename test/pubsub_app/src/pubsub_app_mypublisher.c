@@ -11,17 +11,16 @@ struct _pubsub_app_mypublisher_t {
   mal_identifier_t *network_zone;
   mal_sessiontype_t session;
   mal_identifier_t *session_name;
-  int encoding_format_code;
-  void *encoder;
-  void *decoder;
+  mal_encoder_t *encoder;
+  mal_decoder_t *decoder;
 };
 
 pubsub_app_mypublisher_t *pubsub_app_mypublisher_new(mal_uri_t *broker_uri,
     mal_blob_t *authentication_id, mal_qoslevel_t qoslevel,
     mal_uinteger_t priority, mal_identifier_list_t *domain,
     mal_identifier_t *network_zone, mal_sessiontype_t session,
-    mal_identifier_t *session_name, int encoding_format_code, void *encoder,
-    void *decoder) {
+    mal_identifier_t *session_name,
+    mal_encoder_t *encoder, mal_decoder_t *decoder) {
   pubsub_app_mypublisher_t *self = (pubsub_app_mypublisher_t *) malloc(
       sizeof(pubsub_app_mypublisher_t));
   if (!self)
@@ -35,23 +34,9 @@ pubsub_app_mypublisher_t *pubsub_app_mypublisher_new(mal_uri_t *broker_uri,
   self->network_zone = network_zone;
   self->session = session;
   self->session_name = session_name;
-  self->encoding_format_code = encoding_format_code;
   self->encoder = encoder;
   self->decoder = decoder;
   return self;
-}
-
-int pubsub_app_mypublisher_get_encoding_format_code(
-    pubsub_app_mypublisher_t *self) {
-  return self->encoding_format_code;
-}
-
-void *pubsub_app_mypublisher_get_encoder(pubsub_app_mypublisher_t *self) {
-  return self->encoder;
-}
-
-void *pubsub_app_mypublisher_get_decoder(pubsub_app_mypublisher_t *self) {
-  return self->decoder;
 }
 
 mal_uri_t *pubsub_app_mypublisher_get_broker_uri(pubsub_app_mypublisher_t *self) {
@@ -118,31 +103,28 @@ int pubsub_app_mypublisher_initialize(void *self, mal_actor_t *mal_actor) {
   // TODO: add missing parameters in EntityKey constructor
   entitykey_list_content[0] = mal_entitykey_new();
 
-  // TODO (AF): Use virtual allocation and initialization functions from encoder.
-  malbinary_cursor_t cursor_pubreg;
-  malbinary_cursor_reset(&cursor_pubreg);
+  void *cursor_pubreg = mal_encoder_new_cursor(publisher->encoder);
 
   rc = mal_publish_register_add_encoding_length_entitykey_list(
-      publisher->encoding_format_code, publisher->encoder, entitykey_list,
-      &cursor_pubreg);
+      publisher->encoder, entitykey_list, cursor_pubreg);
   if (rc < 0)
     return rc;
 
   mal_message_t *publish_register_message = mal_message_new(
       publisher->authentication_id, publisher->qoslevel, publisher->priority,
       publisher->domain, publisher->network_zone, publisher->session,
-      publisher->session_name, malbinary_cursor_get_body_length(&cursor_pubreg));
+      publisher->session_name, mal_encoder_cursor_get_length(publisher->encoder, cursor_pubreg));
 
-  // TODO (AF): Use a virtual function
-  malbinary_cursor_init(&cursor_pubreg,
+  mal_encoder_cursor_init(
+      publisher->encoder, cursor_pubreg,
       mal_message_get_body(publish_register_message),
-      malbinary_cursor_get_body_length(&cursor_pubreg),
+      mal_encoder_cursor_get_length(publisher->encoder, cursor_pubreg),
       mal_message_get_body_offset(publish_register_message));
 
   rc = mal_publish_register_encode_entitykey_list(
-      publisher->encoding_format_code, &cursor_pubreg, publisher->encoder,
+      cursor_pubreg, publisher->encoder,
       entitykey_list);
-  malbinary_cursor_assert(&cursor_pubreg);
+  mal_encoder_cursor_assert(publisher->encoder, cursor_pubreg);
   if (rc < 0)
     return rc;
 
@@ -185,43 +167,38 @@ int pubsub_app_mypublisher_initialize(void *self, mal_actor_t *mal_actor) {
       testarea_testservice_testupdate_list_get_content(testupdate_list);
   update_list_content[0] = update;
 
-  // TODO (AF): Use virtual allocation and initialization functions from encoder.
-  malbinary_cursor_t cursor_pub;
-  malbinary_cursor_reset(&cursor_pub);
+  void *cursor_pub = mal_encoder_new_cursor(publisher->encoder);
 
   rc = mal_publish_add_encoding_length_updateheader_list(
-      publisher->encoding_format_code, publisher->encoder, updateheader_list,
-      &cursor_pub);
+      publisher->encoder, updateheader_list, cursor_pub);
   if (rc < 0)
     return rc;
 
   rc = testarea_testservice_testmonitor_update_add_encoding_length_0(
-      publisher->encoding_format_code, publisher->encoder, testupdate_list,
-      &cursor_pub);
+      publisher->encoder, testupdate_list, cursor_pub);
   if (rc < 0)
     return rc;
 
   mal_message_t *publish_message = mal_message_new(publisher->authentication_id,
       publisher->qoslevel, publisher->priority, publisher->domain,
       publisher->network_zone, publisher->session, publisher->session_name,
-      malbinary_cursor_get_body_length(&cursor_pub));
+      mal_encoder_cursor_get_length(publisher->encoder, cursor_pub));
 
-  // TODO (AF): Use a virtual function
-  malbinary_cursor_init(&cursor_pub,
+  mal_encoder_cursor_init(
+      publisher->encoder, cursor_pub,
       mal_message_get_body(publish_message),
-      malbinary_cursor_get_body_length(&cursor_pub),
+      mal_encoder_cursor_get_length(publisher->encoder, cursor_pub),
       mal_message_get_body_offset(publish_message));
 
-  rc = mal_publish_encode_updateheader_list(publisher->encoding_format_code,
-      &cursor_pub, publisher->encoder, updateheader_list);
-  malbinary_cursor_assert(&cursor_pub);
+  rc = mal_publish_encode_updateheader_list(
+      cursor_pub, publisher->encoder, updateheader_list);
+  mal_encoder_cursor_assert(publisher->encoder, cursor_pub);
   if (rc < 0)
     return rc;
 
   rc = testarea_testservice_testmonitor_update_encode_0(
-      publisher->encoding_format_code, &cursor_pub, publisher->encoder,
-      testupdate_list);
-  malbinary_cursor_assert(&cursor_pub);
+      cursor_pub, publisher->encoder, testupdate_list);
+  mal_encoder_cursor_assert(publisher->encoder, cursor_pub);
   if (rc < 0)
     return rc;
 

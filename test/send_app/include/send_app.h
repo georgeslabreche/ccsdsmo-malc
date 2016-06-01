@@ -6,8 +6,6 @@ extern "C" {
 #endif
 
 #include "mal.h"
-#include "malbinary.h"
-#include "malzmq.h"
 #include "testarea.h"
 #include "malactor.h"
 

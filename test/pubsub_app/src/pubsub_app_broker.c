@@ -13,9 +13,8 @@ struct _pubsub_app_broker_t {
   mal_identifier_t *network_zone;
   mal_sessiontype_t session;
   mal_identifier_t *session_name;
-  int encoding_format_code;
-  void *encoder;
-  void *decoder;
+  mal_encoder_t *encoder;
+  mal_decoder_t *decoder;
   pubsub_subscriber_t **subscribers;
 };
 
@@ -29,7 +28,7 @@ pubsub_app_broker_t *pubsub_app_broker_new(mal_uri_t *provider_uri,
     mal_blob_t *authentication_id, mal_qoslevel_t qoslevel,
     mal_uinteger_t priority, mal_identifier_list_t *domain,
     mal_identifier_t *network_zone, mal_sessiontype_t session,
-    mal_identifier_t *session_name, int encoding_format_code, void *encoder, void *decoder) {
+    mal_identifier_t *session_name, mal_encoder_t *encoder, mal_decoder_t *decoder) {
 
   pubsub_app_broker_t *self = (pubsub_app_broker_t *) malloc(sizeof(pubsub_app_broker_t));
   if (!self)
@@ -43,7 +42,6 @@ pubsub_app_broker_t *pubsub_app_broker_new(mal_uri_t *provider_uri,
   self->network_zone = network_zone;
   self->session = session;
   self->session_name = session_name;
-  self->encoding_format_code = encoding_format_code;
   self->encoder = encoder;
   self->decoder = decoder;
   //TODO: Implements an hashtable
@@ -54,19 +52,6 @@ pubsub_app_broker_t *pubsub_app_broker_new(mal_uri_t *provider_uri,
 /**
  * Getter / Setter
  */
-
-int pubsub_app_broker_get_encoding_format_code(
-    pubsub_app_broker_t *self) {
-  return self->encoding_format_code;
-}
-
-void *pubsub_app_broker_get_encoder(pubsub_app_broker_t *self) {
-  return self->encoder;
-}
-
-void *pubsub_app_broker_get_decoder(pubsub_app_broker_t *self) {
-  return self->decoder;
-}
 
 mal_uri_t *pubsub_app_broker_get_provider_uri(
     pubsub_app_broker_t *self) {
@@ -335,9 +320,8 @@ int pubsub_app_broker_on_register(void *self, mal_ctx_t *mal_ctx,
 
   // Get response parameter.
 
-  // TODO (AF): Use virtual allocation and initialization functions from encoder.
-  malbinary_cursor_t cursor;
-  malbinary_cursor_init(&cursor,
+  void *cursor = mal_decoder_new_cursor(
+      broker->decoder,
       mal_message_get_body(message),
       mal_message_get_body_offset(message) + mal_message_get_body_length(message),
       mal_message_get_body_offset(message));
@@ -345,8 +329,8 @@ int pubsub_app_broker_on_register(void *self, mal_ctx_t *mal_ctx,
   printf("pubsub_app_broker_on_register: offset=%d\n", mal_message_get_body_offset(message));
 
   mal_subscription_t *mal_subscription = mal_subscription_new();
-  rc = mal_register_decode(broker->encoding_format_code, &cursor, broker->decoder, &mal_subscription);
-  malbinary_cursor_assert(&cursor);
+  rc = mal_register_decode(cursor, broker->decoder, &mal_subscription);
+  mal_decoder_cursor_assert(broker->decoder, cursor);
   assert(rc == 0);
 
   mal_identifier_t *subscriptionid = mal_subscription_get_subscriptionid(mal_subscription);
@@ -388,9 +372,8 @@ int pubsub_app_broker_on_deregister(void *self, mal_ctx_t *mal_ctx,
 
    // Get response parameter.
 
-   // TODO (AF): Use virtual allocation and initialization functions from encoder.
-   malbinary_cursor_t cursor;
-   malbinary_cursor_init(&cursor,
+   void *cursor = mal_decoder_new_cursor(
+       broker->decoder,
        mal_message_get_body(message),
        mal_message_get_body_offset(message) + mal_message_get_body_length(message),
        mal_message_get_body_offset(message));
@@ -398,7 +381,8 @@ int pubsub_app_broker_on_deregister(void *self, mal_ctx_t *mal_ctx,
    printf("pubsub_app_broker_on_register: offset=%d\n", mal_message_get_body_offset(message));
 
    mal_subscription_t *mal_subscription = mal_subscription_new();
-   rc = mal_register_decode(broker->encoding_format_code, &cursor, broker->decoder, &mal_subscription);
+   rc = mal_register_decode(cursor, broker->decoder, &mal_subscription);
+   mal_decoder_cursor_assert(broker->decoder, cursor);
    assert(rc == 0);
 
    mal_identifier_t *subscriptionid = mal_subscription_get_subscriptionid(mal_subscription);

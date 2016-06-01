@@ -11,17 +11,16 @@ struct _pubsub_app_mysubscriber_t {
   mal_identifier_t *network_zone;
   mal_sessiontype_t session;
   mal_identifier_t *session_name;
-  int encoding_format_code;
-  void *encoder;
-  void *decoder;
+  mal_encoder_t *encoder;
+  mal_decoder_t *decoder;
 };
 
 pubsub_app_mysubscriber_t *pubsub_app_mysubscriber_new(mal_uri_t *broker_uri,
     mal_blob_t *authentication_id, mal_qoslevel_t qoslevel,
     mal_uinteger_t priority, mal_identifier_list_t *domain,
     mal_identifier_t *network_zone, mal_sessiontype_t session,
-    mal_identifier_t *session_name, int encoding_format_code, void *encoder,
-    void *decoder) {
+    mal_identifier_t *session_name,
+    mal_encoder_t *encoder, mal_decoder_t *decoder) {
   pubsub_app_mysubscriber_t *self = (pubsub_app_mysubscriber_t *) malloc(
       sizeof(pubsub_app_mysubscriber_t));
   if (!self)
@@ -35,23 +34,9 @@ pubsub_app_mysubscriber_t *pubsub_app_mysubscriber_new(mal_uri_t *broker_uri,
   self->network_zone = network_zone;
   self->session = session;
   self->session_name = session_name;
-  self->encoding_format_code = encoding_format_code;
   self->encoder = encoder;
   self->decoder = decoder;
   return self;
-}
-
-int pubsub_app_mysubscriber_get_encoding_format_code(
-    pubsub_app_mysubscriber_t *self) {
-  return self->encoding_format_code;
-}
-
-void *pubsub_app_mysubscriber_get_encoder(pubsub_app_mysubscriber_t *self) {
-  return self->encoder;
-}
-
-void *pubsub_app_mysubscriber_get_decoder(pubsub_app_mysubscriber_t *self) {
-  return self->decoder;
 }
 
 mal_uri_t *pubsub_app_mysubscriber_get_broker_uri(
@@ -130,27 +115,25 @@ int pubsub_app_mysubscriber_initialize(void *self, mal_actor_t *mal_actor) {
   */
   mal_subscription_set_entities(subscription, entities);
 
-  // TODO (AF): Use virtual allocation and initialization functions from encoder.
-  malbinary_cursor_t register_cursor;
-  malbinary_cursor_reset(&register_cursor);
+  void *register_cursor = mal_encoder_new_cursor(subscriber->encoder);
 
-  rc = mal_register_add_encoding_length(subscriber->encoding_format_code,
-      subscriber->encoder, subscription, &register_cursor);
+  rc = mal_register_add_encoding_length(
+      subscriber->encoder, subscription, register_cursor);
   if (rc < 0)
     return rc;
 
   mal_message_t *register_message = mal_message_new(
       subscriber->authentication_id, subscriber->qoslevel, subscriber->priority,
       subscriber->domain, subscriber->network_zone, subscriber->session,
-      subscriber->session_name, malbinary_cursor_get_body_length(&register_cursor));
+      subscriber->session_name, mal_encoder_cursor_get_length(subscriber->encoder, register_cursor));
 
-  // TODO (AF): Use a virtual function
-  malbinary_cursor_init(&register_cursor,
+  mal_encoder_cursor_init(
+      subscriber->encoder, register_cursor,
       mal_message_get_body(register_message),
-      malbinary_cursor_get_body_length(&register_cursor),
+      mal_encoder_cursor_get_length(subscriber->encoder, register_cursor),
       mal_message_get_body_offset(register_message));
 
-  rc = mal_register_encode(subscriber->encoding_format_code, &register_cursor, subscriber->encoder, subscription);
+  rc = mal_register_encode(register_cursor, subscriber->encoder, subscription);
   assert(rc == 0);
 
   printf("=== register send... %s\n", broker_uri);
@@ -193,9 +176,8 @@ int pubsub_app_mysubscriber_testnotify(void *self, mal_ctx_t *mal_ctx,
       mal_message_get_interaction_stage(message),
       mal_message_is_error_message(message));
 
-  // TODO (AF): Use virtual allocation and initialization functions from encoder.
-  malbinary_cursor_t cursor;
-  malbinary_cursor_init(&cursor,
+  void *cursor = mal_decoder_new_cursor(
+      subscriber->decoder,
       mal_message_get_body(message),
       mal_message_get_body_offset(message) + mal_message_get_body_length(message),
       mal_message_get_body_offset(message));
@@ -209,9 +191,9 @@ int pubsub_app_mysubscriber_testnotify(void *self, mal_ctx_t *mal_ctx,
   */
 
   mal_updateheader_list_t *updateheader_list;
-  rc = mal_publish_decode_updateheader_list(subscriber->encoding_format_code,
-      &cursor, subscriber->decoder, &updateheader_list);
-  malbinary_cursor_assert(&cursor);
+  rc = mal_publish_decode_updateheader_list(
+      cursor, subscriber->decoder, &updateheader_list);
+  mal_decoder_cursor_assert(subscriber->decoder, cursor);
   if (rc < 0)
     return rc;
 
@@ -224,9 +206,9 @@ int pubsub_app_mysubscriber_testnotify(void *self, mal_ctx_t *mal_ctx,
 
   printf("== testupdate_list\n");
   testarea_testservice_testupdate_list_t *parameter_0;
-  rc = testarea_testservice_testmonitor_update_decode_0(subscriber->encoding_format_code,
-      &cursor, subscriber->decoder, &parameter_0);
-  malbinary_cursor_assert(&cursor);
+  rc = testarea_testservice_testmonitor_update_decode_0(
+      cursor, subscriber->decoder, &parameter_0);
+  mal_decoder_cursor_assert(subscriber->decoder, cursor);
   assert(rc == 0);
 
   // process the update list

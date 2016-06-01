@@ -11,17 +11,16 @@ struct _submit_app_myconsumer_t {
   mal_identifier_t *network_zone;
   mal_sessiontype_t session;
   mal_identifier_t *session_name;
-  int encoding_format_code;
-  void *encoder;
-  void *decoder;
+  mal_encoder_t *encoder;
+  mal_decoder_t *decoder;
 };
 
 submit_app_myconsumer_t *submit_app_myconsumer_new(mal_uri_t *provider_uri,
     mal_blob_t *authentication_id, mal_qoslevel_t qoslevel,
     mal_uinteger_t priority, mal_identifier_list_t *domain,
     mal_identifier_t *network_zone, mal_sessiontype_t session,
-    mal_identifier_t *session_name, int encoding_format_code, void *encoder,
-    void *decoder) {
+    mal_identifier_t *session_name,
+    mal_encoder_t *encoder, mal_decoder_t *decoder) {
   submit_app_myconsumer_t *self = (submit_app_myconsumer_t *) malloc(
       sizeof(submit_app_myconsumer_t));
   if (!self)
@@ -35,23 +34,9 @@ submit_app_myconsumer_t *submit_app_myconsumer_new(mal_uri_t *provider_uri,
   self->network_zone = network_zone;
   self->session = session;
   self->session_name = session_name;
-  self->encoding_format_code = encoding_format_code;
   self->encoder = encoder;
   self->decoder = decoder;
   return self;
-}
-
-int submit_app_myconsumer_get_encoding_format_code(
-    submit_app_myconsumer_t *self) {
-  return self->encoding_format_code;
-}
-
-void *submit_app_myconsumer_get_encoder(submit_app_myconsumer_t *self) {
-  return self->encoder;
-}
-
-void *submit_app_myconsumer_get_decoder(submit_app_myconsumer_t *self) {
-  return self->decoder;
 }
 
 mal_uri_t *submit_app_myconsumer_get_provider_uri(submit_app_myconsumer_t *self) {
@@ -133,28 +118,26 @@ int submit_app_myconsumer_initialize(void *self, mal_actor_t *mal_actor) {
   testarea_testservice_testfinalcompositea_set_intfield2(testfinalcompositea,
       30);
 
-  // TODO (AF): Use virtual allocation and initialization functions from encoder.
-  malbinary_cursor_t cursor;
-  malbinary_cursor_reset(&cursor);
+  void *cursor = mal_encoder_new_cursor(consumer->encoder);
 
   printf("submit_app_myconsumer: encoding_length_0\n");
   rc = testarea_testservice_testsend_send_add_encoding_length_0(
-      consumer->encoding_format_code, consumer->encoder, testcomposite,
-      &cursor);
+      consumer->encoder, testcomposite,
+      cursor);
   if (rc < 0)
     return rc;
 
   printf("submit_app_myconsumer: encoding_length_1\n");
   rc = testarea_testservice_testsend_send_add_encoding_length_1(
-      consumer->encoding_format_code, consumer->encoder, string_list,
-      &cursor);
+      consumer->encoder, string_list,
+      cursor);
   if (rc < 0)
     return rc;
 
   printf("submit_app_myconsumer: encoding_length_2\n");
   rc = testarea_testservice_testsend_send_add_encoding_length_2_testarea_testservice_testfinalcompositea(
-          consumer->encoding_format_code, consumer->encoder,
-          testfinalcompositea, &cursor);
+          consumer->encoder,
+          testfinalcompositea, cursor);
   if (rc < 0)
     return rc;
 
@@ -162,36 +145,32 @@ int submit_app_myconsumer_initialize(void *self, mal_actor_t *mal_actor) {
   mal_message_t *message = mal_message_new(consumer->authentication_id,
       consumer->qoslevel, consumer->priority, consumer->domain,
       consumer->network_zone, consumer->session, consumer->session_name,
-      malbinary_cursor_get_body_length(&cursor));
+      mal_encoder_cursor_get_length(consumer->encoder, cursor));
 
-  // TODO (AF): Use a virtual function
-  malbinary_cursor_init(&cursor,
+  mal_encoder_cursor_init(
+      consumer->encoder, cursor,
       mal_message_get_body(message),
-      malbinary_cursor_get_body_length(&cursor),
+      mal_encoder_cursor_get_length(consumer->encoder, cursor),
       mal_message_get_body_offset(message));
 
   printf("submit_app_myconsumer: encode 0\n");
   rc = testarea_testservice_testsend_send_encode_0(
-      consumer->encoding_format_code, &cursor,
-      submit_app_myconsumer_get_encoder(consumer), testcomposite);
-  malbinary_cursor_assert(&cursor);
+      cursor, consumer->encoder, testcomposite);
+  mal_encoder_cursor_assert(consumer->encoder, cursor);
   if (rc < 0)
     return rc;
 
   printf("submit_app_myconsumer: encode 1\n");
   rc = testarea_testservice_testsend_send_encode_1(
-      consumer->encoding_format_code, &cursor,
-      submit_app_myconsumer_get_encoder(consumer), string_list);
-  malbinary_cursor_assert(&cursor);
+      cursor, consumer->encoder, string_list);
+  mal_encoder_cursor_assert(consumer->encoder, cursor);
   if (rc < 0)
     return rc;
 
   printf("submit_app_myconsumer: encode 2\n");
-  rc =
-      testarea_testservice_testsend_send_encode_2_testarea_testservice_testfinalcompositea(
-          consumer->encoding_format_code, &cursor,
-          submit_app_myconsumer_get_encoder(consumer), testfinalcompositea);
-  malbinary_cursor_assert(&cursor);
+  rc = testarea_testservice_testsend_send_encode_2_testarea_testservice_testfinalcompositea(
+          cursor, consumer->encoder, testfinalcompositea);
+  mal_encoder_cursor_assert(consumer->encoder, cursor);
   if (rc < 0)
     return rc;
 

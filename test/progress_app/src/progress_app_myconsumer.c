@@ -11,9 +11,8 @@ struct _progress_app_myconsumer_t {
   mal_identifier_t *network_zone;
   mal_sessiontype_t session;
   mal_identifier_t *session_name;
-  int encoding_format_code;
-  void *encoder;
-  void *decoder;
+  mal_encoder_t *encoder;
+  mal_decoder_t *decoder;
 
   int cpt;
 };
@@ -22,8 +21,8 @@ progress_app_myconsumer_t *progress_app_myconsumer_new(mal_uri_t *provider_uri,
     mal_blob_t *authentication_id, mal_qoslevel_t qoslevel,
     mal_uinteger_t priority, mal_identifier_list_t *domain,
     mal_identifier_t *network_zone, mal_sessiontype_t session,
-    mal_identifier_t *session_name, int encoding_format_code, void *encoder,
-    void *decoder) {
+    mal_identifier_t *session_name,
+    mal_encoder_t *encoder, mal_decoder_t *decoder) {
   progress_app_myconsumer_t *self = (progress_app_myconsumer_t *) malloc(
       sizeof(progress_app_myconsumer_t));
   if (!self)
@@ -37,25 +36,12 @@ progress_app_myconsumer_t *progress_app_myconsumer_new(mal_uri_t *provider_uri,
   self->network_zone = network_zone;
   self->session = session;
   self->session_name = session_name;
-  self->encoding_format_code = encoding_format_code;
   self->encoder = encoder;
   self->decoder = decoder;
 
   self->cpt = 0;
 
   return self;
-}
-
-int progress_app_myconsumer_get_encoding_format_code(progress_app_myconsumer_t *self) {
-  return self->encoding_format_code;
-}
-
-void *progress_app_myconsumer_get_encoder(progress_app_myconsumer_t *self) {
-  return self->encoder;
-}
-
-void *progress_app_myconsumer_get_decoder(progress_app_myconsumer_t *self) {
-  return self->decoder;
 }
 
 mal_uri_t *progress_app_myconsumer_get_provider_uri(progress_app_myconsumer_t *self) {
@@ -121,14 +107,11 @@ int progress_app_myconsumer_initialize(void *self, mal_actor_t *mal_actor) {
   string_list_content[2] = mal_string_new("list-element-2");
   string_list_content[3] = mal_string_new("list-element-3");
 
-  // TODO (AF): Use virtual allocation and initialization functions from encoder.
-  malbinary_cursor_t cursor;
-  malbinary_cursor_reset(&cursor);
+  void *cursor = mal_encoder_new_cursor(consumer->encoder);
 
   printf("progress_app_myconsumer: encoding_length_0\n");
   rc = testarea_testservice_testprogress_progress_add_encoding_length_0(
-      consumer->encoding_format_code,
-      consumer->encoder, string_list, &cursor);
+      consumer->encoder, string_list, cursor);
   if (rc < 0)
     return rc;
 
@@ -136,19 +119,18 @@ int progress_app_myconsumer_initialize(void *self, mal_actor_t *mal_actor) {
   mal_message_t *message = mal_message_new(consumer->authentication_id,
       consumer->qoslevel, consumer->priority, consumer->domain,
       consumer->network_zone, consumer->session, consumer->session_name,
-      malbinary_cursor_get_body_length(&cursor));
+      mal_encoder_cursor_get_length(consumer->encoder, cursor));
 
-  // TODO (AF): Use a virtual function
-  malbinary_cursor_init(&cursor,
+  mal_encoder_cursor_init(
+      consumer->encoder, cursor,
       mal_message_get_body(message),
-      malbinary_cursor_get_body_length(&cursor),
+      mal_encoder_cursor_get_length(consumer->encoder, cursor),
       mal_message_get_body_offset(message));
 
   printf("progress_app_myconsumer: encode 0\n");
   rc = testarea_testservice_testprogress_progress_encode_0(
-      consumer->encoding_format_code, &cursor,
-      progress_app_myconsumer_get_encoder(consumer), string_list);
-  malbinary_cursor_assert(&cursor);
+      cursor, consumer->encoder, string_list);
+  mal_encoder_cursor_assert(consumer->encoder, cursor);
   if (rc < 0)
     return rc;
 
@@ -222,9 +204,8 @@ int progress_app_myconsumer_testarea_testservice_testprogress_response(
 
   // Get response parameter.
 
-	// TODO (AF): Use virtual allocation and initialization functions from encoder.
-  malbinary_cursor_t cursor;
-  malbinary_cursor_init(&cursor,
+	void *cursor = mal_decoder_new_cursor(
+	    consumer->decoder,
       mal_message_get_body(message),
       mal_message_get_body_offset(message) + mal_message_get_body_length(message),
       mal_message_get_body_offset(message));
@@ -233,9 +214,9 @@ int progress_app_myconsumer_testarea_testservice_testprogress_response(
 
 	mal_string_list_t *parameter_0;
 	printf("progress_app_myprovider: decode first parameter\n");
-	rc = testarea_testservice_testprogress_progress_response_decode_0(consumer->encoding_format_code,
-			&cursor, consumer->decoder, &parameter_0);
-  malbinary_cursor_assert(&cursor);
+	rc = testarea_testservice_testprogress_progress_response_decode_0(
+			cursor, consumer->decoder, &parameter_0);
+	mal_decoder_cursor_assert(consumer->decoder, cursor);
 	if (rc < 0)
 		return rc;
 	printf("parameter_0=");

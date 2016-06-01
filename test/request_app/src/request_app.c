@@ -1,6 +1,9 @@
 /* */
 #include "request_app.h"
 
+#include "malbinary.h"
+#include "malzmq.h"
+
 //  --------------------------------------------------------------------------
 // test also the mapping directory in this test
 #define MD_SIZE 4
@@ -20,6 +23,7 @@ int md_get_key(char *string, unsigned int *key) {
   }
   return -1;
 }
+
 int md_get_string(unsigned int key, char **string) {
   printf("#DEBUG md_get_string(%d)\n", key);
   int i = key - 1;
@@ -29,6 +33,7 @@ int md_get_string(unsigned int key, char **string) {
   printf("#DEBUG md_get_key(%d) -> %s\n", key, *string);
   return 0;
 }
+
 int md_put_string(char *string, unsigned int *key) {
   printf("#DEBUG md_put_string(%s)\n", string);
   if (md_size >= MD_SIZE)
@@ -41,6 +46,7 @@ int md_put_string(char *string, unsigned int *key) {
   printf("#DEBUG md_put_string(%s) -> %d\n", string, *key);
   return 0;
 }
+
 malzmq_mapping_directory_t mapping_directory = {
   &md_get_key, &md_get_string, &md_put_string
 };
@@ -51,13 +57,13 @@ int request_app_create_provider(
     bool verbose,
     mal_ctx_t *mal_ctx,
     mal_uri_t *provider_uri,
-    malbinary_encoder_t *encoder,
-    malbinary_decoder_t *decoder) {
+    mal_encoder_t *encoder,
+    mal_decoder_t *decoder) {
   int rc = 0;
 
   printf(" * request_app_create_provider: \n");
 
-  request_app_myprovider_t *provider = request_app_myprovider_new(MALBINARY_FORMAT_CODE, encoder, decoder);
+  request_app_myprovider_t *provider = request_app_myprovider_new(encoder, decoder);
 
 //  mal_actor_t *provider_actor =
   mal_actor_new(
@@ -72,8 +78,8 @@ int request_app_create_consumer(
     bool verbose,
     mal_ctx_t *mal_ctx,
     mal_uri_t *provider_uri,
-    malbinary_encoder_t *encoder,
-    malbinary_decoder_t *decoder) {
+    mal_encoder_t *encoder,
+    mal_decoder_t *decoder) {
   int rc = 0;
 
   printf(" * request_app_create_consumer: \n");
@@ -88,7 +94,7 @@ int request_app_create_consumer(
 
   request_app_myconsumer_t *consumer = request_app_myconsumer_new(provider_uri,
       authentication_id, qoslevel, priority, domain, network_zone, session,
-      session_name, MALBINARY_FORMAT_CODE, encoder, decoder);
+      session_name, encoder, decoder);
 
   mal_uri_t *consumer_uri = mal_ctx_create_uri(mal_ctx, "request_app/myconsumer");
   printf("request_app: consumer URI: %s\n", consumer_uri);
@@ -108,8 +114,8 @@ void request_app_test(bool verbose) {
   //  @selftest
   mal_ctx_t *mal_ctx = mal_ctx_new();
 
-  malbinary_encoder_t *encoder = malbinary_encoder_new(false, true);
-  malbinary_decoder_t *decoder = malbinary_decoder_new(false, true);
+  mal_encoder_t *encoder = malbinary_encoder_new(false, true);
+  mal_decoder_t *decoder = malbinary_decoder_new(false, true);
 
   // All the MAL header fields are passed
   malzmq_header_t *malzmq_header = malzmq_header_new(&mapping_directory, true, 0, true, NULL, NULL,

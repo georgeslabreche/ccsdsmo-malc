@@ -8,14 +8,8 @@
 extern "C" {
 #endif
 
-send_app_myprovider_t *send_app_myprovider_new(int encoding_format_code,
-    void *encoder, void *decoder);
-
-void send_app_myprovider_set_decoder(send_app_myprovider_t *self,
-    void *decoder);
-
-int send_app_myprovider_get_encoding_format_code(
-    send_app_myprovider_t *self);
+send_app_myprovider_t *send_app_myprovider_new(
+    mal_encoder_t *encoder, mal_decoder_t *decoder);
 
 int send_app_myprovider_initialize(void *self, mal_actor_t *mal_actor);
 

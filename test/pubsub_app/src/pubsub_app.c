@@ -1,6 +1,9 @@
 /* */
 #include "pubsub_app.h"
 
+#include "malbinary.h"
+#include "malzmq.h"
+
 //  --------------------------------------------------------------------------
 //  Selftest
 int pubsub_app_create_provider(
@@ -8,8 +11,8 @@ int pubsub_app_create_provider(
     mal_ctx_t *mal_ctx,
     mal_uri_t *provider_uri,
     mal_uri_t *broker_uri,
-    malbinary_encoder_t *encoder,
-    malbinary_decoder_t *decoder) {
+    mal_encoder_t *encoder,
+    mal_decoder_t *decoder) {
   int rc = 0;
 
   printf(" * pubsub_app_create_provider: \n");
@@ -24,7 +27,7 @@ int pubsub_app_create_provider(
 
   pubsub_app_mypublisher_t *provider = pubsub_app_mypublisher_new(broker_uri,
       authentication_id, qoslevel, priority, domain, network_zone, session,
-      session_name, MALBINARY_FORMAT_CODE, encoder, decoder);
+      session_name, encoder, decoder);
 
   mal_actor_t *provider_actor = mal_actor_new(
       mal_ctx,
@@ -41,8 +44,8 @@ int pubsub_app_create_consumer(
     mal_ctx_t *mal_ctx,
     mal_uri_t *consumer_uri,
     mal_uri_t *broker_uri,
-    malbinary_encoder_t *encoder,
-    malbinary_decoder_t *decoder) {
+    mal_encoder_t *encoder,
+    mal_decoder_t *decoder) {
   int rc = 0;
 
   printf(" * pubsub_app_create_consumer: \n");
@@ -57,7 +60,7 @@ int pubsub_app_create_consumer(
 
   pubsub_app_mysubscriber_t *consumer = pubsub_app_mysubscriber_new(broker_uri,
       authentication_id, qoslevel, priority, domain, network_zone, session,
-      session_name, MALBINARY_FORMAT_CODE, encoder, decoder);
+      session_name, encoder, decoder);
 
   mal_actor_t *consumer_actor = mal_actor_new(
       mal_ctx,
@@ -75,8 +78,8 @@ int pubsub_app_create_broker(
     mal_uri_t *consumer_uri,
     mal_uri_t *provider_uri,
     mal_uri_t *broker_uri,
-    malbinary_encoder_t *encoder,
-    malbinary_decoder_t *decoder) {
+    mal_encoder_t *encoder,
+    mal_decoder_t *decoder) {
   int rc = 0;
 
   printf(" * pubsub_app_create_broker: \n");
@@ -91,7 +94,7 @@ int pubsub_app_create_broker(
 
   pubsub_app_broker_t *broker = pubsub_app_broker_new(provider_uri,
       authentication_id, qoslevel, priority, domain, network_zone, session,
-      session_name, MALBINARY_FORMAT_CODE, encoder, decoder);
+      session_name, encoder, decoder);
   assert(broker);
 
   mal_actor_t *broker_actor = mal_actor_new(
@@ -110,8 +113,8 @@ void pubsub_app_test(bool verbose) {
   //  @selftest
   mal_ctx_t *mal_ctx = mal_ctx_new();
 
-  malbinary_encoder_t *encoder = malbinary_encoder_new(false, true);
-  malbinary_decoder_t *decoder = malbinary_decoder_new(false, true);
+  mal_encoder_t *encoder = malbinary_encoder_new(false, true);
+  mal_decoder_t *decoder = malbinary_decoder_new(false, true);
 
   // All the MAL header fields are passed
   malzmq_header_t *malzmq_header = malzmq_header_new(NULL, true, 0, true, NULL, NULL,
