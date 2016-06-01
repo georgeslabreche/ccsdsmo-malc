@@ -134,6 +134,8 @@ int progress_app_myconsumer_initialize(void *self, mal_actor_t *mal_actor) {
   if (rc < 0)
     return rc;
 
+  mal_encoder_cursor_destroy(consumer->encoder, cursor);
+
   printf("progress_app_myconsumer: progress message\n");
   rc = testarea_testservice_testprogress_progress(mal_actor_get_mal_endpoint(mal_actor), message, provider_uri);
   if (rc < 0)
@@ -219,6 +221,9 @@ int progress_app_myconsumer_testarea_testservice_testprogress_response(
 	mal_decoder_cursor_assert(consumer->decoder, cursor);
 	if (rc < 0)
 		return rc;
+
+  mal_decoder_cursor_destroy(consumer->decoder, cursor);
+
 	printf("parameter_0=");
 	mal_string_list_print(parameter_0);
 	printf("\n");

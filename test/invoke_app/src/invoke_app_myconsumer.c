@@ -137,6 +137,7 @@ int invoke_app_myconsumer_initialize(void *self, mal_actor_t *mal_actor) {
   if (rc < 0)
     return rc;
 
+  mal_encoder_cursor_destroy(consumer->encoder, cursor);
   mal_string_list_destroy(&string_list);
 
   return rc;

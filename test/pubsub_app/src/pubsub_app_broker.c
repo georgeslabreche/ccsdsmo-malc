@@ -333,6 +333,8 @@ int pubsub_app_broker_on_register(void *self, mal_ctx_t *mal_ctx,
   mal_decoder_cursor_assert(broker->decoder, cursor);
   assert(rc == 0);
 
+  mal_decoder_cursor_destroy(broker->decoder, cursor);
+
   mal_identifier_t *subscriptionid = mal_subscription_get_subscriptionid(mal_subscription);
   assert(subscriptionid);
 
@@ -384,6 +386,8 @@ int pubsub_app_broker_on_deregister(void *self, mal_ctx_t *mal_ctx,
    rc = mal_register_decode(cursor, broker->decoder, &mal_subscription);
    mal_decoder_cursor_assert(broker->decoder, cursor);
    assert(rc == 0);
+
+   mal_decoder_cursor_destroy(broker->decoder, cursor);
 
    mal_identifier_t *subscriptionid = mal_subscription_get_subscriptionid(mal_subscription);
    assert(subscriptionid);

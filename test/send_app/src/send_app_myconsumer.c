@@ -164,6 +164,8 @@ int send_app_myconsumer_initialize(void *self, mal_actor_t *mal_actor) {
   if (rc < 0)
     return rc;
 
+  mal_encoder_cursor_destroy(consumer->encoder, cursor);
+
   printf("send_app_myconsumer: send message\n");
   rc = testarea_testservice_testsend_send(mal_actor_get_mal_endpoint(mal_actor), message, provider_uri);
   if (rc < 0)

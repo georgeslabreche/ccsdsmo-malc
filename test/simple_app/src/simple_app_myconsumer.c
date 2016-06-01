@@ -182,6 +182,8 @@ void simple_app_myconsumer_run(zsock_t *pipe, void *self) {
     return;
   }
 
+  mal_encoder_cursor_destroy(consumer->encoder, cursor);
+
   printf("simple_app_myconsumer: send message\n");
   rc = testarea_testservice_testsend_send(consumer->endpoint, message, consumer->provider_uri);
   if (rc < 0) {

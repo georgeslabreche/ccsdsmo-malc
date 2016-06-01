@@ -114,6 +114,8 @@ int submit_app_myprovider_testarea_testservice_testsubmit(
     return rc;
 
   printf("submit_app_myprovider: offset=%d", mal_decoder_cursor_get_offset(provider->decoder, cursor));
+  mal_decoder_cursor_destroy(provider->decoder, cursor);
+
   if (parameter_2.presence_flag)
     printf("submit_app_myprovider: decoding done, short form=%lu\n", parameter_2.short_form);
   else

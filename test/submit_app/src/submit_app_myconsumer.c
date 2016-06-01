@@ -174,6 +174,8 @@ int submit_app_myconsumer_initialize(void *self, mal_actor_t *mal_actor) {
   if (rc < 0)
     return rc;
 
+  mal_encoder_cursor_destroy(consumer->encoder, cursor);
+
   printf("submit_app_myconsumer: submit message\n");
   rc = testarea_testservice_testsubmit_submit(mal_actor_get_mal_endpoint(mal_actor), message,
       provider_uri);

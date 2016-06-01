@@ -74,6 +74,7 @@ int invoke_app_myprovider_testarea_testservice_testinvoke(
   printf("\n");
 
   printf("invoke_app_myprovider: offset=%d\n", mal_decoder_cursor_get_offset(provider->decoder, cursor));
+  mal_decoder_cursor_destroy(provider->decoder, cursor);
 
   // parameter_0 may be NULL
   if (parameter_0 == NULL) {
@@ -144,6 +145,7 @@ int invoke_app_myprovider_testarea_testservice_testinvoke(
   if (rc < 0)
     return rc;
 
+  mal_encoder_cursor_destroy(provider->encoder, cursor_r);
 
   printf("AF: invoke_app_myprovider: handler send RESPONSE\n");
   rc = testarea_testservice_testinvoke_invoke_response(mal_endpoint, message, result_message, (0 != 0));

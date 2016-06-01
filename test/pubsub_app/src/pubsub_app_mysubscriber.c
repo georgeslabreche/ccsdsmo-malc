@@ -136,6 +136,8 @@ int pubsub_app_mysubscriber_initialize(void *self, mal_actor_t *mal_actor) {
   rc = mal_register_encode(register_cursor, subscriber->encoder, subscription);
   assert(rc == 0);
 
+  mal_encoder_cursor_destroy(subscriber->encoder, register_cursor);
+
   printf("=== register send... %s\n", broker_uri);
   rc = testarea_testservice_testmonitor_register(mal_actor_get_mal_endpoint(mal_actor),
       register_message, broker_uri);
@@ -210,6 +212,8 @@ int pubsub_app_mysubscriber_testnotify(void *self, mal_ctx_t *mal_ctx,
       cursor, subscriber->decoder, &parameter_0);
   mal_decoder_cursor_assert(subscriber->decoder, cursor);
   assert(rc == 0);
+
+  mal_decoder_cursor_destroy(subscriber->decoder, cursor);
 
   // process the update list
   unsigned int count = testarea_testservice_testupdate_list_get_element_count(parameter_0);

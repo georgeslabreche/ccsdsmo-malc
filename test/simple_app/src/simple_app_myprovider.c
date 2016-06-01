@@ -142,6 +142,8 @@ int simple_app_myprovider_testarea_testservice_testsend(
     return rc;
 
   printf("simple_app_myprovider: offset=%d", mal_decoder_cursor_get_offset(provider->decoder, cursor));
+  mal_decoder_cursor_destroy(provider->decoder, cursor);
+
   printf("simple_app_myprovider: decoding done, short form=%lu\n", element_holder.short_form);
 
   // parameter_0 may be NULL

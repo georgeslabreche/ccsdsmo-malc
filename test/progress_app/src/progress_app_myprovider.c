@@ -94,6 +94,7 @@ int progress_app_myprovider_testarea_testservice_testprogress(
   printf("\n");
 
   printf("progress_app_myprovider: offset=%d\n", mal_decoder_cursor_get_offset(provider->decoder, cursor));
+  mal_decoder_cursor_destroy(provider->decoder, cursor);
 
   // parameter_0 may be NULL
   if (parameter_0 == NULL) {
@@ -188,6 +189,7 @@ int progress_app_myprovider_testarea_testservice_testprogress(
   if (rc < 0)
     return rc;
 
+  mal_encoder_cursor_destroy(provider->encoder, cursor_r);
 
   printf("AF: progress_app_myprovider: handler send RESPONSE\n");
   rc = testarea_testservice_testprogress_progress_response(mal_endpoint, message, result_message, (0 != 0));

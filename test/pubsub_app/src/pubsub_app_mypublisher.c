@@ -128,6 +128,8 @@ int pubsub_app_mypublisher_initialize(void *self, mal_actor_t *mal_actor) {
   if (rc < 0)
     return rc;
 
+  mal_encoder_cursor_destroy(publisher->encoder, cursor_pubreg);
+
   mal_endpoint_t *mal_endpoint = mal_actor_get_mal_endpoint(mal_actor);
   // send publish_register
   rc = testarea_testservice_testmonitor_publish_register(mal_endpoint, publish_register_message, broker_uri);
@@ -201,6 +203,8 @@ int pubsub_app_mypublisher_initialize(void *self, mal_actor_t *mal_actor) {
   mal_encoder_cursor_assert(publisher->encoder, cursor_pub);
   if (rc < 0)
     return rc;
+
+  mal_encoder_cursor_destroy(publisher->encoder, cursor_pub);
 
   rc = testarea_testservice_testmonitor_publish(mal_actor_get_mal_endpoint(mal_actor),
       publish_message, broker_uri, initial_publish_register_tid);

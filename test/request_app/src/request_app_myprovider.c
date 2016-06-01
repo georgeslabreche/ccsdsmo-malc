@@ -96,6 +96,7 @@ int request_app_myprovider_testarea_testservice_testrequest(
   printf("\n");
 
   printf("request_app_myprovider: offset=%d\n", mal_decoder_cursor_get_offset(provider->decoder, cursor));
+  mal_decoder_cursor_destroy(provider->decoder, cursor);
 
   // parameter_0 may be NULL
   if (parameter_0 == NULL) {
@@ -146,6 +147,8 @@ int request_app_myprovider_testarea_testservice_testrequest(
   mal_encoder_cursor_assert(provider->encoder, cursor_r);
   if (rc < 0)
     return rc;
+
+  mal_encoder_cursor_destroy(provider->encoder, cursor_r);
 
   printf("AF: request_app_myprovider: handler send RESPONSE\n");
   rc = testarea_testservice_testrequest_request_response(mal_endpoint, message, result_message, (0 != 0));

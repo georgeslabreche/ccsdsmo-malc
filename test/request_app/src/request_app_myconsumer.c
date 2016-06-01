@@ -150,6 +150,8 @@ int request_app_myconsumer_initialize(void *self, mal_actor_t *mal_actor) {
   if (rc < 0)
     return rc;
 
+  mal_encoder_cursor_destroy(consumer->encoder, cursor);
+
   printf("request_app_myconsumer: request message\n");
   rc = testarea_testservice_testrequest_request(mal_actor_get_mal_endpoint(mal_actor), message, provider_uri);
   if (rc < 0)
@@ -196,7 +198,9 @@ int request_app_myconsumer_testarea_testservice_testrequest_response(
 	if (rc < 0)
 		return rc;
 
-	printf("parameter_0=");
+  mal_decoder_cursor_destroy(consumer->decoder, cursor);
+
+  printf("parameter_0=");
 	mal_string_list_print(parameter_0);
 	printf("\n");
 
