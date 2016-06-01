@@ -1,6 +1,6 @@
 #include "malbinary.h"
 
-mal_decoder_t *malbinary_decoder_new(bool varint_supported, bool verbose) {
+mal_decoder_t *malbinary_decoder_new(bool varint_supported) {
   mal_decoder_t *self = (mal_decoder_t *) malloc(sizeof(mal_decoder_t));
   if (!self)
     return NULL;

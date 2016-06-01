@@ -7,11 +7,8 @@
 extern "C" {
 #endif
 
-mal_encoder_t *malbinary_encoder_new(bool varint_supported, bool verbose);
+mal_encoder_t *malbinary_encoder_new(bool varint_supported);
 void malbinary_init_encode_functions(mal_encoder_t *encoder);
-
-void malbinary_encoder_set_log_level(mal_encoder_t *self, int level);
-clog_logger_t malbinary_encoder_get_logger(mal_encoder_t *self);
 
 /*
  * Encoding length functions.
@@ -151,10 +148,6 @@ int malbinary_encoder_encode_attribute_tag(mal_encoder_t *encoder, void *cursor,
 /*
  * Test
  */
-
-// TODO (AF): If these functions are used move them in mal_encoder.
-bool malbinary_encoder_is_verbose(mal_encoder_t *self);
-bool malbinary_encoder_is_varint(mal_encoder_t *self);
 
 void malbinary_encoder_test(bool verbose);
 

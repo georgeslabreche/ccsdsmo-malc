@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-mal_decoder_t *malbinary_decoder_new(bool varint_supported, bool verbose);
+mal_decoder_t *malbinary_decoder_new(bool varint_supported);
 void malbinary_init_decode_functions(mal_decoder_t *decoder);
 
 void malbinary_decoder_set_log_level(mal_decoder_t *self, int level);
@@ -59,9 +59,6 @@ short malbinary_read16(void *cursor);
 int malbinary_read32(void *cursor);
 
 long malbinary_read64(void *cursor);
-
-// TODO (AF): Should be a mal_decoder method.
-bool malbinary_decoder_is_verbose(mal_decoder_t *self);
 
 int malbinary_decoder_decode_duration(mal_decoder_t *self, void *cursor, mal_duration_t *result);
 
