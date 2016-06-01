@@ -23,6 +23,14 @@ struct _maltcp_ctx_t {
   mal_decoder_t *decoder;
 };
 
+mal_encoder_t *maltcp_get_encoder(maltcp_ctx_t *self) {
+  return self->encoder;
+}
+
+mal_decoder_t *maltcp_get_decoder(maltcp_ctx_t *self) {
+  return self->decoder;
+}
+
 //  --------------------------------------------------------------------------
 //  The maltcp_endpoint_data_t structure holds the state for one end-point instance
 
@@ -432,7 +440,6 @@ maltcp_ctx_t *maltcp_ctx_new(mal_ctx_t *mal_ctx,
     maltcp_mapping_uri_t *mapping_uri,
     char *hostname, char *port,
     maltcp_header_t *maltcp_header,
-    mal_encoder_t *encoder, mal_decoder_t *decoder,
     bool verbose) {
   maltcp_ctx_t *self = (maltcp_ctx_t *) malloc(sizeof(maltcp_ctx_t));
   if (!self)
@@ -443,8 +450,9 @@ maltcp_ctx_t *maltcp_ctx_new(mal_ctx_t *mal_ctx,
   self->hostname = hostname;
   self->port = port;
   self->maltcp_header = maltcp_header;
-  self->encoder = encoder;
-  self->decoder = decoder;
+
+  self->encoder = malbinary_encoder_new(false);
+  self->decoder = malbinary_decoder_new(false);
 
   int mal_uri_len = strlen(hostname) + strlen(port) + 10;
   mal_uri_t mal_uri[mal_uri_len + 1];

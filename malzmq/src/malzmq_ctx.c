@@ -20,6 +20,14 @@ struct _malzmq_ctx_t {
   mal_decoder_t *decoder;
 };
 
+mal_encoder_t *malzmq_get_encoder(malzmq_ctx_t *self) {
+  return self->encoder;
+}
+
+mal_decoder_t *malzmq_get_decoder(malzmq_ctx_t *self) {
+  return self->decoder;
+}
+
 //  --------------------------------------------------------------------------
 //  The malzmq_endpoint_data_t structure holds the state for one end-point instance
 
@@ -349,7 +357,6 @@ malzmq_ctx_t *malzmq_ctx_new(mal_ctx_t *mal_ctx,
     malzmq_mapping_uri_t *mapping_uri,
     char *hostname, char *port,
     malzmq_header_t *malzmq_header,
-    mal_encoder_t *encoder, mal_decoder_t *decoder,
     bool verbose) {
   malzmq_ctx_t *self = (malzmq_ctx_t *) malloc(sizeof(malzmq_ctx_t));
   if (!self)
@@ -360,8 +367,9 @@ malzmq_ctx_t *malzmq_ctx_new(mal_ctx_t *mal_ctx,
   self->hostname = hostname;
   self->port = port;
   self->malzmq_header = malzmq_header;
-  self->encoder = encoder;
-  self->decoder = decoder;
+
+  self->encoder = malbinary_encoder_new(false);
+  self->decoder = malbinary_decoder_new(false);
 
   int mal_uri_len = strlen(hostname) + strlen(port) + 10;
   mal_uri_t mal_uri[mal_uri_len + 1];

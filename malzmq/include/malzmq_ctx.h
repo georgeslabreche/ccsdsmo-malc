@@ -31,8 +31,10 @@ malzmq_ctx_t *malzmq_ctx_new(
     malzmq_mapping_uri_t *mapping_uri,
     char *hostname, char *port,
     malzmq_header_t *malzmq_header,
-    mal_encoder_t *encoder, mal_decoder_t *decoder,
     bool verbose);
+
+mal_encoder_t *malzmq_get_encoder(malzmq_ctx_t *self);
+mal_decoder_t *malzmq_get_decoder(malzmq_ctx_t *self);
 
 int malzmq_ctx_start(malzmq_ctx_t *self);
 
