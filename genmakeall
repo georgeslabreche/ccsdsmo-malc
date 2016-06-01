@@ -5,13 +5,7 @@ echo "genmakeall PROGDIR=${PROGDIR}"
 
 echo "### Generate MAL/C from $PROGDIR to $MAL_LOCAL"
 
-# TODO remplacer $* par $*
-
-if  [ $# -ne 0 ]; then
-  CMD=$1
-else
-  CMD="all"
-fi
+# TODO: Stop when an error occurs
 
 cd $PROGDIR/util;
 ./genmake $*
@@ -57,3 +51,5 @@ cd $PROGDIR/test/progress_app;
 
 #cd $PROGDIR/test/pubsub_app;
 #./genmake $*
+
+# TODO: If clean should remove $MAL_LOCAL or print a message
