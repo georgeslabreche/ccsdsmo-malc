@@ -1,31 +1,41 @@
 #include "malbinary.h"
 
-struct _malbinary_encoder_t {
-  bool varint_supported;
-  clog_logger_t logger;
-};
-
-malbinary_encoder_t *malbinary_encoder_new(bool varint_supported, bool verbose) {
-  malbinary_encoder_t *self = (malbinary_encoder_t *) malloc(sizeof(malbinary_encoder_t));
+mal_encoder_t *malbinary_encoder_new(bool varint_supported, bool verbose) {
+  mal_encoder_t *self = (mal_encoder_t *) malloc(sizeof(mal_encoder_t));
   if (!self)
     return NULL;
 
+  self->encoding_format_code = MALBINARY_FORMAT_CODE;
   self->varint_supported = varint_supported;
   self->logger = CLOG_WARN_LEVEL;
+
+  malbinary_init_encode_functions(self);
 
   return self;
 }
 
-void malbinary_encoder_set_log_level(malbinary_encoder_t *encoder, int level) {
-  clog_set_level(&encoder->logger, level);
+// TODO (AF): Should be mal_encoder methods.
+void malbinary_encoder_set_log_level(mal_encoder_t *self, int level) {
+  clog_set_level(&self->logger, level);
 }
 
-clog_logger_t malbinary_encoder_get_logger(malbinary_encoder_t *encoder) {
-  return encoder->logger;
+// TODO (AF): Should be mal_encoder methods.
+clog_logger_t malbinary_encoder_get_logger(mal_encoder_t *self) {
+  return self->logger;
 }
 
-bool malbinary_encoder_is_varint(malbinary_encoder_t *encoder) {
+// TODO (AF): Should be mal_encoder methods.
+bool malbinary_encoder_is_varint(mal_encoder_t *encoder) {
   return encoder->varint_supported;
+}
+
+void *malbinary_encoder_new_cursor() {
+  malbinary_cursor_t *cursor = (malbinary_cursor_t *) malloc(sizeof(malbinary_cursor_t));
+  if (! cursor) return NULL;
+
+  malbinary_cursor_reset(cursor);
+
+  return (void *) cursor;
 }
 
 void malbinary_write16(int int_value, void *cursor) {
@@ -195,7 +205,7 @@ void malbinary_write(char b, void *cursor) {
   ((malbinary_cursor_t *) cursor)->body_offset = index;
 }
 
-int malbinary_encoder_add_string_encoding_length(malbinary_encoder_t *self, mal_string_t *to_encode, void *cursor) {
+int malbinary_encoder_add_string_encoding_length(mal_encoder_t *self, mal_string_t *to_encode, void *cursor) {
   int rc = 0;
   if (self->varint_supported) {
     size_t length = mal_string_get_char_count(to_encode);
@@ -206,13 +216,13 @@ int malbinary_encoder_add_string_encoding_length(malbinary_encoder_t *self, mal_
   return rc;
 }
 
-int malbinary_encoder_add_presence_flag_encoding_length(malbinary_encoder_t *self, void *cursor) {
+int malbinary_encoder_add_presence_flag_encoding_length(mal_encoder_t *self, void *cursor) {
   int rc = 0;
   ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
   return rc;
 }
 
-int malbinary_encoder_add_short_form_encoding_length(malbinary_encoder_t *self, long to_encode, void *cursor) {
+int malbinary_encoder_add_short_form_encoding_length(mal_encoder_t *self, long to_encode, void *cursor) {
   int rc = 0;
   if (self->varint_supported)
     ((malbinary_cursor_t *) cursor)->body_length += malbinary_var_long_encoding_length(to_encode);
@@ -221,7 +231,7 @@ int malbinary_encoder_add_short_form_encoding_length(malbinary_encoder_t *self, 
   return rc;
 }
 
-int malbinary_encoder_add_integer_encoding_length(malbinary_encoder_t *self, mal_integer_t to_encode, void *cursor) {
+int malbinary_encoder_add_integer_encoding_length(mal_encoder_t *self, mal_integer_t to_encode, void *cursor) {
   int rc = 0;
   if (self->varint_supported)
     ((malbinary_cursor_t *) cursor)->body_length += malbinary_var_integer_encoding_length(to_encode);
@@ -230,7 +240,7 @@ int malbinary_encoder_add_integer_encoding_length(malbinary_encoder_t *self, mal
   return rc;
 }
 
-int malbinary_encoder_add_list_size_encoding_length(malbinary_encoder_t *self,
+int malbinary_encoder_add_list_size_encoding_length(mal_encoder_t *self,
     unsigned int to_encode, void *cursor) {
   int rc = 0;
   if (self->varint_supported)
@@ -240,14 +250,14 @@ int malbinary_encoder_add_list_size_encoding_length(malbinary_encoder_t *self,
   return rc;
 }
 
-int malbinary_encoder_add_small_enum_encoding_length(malbinary_encoder_t *self,
+int malbinary_encoder_add_small_enum_encoding_length(mal_encoder_t *self,
     unsigned int to_encode, void *cursor) {
   int rc = 0;
   ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_SMALL_ENUM_SIZE;
   return rc;
 }
 
-int malbinary_encoder_add_medium_enum_encoding_length(malbinary_encoder_t *self,
+int malbinary_encoder_add_medium_enum_encoding_length(mal_encoder_t *self,
     unsigned int to_encode, void *cursor) {
   int rc = 0;
   if (self->varint_supported)
@@ -257,7 +267,7 @@ int malbinary_encoder_add_medium_enum_encoding_length(malbinary_encoder_t *self,
   return rc;
 }
 
-int malbinary_encoder_add_large_enum_encoding_length(malbinary_encoder_t *self,
+int malbinary_encoder_add_large_enum_encoding_length(mal_encoder_t *self,
     unsigned int to_encode, void *cursor) {
   int rc = 0;
   if (self->varint_supported)
@@ -267,7 +277,7 @@ int malbinary_encoder_add_large_enum_encoding_length(malbinary_encoder_t *self,
   return rc;
 }
 
-int malbinary_encoder_add_identifier_encoding_length(malbinary_encoder_t *self,
+int malbinary_encoder_add_identifier_encoding_length(mal_encoder_t *self,
     mal_identifier_t *to_encode, void *cursor) {
   int rc = 0;
   if (self->varint_supported) {
@@ -279,7 +289,7 @@ int malbinary_encoder_add_identifier_encoding_length(malbinary_encoder_t *self,
   return rc;
 }
 
-int malbinary_encoder_add_uinteger_encoding_length(malbinary_encoder_t *self,
+int malbinary_encoder_add_uinteger_encoding_length(mal_encoder_t *self,
     mal_uinteger_t to_encode, void *cursor) {
   int rc = 0;
   if (self->varint_supported)
@@ -289,7 +299,7 @@ int malbinary_encoder_add_uinteger_encoding_length(malbinary_encoder_t *self,
   return rc;
 }
 
-int malbinary_encoder_add_uri_encoding_length(malbinary_encoder_t *self,
+int malbinary_encoder_add_uri_encoding_length(mal_encoder_t *self,
     mal_uri_t *to_encode, void *cursor) {
   int rc = 0;
   if (self->varint_supported) {
@@ -301,21 +311,21 @@ int malbinary_encoder_add_uri_encoding_length(malbinary_encoder_t *self,
   return rc;
 }
 
-int malbinary_encoder_add_time_encoding_length(malbinary_encoder_t *self,
+int malbinary_encoder_add_time_encoding_length(mal_encoder_t *self,
     mal_time_t to_encode, void *cursor) {
   int rc = 0;
   ((malbinary_cursor_t *) cursor)->body_length += 8;
   return rc;
 }
 
-int malbinary_encoder_add_uoctet_encoding_length(malbinary_encoder_t *self,
+int malbinary_encoder_add_uoctet_encoding_length(mal_encoder_t *self,
     mal_uoctet_t to_encode, void *cursor) {
   int rc = 0;
   ((malbinary_cursor_t *) cursor)->body_length += 1;
   return rc;
 }
 
-int malbinary_encoder_add_long_encoding_length(malbinary_encoder_t *self,
+int malbinary_encoder_add_long_encoding_length(mal_encoder_t *self,
     mal_long_t to_encode, void *cursor) {
   int rc = 0;
   if (self->varint_supported)
@@ -325,7 +335,7 @@ int malbinary_encoder_add_long_encoding_length(malbinary_encoder_t *self,
   return rc;
 }
 
-int malbinary_encoder_add_ushort_encoding_length(malbinary_encoder_t *self,
+int malbinary_encoder_add_ushort_encoding_length(mal_encoder_t *self,
     mal_ushort_t to_encode, void *cursor) {
   int rc = 0;
   if (self->varint_supported)
@@ -335,14 +345,14 @@ int malbinary_encoder_add_ushort_encoding_length(malbinary_encoder_t *self,
   return rc;
 }
 
-int malbinary_encoder_add_boolean_encoding_length(malbinary_encoder_t *self,
+int malbinary_encoder_add_boolean_encoding_length(mal_encoder_t *self,
     mal_boolean_t to_encode, void *cursor) {
   int rc = 0;
   ((malbinary_cursor_t *) cursor)->body_length += 1;
   return rc;
 }
 
-int malbinary_encoder_add_blob_encoding_length(malbinary_encoder_t *self,
+int malbinary_encoder_add_blob_encoding_length(mal_encoder_t *self,
     mal_blob_t *to_encode, void *cursor) {
   int rc = 0;
   if (self->varint_supported) {
@@ -354,7 +364,7 @@ int malbinary_encoder_add_blob_encoding_length(malbinary_encoder_t *self,
   return rc;
 }
 
-int malbinary_encoder_encode_string(malbinary_encoder_t *self, void *cursor, mal_string_t *to_encode) {
+int malbinary_encoder_encode_string(mal_encoder_t *self, void *cursor, mal_string_t *to_encode) {
   int rc = 0;
   unsigned int length = mal_string_get_char_count(to_encode);
   if (self->varint_supported)
@@ -365,7 +375,7 @@ int malbinary_encoder_encode_string(malbinary_encoder_t *self, void *cursor, mal
   return rc;
 }
 
-int malbinary_encoder_encode_presence_flag(malbinary_encoder_t *self,
+int malbinary_encoder_encode_presence_flag(mal_encoder_t *self,
     void *cursor, bool present) {
   int rc = 0;
   if (present) {
@@ -376,7 +386,7 @@ int malbinary_encoder_encode_presence_flag(malbinary_encoder_t *self,
   return rc;
 }
 
-int malbinary_encoder_encode_short_form(malbinary_encoder_t *self, void *cursor, long to_encode) {
+int malbinary_encoder_encode_short_form(mal_encoder_t *self, void *cursor, long to_encode) {
   int rc = 0;
   if (self->varint_supported)
     malbinary_write_varlong(to_encode, cursor);
@@ -385,7 +395,7 @@ int malbinary_encoder_encode_short_form(malbinary_encoder_t *self, void *cursor,
   return rc;
 }
 
-int malbinary_encoder_encode_integer(malbinary_encoder_t *self, void *cursor, mal_integer_t to_encode) {
+int malbinary_encoder_encode_integer(mal_encoder_t *self, void *cursor, mal_integer_t to_encode) {
   int rc = 0;
   if (self->varint_supported)
     malbinary_write_varint(to_encode, cursor);
@@ -394,7 +404,7 @@ int malbinary_encoder_encode_integer(malbinary_encoder_t *self, void *cursor, ma
   return rc;
 }
 
-int malbinary_encoder_encode_list_size(malbinary_encoder_t *self, void *cursor, unsigned int list_size) {
+int malbinary_encoder_encode_list_size(mal_encoder_t *self, void *cursor, unsigned int list_size) {
   int rc = 0;
   if (self->varint_supported)
     malbinary_write_uvarint(list_size, cursor);
@@ -403,13 +413,13 @@ int malbinary_encoder_encode_list_size(malbinary_encoder_t *self, void *cursor, 
   return rc;
 }
 
-int malbinary_encoder_encode_small_enum(malbinary_encoder_t *self, void *cursor, int to_encode) {
+int malbinary_encoder_encode_small_enum(mal_encoder_t *self, void *cursor, int to_encode) {
   int rc = 0;
   malbinary_write(to_encode, cursor);
   return rc;
 }
 
-int malbinary_encoder_encode_medium_enum(malbinary_encoder_t *self, void *cursor, int to_encode) {
+int malbinary_encoder_encode_medium_enum(mal_encoder_t *self, void *cursor, int to_encode) {
   int rc = 0;
   if (self->varint_supported)
     malbinary_write_uvarshort(to_encode, cursor);
@@ -418,7 +428,7 @@ int malbinary_encoder_encode_medium_enum(malbinary_encoder_t *self, void *cursor
   return rc;
 }
 
-int malbinary_encoder_encode_large_enum(malbinary_encoder_t *self, void *cursor, int to_encode) {
+int malbinary_encoder_encode_large_enum(mal_encoder_t *self, void *cursor, int to_encode) {
   int rc = 0;
   if (self->varint_supported)
     malbinary_write_uvarint(to_encode, cursor);
@@ -427,7 +437,7 @@ int malbinary_encoder_encode_large_enum(malbinary_encoder_t *self, void *cursor,
   return rc;
 }
 
-int malbinary_encoder_encode_uri(malbinary_encoder_t *self, void *cursor, mal_uri_t *to_encode) {
+int malbinary_encoder_encode_uri(mal_encoder_t *self, void *cursor, mal_uri_t *to_encode) {
   int rc = 0;
   unsigned int length = mal_uri_get_char_count(to_encode);
   if (self->varint_supported)
@@ -438,7 +448,7 @@ int malbinary_encoder_encode_uri(malbinary_encoder_t *self, void *cursor, mal_ur
   return rc;
 }
 
-int malbinary_encoder_encode_blob(malbinary_encoder_t *self, void *cursor, mal_blob_t *to_encode) {
+int malbinary_encoder_encode_blob(mal_encoder_t *self, void *cursor, mal_blob_t *to_encode) {
   int rc = 0;
   unsigned int length = mal_blob_get_length(to_encode);
   if (self->varint_supported)
@@ -449,7 +459,7 @@ int malbinary_encoder_encode_blob(malbinary_encoder_t *self, void *cursor, mal_b
   return rc;
 }
 
-int malbinary_encoder_encode_time(malbinary_encoder_t *self, void *cursor, mal_time_t to_encode) {
+int malbinary_encoder_encode_time(mal_encoder_t *self, void *cursor, mal_time_t to_encode) {
   int rc = 0;
   if (self->varint_supported)
     malbinary_write_uvarlong(to_encode, cursor);
@@ -458,7 +468,7 @@ int malbinary_encoder_encode_time(malbinary_encoder_t *self, void *cursor, mal_t
   return rc;
 }
 
-int malbinary_encoder_encode_uinteger(malbinary_encoder_t *self, void *cursor, mal_uinteger_t to_encode) {
+int malbinary_encoder_encode_uinteger(mal_encoder_t *self, void *cursor, mal_uinteger_t to_encode) {
   int rc = 0;
   if (self->varint_supported)
       malbinary_write_uvarint(to_encode, cursor);
@@ -467,7 +477,7 @@ int malbinary_encoder_encode_uinteger(malbinary_encoder_t *self, void *cursor, m
   return rc;
 }
 
-int malbinary_encoder_encode_identifier(malbinary_encoder_t *self, void *cursor, mal_identifier_t *to_encode) {
+int malbinary_encoder_encode_identifier(mal_encoder_t *self, void *cursor, mal_identifier_t *to_encode) {
   int rc = 0;
   unsigned int length = mal_identifier_get_char_count(to_encode);
   if (self->varint_supported)
@@ -478,13 +488,13 @@ int malbinary_encoder_encode_identifier(malbinary_encoder_t *self, void *cursor,
   return rc;
 }
 
-int malbinary_encoder_encode_uoctet(malbinary_encoder_t *self, void *cursor, mal_uoctet_t to_encode) {
+int malbinary_encoder_encode_uoctet(mal_encoder_t *self, void *cursor, mal_uoctet_t to_encode) {
   int rc = 0;
   malbinary_write(to_encode, cursor);
   return rc;
 }
 
-int malbinary_encoder_encode_long(malbinary_encoder_t *self, void *cursor, mal_long_t to_encode) {
+int malbinary_encoder_encode_long(mal_encoder_t *self, void *cursor, mal_long_t to_encode) {
   int rc = 0;
   if (self->varint_supported)
     malbinary_write_varlong(to_encode, cursor);
@@ -493,7 +503,7 @@ int malbinary_encoder_encode_long(malbinary_encoder_t *self, void *cursor, mal_l
   return rc;
 }
 
-int malbinary_encoder_encode_ushort(malbinary_encoder_t *self, void *cursor, mal_ushort_t to_encode) {
+int malbinary_encoder_encode_ushort(mal_encoder_t *self, void *cursor, mal_ushort_t to_encode) {
   int rc = 0;
   if (self->varint_supported)
     malbinary_write_varshort(to_encode, cursor);
@@ -502,7 +512,7 @@ int malbinary_encoder_encode_ushort(malbinary_encoder_t *self, void *cursor, mal
   return rc;
 }
 
-int malbinary_encoder_encode_boolean(malbinary_encoder_t *self, void *cursor, mal_boolean_t to_encode) {
+int malbinary_encoder_encode_boolean(mal_encoder_t *self, void *cursor, mal_boolean_t to_encode) {
   int rc = 0;
   if (to_encode) {
     malbinary_write(1, cursor);
@@ -512,7 +522,7 @@ int malbinary_encoder_encode_boolean(malbinary_encoder_t *self, void *cursor, ma
   return rc;
 }
 
-int malbinary_encoder_encode_attribute_tag(malbinary_encoder_t *self, void *cursor, unsigned char to_encode) {
+int malbinary_encoder_encode_attribute_tag(mal_encoder_t *self, void *cursor, unsigned char to_encode) {
   int rc = 0;
   if (self->varint_supported)
     malbinary_write_uvarint(to_encode, cursor);
@@ -521,7 +531,7 @@ int malbinary_encoder_encode_attribute_tag(malbinary_encoder_t *self, void *curs
   return rc;
 }
 
-int malbinary_encoder_add_duration_encoding_length(malbinary_encoder_t *self,
+int malbinary_encoder_add_duration_encoding_length(mal_encoder_t *self,
     mal_duration_t to_encode, void *cursor) {
   int rc = 0;
   //TODO: malbinary_encoder_add_duration_encoding_length
@@ -537,7 +547,7 @@ int floatToIntBits(float x) {
   return u.i;
 }
 
-int malbinary_encoder_add_float_encoding_length(malbinary_encoder_t *self,
+int malbinary_encoder_add_float_encoding_length(mal_encoder_t *self,
     mal_float_t to_encode, void *cursor) {
   int rc = 0;
   mal_integer_t i = floatToIntBits(to_encode);
@@ -554,7 +564,7 @@ long doubleToLongBits(double x) {
   return u.l;
 }
 
-int malbinary_encoder_add_double_encoding_length(malbinary_encoder_t *self,
+int malbinary_encoder_add_double_encoding_length(mal_encoder_t *self,
     mal_double_t to_encode, void *cursor) {
   int rc = 0;
   mal_long_t l = doubleToLongBits(to_encode);
@@ -562,14 +572,14 @@ int malbinary_encoder_add_double_encoding_length(malbinary_encoder_t *self,
   return rc;
 }
 
-int malbinary_encoder_add_octet_encoding_length(malbinary_encoder_t *self,
+int malbinary_encoder_add_octet_encoding_length(mal_encoder_t *self,
     mal_octet_t to_encode, void *cursor) {
   int rc = 0;
   ((malbinary_cursor_t *) cursor)->body_length += 1;
   return rc;
 }
 
-int malbinary_encoder_add_short_encoding_length(malbinary_encoder_t *self,
+int malbinary_encoder_add_short_encoding_length(mal_encoder_t *self,
     mal_short_t to_encode, void *cursor) {
   int rc = 0;
   if (self->varint_supported)
@@ -579,7 +589,7 @@ int malbinary_encoder_add_short_encoding_length(malbinary_encoder_t *self,
   return rc;
 }
 
-int malbinary_encoder_add_ulong_encoding_length(malbinary_encoder_t *self,
+int malbinary_encoder_add_ulong_encoding_length(mal_encoder_t *self,
     mal_ulong_t to_encode, void *cursor) {
   int rc = 0;
   if (self->varint_supported)
@@ -589,20 +599,20 @@ int malbinary_encoder_add_ulong_encoding_length(malbinary_encoder_t *self,
   return rc;
 }
 
-int malbinary_encoder_add_finetime_encoding_length(malbinary_encoder_t *self,
+int malbinary_encoder_add_finetime_encoding_length(mal_encoder_t *self,
     mal_finetime_t to_encode, void *cursor) {
   int rc = 0;
   //TODO: malbinary_encoder_add_finetime_encoding_length
   return rc;
 }
 
-int malbinary_encoder_encode_duration(malbinary_encoder_t *self, void *cursor, mal_duration_t to_encode) {
+int malbinary_encoder_encode_duration(mal_encoder_t *self, void *cursor, mal_duration_t to_encode) {
   int rc = 0;
   //TODO: malbinary_encoder_encode_duration
   return rc;
 }
 
-int malbinary_encoder_encode_float(malbinary_encoder_t *self, void *cursor, mal_float_t to_encode) {
+int malbinary_encoder_encode_float(mal_encoder_t *self, void *cursor, mal_float_t to_encode) {
   int rc = 0;
   int i = floatToIntBits(to_encode);
   if (self->varint_supported)
@@ -612,7 +622,7 @@ int malbinary_encoder_encode_float(malbinary_encoder_t *self, void *cursor, mal_
   return rc;
 }
 
-int malbinary_encoder_encode_double(malbinary_encoder_t *self, void *cursor, mal_double_t to_encode) {
+int malbinary_encoder_encode_double(mal_encoder_t *self, void *cursor, mal_double_t to_encode) {
   int rc = 0;
   long l = doubleToLongBits(to_encode);
   if (self->varint_supported)
@@ -622,13 +632,13 @@ int malbinary_encoder_encode_double(malbinary_encoder_t *self, void *cursor, mal
   return rc;
 }
 
-int malbinary_encoder_encode_octet(malbinary_encoder_t *self, void *cursor, mal_octet_t to_encode) {
+int malbinary_encoder_encode_octet(mal_encoder_t *self, void *cursor, mal_octet_t to_encode) {
   int rc = 0;
   malbinary_write(to_encode, cursor);
   return rc;
 }
 
-int malbinary_encoder_encode_short(malbinary_encoder_t *self, void *cursor, mal_short_t to_encode) {
+int malbinary_encoder_encode_short(mal_encoder_t *self, void *cursor, mal_short_t to_encode) {
   int rc = 0;
   if (self->varint_supported)
     malbinary_write_varshort(to_encode, cursor);
@@ -637,7 +647,7 @@ int malbinary_encoder_encode_short(malbinary_encoder_t *self, void *cursor, mal_
   return rc;
 }
 
-int malbinary_encoder_encode_ulong(malbinary_encoder_t *self, void *cursor, mal_ulong_t to_encode) {
+int malbinary_encoder_encode_ulong(mal_encoder_t *self, void *cursor, mal_ulong_t to_encode) {
   int rc = 0;
   if (self->varint_supported)
     malbinary_write_uvarlong(to_encode, cursor);
@@ -646,69 +656,69 @@ int malbinary_encoder_encode_ulong(malbinary_encoder_t *self, void *cursor, mal_
   return rc;
 }
 
-int malbinary_encoder_encode_finetime(malbinary_encoder_t *self, void *cursor, mal_finetime_t to_encode) {
+int malbinary_encoder_encode_finetime(mal_encoder_t *self, void *cursor, mal_finetime_t to_encode) {
   int rc = 0;
   //TODO: malbinary_encoder_encode_finetime
   return rc;
 }
 
-int malbinary_encoder_add_attribute_encoding_length(malbinary_encoder_t *malbinary_encoder,
+int malbinary_encoder_add_attribute_encoding_length(mal_encoder_t *encoder,
     unsigned char attribute_tag, union mal_attribute_t self, void *cursor) {
   int rc = 0;
   switch (attribute_tag) {
   case MAL_BLOB_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_add_blob_encoding_length(malbinary_encoder, self.blob_value, cursor);
+    rc = malbinary_encoder_add_blob_encoding_length(encoder, self.blob_value, cursor);
     break;
   case MAL_BOOLEAN_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_add_boolean_encoding_length(malbinary_encoder, self.boolean_value, cursor);
+    rc = malbinary_encoder_add_boolean_encoding_length(encoder, self.boolean_value, cursor);
     break;
   case MAL_DURATION_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_add_duration_encoding_length(malbinary_encoder, self.duration_value, cursor);
+    rc = malbinary_encoder_add_duration_encoding_length(encoder, self.duration_value, cursor);
     break;
   case MAL_FLOAT_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_add_float_encoding_length(malbinary_encoder, self.float_value, cursor);
+    rc = malbinary_encoder_add_float_encoding_length(encoder, self.float_value, cursor);
     break;
   case MAL_DOUBLE_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_add_double_encoding_length(malbinary_encoder, self.double_value, cursor);
+    rc = malbinary_encoder_add_double_encoding_length(encoder, self.double_value, cursor);
     break;
   case MAL_IDENTIFIER_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_add_identifier_encoding_length(malbinary_encoder, self.identifier_value, cursor);
+    rc = malbinary_encoder_add_identifier_encoding_length(encoder, self.identifier_value, cursor);
     break;
   case MAL_OCTET_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_add_octet_encoding_length(malbinary_encoder, self.octet_value, cursor);
+    rc = malbinary_encoder_add_octet_encoding_length(encoder, self.octet_value, cursor);
     break;
   case MAL_UOCTET_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_add_uoctet_encoding_length(malbinary_encoder, self.uoctet_value, cursor);
+    rc = malbinary_encoder_add_uoctet_encoding_length(encoder, self.uoctet_value, cursor);
     break;
   case MAL_SHORT_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_add_short_encoding_length(malbinary_encoder, self.short_value, cursor);
+    rc = malbinary_encoder_add_short_encoding_length(encoder, self.short_value, cursor);
     break;
   case MAL_USHORT_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_add_ushort_encoding_length(malbinary_encoder, self.ushort_value, cursor);
+    rc = malbinary_encoder_add_ushort_encoding_length(encoder, self.ushort_value, cursor);
     break;
   case MAL_INTEGER_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_add_integer_encoding_length(malbinary_encoder, self.integer_value, cursor);
+    rc = malbinary_encoder_add_integer_encoding_length(encoder, self.integer_value, cursor);
     break;
   case MAL_UINTEGER_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_add_uinteger_encoding_length(malbinary_encoder, self.uinteger_value, cursor);
+    rc = malbinary_encoder_add_uinteger_encoding_length(encoder, self.uinteger_value, cursor);
     break;
   case MAL_LONG_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_add_long_encoding_length(malbinary_encoder, self.long_value, cursor);
+    rc = malbinary_encoder_add_long_encoding_length(encoder, self.long_value, cursor);
     break;
   case MAL_ULONG_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_add_ulong_encoding_length(malbinary_encoder, self.ulong_value, cursor);
+    rc = malbinary_encoder_add_ulong_encoding_length(encoder, self.ulong_value, cursor);
     break;
   case MAL_STRING_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_add_string_encoding_length(malbinary_encoder, self.string_value, cursor);
+    rc = malbinary_encoder_add_string_encoding_length(encoder, self.string_value, cursor);
     break;
   case MAL_TIME_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_add_time_encoding_length(malbinary_encoder, self.time_value, cursor);
+    rc = malbinary_encoder_add_time_encoding_length(encoder, self.time_value, cursor);
     break;
   case MAL_FINETIME_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_add_finetime_encoding_length(malbinary_encoder, self.finetime_value, cursor);
+    rc = malbinary_encoder_add_finetime_encoding_length(encoder, self.finetime_value, cursor);
     break;
   case MAL_URI_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_add_uri_encoding_length(malbinary_encoder, self.uri_value, cursor);
+    rc = malbinary_encoder_add_uri_encoding_length(encoder, self.uri_value, cursor);
     break;
   default:
     //nothing to do
@@ -717,62 +727,62 @@ int malbinary_encoder_add_attribute_encoding_length(malbinary_encoder_t *malbina
   return rc;
 }
 
-int malbinary_encoder_encode_attribute(malbinary_encoder_t *malbinary_encoder, void *cursor, unsigned char attribute_tag, union mal_attribute_t self) {
+int malbinary_encoder_encode_attribute(mal_encoder_t *encoder, void *cursor, unsigned char attribute_tag, union mal_attribute_t self) {
   int rc = 0;
   switch (attribute_tag) {
   case MAL_BLOB_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_encode_blob(malbinary_encoder, cursor, self.blob_value);
+    rc = malbinary_encoder_encode_blob(encoder, cursor, self.blob_value);
     break;
   case MAL_BOOLEAN_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_encode_boolean(malbinary_encoder, cursor, self.boolean_value);
+    rc = malbinary_encoder_encode_boolean(encoder, cursor, self.boolean_value);
     break;
   case MAL_DURATION_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_encode_duration(malbinary_encoder, cursor, self.duration_value);
+    rc = malbinary_encoder_encode_duration(encoder, cursor, self.duration_value);
     break;
   case MAL_FLOAT_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_encode_float(malbinary_encoder, cursor, self.float_value);
+    rc = malbinary_encoder_encode_float(encoder, cursor, self.float_value);
     break;
   case MAL_DOUBLE_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_encode_double(malbinary_encoder, cursor, self.double_value);
+    rc = malbinary_encoder_encode_double(encoder, cursor, self.double_value);
     break;
   case MAL_IDENTIFIER_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_encode_identifier(malbinary_encoder, cursor, self.identifier_value);
+    rc = malbinary_encoder_encode_identifier(encoder, cursor, self.identifier_value);
     break;
   case MAL_OCTET_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_encode_octet(malbinary_encoder, cursor, self.octet_value);
+    rc = malbinary_encoder_encode_octet(encoder, cursor, self.octet_value);
     break;
   case MAL_UOCTET_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_encode_uoctet(malbinary_encoder, cursor, self.uoctet_value);
+    rc = malbinary_encoder_encode_uoctet(encoder, cursor, self.uoctet_value);
     break;
   case MAL_SHORT_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_encode_short(malbinary_encoder, cursor, self.short_value);
+    rc = malbinary_encoder_encode_short(encoder, cursor, self.short_value);
     break;
   case MAL_USHORT_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_encode_ushort(malbinary_encoder, cursor, self.ushort_value);
+    rc = malbinary_encoder_encode_ushort(encoder, cursor, self.ushort_value);
     break;
   case MAL_INTEGER_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_encode_integer(malbinary_encoder, cursor, self.integer_value);
+    rc = malbinary_encoder_encode_integer(encoder, cursor, self.integer_value);
     break;
   case MAL_UINTEGER_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_encode_uinteger(malbinary_encoder, cursor, self.uinteger_value);
+    rc = malbinary_encoder_encode_uinteger(encoder, cursor, self.uinteger_value);
     break;
   case MAL_LONG_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_encode_long(malbinary_encoder, cursor, self.long_value);
+    rc = malbinary_encoder_encode_long(encoder, cursor, self.long_value);
     break;
   case MAL_ULONG_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_encode_ulong(malbinary_encoder, cursor, self.ulong_value);
+    rc = malbinary_encoder_encode_ulong(encoder, cursor, self.ulong_value);
     break;
   case MAL_STRING_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_encode_string(malbinary_encoder, cursor, self.string_value);
+    rc = malbinary_encoder_encode_string(encoder, cursor, self.string_value);
     break;
   case MAL_TIME_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_encode_time(malbinary_encoder, cursor, self.time_value);
+    rc = malbinary_encoder_encode_time(encoder, cursor, self.time_value);
     break;
   case MAL_FINETIME_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_encode_finetime(malbinary_encoder, cursor, self.finetime_value);
+    rc = malbinary_encoder_encode_finetime(encoder, cursor, self.finetime_value);
     break;
   case MAL_URI_ATTRIBUTE_TAG:
-    rc = malbinary_encoder_encode_uri(malbinary_encoder, cursor, self.uri_value);
+    rc = malbinary_encoder_encode_uri(encoder, cursor, self.uri_value);
     break;
   default:
     //nothing to do
@@ -780,6 +790,142 @@ int malbinary_encoder_encode_attribute(malbinary_encoder_t *malbinary_encoder, v
   }
   return rc;
 }
+
+// TODO (AF): The malbinary encoding functions should be private and only used through
+// the mal_encoder_t structure.
+
+void malbinary_init_encode_functions(mal_encoder_t *self) {
+  // TODO (AF): Currently the use of this initialization function below causes
+  // a circular dependance with the mal module.
+//  mal_encoder_initialize_functions(self,
+//      malbinary_encoder_new_cursor,
+//      malbinary_cursor_destroy,
+//      malbinary_cursor_init,
+//      malbinary_cursor_reset,
+//      malbinary_cursor_get_length,
+//      malbinary_cursor_get_offset,
+//      malbinary_cursor_assert,
+//      malbinary_encoder_add_string_encoding_length,
+//      malbinary_encoder_add_presence_flag_encoding_length,
+//      malbinary_encoder_add_short_form_encoding_length,
+//      malbinary_encoder_add_integer_encoding_length,
+//      malbinary_encoder_add_identifier_encoding_length,
+//      malbinary_encoder_add_uinteger_encoding_length,
+//      malbinary_encoder_add_uri_encoding_length,
+//      malbinary_encoder_add_time_encoding_length,
+//      malbinary_encoder_add_uoctet_encoding_length,
+//      malbinary_encoder_add_long_encoding_length,
+//      malbinary_encoder_add_ushort_encoding_length,
+//      malbinary_encoder_add_boolean_encoding_length,
+//      malbinary_encoder_add_blob_encoding_length,
+//      malbinary_encoder_add_list_size_encoding_length,
+//      malbinary_encoder_add_small_enum_encoding_length,
+//      malbinary_encoder_add_medium_enum_encoding_length,
+//      malbinary_encoder_add_large_enum_encoding_length,
+//      malbinary_encoder_add_duration_encoding_length,
+//      malbinary_encoder_add_float_encoding_length,
+//      malbinary_encoder_add_double_encoding_length,
+//      malbinary_encoder_add_octet_encoding_length,
+//      malbinary_encoder_add_short_encoding_length,
+//      malbinary_encoder_add_ulong_encoding_length,
+//      malbinary_encoder_add_finetime_encoding_length,
+//      malbinary_encoder_add_attribute_encoding_length,
+//      malbinary_encoder_encode_string,
+//      malbinary_encoder_encode_presence_flag,
+//      malbinary_encoder_encode_short_form,
+//      malbinary_encoder_encode_small_enum,
+//      malbinary_encoder_encode_medium_enum,
+//      malbinary_encoder_encode_large_enum,
+//      malbinary_encoder_encode_integer,
+//      malbinary_encoder_encode_list_size,
+//      malbinary_encoder_encode_uri,
+//      malbinary_encoder_encode_blob,
+//      malbinary_encoder_encode_time,
+//      malbinary_encoder_encode_uinteger,
+//      malbinary_encoder_encode_identifier,
+//      malbinary_encoder_encode_uoctet,
+//      malbinary_encoder_encode_long,
+//      malbinary_encoder_encode_ushort,
+//      malbinary_encoder_encode_boolean,
+//      malbinary_write16,
+//      malbinary_write32,
+//      malbinary_write64,
+//      malbinary_encoder_encode_duration,
+//      malbinary_encoder_encode_float,
+//      malbinary_encoder_encode_double,
+//      malbinary_encoder_encode_octet,
+//      malbinary_encoder_encode_short,
+//      malbinary_encoder_encode_ulong,
+//      malbinary_encoder_encode_finetime,
+//      malbinary_encoder_encode_attribute,
+//      malbinary_encoder_encode_attribute_tag);
+
+  self->new_cursor = malbinary_encoder_new_cursor;
+  self->cursor_destroy = malbinary_cursor_destroy;
+  self->cursor_init = malbinary_cursor_init;
+  self->cursor_reset = malbinary_cursor_reset;
+  self->cursor_get_length = malbinary_cursor_get_length;
+  self->cursor_get_offset = malbinary_cursor_get_offset;
+  self->cursor_assert = malbinary_cursor_assert;
+
+  self->mal_encoder_add_string_encoding_length = malbinary_encoder_add_string_encoding_length;
+  self->mal_encoder_add_presence_flag_encoding_length = malbinary_encoder_add_presence_flag_encoding_length;
+  self->mal_encoder_add_short_form_encoding_length = malbinary_encoder_add_short_form_encoding_length;
+  self->mal_encoder_add_integer_encoding_length = malbinary_encoder_add_integer_encoding_length;
+  self->mal_encoder_add_identifier_encoding_length = malbinary_encoder_add_identifier_encoding_length;
+  self->mal_encoder_add_uinteger_encoding_length = malbinary_encoder_add_uinteger_encoding_length;
+  self->mal_encoder_add_uri_encoding_length = malbinary_encoder_add_uri_encoding_length;
+  self->mal_encoder_add_time_encoding_length = malbinary_encoder_add_time_encoding_length;
+  self->mal_encoder_add_uoctet_encoding_length = malbinary_encoder_add_uoctet_encoding_length;
+  self->mal_encoder_add_long_encoding_length = malbinary_encoder_add_long_encoding_length;
+  self->mal_encoder_add_ushort_encoding_length = malbinary_encoder_add_ushort_encoding_length;
+  self->mal_encoder_add_boolean_encoding_length = malbinary_encoder_add_boolean_encoding_length;
+  self->mal_encoder_add_blob_encoding_length = malbinary_encoder_add_blob_encoding_length;
+  self->mal_encoder_add_list_size_encoding_length = malbinary_encoder_add_list_size_encoding_length;
+  self->mal_encoder_add_small_enum_encoding_length = malbinary_encoder_add_small_enum_encoding_length;
+  self->mal_encoder_add_medium_enum_encoding_length = malbinary_encoder_add_medium_enum_encoding_length;
+  self->mal_encoder_add_large_enum_encoding_length = malbinary_encoder_add_large_enum_encoding_length;
+  self->mal_encoder_add_duration_encoding_length = malbinary_encoder_add_duration_encoding_length;
+  self->mal_encoder_add_float_encoding_length = malbinary_encoder_add_float_encoding_length;
+  self->mal_encoder_add_double_encoding_length = malbinary_encoder_add_double_encoding_length;
+  self->mal_encoder_add_octet_encoding_length = malbinary_encoder_add_octet_encoding_length;
+  self->mal_encoder_add_short_encoding_length = malbinary_encoder_add_short_encoding_length;
+  self->mal_encoder_add_ulong_encoding_length = malbinary_encoder_add_ulong_encoding_length;
+  self->mal_encoder_add_finetime_encoding_length = malbinary_encoder_add_finetime_encoding_length;
+  self->mal_encoder_add_attribute_encoding_length = malbinary_encoder_add_attribute_encoding_length;
+
+  self->mal_encoder_encode_string = malbinary_encoder_encode_string;
+  self->mal_encoder_encode_presence_flag = malbinary_encoder_encode_presence_flag;
+  self->mal_encoder_encode_short_form = malbinary_encoder_encode_short_form;
+  self->mal_encoder_encode_small_enum = malbinary_encoder_encode_small_enum;
+  self->mal_encoder_encode_medium_enum = malbinary_encoder_encode_medium_enum;
+  self->mal_encoder_encode_large_enum = malbinary_encoder_encode_large_enum;
+  self->mal_encoder_encode_integer = malbinary_encoder_encode_integer;
+  self->mal_encoder_encode_list_size = malbinary_encoder_encode_list_size;
+  self->mal_encoder_encode_uri = malbinary_encoder_encode_uri;
+  self->mal_encoder_encode_blob = malbinary_encoder_encode_blob;
+  self->mal_encoder_encode_time = malbinary_encoder_encode_time;
+  self->mal_encoder_encode_uinteger = malbinary_encoder_encode_uinteger;
+  self->mal_encoder_encode_identifier = malbinary_encoder_encode_identifier;
+  self->mal_encoder_encode_uoctet = malbinary_encoder_encode_uoctet;
+  self->mal_encoder_encode_long = malbinary_encoder_encode_long;
+  self->mal_encoder_encode_ushort = malbinary_encoder_encode_ushort;
+  self->mal_encoder_encode_boolean = malbinary_encoder_encode_boolean;
+  self->mal_write16 = malbinary_write16;
+  self->mal_write32 = malbinary_write32;
+  self->mal_write64 = malbinary_write64;
+  self->mal_encoder_encode_duration = malbinary_encoder_encode_duration;
+  self->mal_encoder_encode_float = malbinary_encoder_encode_float;
+  self->mal_encoder_encode_double = malbinary_encoder_encode_double;
+  self->mal_encoder_encode_octet = malbinary_encoder_encode_octet;
+  self->mal_encoder_encode_short = malbinary_encoder_encode_short;
+  self->mal_encoder_encode_ulong = malbinary_encoder_encode_ulong;
+  self->mal_encoder_encode_finetime = malbinary_encoder_encode_finetime;
+  self->mal_encoder_encode_attribute = malbinary_encoder_encode_attribute;
+  self->mal_encoder_encode_attribute_tag = malbinary_encoder_encode_attribute_tag;
+}
+
+// Test
 
 void malbinary_encoder_test(bool verbose) {
   printf(" * malbinary_encoder: ");

@@ -10,6 +10,9 @@ extern "C" {
 
 #include "malattributes.h"
 
+#include "../../mal/include/mal_encoder.h"
+#include "../../mal/include/mal_decoder.h"
+
 //  MALBINARY API version macros for compile-time API detection
 
 #define MALBINARY_VERSION_MAJOR 1
@@ -38,18 +41,19 @@ struct _malbinary_cursor_t {
 
 typedef struct _malbinary_cursor_t malbinary_cursor_t;
 
-void malbinary_cursor_reset(malbinary_cursor_t *cursor);
-void malbinary_cursor_init(malbinary_cursor_t *cursor,
+void malbinary_cursor_destroy(void *cursor);
+
+void malbinary_cursor_reset(void *cursor);
+void malbinary_cursor_init(void *cursor,
     char *bytes, unsigned int length, unsigned int offset);
 void malbinary_cursor_copy(malbinary_cursor_t *from, malbinary_cursor_t *to);
 
-void malbinary_add_length(malbinary_cursor_t *cursor, unsigned int length);
+void malbinary_add_length(void *cursor, unsigned int length);
 
-void malbinary_cursor_assert(malbinary_cursor_t *cursor);
+void malbinary_cursor_assert(void *cursor);
 
-// TODO (AF): Rename getters without 'body' reference
-unsigned int malbinary_cursor_get_body_length(malbinary_cursor_t *cursor);
-unsigned int malbinary_cursor_get_body_offset(malbinary_cursor_t *cursor);
+unsigned int malbinary_cursor_get_length(void *cursor);
+unsigned int malbinary_cursor_get_offset(void *cursor);
 
 // The format code must be unique among all the available encoding formats
 #define MALBINARY_FORMAT_CODE 0
