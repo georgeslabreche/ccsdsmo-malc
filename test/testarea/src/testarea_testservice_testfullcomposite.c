@@ -144,187 +144,187 @@ testarea_testservice_testfullcomposite_t * testarea_testservice_testfullcomposit
 }
 
 // encoding functions related to transport malbinary
-int testarea_testservice_testfullcomposite_add_encoding_length_malbinary(testarea_testservice_testfullcomposite_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor)
+int testarea_testservice_testfullcomposite_add_encoding_length_malbinary(testarea_testservice_testfullcomposite_t * self, mal_encoder_t *encoder, void *cursor)
 {
   int rc = 0;
-  rc = malbinary_encoder_add_boolean_encoding_length(malbinary_encoder, self->boolfield, cursor);
+  rc = malbinary_encoder_add_boolean_encoding_length(encoder, self->boolfield, cursor);
   if (rc < 0)
     return rc;
   ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
   if (self->intfield_is_present)
   {
-    rc = malbinary_encoder_add_integer_encoding_length(malbinary_encoder, self->intfield, cursor);
+    rc = malbinary_encoder_add_integer_encoding_length(encoder, self->intfield, cursor);
     if (rc < 0)
       return rc;
   }
   ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
   if (self->stringfield != NULL)
   {
-    rc = malbinary_encoder_add_string_encoding_length(malbinary_encoder, self->stringfield, cursor);
+    rc = malbinary_encoder_add_string_encoding_length(encoder, self->stringfield, cursor);
     if (rc < 0)
       return rc;
   }
-  rc = malbinary_encoder_add_blob_encoding_length(malbinary_encoder, self->blobfield, cursor);
+  rc = malbinary_encoder_add_blob_encoding_length(encoder, self->blobfield, cursor);
   if (rc < 0)
     return rc;
   ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_SMALL_ENUM_SIZE;
   ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
   if (self->compfield != NULL)
   {
-    rc = testarea_testservice_testcomposite_add_encoding_length_malbinary(self->compfield, malbinary_encoder, cursor);
+    rc = testarea_testservice_testcomposite_add_encoding_length_malbinary(self->compfield, encoder, cursor);
     if (rc < 0)
       return rc;
   }
   ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
   if (self->boollistfield != NULL)
   {
-    rc = mal_boolean_list_add_encoding_length_malbinary(self->boollistfield, malbinary_encoder, cursor);
+    rc = mal_boolean_list_add_encoding_length_malbinary(self->boollistfield, encoder, cursor);
     if (rc < 0)
       return rc;
   }
-  rc = mal_integer_list_add_encoding_length_malbinary(self->intlistfield, malbinary_encoder, cursor);
+  rc = mal_integer_list_add_encoding_length_malbinary(self->intlistfield, encoder, cursor);
   if (rc < 0)
     return rc;
-  rc = mal_string_list_add_encoding_length_malbinary(self->stringlistfield, malbinary_encoder, cursor);
+  rc = mal_string_list_add_encoding_length_malbinary(self->stringlistfield, encoder, cursor);
   if (rc < 0)
     return rc;
   ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
   if (self->bloblistfield != NULL)
   {
-    rc = mal_blob_list_add_encoding_length_malbinary(self->bloblistfield, malbinary_encoder, cursor);
+    rc = mal_blob_list_add_encoding_length_malbinary(self->bloblistfield, encoder, cursor);
     if (rc < 0)
       return rc;
   }
   ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
   if (self->enumlistfield != NULL)
   {
-    rc = testarea_testenumeration_list_add_encoding_length_malbinary(self->enumlistfield, malbinary_encoder, cursor);
+    rc = testarea_testenumeration_list_add_encoding_length_malbinary(self->enumlistfield, encoder, cursor);
     if (rc < 0)
       return rc;
   }
-  rc = testarea_testservice_testcomposite_list_add_encoding_length_malbinary(self->complistfield, malbinary_encoder, cursor);
+  rc = testarea_testservice_testcomposite_list_add_encoding_length_malbinary(self->complistfield, encoder, cursor);
   if (rc < 0)
     return rc;
   ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_ATTRIBUTE_TAG_SIZE;
-  rc = malbinary_encoder_add_attribute_encoding_length(malbinary_encoder, self->attributefield_attribute_tag, self->attributefield, cursor);
+  rc = malbinary_encoder_add_attribute_encoding_length(encoder, self->attributefield_attribute_tag, self->attributefield, cursor);
   if (rc < 0)
     return rc;
   return rc;
 }
-int testarea_testservice_testfullcomposite_encode_malbinary(testarea_testservice_testfullcomposite_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor)
+int testarea_testservice_testfullcomposite_encode_malbinary(testarea_testservice_testfullcomposite_t * self, mal_encoder_t *encoder, void *cursor)
 {
   int rc = 0;
   bool presence_flag;
-  rc = malbinary_encoder_encode_boolean(malbinary_encoder, cursor, self->boolfield);
+  rc = malbinary_encoder_encode_boolean(encoder, cursor, self->boolfield);
   if (rc < 0)
     return rc;
   presence_flag = self->intfield_is_present;
-  rc = malbinary_encoder_encode_presence_flag(malbinary_encoder, cursor, presence_flag);
+  rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_encoder_encode_integer(malbinary_encoder, cursor, self->intfield);
+    rc = malbinary_encoder_encode_integer(encoder, cursor, self->intfield);
     if (rc < 0)
       return rc;
   }
   presence_flag = (self->stringfield != NULL);
-  rc = malbinary_encoder_encode_presence_flag(malbinary_encoder, cursor, presence_flag);
+  rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_encoder_encode_string(malbinary_encoder, cursor, self->stringfield);
+    rc = malbinary_encoder_encode_string(encoder, cursor, self->stringfield);
     if (rc < 0)
       return rc;
   }
-  rc = malbinary_encoder_encode_blob(malbinary_encoder, cursor, self->blobfield);
+  rc = malbinary_encoder_encode_blob(encoder, cursor, self->blobfield);
   if (rc < 0)
     return rc;
-  rc = malbinary_encoder_encode_small_enum(malbinary_encoder, cursor, self->enumfield);
+  rc = malbinary_encoder_encode_small_enum(encoder, cursor, self->enumfield);
   if (rc < 0)
     return rc;
   presence_flag = (self->compfield != NULL);
-  rc = malbinary_encoder_encode_presence_flag(malbinary_encoder, cursor, presence_flag);
+  rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = testarea_testservice_testcomposite_encode_malbinary(self->compfield, malbinary_encoder, cursor);
+    rc = testarea_testservice_testcomposite_encode_malbinary(self->compfield, encoder, cursor);
     if (rc < 0)
       return rc;
   }
   presence_flag = (self->boollistfield != NULL);
-  rc = malbinary_encoder_encode_presence_flag(malbinary_encoder, cursor, presence_flag);
+  rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = mal_boolean_list_encode_malbinary(self->boollistfield, malbinary_encoder, cursor);
+    rc = mal_boolean_list_encode_malbinary(self->boollistfield, encoder, cursor);
     if (rc < 0)
       return rc;
   }
-  rc = mal_integer_list_encode_malbinary(self->intlistfield, malbinary_encoder, cursor);
+  rc = mal_integer_list_encode_malbinary(self->intlistfield, encoder, cursor);
   if (rc < 0)
     return rc;
-  rc = mal_string_list_encode_malbinary(self->stringlistfield, malbinary_encoder, cursor);
+  rc = mal_string_list_encode_malbinary(self->stringlistfield, encoder, cursor);
   if (rc < 0)
     return rc;
   presence_flag = (self->bloblistfield != NULL);
-  rc = malbinary_encoder_encode_presence_flag(malbinary_encoder, cursor, presence_flag);
+  rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = mal_blob_list_encode_malbinary(self->bloblistfield, malbinary_encoder, cursor);
+    rc = mal_blob_list_encode_malbinary(self->bloblistfield, encoder, cursor);
     if (rc < 0)
       return rc;
   }
   presence_flag = (self->enumlistfield != NULL);
-  rc = malbinary_encoder_encode_presence_flag(malbinary_encoder, cursor, presence_flag);
+  rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = testarea_testenumeration_list_encode_malbinary(self->enumlistfield, malbinary_encoder, cursor);
+    rc = testarea_testenumeration_list_encode_malbinary(self->enumlistfield, encoder, cursor);
     if (rc < 0)
       return rc;
   }
-  rc = testarea_testservice_testcomposite_list_encode_malbinary(self->complistfield, malbinary_encoder, cursor);
+  rc = testarea_testservice_testcomposite_list_encode_malbinary(self->complistfield, encoder, cursor);
   if (rc < 0)
     return rc;
-  rc = malbinary_encoder_encode_attribute_tag(malbinary_encoder, cursor, self->attributefield_attribute_tag);
+  rc = malbinary_encoder_encode_attribute_tag(encoder, cursor, self->attributefield_attribute_tag);
   if (rc < 0)
     return rc;
-  rc = malbinary_encoder_encode_attribute(malbinary_encoder, cursor, self->attributefield_attribute_tag, self->attributefield);
+  rc = malbinary_encoder_encode_attribute(encoder, cursor, self->attributefield_attribute_tag, self->attributefield);
   if (rc < 0)
     return rc;
   return rc;
 }
-int testarea_testservice_testfullcomposite_decode_malbinary(testarea_testservice_testfullcomposite_t * self, malbinary_decoder_t * malbinary_decoder, void * cursor)
+int testarea_testservice_testfullcomposite_decode_malbinary(testarea_testservice_testfullcomposite_t * self, mal_decoder_t *decoder, void *cursor)
 {
   int rc = 0;
   bool presence_flag;
   int enumerated_value;
-  rc = malbinary_decoder_decode_boolean(malbinary_decoder, cursor, &self->boolfield);
+  rc = malbinary_decoder_decode_boolean(decoder, cursor, &self->boolfield);
   if (rc < 0)
     return rc;
-  rc = malbinary_decoder_decode_presence_flag(malbinary_decoder, cursor, &presence_flag);
+  rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_decoder_decode_integer(malbinary_decoder, cursor, &self->intfield);
+    rc = malbinary_decoder_decode_integer(decoder, cursor, &self->intfield);
     if (rc < 0)
       return rc;
   }
   self->intfield_is_present = presence_flag;
-  rc = malbinary_decoder_decode_presence_flag(malbinary_decoder, cursor, &presence_flag);
+  rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_decoder_decode_string(malbinary_decoder, cursor, &self->stringfield);
+    rc = malbinary_decoder_decode_string(decoder, cursor, &self->stringfield);
     if (rc < 0)
       return rc;
   }
@@ -332,21 +332,21 @@ int testarea_testservice_testfullcomposite_decode_malbinary(testarea_testservice
   {
     self->stringfield = NULL;
   }
-  rc = malbinary_decoder_decode_blob(malbinary_decoder, cursor, &self->blobfield);
+  rc = malbinary_decoder_decode_blob(decoder, cursor, &self->blobfield);
   if (rc < 0)
     return rc;
-  rc = malbinary_decoder_decode_small_enum(malbinary_decoder, cursor, &enumerated_value);
+  rc = malbinary_decoder_decode_small_enum(decoder, cursor, &enumerated_value);
   if (rc < 0)
     return rc;
   self->enumfield = (testarea_testenumeration_t) enumerated_value;
-  rc = malbinary_decoder_decode_presence_flag(malbinary_decoder, cursor, &presence_flag);
+  rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
     self->compfield = testarea_testservice_testcomposite_new();
     if (self->compfield == NULL) return -1;
-    rc = testarea_testservice_testcomposite_decode_malbinary(self->compfield, malbinary_decoder, cursor);
+    rc = testarea_testservice_testcomposite_decode_malbinary(self->compfield, decoder, cursor);
     if (rc < 0)
       return rc;
   }
@@ -354,14 +354,14 @@ int testarea_testservice_testfullcomposite_decode_malbinary(testarea_testservice
   {
     self->compfield = NULL;
   }
-  rc = malbinary_decoder_decode_presence_flag(malbinary_decoder, cursor, &presence_flag);
+  rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
     self->boollistfield = mal_boolean_list_new(0);
     if (self->boollistfield == NULL) return -1;
-    rc = mal_boolean_list_decode_malbinary(self->boollistfield, malbinary_decoder, cursor);
+    rc = mal_boolean_list_decode_malbinary(self->boollistfield, decoder, cursor);
     if (rc < 0)
       return rc;
   }
@@ -371,22 +371,22 @@ int testarea_testservice_testfullcomposite_decode_malbinary(testarea_testservice
   }
   self->intlistfield = mal_integer_list_new(0);
   if (self->intlistfield == NULL) return -1;
-  rc = mal_integer_list_decode_malbinary(self->intlistfield, malbinary_decoder, cursor);
+  rc = mal_integer_list_decode_malbinary(self->intlistfield, decoder, cursor);
   if (rc < 0)
     return rc;
   self->stringlistfield = mal_string_list_new(0);
   if (self->stringlistfield == NULL) return -1;
-  rc = mal_string_list_decode_malbinary(self->stringlistfield, malbinary_decoder, cursor);
+  rc = mal_string_list_decode_malbinary(self->stringlistfield, decoder, cursor);
   if (rc < 0)
     return rc;
-  rc = malbinary_decoder_decode_presence_flag(malbinary_decoder, cursor, &presence_flag);
+  rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
     self->bloblistfield = mal_blob_list_new(0);
     if (self->bloblistfield == NULL) return -1;
-    rc = mal_blob_list_decode_malbinary(self->bloblistfield, malbinary_decoder, cursor);
+    rc = mal_blob_list_decode_malbinary(self->bloblistfield, decoder, cursor);
     if (rc < 0)
       return rc;
   }
@@ -394,14 +394,14 @@ int testarea_testservice_testfullcomposite_decode_malbinary(testarea_testservice
   {
     self->bloblistfield = NULL;
   }
-  rc = malbinary_decoder_decode_presence_flag(malbinary_decoder, cursor, &presence_flag);
+  rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
     self->enumlistfield = testarea_testenumeration_list_new(0);
     if (self->enumlistfield == NULL) return -1;
-    rc = testarea_testenumeration_list_decode_malbinary(self->enumlistfield, malbinary_decoder, cursor);
+    rc = testarea_testenumeration_list_decode_malbinary(self->enumlistfield, decoder, cursor);
     if (rc < 0)
       return rc;
   }
@@ -411,13 +411,13 @@ int testarea_testservice_testfullcomposite_decode_malbinary(testarea_testservice
   }
   self->complistfield = testarea_testservice_testcomposite_list_new(0);
   if (self->complistfield == NULL) return -1;
-  rc = testarea_testservice_testcomposite_list_decode_malbinary(self->complistfield, malbinary_decoder, cursor);
+  rc = testarea_testservice_testcomposite_list_decode_malbinary(self->complistfield, decoder, cursor);
   if (rc < 0)
     return rc;
-  rc = malbinary_decoder_decode_attribute_tag(malbinary_decoder, cursor, &self->attributefield_attribute_tag);
+  rc = malbinary_decoder_decode_attribute_tag(decoder, cursor, &self->attributefield_attribute_tag);
   if (rc < 0)
     return rc;
-  rc = malbinary_decoder_decode_attribute(malbinary_decoder, cursor, self->attributefield_attribute_tag, self->attributefield);
+  rc = malbinary_decoder_decode_attribute(decoder, cursor, self->attributefield_attribute_tag, self->attributefield);
   if (rc < 0)
     return rc;
   return rc;

@@ -18,9 +18,9 @@ bool * testarea_testenumeration_list_get_presence_flags(testarea_testenumeration
 testarea_testenumeration_t * testarea_testenumeration_list_get_content(testarea_testenumeration_list_t * self);
 
 // encoding functions related to transport malbinary
-int testarea_testenumeration_list_add_encoding_length_malbinary(testarea_testenumeration_list_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor);
-int testarea_testenumeration_list_encode_malbinary(testarea_testenumeration_list_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor);
-int testarea_testenumeration_list_decode_malbinary(testarea_testenumeration_list_t * self, malbinary_decoder_t * malbinary_decoder, void * cursor);
+int testarea_testenumeration_list_add_encoding_length_malbinary(testarea_testenumeration_list_t * self, mal_encoder_t *encoder, void *cursor);
+int testarea_testenumeration_list_encode_malbinary(testarea_testenumeration_list_t * self, mal_encoder_t *encoder, void *cursor);
+int testarea_testenumeration_list_decode_malbinary(testarea_testenumeration_list_t * self, mal_decoder_t *decoder, void *cursor);
 
 // test function
 void testarea_testenumeration_list_test(bool verbose);

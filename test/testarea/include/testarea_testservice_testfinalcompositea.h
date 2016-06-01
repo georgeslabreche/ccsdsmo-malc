@@ -16,9 +16,9 @@ void testarea_testservice_testfinalcompositea_set_intfield2(testarea_testservice
 testarea_testservice_testfinalcompositea_t * testarea_testservice_testfinalcompositea_new(void);
 
 // encoding functions related to transport malbinary
-int testarea_testservice_testfinalcompositea_add_encoding_length_malbinary(testarea_testservice_testfinalcompositea_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor);
-int testarea_testservice_testfinalcompositea_encode_malbinary(testarea_testservice_testfinalcompositea_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor);
-int testarea_testservice_testfinalcompositea_decode_malbinary(testarea_testservice_testfinalcompositea_t * self, malbinary_decoder_t * malbinary_decoder, void * cursor);
+int testarea_testservice_testfinalcompositea_add_encoding_length_malbinary(testarea_testservice_testfinalcompositea_t * self, mal_encoder_t * mal_encoder, void * cursor);
+int testarea_testservice_testfinalcompositea_encode_malbinary(testarea_testservice_testfinalcompositea_t * self, mal_encoder_t * mal_encoder, void * cursor);
+int testarea_testservice_testfinalcompositea_decode_malbinary(testarea_testservice_testfinalcompositea_t * self, mal_decoder_t * mal_decoder, void * cursor);
 
 // destructor
 void testarea_testservice_testfinalcompositea_destroy(testarea_testservice_testfinalcompositea_t ** self_p);

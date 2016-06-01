@@ -48,11 +48,11 @@ testarea_testservice_testcomposite_t ** testarea_testservice_testcomposite_list_
 }
 
 // encoding functions related to transport malbinary
-int testarea_testservice_testcomposite_list_add_encoding_length_malbinary(testarea_testservice_testcomposite_list_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor)
+int testarea_testservice_testcomposite_list_add_encoding_length_malbinary(testarea_testservice_testcomposite_list_t * self, mal_encoder_t *encoder, void *cursor)
 {
   int rc = 0;
   unsigned int list_size = self->element_count;
-  malbinary_encoder_add_list_size_encoding_length(malbinary_encoder, list_size, cursor);
+  malbinary_encoder_add_list_size_encoding_length(encoder, list_size, cursor);
   ((malbinary_cursor_t *) cursor)->body_length += list_size;
   testarea_testservice_testcomposite_t ** content = self->content;
   for (int i = 0; i < list_size; i++)
@@ -60,18 +60,18 @@ int testarea_testservice_testcomposite_list_add_encoding_length_malbinary(testar
     testarea_testservice_testcomposite_t * list_element = content[i];
     if (list_element != NULL)
     {
-      rc = testarea_testservice_testcomposite_add_encoding_length_malbinary(list_element, malbinary_encoder, cursor);
+      rc = testarea_testservice_testcomposite_add_encoding_length_malbinary(list_element, encoder, cursor);
       if (rc < 0)
         return rc;
     }
   }
   return rc;
 }
-int testarea_testservice_testcomposite_list_encode_malbinary(testarea_testservice_testcomposite_list_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor)
+int testarea_testservice_testcomposite_list_encode_malbinary(testarea_testservice_testcomposite_list_t * self, mal_encoder_t *encoder, void *cursor)
 {
   int rc = 0;
   unsigned int list_size = self->element_count;
-  rc = malbinary_encoder_encode_list_size(malbinary_encoder, cursor, list_size);
+  rc = malbinary_encoder_encode_list_size(encoder, cursor, list_size);
   if (rc < 0)
     return rc;
   testarea_testservice_testcomposite_t ** content = self->content;
@@ -79,21 +79,21 @@ int testarea_testservice_testcomposite_list_encode_malbinary(testarea_testservic
   {
     testarea_testservice_testcomposite_t *list_element = content[i];
     bool presence_flag = (list_element != NULL);
-    rc = malbinary_encoder_encode_presence_flag(malbinary_encoder, cursor, presence_flag);
+    rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
     if (rc < 0)
       return rc;
     if (presence_flag)
     {
-      rc = testarea_testservice_testcomposite_encode_malbinary(list_element, malbinary_encoder, cursor);
+      rc = testarea_testservice_testcomposite_encode_malbinary(list_element, encoder, cursor);
       if (rc < 0)
         return rc;
     }
   }
   return rc;
 }
-int testarea_testservice_testcomposite_list_decode_malbinary(testarea_testservice_testcomposite_list_t * self, malbinary_decoder_t * malbinary_decoder, void * cursor)
+int testarea_testservice_testcomposite_list_decode_malbinary(testarea_testservice_testcomposite_list_t * self, mal_decoder_t *decoder, void *cursor)
 {
-  int rc = malbinary_decoder_decode_list_size(malbinary_decoder, cursor, &self->element_count);
+  int rc = malbinary_decoder_decode_list_size(decoder, cursor, &self->element_count);
   if (rc < 0)
     return rc;
   if (self->element_count == 0)
@@ -107,14 +107,14 @@ int testarea_testservice_testcomposite_list_decode_malbinary(testarea_testservic
   for (int i = 0; i < self->element_count; i++)
   {
     bool presence_flag;
-    rc = malbinary_decoder_decode_presence_flag(malbinary_decoder, cursor, &presence_flag);
+    rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
     if (rc < 0)
       return rc;
     if (presence_flag)
     {
       self->content[i] = testarea_testservice_testcomposite_new();
       if (self->content[i] == NULL) return -1;
-      rc = testarea_testservice_testcomposite_decode_malbinary(self->content[i], malbinary_decoder, cursor);
+      rc = testarea_testservice_testcomposite_decode_malbinary(self->content[i], decoder, cursor);
       if (rc < 0)
         return rc;
     }

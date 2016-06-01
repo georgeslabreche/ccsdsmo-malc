@@ -26,44 +26,44 @@ testarea_testservice_testupdate_t * testarea_testservice_testupdate_new(void)
 }
 
 // encoding functions related to transport malbinary
-int testarea_testservice_testupdate_add_encoding_length_malbinary(testarea_testservice_testupdate_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor)
+int testarea_testservice_testupdate_add_encoding_length_malbinary(testarea_testservice_testupdate_t * self, mal_encoder_t *encoder, void *cursor)
 {
   int rc = 0;
   ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
   if (self->stringfield != NULL)
   {
-    rc = malbinary_encoder_add_string_encoding_length(malbinary_encoder, self->stringfield, cursor);
+    rc = malbinary_encoder_add_string_encoding_length(encoder, self->stringfield, cursor);
     if (rc < 0)
       return rc;
   }
   return rc;
 }
-int testarea_testservice_testupdate_encode_malbinary(testarea_testservice_testupdate_t * self, malbinary_encoder_t * malbinary_encoder, void * cursor)
+int testarea_testservice_testupdate_encode_malbinary(testarea_testservice_testupdate_t * self, mal_encoder_t *encoder, void *cursor)
 {
   int rc = 0;
   bool presence_flag;
   presence_flag = (self->stringfield != NULL);
-  rc = malbinary_encoder_encode_presence_flag(malbinary_encoder, cursor, presence_flag);
+  rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_encoder_encode_string(malbinary_encoder, cursor, self->stringfield);
+    rc = malbinary_encoder_encode_string(encoder, cursor, self->stringfield);
     if (rc < 0)
       return rc;
   }
   return rc;
 }
-int testarea_testservice_testupdate_decode_malbinary(testarea_testservice_testupdate_t * self, malbinary_decoder_t * malbinary_decoder, void * cursor)
+int testarea_testservice_testupdate_decode_malbinary(testarea_testservice_testupdate_t * self, mal_decoder_t *decoder, void *cursor)
 {
   int rc = 0;
   bool presence_flag;
-  rc = malbinary_decoder_decode_presence_flag(malbinary_decoder, cursor, &presence_flag);
+  rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_decoder_decode_string(malbinary_decoder, cursor, &self->stringfield);
+    rc = malbinary_decoder_decode_string(decoder, cursor, &self->stringfield);
     if (rc < 0)
       return rc;
   }
