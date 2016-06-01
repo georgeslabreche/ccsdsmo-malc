@@ -200,7 +200,7 @@ static mal_uoctet_t convert_to_interaction_stage(int sduType) {
 
 // internal functions, should not be visible from outside this module
 int malzmq_add_string_encoding_length(mal_string_t *to_encode,
-    malzmq_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
+    malzmq_mapping_directory_t *mapping_directory, mal_encoder_t *encoder,
     void *cursor) {
   int rc = 0;
   bool mdk_encode = false;
@@ -220,19 +220,19 @@ int malzmq_add_string_encoding_length(mal_string_t *to_encode,
 }
 
 int malzmq_add_uri_encoding_length(mal_uri_t *to_encode,
-    malzmq_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
+    malzmq_mapping_directory_t *mapping_directory, mal_encoder_t *encoder,
     void *cursor) {
   return malzmq_add_string_encoding_length(to_encode, mapping_directory, encoder, cursor);
 }
 
 int malzmq_add_identifier_encoding_length(mal_identifier_t *to_encode,
-    malzmq_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
+    malzmq_mapping_directory_t *mapping_directory, mal_encoder_t *encoder,
     void *cursor) {
   return malzmq_add_string_encoding_length(to_encode, mapping_directory, encoder, cursor);
 }
 
 int malzmq_add_identifier_list_encoding_length(mal_identifier_list_t *to_encode,
-    malzmq_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder, void *cursor) {
+    malzmq_mapping_directory_t *mapping_directory, mal_encoder_t *encoder, void *cursor) {
   int rc = 0;
   unsigned int list_size = mal_identifier_list_get_element_count(to_encode);
   malbinary_encoder_add_list_size_encoding_length(encoder, list_size, cursor);
@@ -251,7 +251,7 @@ int malzmq_add_identifier_list_encoding_length(mal_identifier_list_t *to_encode,
 }
 
 int malzmq_add_message_encoding_length(malzmq_header_t *malzmq_header,
-    mal_message_t *message, malbinary_encoder_t *encoder,
+    mal_message_t *message, mal_encoder_t *encoder,
     void *cursor) {
   int rc = 0;
 
@@ -328,7 +328,7 @@ int malzmq_add_message_encoding_length(malzmq_header_t *malzmq_header,
 int malzmq_encode_string(
     mal_string_t *to_encode,
     malzmq_mapping_directory_t *mapping_directory,
-    malbinary_encoder_t *encoder,
+    mal_encoder_t *encoder,
     void *cursor) {
   int rc = 0;
   bool mdk_encode = false;
@@ -361,19 +361,19 @@ int malzmq_encode_string(
 }
 
 int malzmq_encode_uri(mal_uri_t *to_encode,
-    malzmq_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
+    malzmq_mapping_directory_t *mapping_directory, mal_encoder_t *encoder,
     void *cursor) {
   return malzmq_encode_string(to_encode, mapping_directory, encoder, cursor);
 }
 
 int malzmq_encode_identifier(mal_identifier_t *to_encode,
-    malzmq_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
+    malzmq_mapping_directory_t *mapping_directory, mal_encoder_t *encoder,
     void *cursor) {
   return malzmq_encode_string(to_encode, mapping_directory, encoder, cursor);
 }
 
 int malzmq_encode_identifier_list(mal_identifier_list_t *to_encode,
-    malzmq_mapping_directory_t *mapping_directory, malbinary_encoder_t *encoder,
+    malzmq_mapping_directory_t *mapping_directory, mal_encoder_t *encoder,
     void *cursor) {
   int rc = 0;
   unsigned int list_size = mal_identifier_list_get_element_count(to_encode);
@@ -396,7 +396,7 @@ int malzmq_encode_identifier_list(mal_identifier_list_t *to_encode,
 }
 
 int malzmq_encode_message(malzmq_header_t *malzmq_header,
-    mal_message_t *message, malbinary_encoder_t *encoder, void *cursor) {
+    mal_message_t *message, mal_encoder_t *encoder, void *cursor) {
   clog_debug(malbinary_encoder_get_logger(encoder), "malzmq_encode_message()\n");
 
   int sdu_type = convert_to_sdu_type(
@@ -485,7 +485,7 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
 
 // internal functions, should not be visible from outside this module
 int malzmq_decode_string(malzmq_mapping_directory_t *mapping_directory,
-    malbinary_decoder_t *decoder, void *cursor, mal_string_t **result) {
+    mal_decoder_t *decoder, void *cursor, mal_string_t **result) {
   int rc = 0;
   // TODO: varint
   int opt_mdk = malbinary_read32(cursor);
@@ -511,13 +511,13 @@ int malzmq_decode_string(malzmq_mapping_directory_t *mapping_directory,
 }
 
 int malzmq_decode_uri(malzmq_mapping_directory_t *mapping_directory,
-    malbinary_decoder_t *decoder, void *cursor,
+    mal_decoder_t *decoder, void *cursor,
     mal_uri_t **result) {
   return malzmq_decode_string(mapping_directory, decoder, cursor, result);
 }
 
 int malzmq_decode_uri_to(malzmq_header_t *malzmq_header,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int length,
+    mal_decoder_t *decoder, char *bytes, unsigned int length,
     mal_uri_t **uri_to) {
   // TODO (AF): Use virtual allocation and initialization functions from encoder.
   malbinary_cursor_t cursor;
@@ -546,13 +546,13 @@ int malzmq_decode_uri_to(malzmq_header_t *malzmq_header,
 }
 
 int malzmq_decode_identifier(malzmq_mapping_directory_t *mapping_directory,
-    malbinary_decoder_t *decoder, void *cursor,
+    mal_decoder_t *decoder, void *cursor,
     mal_identifier_t **result) {
   return malzmq_decode_string(mapping_directory, decoder, cursor, result);
 }
 
 int malzmq_decode_identifier_list(malzmq_mapping_directory_t *mapping_directory,
-    malbinary_decoder_t *decoder, void *cursor,
+    mal_decoder_t *decoder, void *cursor,
     mal_identifier_list_t **result) {
   int rc = 0;
   unsigned int list_size;
@@ -582,7 +582,7 @@ int malzmq_decode_identifier_list(malzmq_mapping_directory_t *mapping_directory,
 }
 
 int malzmq_decode_message(malzmq_header_t *malzmq_header,
-    mal_message_t *message, malbinary_decoder_t *decoder, void *cursor) {
+    mal_message_t *message, mal_decoder_t *decoder, void *cursor) {
   char b = ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++];
 
   unsigned char version = (b >> 5) & 0x07;
