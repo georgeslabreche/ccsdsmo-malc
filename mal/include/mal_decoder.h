@@ -33,13 +33,44 @@ unsigned int mal_decoder_cursor_get_length(mal_decoder_t *self, void *cursor);
 unsigned int mal_decoder_cursor_get_offset(mal_decoder_t *self, void *cursor);
 void mal_decoder_cursor_assert(mal_decoder_t *self, void *cursor);
 
+/* Decoding functions */
+
+short mal_read16(mal_decoder_t *self, void *cursor);
+int mal_read32(mal_decoder_t *self, void *cursor);
+long mal_read64(mal_decoder_t *self, void *cursor);
+int mal_decoder_decode_string(mal_decoder_t *self, void *cursor, mal_string_t **result);
+int mal_decoder_decode_presence_flag(mal_decoder_t *self, void *cursor, bool *result);
+int mal_decoder_decode_short_form(mal_decoder_t *self, void *cursor, long *result);
+int mal_decoder_decode_small_enum(mal_decoder_t *self, void *cursor, int *result);
+int mal_decoder_decode_medium_enum(mal_decoder_t *self, void *cursor, int *result);
+int mal_decoder_decode_large_enum(mal_decoder_t *self, void *cursor, int *result);
+int mal_decoder_decode_integer(mal_decoder_t *self, void *cursor, mal_integer_t *result);
+int mal_decoder_decode_list_size(mal_decoder_t *self, void *cursor, unsigned int *result);
+int mal_decoder_decode_uri(mal_decoder_t *self, void *cursor, mal_uri_t **result);
+int mal_decoder_decode_blob(mal_decoder_t *self, void *cursor, mal_blob_t **result);
+int mal_decoder_decode_time(mal_decoder_t *self, void *cursor, mal_time_t *result);
+int mal_decoder_decode_uinteger(mal_decoder_t *self, void *cursor, mal_uinteger_t *result);
+int mal_decoder_decode_identifier(mal_decoder_t *self, void *cursor, mal_identifier_t **result);
+int mal_decoder_decode_uoctet(mal_decoder_t *self, void *cursor, mal_uoctet_t *result);
+int mal_decoder_decode_long(mal_decoder_t *self, void *cursor, mal_long_t *result);
+int mal_decoder_decode_ushort(mal_decoder_t *self, void *cursor, mal_ushort_t *result);
+int mal_decoder_decode_boolean(mal_decoder_t *self, void *cursor, mal_boolean_t *result);
+int mal_decoder_decode_duration(mal_decoder_t *self, void *cursor, mal_duration_t *result);
+int mal_decoder_decode_float(mal_decoder_t *self, void *cursor, mal_float_t *result);
+int mal_decoder_decode_double(mal_decoder_t *self, void *cursor, mal_double_t *result);
+int mal_decoder_decode_octet(mal_decoder_t *self, void *cursor, mal_octet_t *result);
+int mal_decoder_decode_short(mal_decoder_t *self, void *cursor, mal_short_t *result);
+int mal_decoder_decode_ulong(mal_decoder_t *self, void *cursor, mal_ulong_t *result);
+int mal_decoder_decode_finetime(mal_decoder_t *self, void *cursor, mal_finetime_t *result);
+int mal_decoder_decode_attribute(mal_decoder_t *decoder, void *cursor,
+    unsigned char attribute_tag, union mal_attribute_t self);
+int mal_decoder_decode_attribute_tag(mal_decoder_t *self, void *cursor, unsigned char *result);
+
 /** ***** ***** ***** ***** ***** ***** ***** ***** ***** *****
  * Encoding SPI
  * ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** */
 
-/*
- * Cursor manipulation.
- */
+/* Cursor manipulation */
 
 typedef void *mal_decoder_new_cursor_fn(char *bytes, unsigned int length, unsigned int offset);
 typedef void mal_decoder_cursor_destroy_fn(void *cursor);
@@ -49,9 +80,7 @@ typedef unsigned int mal_decoder_cursor_get_length_fn(void *cursor);
 typedef unsigned int mal_decoder_cursor_get_offset_fn(void *cursor);
 typedef void mal_decoder_cursor_assert_fn(void *cursor);
 
-/*
- * Decoding functions.
- */
+/* Decoding functions */
 
 typedef short mal_read16_fn(void *cursor);
 typedef int mal_read32_fn(void *cursor);
@@ -85,12 +114,9 @@ typedef int mal_decoder_decode_attribute_fn(mal_decoder_t *decoder, void *cursor
 typedef int mal_decoder_decode_attribute_tag_fn(mal_decoder_t *self, void *cursor, unsigned char *result);
 
 /*
- * Handles structure initialization.
- *
- * TODO (AF): The use of this function in malbinary causes a circular
- * dependency !!
+ * Prototype of initialization function for decoding handles structure.
  */
-void mal_decoder_initialize_functions(
+typedef void mal_decoder_initialize_functions_fn(
     mal_decoder_t *self,
     mal_decoder_new_cursor_fn *new_cursor,
     mal_decoder_cursor_destroy_fn *cursor_destroy,
@@ -129,6 +155,13 @@ void mal_decoder_initialize_functions(
     mal_decoder_decode_attribute_fn *mal_decoder_decode_attribute,
     mal_decoder_decode_attribute_tag_fn *mal_decoder_decode_attribute_tag);
 
+/*
+ * Currently this function can not be used by the decoding modules as it causes
+ * a circular dependency. Decoding modules must declare an initialization function
+ * with exactly the same signature and code.
+ */
+mal_decoder_initialize_functions_fn mal_decoder_initialize_functions;
+
 // TODO (AF): This structure should be private to the MAL:
 //  -1- The encoding module initializes it through the mal_decoder_initialize_fn.
 //  -2- The users (consumer, provider, stubs) uses it through the mal_decoder functions.
@@ -139,9 +172,7 @@ struct _mal_decoder_t {
   bool varint_supported;
   clog_logger_t logger;
 
-  /*
-   * Cursor manipulation.
-   */
+  /* Cursor manipulation */
 
   mal_decoder_new_cursor_fn *new_cursor;
   mal_decoder_cursor_destroy_fn *cursor_destroy;
@@ -151,9 +182,7 @@ struct _mal_decoder_t {
   mal_decoder_cursor_get_offset_fn *cursor_get_offset;
   mal_decoder_cursor_assert_fn *cursor_assert;
 
-  /*
-   * Decoding functions.
-   */
+  /* Decoding functions */
 
   mal_read16_fn *mal_read16;
   mal_read32_fn *mal_read32;
