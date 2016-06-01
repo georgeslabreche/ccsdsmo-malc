@@ -255,7 +255,7 @@ int malzmq_add_message_encoding_length(malzmq_header_t *malzmq_header,
     void *cursor) {
   int rc = 0;
 
-  clog_debug(malbinary_encoder_get_logger(encoder), "malzmq_add_message_encoding_length()\n");
+  clog_debug(mal_encoder_get_logger(encoder), "malzmq_add_message_encoding_length()\n");
 
   // +1 byte: version + sdu type
   // +2 bytes: service area
@@ -397,7 +397,7 @@ int malzmq_encode_identifier_list(mal_identifier_list_t *to_encode,
 
 int malzmq_encode_message(malzmq_header_t *malzmq_header,
     mal_message_t *message, mal_encoder_t *encoder, void *cursor) {
-  clog_debug(malbinary_encoder_get_logger(encoder), "malzmq_encode_message()\n");
+  clog_debug(mal_encoder_get_logger(encoder), "malzmq_encode_message()\n");
 
   int sdu_type = convert_to_sdu_type(
       mal_message_get_interaction_type(message),
