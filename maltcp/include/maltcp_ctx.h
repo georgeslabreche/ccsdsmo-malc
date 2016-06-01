@@ -31,7 +31,7 @@ maltcp_ctx_t *maltcp_ctx_new(
     maltcp_mapping_uri_t *mapping_uri,
     char *hostname, char *port,
     maltcp_header_t *maltcp_header,
-    malbinary_encoder_t *encoder, malbinary_decoder_t *decoder,
+    mal_encoder_t *encoder, mal_decoder_t *decoder,
     bool verbose);
 
 int maltcp_ctx_start(maltcp_ctx_t *self);
