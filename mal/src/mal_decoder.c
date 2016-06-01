@@ -2,7 +2,6 @@
  */
 
 // TODO (AF): To remove
-//#include "mal.h"
 #include "malattributes.h"
 #include "mal_decoder.h"
 
@@ -54,11 +53,129 @@ void mal_decoder_cursor_assert(mal_decoder_t *self, void *cursor) {
   self->cursor_assert(cursor);
 }
 
+/* Decoding functions */
+
+short mal_read16(mal_decoder_t *self, void *cursor) {
+  return self->mal_read16(cursor);
+}
+
+int mal_read32(mal_decoder_t *self, void *cursor) {
+  return self->mal_read32(cursor);
+}
+
+long mal_read64(mal_decoder_t *self, void *cursor) {
+  return self->mal_read64(cursor);
+}
+
+int mal_decoder_decode_string(mal_decoder_t *self, void *cursor, mal_string_t **result) {
+  return self->mal_decoder_decode_string(self, cursor, result);
+}
+
+int mal_decoder_decode_presence_flag(mal_decoder_t *self, void *cursor, bool *result) {
+  return self->mal_decoder_decode_presence_flag(self, cursor, result);
+}
+
+int mal_decoder_decode_short_form(mal_decoder_t *self, void *cursor, long *result) {
+  return self->mal_decoder_decode_short_form(self, cursor, result);
+}
+
+int mal_decoder_decode_small_enum(mal_decoder_t *self, void *cursor, int *result) {
+  return self->mal_decoder_decode_small_enum(self, cursor, result);
+}
+
+int mal_decoder_decode_medium_enum(mal_decoder_t *self, void *cursor, int *result) {
+  return self->mal_decoder_decode_medium_enum(self, cursor, result);
+}
+
+int mal_decoder_decode_large_enum(mal_decoder_t *self, void *cursor, int *result) {
+  return self->mal_decoder_decode_large_enum(self, cursor, result);
+}
+
+int mal_decoder_decode_integer(mal_decoder_t *self, void *cursor, mal_integer_t *result) {
+  return self->mal_decoder_decode_integer(self, cursor, result);
+}
+
+int mal_decoder_decode_list_size(mal_decoder_t *self, void *cursor, unsigned int *result) {
+  return self->mal_decoder_decode_list_size(self, cursor, result);
+}
+
+int mal_decoder_decode_uri(mal_decoder_t *self, void *cursor, mal_uri_t **result) {
+  return self->mal_decoder_decode_uri(self, cursor, result);
+}
+
+int mal_decoder_decode_blob(mal_decoder_t *self, void *cursor, mal_blob_t **result) {
+  return self->mal_decoder_decode_blob(self, cursor, result);
+}
+
+int mal_decoder_decode_time(mal_decoder_t *self, void *cursor, mal_time_t *result) {
+  return self->mal_decoder_decode_time(self, cursor, result);
+}
+
+int mal_decoder_decode_uinteger(mal_decoder_t *self, void *cursor, mal_uinteger_t *result) {
+  return self->mal_decoder_decode_uinteger(self, cursor, result);
+}
+
+int mal_decoder_decode_identifier(mal_decoder_t *self, void *cursor, mal_identifier_t **result) {
+  return self->mal_decoder_decode_identifier(self, cursor, result);
+}
+
+int mal_decoder_decode_uoctet(mal_decoder_t *self, void *cursor, mal_uoctet_t *result) {
+  return self->mal_decoder_decode_uoctet(self, cursor, result);
+}
+
+int mal_decoder_decode_long(mal_decoder_t *self, void *cursor, mal_long_t *result) {
+  return self->mal_decoder_decode_long(self, cursor, result);
+}
+
+int mal_decoder_decode_ushort(mal_decoder_t *self, void *cursor, mal_ushort_t *result) {
+  return self->mal_decoder_decode_ushort(self, cursor, result);
+}
+
+int mal_decoder_decode_boolean(mal_decoder_t *self, void *cursor, mal_boolean_t *result) {
+  return self->mal_decoder_decode_boolean(self, cursor, result);
+}
+
+int mal_decoder_decode_duration(mal_decoder_t *self, void *cursor, mal_duration_t *result) {
+  return self->mal_decoder_decode_duration(self, cursor, result);
+}
+
+int mal_decoder_decode_float(mal_decoder_t *self, void *cursor, mal_float_t *result) {
+  return self->mal_decoder_decode_float(self, cursor, result);
+}
+
+int mal_decoder_decode_double(mal_decoder_t *self, void *cursor, mal_double_t *result) {
+  return self->mal_decoder_decode_double(self, cursor, result);
+}
+
+int mal_decoder_decode_octet(mal_decoder_t *self, void *cursor, mal_octet_t *result) {
+  return self->mal_decoder_decode_octet(self, cursor, result);
+}
+
+int mal_decoder_decode_short(mal_decoder_t *self, void *cursor, mal_short_t *result) {
+  return self->mal_decoder_decode_short(self, cursor, result);
+}
+
+int mal_decoder_decode_ulong(mal_decoder_t *self, void *cursor, mal_ulong_t *result) {
+  return self->mal_decoder_decode_ulong(self, cursor, result);
+}
+
+int mal_decoder_decode_finetime(mal_decoder_t *self, void *cursor, mal_finetime_t *result) {
+  return self->mal_decoder_decode_finetime(self, cursor, result);
+}
+
+int mal_decoder_decode_attribute(mal_decoder_t *decoder, void *cursor,
+    unsigned char attribute_tag, union mal_attribute_t self) {
+  return decoder->mal_decoder_decode_attribute(decoder, cursor, attribute_tag, self);
+}
+
+int mal_decoder_decode_attribute_tag(mal_decoder_t *self, void *cursor, unsigned char *result) {
+  return self->mal_decoder_decode_attribute_tag(self, cursor, result);
+}
+
 /*
- * Handles structure initialization.
- *
- * TODO (AF): The use of this function in malbinary causes a circular
- * dependency !!
+ * Currently this function can not be used by the decoding modules as it causes
+ * a circular dependency. Decoding modules must declare an initialization function
+ * with exactly the same signature and code.
  */
 void mal_decoder_initialize_functions(
     mal_decoder_t *self,
@@ -98,9 +215,7 @@ void mal_decoder_initialize_functions(
     mal_decoder_decode_finetime_fn *mal_decoder_decode_finetime,
     mal_decoder_decode_attribute_fn *mal_decoder_decode_attribute,
     mal_decoder_decode_attribute_tag_fn *mal_decoder_decode_attribute_tag) {
-  /*
-   * Cursor manipulation.
-   */
+  /* Cursor manipulation */
 
   self->new_cursor = new_cursor;
   self->cursor_destroy = cursor_destroy;
@@ -110,9 +225,7 @@ void mal_decoder_initialize_functions(
   self->cursor_get_offset = cursor_get_offset;
   self->cursor_assert = cursor_assert;
 
-  /*
-   * Decoding functions.
-   */
+  /* Decoding functions */
 
   self->mal_read16 = mal_read16;
   self->mal_read32 = mal_read32;
