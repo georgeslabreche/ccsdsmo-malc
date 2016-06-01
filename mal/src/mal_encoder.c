@@ -20,6 +20,10 @@ clog_logger_t mal_encoder_get_logger(mal_encoder_t *self) {
   return self->logger;
 }
 
+bool mal_encoder_is_varint(mal_encoder_t *encoder) {
+  return encoder->varint_supported;
+}
+
 /*
  * Cursor manipulation.
  */

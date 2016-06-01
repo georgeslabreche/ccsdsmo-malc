@@ -17,6 +17,10 @@ clog_logger_t mal_decoder_get_logger(mal_decoder_t *self) {
   return self->logger;
 }
 
+bool mal_decoder_is_varint(mal_decoder_t *decoder) {
+  return decoder->varint_supported;
+}
+
 /*
  * Cursor manipulation.
  */

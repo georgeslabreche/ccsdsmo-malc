@@ -17,6 +17,8 @@ int mal_encoder_get_encoding_format_code(mal_encoder_t *self);
 void mal_encoder_set_log_level(mal_encoder_t *self, int level);
 clog_logger_t mal_encoder_get_logger(mal_encoder_t *self);
 
+bool mal_encoder_is_varint(mal_encoder_t *encoder);
+
 /*
  * Cursor manipulation.
  */
