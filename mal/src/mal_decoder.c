@@ -25,33 +25,28 @@ bool mal_decoder_is_varint(mal_decoder_t *decoder) {
  * Cursor manipulation.
  */
 
+/** Creates a new decoding cursor */
 void *mal_decoder_new_cursor(mal_decoder_t *self, char *bytes, unsigned int length, unsigned int offset) {
   return self->new_cursor(bytes, length, offset);
 }
 
+/** Reset a decoding cursor for reuse */
+void mal_decoder_cursor_reset(mal_decoder_t *self, void *cursor, char *bytes, unsigned int length, unsigned int offset) {
+  self->cursor_reset(cursor, bytes, length, offset);
+}
+
+/** Destroy an decoding cursor */
 void mal_decoder_cursor_destroy(mal_decoder_t *self, void *cursor) {
   self->cursor_destroy(cursor);
 }
-
-void mal_decoder_cursor_init(mal_decoder_t *self, void *cursor, char *bytes, unsigned int length, unsigned int offset) {
-  self->cursor_init(cursor, bytes, length, offset);
-}
-
-
-void mal_decoder_cursor_reset(mal_decoder_t *self, void *cursor) {
-  self->cursor_reset(cursor);
-}
-
 
 unsigned int mal_decoder_cursor_get_length(mal_decoder_t *self, void *cursor) {
   return self->cursor_get_length(cursor);
 }
 
-
 unsigned int mal_decoder_cursor_get_offset(mal_decoder_t *self, void *cursor) {
   return self->cursor_get_offset(cursor);
 }
-
 
 void mal_decoder_cursor_assert(mal_decoder_t *self, void *cursor) {
   self->cursor_assert(cursor);
@@ -184,9 +179,8 @@ int mal_decoder_decode_attribute_tag(mal_decoder_t *self, void *cursor, unsigned
 void mal_decoder_initialize_functions(
     mal_decoder_t *self,
     mal_decoder_new_cursor_fn *new_cursor,
-    mal_decoder_cursor_destroy_fn *cursor_destroy,
-    mal_decoder_cursor_init_fn *cursor_init,
     mal_decoder_cursor_reset_fn *cursor_reset,
+    mal_decoder_cursor_destroy_fn *cursor_destroy,
     mal_decoder_cursor_get_length_fn *cursor_get_length,
     mal_decoder_cursor_get_offset_fn *cursor_get_offset,
     mal_decoder_cursor_assert_fn *cursor_assert,
@@ -222,9 +216,8 @@ void mal_decoder_initialize_functions(
   /* Cursor manipulation */
 
   self->new_cursor = new_cursor;
-  self->cursor_destroy = cursor_destroy;
-  self->cursor_init = cursor_init;
   self->cursor_reset = cursor_reset;
+  self->cursor_destroy = cursor_destroy;
   self->cursor_get_length = cursor_get_length;
   self->cursor_get_offset = cursor_get_offset;
   self->cursor_assert = cursor_assert;

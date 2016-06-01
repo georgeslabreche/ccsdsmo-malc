@@ -28,14 +28,17 @@ bool mal_encoder_is_varint(mal_encoder_t *encoder) {
  * Cursor manipulation.
  */
 
+/** Creates a new encoding cursor, ready to calculate encoding size */
 void *mal_encoder_new_cursor(mal_encoder_t *self) {
   return self->new_cursor();
 }
 
-void mal_encoder_cursor_destroy(mal_encoder_t *self, void *cursor) {
-  self->cursor_destroy(cursor);
+/** Resets an encoding cursor for reuse, ready to calculate encoding size */
+void mal_encoder_cursor_reset(mal_encoder_t *self, void *cursor) {
+  self->cursor_reset(cursor);
 }
 
+/** Initializes the encoding cursor for encoding phase */
 void mal_encoder_cursor_init(
     mal_encoder_t *self,
     void *cursor,
@@ -43,8 +46,9 @@ void mal_encoder_cursor_init(
   self->cursor_init(cursor, bytes, length, offset);
 }
 
-void mal_encoder_cursor_reset(mal_encoder_t *self, void *cursor) {
-  self->cursor_reset(cursor);
+/** Destroy an encoding cursor */
+void mal_encoder_cursor_destroy(mal_encoder_t *self, void *cursor) {
+  self->cursor_destroy(cursor);
 }
 
 unsigned int mal_encoder_cursor_get_length(mal_encoder_t *self, void *cursor) {
@@ -290,9 +294,9 @@ int mal_encoder_encode_attribute_tag(mal_encoder_t *self, void *cursor, unsigned
 void mal_encoder_initialize_functions(
     mal_encoder_t *self,
     mal_encoder_new_cursor_fn *new_cursor,
-    mal_encoder_cursor_destroy_fn *cursor_destroy,
-    mal_encoder_cursor_init_fn *cursor_init,
     mal_encoder_cursor_reset_fn *cursor_reset,
+    mal_encoder_cursor_init_fn *cursor_init,
+    mal_encoder_cursor_destroy_fn *cursor_destroy,
     mal_encoder_cursor_get_length_fn *cursor_get_length,
     mal_encoder_cursor_get_offset_fn *cursor_get_offset,
     mal_encoder_cursor_assert_fn *cursor_assert,
@@ -353,9 +357,9 @@ void mal_encoder_initialize_functions(
   /* Cursor manipulation */
 
   self->new_cursor = new_cursor;
-  self->cursor_destroy = cursor_destroy;
-  self->cursor_init = cursor_init;
   self->cursor_reset = cursor_reset;
+  self->cursor_init = cursor_init;
+  self->cursor_destroy = cursor_destroy;
   self->cursor_get_length = cursor_get_length;
   self->cursor_get_offset = cursor_get_offset;
   self->cursor_assert = cursor_assert;

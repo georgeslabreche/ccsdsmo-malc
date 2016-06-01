@@ -23,6 +23,12 @@ void *malbinary_decoder_new_cursor(char *bytes, unsigned int length, unsigned in
   return (void *) cursor;
 }
 
+void  malbinary_decoder_cursor_reset(void *cursor,
+    char *bytes, unsigned int length, unsigned int offset) {
+  malbinary_cursor_reset(cursor);
+  malbinary_cursor_init(cursor, bytes, length, offset);
+}
+
 short malbinary_read16(void *cursor) {
   unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;;
   short res = (short) ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & 0xFF) << 8);
@@ -447,9 +453,8 @@ void malbinary_init_decode_functions(mal_decoder_t *self) {
   // same signature and code of the corresponding MAL function.
   malbinary_decoder_initialize_functions(self,
       malbinary_decoder_new_cursor,
+      malbinary_decoder_cursor_reset,
       malbinary_cursor_destroy,
-      malbinary_cursor_init,
-      malbinary_cursor_reset,
       malbinary_cursor_get_length,
       malbinary_cursor_get_offset,
       malbinary_cursor_assert,
@@ -489,9 +494,8 @@ void malbinary_init_decode_functions(mal_decoder_t *self) {
 void malbinary_decoder_initialize_functions(
     mal_decoder_t *self,
     mal_decoder_new_cursor_fn *new_cursor,
-    mal_decoder_cursor_destroy_fn *cursor_destroy,
-    mal_decoder_cursor_init_fn *cursor_init,
     mal_decoder_cursor_reset_fn *cursor_reset,
+    mal_decoder_cursor_destroy_fn *cursor_destroy,
     mal_decoder_cursor_get_length_fn *cursor_get_length,
     mal_decoder_cursor_get_offset_fn *cursor_get_offset,
     mal_decoder_cursor_assert_fn *cursor_assert,
@@ -524,10 +528,10 @@ void malbinary_decoder_initialize_functions(
     mal_decoder_decode_finetime_fn *mal_decoder_decode_finetime,
     mal_decoder_decode_attribute_fn *mal_decoder_decode_attribute,
     mal_decoder_decode_attribute_tag_fn *mal_decoder_decode_attribute_tag) {
+  // TODO (AF): Initializes the structure with parameters !!
   self->new_cursor = malbinary_decoder_new_cursor;
+  self->cursor_reset = malbinary_decoder_cursor_reset;
   self->cursor_destroy = malbinary_cursor_destroy;
-  self->cursor_init = malbinary_cursor_init;
-  self->cursor_reset = malbinary_cursor_reset;
   self->cursor_get_length = malbinary_cursor_get_length;
   self->cursor_get_offset = malbinary_cursor_get_offset;
   self->cursor_assert = malbinary_cursor_assert;

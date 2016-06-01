@@ -8,6 +8,8 @@ extern "C" {
 #endif
 
 mal_decoder_t *malbinary_decoder_new(bool varint_supported);
+void  malbinary_decoder_cursor_reset(void *cursor,
+    char *bytes, unsigned int length, unsigned int offset);
 void malbinary_init_decode_functions(mal_decoder_t *decoder);
 
 void malbinary_decoder_set_log_level(mal_decoder_t *self, int level);

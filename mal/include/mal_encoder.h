@@ -23,12 +23,18 @@ bool mal_encoder_is_varint(mal_encoder_t *encoder);
  * Cursor manipulation.
  */
 
+/** Creates a new encoding cursor, ready to calculate encoding size */
 void *mal_encoder_new_cursor(mal_encoder_t *self);
-void mal_encoder_cursor_destroy(mal_encoder_t *self, void *cursor);
-void mal_encoder_cursor_init(mal_encoder_t *self, void *cursor, char *bytes, unsigned int length, unsigned int offset);
+/** Resets an encoding cursor for reuse, ready to calculate encoding size */
 void mal_encoder_cursor_reset(mal_encoder_t *self, void *cursor);
+/** Initializes the encoding cursor for encoding phase */
+void mal_encoder_cursor_init(mal_encoder_t *self, void *cursor, char *bytes, unsigned int length, unsigned int offset);
+/** Destroy an encoding cursor */
+void mal_encoder_cursor_destroy(mal_encoder_t *self, void *cursor);
+
 unsigned int mal_encoder_cursor_get_length(mal_encoder_t *self, void *cursor);
 unsigned int mal_encoder_cursor_get_offset(mal_encoder_t *self, void *cursor);
+
 void mal_encoder_cursor_assert(mal_encoder_t *self, void *cursor);
 
 /* Encoding length functions */
@@ -99,10 +105,14 @@ int mal_encoder_encode_attribute_tag(mal_encoder_t *encoder, void *cursor, unsig
 
 /* Cursor manipulation */
 
+/** Creates a new encoding cursor, ready to calculate encoding size */
 typedef void *mal_encoder_new_cursor_fn();
-typedef void mal_encoder_cursor_destroy_fn(void *cursor);
-typedef void mal_encoder_cursor_init_fn(void *cursor, char *bytes, unsigned int length, unsigned int offset);
+/** Resets an encoding cursor for reuse, ready to calculate encoding size */
 typedef void mal_encoder_cursor_reset_fn(void *cursor);
+/** Initializes the encoding cursor for encoding phase */
+typedef void mal_encoder_cursor_init_fn(void *cursor, char *bytes, unsigned int length, unsigned int offset);
+/** Destroy an encoding cursor */
+typedef void mal_encoder_cursor_destroy_fn(void *cursor);
 typedef unsigned int mal_encoder_cursor_get_length_fn(void *cursor);
 typedef unsigned int mal_encoder_cursor_get_offset_fn(void *cursor);
 typedef void mal_encoder_cursor_assert_fn(void *cursor);
@@ -175,9 +185,9 @@ typedef int mal_encoder_encode_attribute_tag_fn(mal_encoder_t *encoder, void *cu
 typedef void mal_encoder_initialize_functions_fn(
     mal_encoder_t *self,
     mal_encoder_new_cursor_fn *new_cursor,
-    mal_encoder_cursor_destroy_fn *cursor_destroy,
-    mal_encoder_cursor_init_fn *cursor_init,
     mal_encoder_cursor_reset_fn *cursor_reset,
+    mal_encoder_cursor_init_fn *cursor_init,
+    mal_encoder_cursor_destroy_fn *cursor_destroy,
     mal_encoder_cursor_get_length_fn *cursor_get_length,
     mal_encoder_cursor_get_offset_fn *cursor_get_offset,
     mal_encoder_cursor_assert_fn *cursor_assert,
@@ -256,9 +266,9 @@ struct _mal_encoder_t {
   /* Cursor manipulation */
 
   mal_encoder_new_cursor_fn *new_cursor;
-  mal_encoder_cursor_destroy_fn *cursor_destroy;
-  mal_encoder_cursor_init_fn *cursor_init;
   mal_encoder_cursor_reset_fn *cursor_reset;
+  mal_encoder_cursor_init_fn *cursor_init;
+  mal_encoder_cursor_destroy_fn *cursor_destroy;
   mal_encoder_cursor_get_length_fn *cursor_get_length;
   mal_encoder_cursor_get_offset_fn *cursor_get_offset;
   mal_encoder_cursor_assert_fn *cursor_assert;

@@ -27,12 +27,16 @@ bool mal_decoder_is_varint(mal_decoder_t *decoder);
  * Cursor manipulation.
  */
 
+/** Creates a new decoding cursor */
 void *mal_decoder_new_cursor(mal_decoder_t *self, char *bytes, unsigned int length, unsigned int offset);
+/** Reset a decoding cursor for reuse */
+void mal_decoder_cursor_reset(mal_decoder_t *self, void *cursor, char *bytes, unsigned int length, unsigned int offset);
+/** Destroy an decoding cursor */
 void mal_decoder_cursor_destroy(mal_decoder_t *self, void *cursor);
-void mal_decoder_cursor_init(mal_decoder_t *self, void *cursor, char *bytes, unsigned int length, unsigned int offset);
-void mal_decoder_cursor_reset(mal_decoder_t *self, void *cursor);
+
 unsigned int mal_decoder_cursor_get_length(mal_decoder_t *self, void *cursor);
 unsigned int mal_decoder_cursor_get_offset(mal_decoder_t *self, void *cursor);
+
 void mal_decoder_cursor_assert(mal_decoder_t *self, void *cursor);
 
 /* Decoding functions */
@@ -74,10 +78,12 @@ int mal_decoder_decode_attribute_tag(mal_decoder_t *self, void *cursor, unsigned
 
 /* Cursor manipulation */
 
+/** Creates a new decoding cursor */
 typedef void *mal_decoder_new_cursor_fn(char *bytes, unsigned int length, unsigned int offset);
+/** Reset a decoding cursor for reuse */
+typedef void mal_decoder_cursor_reset_fn(void *cursor, char *bytes, unsigned int length, unsigned int offset);
+/** Destroy an decoding cursor */
 typedef void mal_decoder_cursor_destroy_fn(void *cursor);
-typedef void mal_decoder_cursor_init_fn(void *cursor, char *bytes, unsigned int length, unsigned int offset);
-typedef void mal_decoder_cursor_reset_fn(void *cursor);
 typedef unsigned int mal_decoder_cursor_get_length_fn(void *cursor);
 typedef unsigned int mal_decoder_cursor_get_offset_fn(void *cursor);
 typedef void mal_decoder_cursor_assert_fn(void *cursor);
@@ -121,9 +127,8 @@ typedef int mal_decoder_decode_attribute_tag_fn(mal_decoder_t *self, void *curso
 typedef void mal_decoder_initialize_functions_fn(
     mal_decoder_t *self,
     mal_decoder_new_cursor_fn *new_cursor,
-    mal_decoder_cursor_destroy_fn *cursor_destroy,
-    mal_decoder_cursor_init_fn *cursor_init,
     mal_decoder_cursor_reset_fn *cursor_reset,
+    mal_decoder_cursor_destroy_fn *cursor_destroy,
     mal_decoder_cursor_get_length_fn *cursor_get_length,
     mal_decoder_cursor_get_offset_fn *cursor_get_offset,
     mal_decoder_cursor_assert_fn *cursor_assert,
@@ -177,9 +182,8 @@ struct _mal_decoder_t {
   /* Cursor manipulation */
 
   mal_decoder_new_cursor_fn *new_cursor;
-  mal_decoder_cursor_destroy_fn *cursor_destroy;
-  mal_decoder_cursor_init_fn *cursor_init;
   mal_decoder_cursor_reset_fn *cursor_reset;
+  mal_decoder_cursor_destroy_fn *cursor_destroy;
   mal_decoder_cursor_get_length_fn *cursor_get_length;
   mal_decoder_cursor_get_offset_fn *cursor_get_offset;
   mal_decoder_cursor_assert_fn *cursor_assert;
