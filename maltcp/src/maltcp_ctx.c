@@ -19,8 +19,8 @@ struct _maltcp_ctx_t {
   void *endpoints_socket;   // inproc connected to endpoints
   zloop_t *zloop;
   maltcp_header_t *maltcp_header;
-  malbinary_encoder_t *encoder;
-  malbinary_decoder_t *decoder;
+  mal_encoder_t *encoder;
+  mal_decoder_t *decoder;
 };
 
 //  --------------------------------------------------------------------------
@@ -432,7 +432,7 @@ maltcp_ctx_t *maltcp_ctx_new(mal_ctx_t *mal_ctx,
     maltcp_mapping_uri_t *mapping_uri,
     char *hostname, char *port,
     maltcp_header_t *maltcp_header,
-    malbinary_encoder_t *encoder, malbinary_decoder_t *decoder,
+    mal_encoder_t *encoder, mal_decoder_t *decoder,
     bool verbose) {
   maltcp_ctx_t *self = (maltcp_ctx_t *) malloc(sizeof(maltcp_ctx_t));
   if (!self)
@@ -605,12 +605,12 @@ int maltcp_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
   if (rc < 0)
     return rc;
 
-  clog_debug(maltcp_logger, "maltcp_ctx: encoding_length=%d\n", malbinary_cursor_get_body_length(&cursor));
+  clog_debug(maltcp_logger, "maltcp_ctx: encoding_length=%d\n", malbinary_cursor_get_length(&cursor));
 
   // TODO (AF): Replace by a virtual function
   malbinary_cursor_init(&cursor,
-      (char *) malloc(malbinary_cursor_get_body_length(&cursor)),
-      malbinary_cursor_get_body_length(&cursor),
+      (char *) malloc(malbinary_cursor_get_length(&cursor)),
+      malbinary_cursor_get_length(&cursor),
       0);
   // TODO (AF): to remove
 //  char *bytes = (char *) malloc(encoding_length);
@@ -624,7 +624,7 @@ int maltcp_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
   if (rc < 0)
     return rc;
 
-  clog_debug(maltcp_logger, "maltcp_ctx: message is encoded: %d bytes\n", malbinary_cursor_get_body_offset(&cursor));
+  clog_debug(maltcp_logger, "maltcp_ctx: message is encoded: %d bytes\n", malbinary_cursor_get_offset(&cursor));
 
   //zframe_t *frame = zframe_new(bytes, encoding_length);
   clog_debug(maltcp_logger, "maltcp_ctx: send zmq message\n");
@@ -644,8 +644,8 @@ int maltcp_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
 
     /* Sends the ID frame followed by the response */
     zmq_send (socket, id, id_size, ZMQ_SNDMORE);
-    zmq_send (socket, cursor.body_ptr, malbinary_cursor_get_body_length(&cursor), 0);
-    clog_debug(maltcp_logger, "maltcp_ctx: zmq message (%d) sended.\n", malbinary_cursor_get_body_length(&cursor));
+    zmq_send (socket, cursor.body_ptr, malbinary_cursor_get_length(&cursor), 0);
+    clog_debug(maltcp_logger, "maltcp_ctx: zmq message (%d) sended.\n", malbinary_cursor_get_length(&cursor));
 
     /* TODO: use zmq_msg_* ?
     zmq_msg_t msg;

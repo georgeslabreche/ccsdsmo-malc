@@ -199,23 +199,23 @@ static mal_uoctet_t convert_to_interaction_stage(int sduType) {
  }*/
 
 // internal functions, should not be visible from outside this module
-int maltcp_add_string_encoding_length(mal_string_t *to_encode, malbinary_encoder_t *encoder,
+int maltcp_add_string_encoding_length(mal_string_t *to_encode, mal_encoder_t *encoder,
     void *cursor) {
   return malbinary_encoder_add_string_encoding_length(encoder, to_encode, cursor);
 }
 
-int maltcp_add_uri_encoding_length(mal_uri_t *to_encode, malbinary_encoder_t *encoder,
+int maltcp_add_uri_encoding_length(mal_uri_t *to_encode, mal_encoder_t *encoder,
     void *cursor) {
   return maltcp_add_string_encoding_length(to_encode, encoder, cursor);
 }
 
-int maltcp_add_identifier_encoding_length(mal_identifier_t *to_encode, malbinary_encoder_t *encoder,
+int maltcp_add_identifier_encoding_length(mal_identifier_t *to_encode, mal_encoder_t *encoder,
     void *cursor) {
   return maltcp_add_string_encoding_length(to_encode, encoder, cursor);
 }
 
 int maltcp_add_identifier_list_encoding_length(mal_identifier_list_t *to_encode,
-     malbinary_encoder_t *encoder, void *cursor) {
+     mal_encoder_t *encoder, void *cursor) {
   int rc = 0;
   unsigned int list_size = mal_identifier_list_get_element_count(to_encode);
   malbinary_encoder_add_list_size_encoding_length(encoder, list_size, cursor);
@@ -234,7 +234,7 @@ int maltcp_add_identifier_list_encoding_length(mal_identifier_list_t *to_encode,
 }
 
 int maltcp_add_message_encoding_length(maltcp_header_t *maltcp_header,
-    mal_message_t *message, malbinary_encoder_t *encoder,
+    mal_message_t *message, mal_encoder_t *encoder,
     void *cursor) {
   int rc = 0;
 
@@ -307,18 +307,18 @@ int maltcp_add_message_encoding_length(maltcp_header_t *maltcp_header,
   return rc;
 }
 
-int maltcp_encode_uri(mal_uri_t *to_encode, malbinary_encoder_t *encoder,
+int maltcp_encode_uri(mal_uri_t *to_encode, mal_encoder_t *encoder,
     void *cursor) {
   return malbinary_encoder_encode_string(encoder, cursor, to_encode);
 }
 
-int maltcp_encode_identifier(mal_identifier_t *to_encode, malbinary_encoder_t *encoder,
+int maltcp_encode_identifier(mal_identifier_t *to_encode, mal_encoder_t *encoder,
     void *cursor) {
   return malbinary_encoder_encode_string(encoder, cursor, to_encode);
 }
 
 int maltcp_encode_identifier_list(mal_identifier_list_t *to_encode,
-    malbinary_encoder_t *encoder, void *cursor) {
+    mal_encoder_t *encoder, void *cursor) {
   int rc = 0;
   unsigned int list_size = mal_identifier_list_get_element_count(to_encode);
   malbinary_encoder_encode_list_size(encoder, cursor, list_size);
@@ -340,7 +340,7 @@ int maltcp_encode_identifier_list(mal_identifier_list_t *to_encode,
 }
 
 int maltcp_encode_message(maltcp_header_t *maltcp_header,
-    mal_message_t *message, malbinary_encoder_t *encoder, void *cursor) {
+    mal_message_t *message, mal_encoder_t *encoder, void *cursor) {
   clog_debug(malbinary_encoder_get_logger(encoder), "maltcp_encode_message()\n");
 
   int sdu_type = convert_to_sdu_type(
@@ -437,17 +437,17 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
 
   // Encode the body length (message length)
   malbinary_write32(((malbinary_cursor_t *) cursor)->body_offset, &cursor_bl);
-  printf("--- message_length = %u\n" , malbinary_cursor_get_body_offset((malbinary_cursor_t *) cursor));//NTA tmp
+  printf("--- message_length = %u\n" , malbinary_cursor_get_offset((malbinary_cursor_t *) cursor));//NTA tmp
 
   return 0;
 }
 
-int maltcp_decode_uri(malbinary_decoder_t *decoder, void *cursor, mal_uri_t **result) {
+int maltcp_decode_uri(mal_decoder_t *decoder, void *cursor, mal_uri_t **result) {
   return malbinary_decoder_decode_string(decoder, cursor, result);
 }
 
 int maltcp_decode_uri_to(maltcp_header_t *maltcp_header,
-    malbinary_decoder_t *decoder, char *bytes, unsigned int length,
+    mal_decoder_t *decoder, char *bytes, unsigned int length,
     mal_uri_t **uri_to) {
   // TODO (AF): Use virtual allocation and initialization functions from encoder.
   malbinary_cursor_t cursor;
@@ -476,13 +476,13 @@ int maltcp_decode_uri_to(maltcp_header_t *maltcp_header,
   return maltcp_decode_uri(decoder, &cursor, uri_to);
 }
 
-int maltcp_decode_identifier(malbinary_decoder_t *decoder, void *cursor,
+int maltcp_decode_identifier(mal_decoder_t *decoder, void *cursor,
     mal_identifier_t **result) {
   int rc = malbinary_decoder_decode_string(decoder, cursor, result);
   return rc;
 }
 
-int maltcp_decode_identifier_list(malbinary_decoder_t *decoder, void *cursor,
+int maltcp_decode_identifier_list(mal_decoder_t *decoder, void *cursor,
     mal_identifier_list_t **result) {
   int rc = 0;
   unsigned int list_size;
@@ -511,7 +511,7 @@ int maltcp_decode_identifier_list(malbinary_decoder_t *decoder, void *cursor,
 }
 
 int maltcp_decode_message(maltcp_header_t *maltcp_header,
-    mal_message_t *message, malbinary_decoder_t *decoder, void *cursor,
+    mal_message_t *message, mal_decoder_t *decoder, void *cursor,
     mal_uoctet_t *encoding_id, mal_uinteger_t *mal_message_length) {
   char b = ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++];
 
