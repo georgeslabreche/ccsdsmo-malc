@@ -192,18 +192,21 @@ void malbinary_write(char b, void *cursor) {
 
 int malbinary_encoder_add_string_encoding_length(mal_encoder_t *self, mal_string_t *to_encode, void *cursor) {
   int rc = 0;
+  size_t length = mal_string_get_char_count(to_encode);
   if (self->varint_supported) {
-    size_t length = mal_string_get_char_count(to_encode);
     ((malbinary_cursor_t *) cursor)->body_length += malbinary_var_uinteger_encoding_length(length) + length;
   } else {
-    ((malbinary_cursor_t *) cursor)->body_length += 4 + mal_string_get_char_count(to_encode);
+    ((malbinary_cursor_t *) cursor)->body_length += 4 + length;
   }
   return rc;
 }
 
-int malbinary_encoder_add_presence_flag_encoding_length(mal_encoder_t *self, void *cursor) {
+int malbinary_encoder_add_presence_flag_encoding_length(mal_encoder_t *self, void *cursor, unsigned int length) {
   int rc = 0;
-  ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
+  if (length > 1)
+    ((malbinary_cursor_t *) cursor)->body_length += length;
+  else
+    ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
   return rc;
 }
 
@@ -351,7 +354,7 @@ int malbinary_encoder_add_blob_encoding_length(mal_encoder_t *self,
 
 int malbinary_encoder_encode_string(mal_encoder_t *self, void *cursor, mal_string_t *to_encode) {
   int rc = 0;
-  unsigned int length = mal_string_get_char_count(to_encode);
+  size_t length = mal_string_get_char_count(to_encode);
   if (self->varint_supported)
     malbinary_write_uvarint(length, cursor);
   else
@@ -647,6 +650,13 @@ int malbinary_encoder_encode_finetime(mal_encoder_t *self, void *cursor, mal_fin
   return rc;
 }
 
+int malbinary_encoder_add_attribute_tag_encoding_length(mal_encoder_t *encoder,
+    unsigned char attribute_tag, void *cursor) {
+  int rc = 0;
+  ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_ATTRIBUTE_TAG_SIZE;
+  return rc;
+}
+
 int malbinary_encoder_add_attribute_encoding_length(mal_encoder_t *encoder,
     unsigned char attribute_tag, union mal_attribute_t self, void *cursor) {
   int rc = 0;
@@ -779,15 +789,8 @@ int malbinary_encoder_encode_attribute(mal_encoder_t *encoder, void *cursor, uns
 // TODO (AF): The malbinary encoding functions should be private and only used through
 // the mal_encoder_t structure.
 
-mal_encoder_initialize_functions_fn malbinary_encoder_initialize_functions;
-
 void malbinary_init_encode_functions(mal_encoder_t *self) {
-  // TODO (AF): Currently the use of the MAL generic initialization function
-  // (malbinary_encoder_initialize_functions) is not possible as it causes a
-  // circular dependency with the mal module.
-  // The malbinary_encoder_initialize_functions below must have exactly the
-  // same signature and code of the corresponding MAL function.
-  malbinary_encoder_initialize_functions(self,
+  mal_encoder_initialize_functions(self,
       malbinary_encoder_new_cursor,
       malbinary_cursor_reset,
       malbinary_cursor_init,
@@ -819,7 +822,49 @@ void malbinary_init_encode_functions(mal_encoder_t *self) {
       malbinary_encoder_add_short_encoding_length,
       malbinary_encoder_add_ulong_encoding_length,
       malbinary_encoder_add_finetime_encoding_length,
+      malbinary_encoder_add_attribute_tag_encoding_length,
       malbinary_encoder_add_attribute_encoding_length,
+
+      mal_entitykey_add_encoding_length_malbinary,
+      mal_entityrequest_add_encoding_length_malbinary,
+      mal_file_add_encoding_length_malbinary,
+      mal_idbooleanpair_add_encoding_length_malbinary,
+      mal_namedvalue_add_encoding_length_malbinary,
+      mal_pair_add_encoding_length_malbinary,
+      mal_subscription_add_encoding_length_malbinary,
+      mal_updateheader_add_encoding_length_malbinary,
+
+      mal_blob_list_add_encoding_length_malbinary,
+      mal_boolean_list_add_encoding_length_malbinary,
+      mal_double_list_add_encoding_length_malbinary,
+      mal_duration_list_add_encoding_length_malbinary,
+      mal_entitykey_list_add_encoding_length_malbinary,
+      mal_entityrequest_list_add_encoding_length_malbinary,
+      mal_file_list_add_encoding_length_malbinary,
+      mal_finetime_list_add_encoding_length_malbinary,
+      mal_float_list_add_encoding_length_malbinary,
+      mal_idbooleanpair_list_add_encoding_length_malbinary,
+      mal_identifier_list_add_encoding_length_malbinary,
+      mal_integer_list_add_encoding_length_malbinary,
+      mal_interactiontype_list_add_encoding_length_malbinary,
+      mal_long_list_add_encoding_length_malbinary,
+      mal_namedvalue_list_add_encoding_length_malbinary,
+      mal_octet_list_add_encoding_length_malbinary,
+      mal_pair_list_add_encoding_length_malbinary,
+      mal_qoslevel_list_add_encoding_length_malbinary,
+      mal_sessiontype_list_add_encoding_length_malbinary,
+      mal_short_list_add_encoding_length_malbinary,
+      mal_string_list_add_encoding_length_malbinary,
+      mal_subscription_list_add_encoding_length_malbinary,
+      mal_time_list_add_encoding_length_malbinary,
+      mal_uinteger_list_add_encoding_length_malbinary,
+      mal_ulong_list_add_encoding_length_malbinary,
+      mal_uoctet_list_add_encoding_length_malbinary,
+      mal_updateheader_list_add_encoding_length_malbinary,
+      mal_updatetype_list_add_encoding_length_malbinary,
+      mal_uri_list_add_encoding_length_malbinary,
+      mal_ushort_list_add_encoding_length_malbinary,
+
       malbinary_encoder_encode_string,
       malbinary_encoder_encode_presence_flag,
       malbinary_encoder_encode_short_form,
@@ -848,138 +893,47 @@ void malbinary_init_encode_functions(mal_encoder_t *self) {
       malbinary_encoder_encode_ulong,
       malbinary_encoder_encode_finetime,
       malbinary_encoder_encode_attribute,
-      malbinary_encoder_encode_attribute_tag);
-}
+      malbinary_encoder_encode_attribute_tag,
 
-// TODO: This function below must always have exactly the same signature and code
-// of the corresponding MAL function (malbinary_encoder_initialize_functions).
-void malbinary_encoder_initialize_functions(
-    mal_encoder_t *self,
-    mal_encoder_new_cursor_fn *new_cursor,
-    mal_encoder_cursor_reset_fn *cursor_reset,
-    mal_encoder_cursor_init_fn *cursor_init,
-    mal_encoder_cursor_destroy_fn *cursor_destroy,
-    mal_encoder_cursor_get_length_fn *cursor_get_length,
-    mal_encoder_cursor_get_offset_fn *cursor_get_offset,
-    mal_encoder_cursor_assert_fn *cursor_assert,
-    mal_encoder_add_string_encoding_length_fn *mal_encoder_add_string_encoding_length,
-    mal_encoder_add_presence_flag_encoding_length_fn *mal_encoder_add_presence_flag_encoding_length,
-    mal_encoder_add_short_form_encoding_length_fn *mal_encoder_add_short_form_encoding_length,
-    mal_encoder_add_integer_encoding_length_fn *mal_encoder_add_integer_encoding_length,
-    mal_encoder_add_identifier_encoding_length_fn *mal_encoder_add_identifier_encoding_length,
-    mal_encoder_add_uinteger_encoding_length_fn *mal_encoder_add_uinteger_encoding_length,
-    mal_encoder_add_uri_encoding_length_fn *mal_encoder_add_uri_encoding_length,
-    mal_encoder_add_time_encoding_length_fn *mal_encoder_add_time_encoding_length,
-    mal_encoder_add_uoctet_encoding_length_fn *mal_encoder_add_uoctet_encoding_length,
-    mal_encoder_add_long_encoding_length_fn *mal_encoder_add_long_encoding_length,
-    mal_encoder_add_ushort_encoding_length_fn *mal_encoder_add_ushort_encoding_length,
-    mal_encoder_add_boolean_encoding_length_fn *mal_encoder_add_boolean_encoding_length,
-    mal_encoder_add_blob_encoding_length_fn *mal_encoder_add_blob_encoding_length,
-    mal_encoder_add_list_size_encoding_length_fn *mal_encoder_add_list_size_encoding_length,
-    mal_encoder_add_small_enum_encoding_length_fn *mal_encoder_add_small_enum_encoding_length,
-    mal_encoder_add_medium_enum_encoding_length_fn *mal_encoder_add_medium_enum_encoding_length,
-    mal_encoder_add_large_enum_encoding_length_fn *mal_encoder_add_large_enum_encoding_length,
-    mal_encoder_add_duration_encoding_length_fn *mal_encoder_add_duration_encoding_length,
-    mal_encoder_add_float_encoding_length_fn *mal_encoder_add_float_encoding_length,
-    mal_encoder_add_double_encoding_length_fn *mal_encoder_add_double_encoding_length,
-    mal_encoder_add_octet_encoding_length_fn *mal_encoder_add_octet_encoding_length,
-    mal_encoder_add_short_encoding_length_fn *mal_encoder_add_short_encoding_length,
-    mal_encoder_add_ulong_encoding_length_fn *mal_encoder_add_ulong_encoding_length,
-    mal_encoder_add_finetime_encoding_length_fn *mal_encoder_add_finetime_encoding_length,
-    mal_encoder_add_attribute_encoding_length_fn *mal_encoder_add_attribute_encoding_length,
-    mal_encoder_encode_string_fn *mal_encoder_encode_string,
-    mal_encoder_encode_presence_flag_fn *mal_encoder_encode_presence_flag,
-    mal_encoder_encode_short_form_fn *mal_encoder_encode_short_form,
-    mal_encoder_encode_small_enum_fn *mal_encoder_encode_small_enum,
-    mal_encoder_encode_medium_enum_fn *mal_encoder_encode_medium_enum,
-    mal_encoder_encode_large_enum_fn *mal_encoder_encode_large_enum,
-    mal_encoder_encode_integer_fn *mal_encoder_encode_integer,
-    mal_encoder_encode_list_size_fn *mal_encoder_encode_list_size,
-    mal_encoder_encode_uri_fn *mal_encoder_encode_uri,
-    mal_encoder_encode_blob_fn *mal_encoder_encode_blob,
-    mal_encoder_encode_time_fn *mal_encoder_encode_time,
-    mal_encoder_encode_uinteger_fn *mal_encoder_encode_uinteger,
-    mal_encoder_encode_identifier_fn *mal_encoder_encode_identifier,
-    mal_encoder_encode_uoctet_fn *mal_encoder_encode_uoctet,
-    mal_encoder_encode_long_fn *mal_encoder_encode_long,
-    mal_encoder_encode_ushort_fn *mal_encoder_encode_ushort,
-    mal_encoder_encode_boolean_fn *mal_encoder_encode_boolean,
-    mal_write16_fn *mal_write16,
-    mal_write32_fn *mal_write32,
-    mal_write64_fn *mal_write64,
-    mal_encoder_encode_duration_fn *mal_encoder_encode_duration,
-    mal_encoder_encode_float_fn *mal_encoder_encode_float,
-    mal_encoder_encode_double_fn *mal_encoder_encode_double,
-    mal_encoder_encode_octet_fn *mal_encoder_encode_octet,
-    mal_encoder_encode_short_fn *mal_encoder_encode_short,
-    mal_encoder_encode_ulong_fn *mal_encoder_encode_ulong,
-    mal_encoder_encode_finetime_fn *mal_encoder_encode_finetime,
-    mal_encoder_encode_attribute_fn *mal_encoder_encode_attribute,
-    mal_encoder_encode_attribute_tag_fn *mal_encoder_encode_attribute_tag) {
-  // TODO (AF): Initializes the structure with parameters !!
-  self->new_cursor = malbinary_encoder_new_cursor;
-  self->cursor_reset = malbinary_cursor_reset;
-  self->cursor_init = malbinary_cursor_init;
-  self->cursor_destroy = malbinary_cursor_destroy;
-  self->cursor_get_length = malbinary_cursor_get_length;
-  self->cursor_get_offset = malbinary_cursor_get_offset;
-  self->cursor_assert = malbinary_cursor_assert;
+      mal_entitykey_encode_malbinary,
+      mal_entityrequest_encode_malbinary,
+      mal_file_encode_malbinary,
+      mal_idbooleanpair_encode_malbinary,
+      mal_namedvalue_encode_malbinary,
+      mal_pair_encode_malbinary,
+      mal_subscription_encode_malbinary,
+      mal_updateheader_encode_malbinary,
 
-  self->mal_encoder_add_string_encoding_length = malbinary_encoder_add_string_encoding_length;
-  self->mal_encoder_add_presence_flag_encoding_length = malbinary_encoder_add_presence_flag_encoding_length;
-  self->mal_encoder_add_short_form_encoding_length = malbinary_encoder_add_short_form_encoding_length;
-  self->mal_encoder_add_integer_encoding_length = malbinary_encoder_add_integer_encoding_length;
-  self->mal_encoder_add_identifier_encoding_length = malbinary_encoder_add_identifier_encoding_length;
-  self->mal_encoder_add_uinteger_encoding_length = malbinary_encoder_add_uinteger_encoding_length;
-  self->mal_encoder_add_uri_encoding_length = malbinary_encoder_add_uri_encoding_length;
-  self->mal_encoder_add_time_encoding_length = malbinary_encoder_add_time_encoding_length;
-  self->mal_encoder_add_uoctet_encoding_length = malbinary_encoder_add_uoctet_encoding_length;
-  self->mal_encoder_add_long_encoding_length = malbinary_encoder_add_long_encoding_length;
-  self->mal_encoder_add_ushort_encoding_length = malbinary_encoder_add_ushort_encoding_length;
-  self->mal_encoder_add_boolean_encoding_length = malbinary_encoder_add_boolean_encoding_length;
-  self->mal_encoder_add_blob_encoding_length = malbinary_encoder_add_blob_encoding_length;
-  self->mal_encoder_add_list_size_encoding_length = malbinary_encoder_add_list_size_encoding_length;
-  self->mal_encoder_add_small_enum_encoding_length = malbinary_encoder_add_small_enum_encoding_length;
-  self->mal_encoder_add_medium_enum_encoding_length = malbinary_encoder_add_medium_enum_encoding_length;
-  self->mal_encoder_add_large_enum_encoding_length = malbinary_encoder_add_large_enum_encoding_length;
-  self->mal_encoder_add_duration_encoding_length = malbinary_encoder_add_duration_encoding_length;
-  self->mal_encoder_add_float_encoding_length = malbinary_encoder_add_float_encoding_length;
-  self->mal_encoder_add_double_encoding_length = malbinary_encoder_add_double_encoding_length;
-  self->mal_encoder_add_octet_encoding_length = malbinary_encoder_add_octet_encoding_length;
-  self->mal_encoder_add_short_encoding_length = malbinary_encoder_add_short_encoding_length;
-  self->mal_encoder_add_ulong_encoding_length = malbinary_encoder_add_ulong_encoding_length;
-  self->mal_encoder_add_finetime_encoding_length = malbinary_encoder_add_finetime_encoding_length;
-  self->mal_encoder_add_attribute_encoding_length = malbinary_encoder_add_attribute_encoding_length;
-
-  self->mal_encoder_encode_string = malbinary_encoder_encode_string;
-  self->mal_encoder_encode_presence_flag = malbinary_encoder_encode_presence_flag;
-  self->mal_encoder_encode_short_form = malbinary_encoder_encode_short_form;
-  self->mal_encoder_encode_small_enum = malbinary_encoder_encode_small_enum;
-  self->mal_encoder_encode_medium_enum = malbinary_encoder_encode_medium_enum;
-  self->mal_encoder_encode_large_enum = malbinary_encoder_encode_large_enum;
-  self->mal_encoder_encode_integer = malbinary_encoder_encode_integer;
-  self->mal_encoder_encode_list_size = malbinary_encoder_encode_list_size;
-  self->mal_encoder_encode_uri = malbinary_encoder_encode_uri;
-  self->mal_encoder_encode_blob = malbinary_encoder_encode_blob;
-  self->mal_encoder_encode_time = malbinary_encoder_encode_time;
-  self->mal_encoder_encode_uinteger = malbinary_encoder_encode_uinteger;
-  self->mal_encoder_encode_identifier = malbinary_encoder_encode_identifier;
-  self->mal_encoder_encode_uoctet = malbinary_encoder_encode_uoctet;
-  self->mal_encoder_encode_long = malbinary_encoder_encode_long;
-  self->mal_encoder_encode_ushort = malbinary_encoder_encode_ushort;
-  self->mal_encoder_encode_boolean = malbinary_encoder_encode_boolean;
-  self->mal_write16 = malbinary_write16;
-  self->mal_write32 = malbinary_write32;
-  self->mal_write64 = malbinary_write64;
-  self->mal_encoder_encode_duration = malbinary_encoder_encode_duration;
-  self->mal_encoder_encode_float = malbinary_encoder_encode_float;
-  self->mal_encoder_encode_double = malbinary_encoder_encode_double;
-  self->mal_encoder_encode_octet = malbinary_encoder_encode_octet;
-  self->mal_encoder_encode_short = malbinary_encoder_encode_short;
-  self->mal_encoder_encode_ulong = malbinary_encoder_encode_ulong;
-  self->mal_encoder_encode_finetime = malbinary_encoder_encode_finetime;
-  self->mal_encoder_encode_attribute = malbinary_encoder_encode_attribute;
-  self->mal_encoder_encode_attribute_tag = malbinary_encoder_encode_attribute_tag;
+      mal_blob_list_encode_malbinary,
+      mal_boolean_list_encode_malbinary,
+      mal_double_list_encode_malbinary,
+      mal_duration_list_encode_malbinary,
+      mal_entitykey_list_encode_malbinary,
+      mal_entityrequest_list_encode_malbinary,
+      mal_file_list_encode_malbinary,
+      mal_finetime_list_encode_malbinary,
+      mal_float_list_encode_malbinary,
+      mal_idbooleanpair_list_encode_malbinary,
+      mal_identifier_list_encode_malbinary,
+      mal_integer_list_encode_malbinary,
+      mal_interactiontype_list_encode_malbinary,
+      mal_long_list_encode_malbinary,
+      mal_namedvalue_list_encode_malbinary,
+      mal_octet_list_encode_malbinary,
+      mal_pair_list_encode_malbinary,
+      mal_qoslevel_list_encode_malbinary,
+      mal_sessiontype_list_encode_malbinary,
+      mal_short_list_encode_malbinary,
+      mal_string_list_encode_malbinary,
+      mal_subscription_list_encode_malbinary,
+      mal_time_list_encode_malbinary,
+      mal_uinteger_list_encode_malbinary,
+      mal_ulong_list_encode_malbinary,
+      mal_uoctet_list_encode_malbinary,
+      mal_updateheader_list_encode_malbinary,
+      mal_updatetype_list_encode_malbinary,
+      mal_uri_list_encode_malbinary,
+      mal_ushort_list_encode_malbinary);
 }
 
 // Test
