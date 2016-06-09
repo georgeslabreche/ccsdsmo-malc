@@ -487,7 +487,6 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
 int malzmq_decode_string(malzmq_mapping_directory_t *mapping_directory,
     mal_decoder_t *decoder, void *cursor, mal_string_t **result) {
   int rc = 0;
-  // TODO: varint
   int opt_mdk = malbinary_read32(cursor);
   if (opt_mdk < 0) {
     unsigned int md_key = - opt_mdk;
