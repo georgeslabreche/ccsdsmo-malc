@@ -36,9 +36,9 @@ maltcp_ctx_t *maltcp_ctx_new(
     maltcp_header_t *maltcp_header,
     bool verbose);
 
-int maltcp_ctx_start(maltcp_ctx_t *self);
-
-void maltcp_ctx_destroy(maltcp_ctx_t **self_p);
+int maltcp_ctx_start(void *self);
+int maltcp_ctx_stop(void *self);
+int maltcp_ctx_destroy(void **self_p);
 
 // Must be compliant with MAL virtual function: void *self
 int maltcp_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,

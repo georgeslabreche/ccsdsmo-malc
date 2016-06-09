@@ -521,23 +521,33 @@ maltcp_ctx_t *maltcp_ctx_new(mal_ctx_t *mal_ctx,
       maltcp_ctx_poller_add_endpoint, maltcp_ctx_poller_del_endpoint,
       maltcp_ctx_send_message, maltcp_ctx_recv_message,
       maltcp_ctx_poller_wait,
-      maltcp_ctx_destroy_message);
+      maltcp_ctx_destroy_message,
+      maltcp_ctx_start,
+      maltcp_ctx_stop,
+      maltcp_ctx_destroy);
 
   return self;
 }
 
-int maltcp_ctx_start(maltcp_ctx_t *self) {
+int maltcp_ctx_start(void *self) {
   clog_debug(maltcp_logger, "maltcp_ctx: running...\n");
-  return zloop_start(self->zloop);
+  return zloop_start(((maltcp_ctx_t *)self)->zloop);
 }
 
-void maltcp_ctx_destroy(maltcp_ctx_t **self_p) {
+int maltcp_ctx_stop(void *self) {
+  clog_debug(maltcp_logger, "maltcp_ctx: stop...\n");
+  zloop_destroy(&((maltcp_ctx_t *)self)->zloop);
+  return 0;
+}
+
+int maltcp_ctx_destroy(void **self_p) {
   if (*self_p) {
-    maltcp_ctx_t *self = *self_p;
+    maltcp_ctx_t *self = (maltcp_ctx_t *) *self_p;
     free(self->maltcp_header);
     free(self);
     *self_p = NULL;
   }
+  return 0;
 }
 
 // Must be compliant with MAL virtual function: void *self
