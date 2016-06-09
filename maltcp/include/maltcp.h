@@ -9,6 +9,7 @@ extern "C" {
 #endif
 
 #include "mal.h"
+#include "malbinary.h"
 #include "czmq.h"
 #include "zmq.h"
 
