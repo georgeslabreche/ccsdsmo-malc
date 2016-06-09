@@ -1,8 +1,11 @@
 /* */
 #include "simple_app.h"
 
-#include "clog.h"
-#include "malbinary.h"
+zactor_t *provider_actor = NULL;
+zactor_t *consumer_actor = NULL;
+
+bool split = true;
+bool tcp = false;
 
 //  --------------------------------------------------------------------------
 //  Selftest
@@ -65,41 +68,61 @@ void simple_app_test(bool verbose) {
 
   // @selftest
   mal_ctx_t *mal_ctx = mal_ctx_new();
+  //void *ctx;
 
-  mal_encoder_t *encoder = malbinary_encoder_new(false);
-  mal_decoder_t *decoder = malbinary_decoder_new(false);
+  if (tcp) {
+    // All the MAL header fields are passed
+    maltcp_header_t *maltcp_header = maltcp_header_new(true, 0, true, NULL, NULL, NULL, NULL);
 
-  // All the MAL header fields are passed
-  malzmq_header_t *malzmq_header = malzmq_header_new(NULL, true, 0, true, NULL, NULL, NULL, NULL);
+    // This test uses the same encoding configuration at the MAL/ZMQ transport
+    // level (MAL header encoding) and at the application
+    // level (MAL message body encoding)
+    maltcp_ctx_new(
+        mal_ctx,
+        NULL,                 // Use default transformation of MAL URI to ZMQ URI
+        "localhost", "6666",
+        maltcp_header,
+        true);
+  } else {
+    // All the MAL header fields are passed
+    malzmq_header_t *malzmq_header = malzmq_header_new(NULL, true, 0, true, NULL, NULL, NULL, NULL);
 
-  // This test uses the same encoding configuration at the MAL/ZMQ transport
-  // level (MAL header encoding) and at the application
-  // level (MAL message body encoding)
-  malzmq_ctx_t *malzmq_ctx = malzmq_ctx_new(
-      mal_ctx,
-      NULL,                 // Use default transformation of MAL URI to ZMQ URI
-      "localhost", "6666",
-      malzmq_header,
-      true);
+    // This test uses the same encoding configuration at the MAL/ZMQ transport
+    // level (MAL header encoding) and at the application
+    // level (MAL message body encoding)
+    malzmq_ctx_new(
+        mal_ctx,
+        NULL,                 // Use default transformation of MAL URI to ZMQ URI
+        "localhost", "6666",
+        malzmq_header,
+        true);
+  }
 
   mal_uri_t *provider_uri = mal_ctx_create_uri(mal_ctx, "simple_app/myprovider");
   printf("simple_app: provider URI: %s\n", provider_uri);
 
+  mal_encoder_t *encoder;
+  mal_decoder_t *decoder;
+  if (split) {
+    encoder = malsplitbinary_encoder_new();
+    decoder = malsplitbinary_decoder_new();
+  } else {
+    encoder = malbinary_encoder_new(false);
+    decoder = malbinary_decoder_new(false);
+  }
+
   provider = simple_app_create_provider(verbose, mal_ctx, provider_uri, encoder, decoder);
   consumer = simple_app_create_consumer(verbose, mal_ctx, provider_uri, encoder, decoder);
 
-  zactor_t *provider_actor = zactor_new(simple_app_myprovider_run, provider);
-  zactor_t *consumer_actor = zactor_new(simple_app_myconsumer_run, consumer);
+  provider_actor = zactor_new(simple_app_myprovider_run, provider);
+  consumer_actor = zactor_new(simple_app_myconsumer_run, consumer);
 
   //  @end
   printf("OK\n");
 
-  // Start blocks until interrupted (see zloop).
-  malzmq_ctx_start(malzmq_ctx);
-
-  zactor_destroy(&provider_actor);
-  zactor_destroy(&consumer_actor);
-
+  mal_binding_ctx_start(mal_ctx);
+  printf("Stopped.\n");
+  mal_binding_ctx_destroy(mal_ctx);
   mal_ctx_destroy(&mal_ctx);
-  malzmq_ctx_destroy(&malzmq_ctx);
+  printf("destroyed.\n");
 }

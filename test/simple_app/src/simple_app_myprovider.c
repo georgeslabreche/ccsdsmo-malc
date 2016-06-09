@@ -50,7 +50,7 @@ void simple_app_myprovider_run(zsock_t *pipe, void *args) {
   mal_endpoint_t *endpoint;
   rc = mal_poller_wait(self->poller, &endpoint, -1);
 
-  printf("simple_app_myprovider_run, %p %p\n", (void *) endpoint, (void *) self->endpoint);
+  printf("simple_app_myprovider_run\n");
 
   mal_message_t *message = NULL;
   rc = mal_endpoint_recv_message(self->endpoint, &message);
@@ -131,7 +131,7 @@ int simple_app_myprovider_testarea_testservice_testsend(
   mal_string_list_print(parameter_1);
   printf("\n");
 
-  printf("simple_app_myprovider: offset=%d", mal_decoder_cursor_get_offset(provider->decoder, cursor));
+  printf("simple_app_myprovider: offset=%d\n", mal_decoder_cursor_get_offset(provider->decoder, cursor));
 
   mal_element_holder_t element_holder;
   printf("simple_app_myprovider: decode third parameter\n");
@@ -141,7 +141,7 @@ int simple_app_myprovider_testarea_testservice_testsend(
   if (rc < 0)
     return rc;
 
-  printf("simple_app_myprovider: offset=%d", mal_decoder_cursor_get_offset(provider->decoder, cursor));
+  printf("simple_app_myprovider: offset=%d\n", mal_decoder_cursor_get_offset(provider->decoder, cursor));
   mal_decoder_cursor_destroy(provider->decoder, cursor);
 
   printf("simple_app_myprovider: decoding done, short form=%lu\n", element_holder.short_form);
@@ -184,6 +184,13 @@ int simple_app_myprovider_testarea_testservice_testsend(
   mal_message_destroy(&message, mal_endpoint_get_mal_ctx(provider->endpoint));
 
   printf("Provider done.\n");
+
+  zactor_destroy(&consumer_actor);
+  printf("Provider done 1.\n");
+  zactor_destroy(&provider_actor);
+  printf("Provider done 2.\n");
+  mal_binding_ctx_stop(mal_ctx);
+
   return rc;
 }
 

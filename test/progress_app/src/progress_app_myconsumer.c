@@ -224,20 +224,22 @@ int progress_app_myconsumer_testarea_testservice_testprogress_response(
 
   mal_decoder_cursor_destroy(consumer->decoder, cursor);
 
-	printf("parameter_0=");
+	printf("progress_app_myprovider: parameter_0=");
 	mal_string_list_print(parameter_0);
 	printf("\n");
 
-  printf("destroy parameter_0\n");
+  printf("progress_app_myprovider: destroy parameter_0\n");
   mal_string_list_destroy(&parameter_0);
 
-  printf("destroy MAL result message\n");
+  printf("progress_app_myprovider: destroy MAL result message\n");
   mal_message_destroy(&message, mal_ctx);
 
   printf("Consumer done.\n");
 
   mal_actor_send_command(provider_actor, "$TERM");
   mal_actor_send_command(consumer_actor, "$TERM");
+  zclock_sleep(1000);
+  mal_binding_ctx_stop(mal_ctx);
 
 	return 0;
 }

@@ -1,5 +1,5 @@
 /* */
-#include "../include/send_app.h"
+#include "send_app.h"
 
 // state
 struct _send_app_myprovider_t {
@@ -158,6 +158,11 @@ int send_app_myprovider_testarea_testservice_testsend(
   mal_message_destroy(&message, mal_ctx);
 
   printf("Provider done.\n");
+
+  mal_actor_send_command(provider_actor, "$TERM");
+  mal_actor_send_command(consumer_actor, "$TERM");
+  mal_binding_ctx_stop(mal_ctx);
+
   return rc;
 }
 

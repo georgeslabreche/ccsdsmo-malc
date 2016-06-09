@@ -164,6 +164,9 @@ int invoke_app_myprovider_testarea_testservice_testinvoke(
   mal_message_destroy(&result_message, mal_ctx);
 
   printf("Provider done.\n");
+
+  mal_binding_ctx_stop(mal_ctx);
+
   return rc;
 }
 
