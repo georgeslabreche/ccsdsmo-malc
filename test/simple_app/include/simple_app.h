@@ -6,8 +6,12 @@ extern "C" {
 #endif
 
 #include "mal.h"
+#include "malbinary.h"
+#include "malsplitbinary.h"
 #include "malzmq.h"
+#include "maltcp.h"
 #include "testarea.h"
+#include "malactor.h"
 
 #define SIMPLE_APP_VERSION_MAJOR 1
 #define SIMPLE_APP_VERSION_MINOR 0
@@ -26,6 +30,9 @@ void simple_app_test(bool verbose);
 // Public API classes
 #include "simple_app_myconsumer.h"
 #include "simple_app_myprovider.h"
+
+extern zactor_t *provider_actor;
+extern zactor_t *consumer_actor;
 
 #ifdef __cplusplus
 }

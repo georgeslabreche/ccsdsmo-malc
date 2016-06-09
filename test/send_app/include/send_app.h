@@ -6,6 +6,10 @@ extern "C" {
 #endif
 
 #include "mal.h"
+#include "malbinary.h"
+#include "malsplitbinary.h"
+#include "malzmq.h"
+#include "maltcp.h"
 #include "testarea.h"
 #include "malactor.h"
 
@@ -24,8 +28,11 @@ typedef struct _send_app_myconsumer_t send_app_myconsumer_t;
 void send_app_test(bool verbose);
 
 // Public API classes
-#include "../../send_app/include/send_app_myconsumer.h"
-#include "../../send_app/include/send_app_myprovider.h"
+#include "send_app_myconsumer.h"
+#include "send_app_myprovider.h"
+
+extern mal_actor_t *consumer_actor;
+extern mal_actor_t *provider_actor;
 
 #ifdef __cplusplus
 }
