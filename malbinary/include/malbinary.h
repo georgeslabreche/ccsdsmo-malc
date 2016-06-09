@@ -48,8 +48,6 @@ void malbinary_cursor_init(void *cursor,
     char *bytes, unsigned int length, unsigned int offset);
 void malbinary_cursor_copy(malbinary_cursor_t *from, malbinary_cursor_t *to);
 
-void malbinary_add_length(void *cursor, unsigned int length);
-
 void malbinary_cursor_assert(void *cursor);
 
 unsigned int malbinary_cursor_get_length(void *cursor);
