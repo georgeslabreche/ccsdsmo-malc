@@ -18,8 +18,6 @@ bool *mal_double_list_get_presence_flags(mal_double_list_t *self);
 
 mal_double_t *mal_double_list_get_content(mal_double_list_t *self);
 
-void mal_double_list_add_element(mal_double_list_t *self, int index, mal_double_t element);
-
 int mal_double_list_add_encoding_length_malbinary(mal_double_list_t *self,
     mal_encoder_t *encoder, void *cursor);
 
