@@ -23,11 +23,12 @@ void malbinary_cursor_copy(malbinary_cursor_t *from, malbinary_cursor_t *to) {
   to->body_offset = from->body_offset;
 }
 
-void malbinary_add_length(void *cursor, unsigned int length) {
-  ((malbinary_cursor_t *) cursor)->body_length += length;
-}
-
 void malbinary_cursor_assert(void *cursor) {
+  /*
+  printf("-- body_offset = %d <= %d = body_length\n",
+      ((malbinary_cursor_t *) cursor)->body_offset,
+      ((malbinary_cursor_t *) cursor)->body_length);//NTA tmp
+      */
   assert(((malbinary_cursor_t *) cursor)->body_offset <= ((malbinary_cursor_t *) cursor)->body_length);
 }
 
