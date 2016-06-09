@@ -18,7 +18,7 @@ int malbinary_encoder_add_string_encoding_length(mal_encoder_t *self,
     mal_string_t *to_encode, void *cursor);
 
 int malbinary_encoder_add_presence_flag_encoding_length(
-    mal_encoder_t *self, void *cursor);
+    mal_encoder_t *self, void *cursor, unsigned int length);
 
 int malbinary_encoder_add_short_form_encoding_length(mal_encoder_t *self,
     long to_encode, void *cursor);
@@ -78,6 +78,9 @@ int malbinary_encoder_add_short_encoding_length(mal_encoder_t *self, mal_short_t
 int malbinary_encoder_add_ulong_encoding_length(mal_encoder_t *self, mal_ulong_t to_encode, void *cursor);
 
 int malbinary_encoder_add_finetime_encoding_length(mal_encoder_t *self, mal_finetime_t to_encode, void *cursor);
+
+int malbinary_encoder_add_attribute_tag_encoding_length(mal_encoder_t *encoder,
+    unsigned char attribute_tag, void *cursor);
 
 int malbinary_encoder_add_attribute_encoding_length(mal_encoder_t *encoder,
     unsigned char attribute_tag, union mal_attribute_t self, void *cursor);
