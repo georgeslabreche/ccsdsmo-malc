@@ -18,8 +18,6 @@ bool *mal_finetime_list_get_presence_flags(mal_finetime_list_t *self);
 
 mal_finetime_t *mal_finetime_list_get_content(mal_finetime_list_t *self);
 
-void mal_finetime_list_add_element(mal_finetime_list_t *self, int index, mal_finetime_t element);
-
 int mal_finetime_list_add_encoding_length_malbinary(mal_finetime_list_t *self,
     mal_encoder_t *encoder, void *cursor);
 
