@@ -17,9 +17,9 @@ unsigned int testarea_testservice_testfinalcompositea_list_get_element_count(tes
 testarea_testservice_testfinalcompositea_t ** testarea_testservice_testfinalcompositea_list_get_content(testarea_testservice_testfinalcompositea_list_t * self);
 
 // encoding functions related to transport malbinary
-int testarea_testservice_testfinalcompositea_list_add_encoding_length_malbinary(testarea_testservice_testfinalcompositea_list_t * self, mal_encoder_t * mal_encoder, void * cursor);
-int testarea_testservice_testfinalcompositea_list_encode_malbinary(testarea_testservice_testfinalcompositea_list_t * self, mal_encoder_t * mal_encoder, void * cursor);
-int testarea_testservice_testfinalcompositea_list_decode_malbinary(testarea_testservice_testfinalcompositea_list_t * self, mal_decoder_t * mal_decoder, void * cursor);
+int testarea_testservice_testfinalcompositea_list_add_encoding_length_malbinary(testarea_testservice_testfinalcompositea_list_t * self, mal_encoder_t * encoder, void * cursor);
+int testarea_testservice_testfinalcompositea_list_encode_malbinary(testarea_testservice_testfinalcompositea_list_t * self, mal_encoder_t * encoder, void * cursor);
+int testarea_testservice_testfinalcompositea_list_decode_malbinary(testarea_testservice_testfinalcompositea_list_t * self, mal_decoder_t * decoder, void * cursor);
 
 // test function
 void testarea_testservice_testfinalcompositea_list_test(bool verbose);

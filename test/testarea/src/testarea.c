@@ -10,15 +10,18 @@ int testarea_testservice_testsend_send(mal_endpoint_t * endpoint, mal_message_t 
   return rc;
 }
 
-int testarea_testservice_testsend_send_add_encoding_length_0(mal_encoder_t *encoder, testarea_testservice_testcomposite_t * element, void *cursor)
+int testarea_testservice_testsend_send_add_encoding_length_0(mal_encoder_t * encoder, testarea_testservice_testcomposite_t * element, void * cursor)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
-      ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
-      if (element != NULL)
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      if (rc < 0)
+        return rc;
+      if ((element != NULL))
       {
         rc = testarea_testservice_testcomposite_add_encoding_length_malbinary(element, encoder, cursor);
         if (rc < 0)
@@ -32,15 +35,16 @@ int testarea_testservice_testsend_send_add_encoding_length_0(mal_encoder_t *enco
   return rc;
 }
 
-int testarea_testservice_testsend_send_encode_0(void *cursor, mal_encoder_t *encoder, testarea_testservice_testcomposite_t * element)
+int testarea_testservice_testsend_send_encode_0(void * cursor, mal_encoder_t * encoder, testarea_testservice_testcomposite_t * element)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag = (element != NULL);
-      rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+      rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -57,15 +61,16 @@ int testarea_testservice_testsend_send_encode_0(void *cursor, mal_encoder_t *enc
   return rc;
 }
 
-int testarea_testservice_testsend_send_decode_0(void *cursor, mal_decoder_t *decoder, testarea_testservice_testcomposite_t ** element_res)
+int testarea_testservice_testsend_send_decode_0(void * cursor, mal_decoder_t * decoder, testarea_testservice_testcomposite_t ** element_res)
 {
   int rc = 0;
   switch (decoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag;
-      rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+      rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -88,15 +93,18 @@ int testarea_testservice_testsend_send_decode_0(void *cursor, mal_decoder_t *dec
   return rc;
 }
 
-int testarea_testservice_testsend_send_add_encoding_length_1(mal_encoder_t *encoder, mal_string_list_t * element, void *cursor)
+int testarea_testservice_testsend_send_add_encoding_length_1(mal_encoder_t * encoder, mal_string_list_t * element, void * cursor)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
-      ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
-      if (element != NULL)
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      if (rc < 0)
+        return rc;
+      if ((element != NULL))
       {
         rc = mal_string_list_add_encoding_length_malbinary(element, encoder, cursor);
         if (rc < 0)
@@ -110,15 +118,16 @@ int testarea_testservice_testsend_send_add_encoding_length_1(mal_encoder_t *enco
   return rc;
 }
 
-int testarea_testservice_testsend_send_encode_1(void *cursor, mal_encoder_t *encoder, mal_string_list_t * element)
+int testarea_testservice_testsend_send_encode_1(void * cursor, mal_encoder_t * encoder, mal_string_list_t * element)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag = (element != NULL);
-      rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+      rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -135,15 +144,16 @@ int testarea_testservice_testsend_send_encode_1(void *cursor, mal_encoder_t *enc
   return rc;
 }
 
-int testarea_testservice_testsend_send_decode_1(void *cursor, mal_decoder_t *decoder, mal_string_list_t ** element_res)
+int testarea_testservice_testsend_send_decode_1(void * cursor, mal_decoder_t * decoder, mal_string_list_t ** element_res)
 {
   int rc = 0;
   switch (decoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag;
-      rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+      rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -166,16 +176,22 @@ int testarea_testservice_testsend_send_decode_1(void *cursor, mal_decoder_t *dec
   return rc;
 }
 
-int testarea_testservice_testsend_send_add_encoding_length_2_testarea_testservice_testfinalcompositea(mal_encoder_t *encoder, testarea_testservice_testfinalcompositea_t *element, void * cursor)
+int testarea_testservice_testsend_send_add_encoding_length_2_testarea_testservice_testfinalcompositea(mal_encoder_t * encoder, testarea_testservice_testfinalcompositea_t * element, void * cursor)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
-      ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
-      if (element != NULL)
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      if (rc < 0)
+        return rc;
+      if ((element != NULL))
       {
+        rc = mal_encoder_add_short_form_encoding_length(encoder, TESTAREA_TESTSERVICE_TESTFINALCOMPOSITEA_SHORT_FORM, cursor);
+        if (rc < 0)
+          return rc;
         rc = testarea_testservice_testfinalcompositea_add_encoding_length_malbinary(element, encoder, cursor);
         if (rc < 0)
           return rc;
@@ -194,13 +210,17 @@ int testarea_testservice_testsend_send_encode_2_testarea_testservice_testfinalco
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag = (element != NULL);
-      rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+      rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
       {
+        rc = mal_encoder_encode_short_form(encoder, cursor, TESTAREA_TESTSERVICE_TESTFINALCOMPOSITEA_SHORT_FORM);
+        if (rc < 0)
+          return rc;
         rc = testarea_testservice_testfinalcompositea_encode_malbinary(element, encoder, cursor);
         if (rc < 0)
           return rc;
@@ -219,10 +239,16 @@ int testarea_testservice_testsend_send_add_encoding_length_2_testarea_testservic
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
-      ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
-      if (element != NULL)
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      if (rc < 0)
+        return rc;
+      if ((element != NULL))
       {
+        rc = mal_encoder_add_short_form_encoding_length(encoder, TESTAREA_TESTSERVICE_TESTFINALCOMPOSITEB_SHORT_FORM, cursor);
+        if (rc < 0)
+          return rc;
         rc = testarea_testservice_testfinalcompositeb_add_encoding_length_malbinary(element, encoder, cursor);
         if (rc < 0)
           return rc;
@@ -241,13 +267,17 @@ int testarea_testservice_testsend_send_encode_2_testarea_testservice_testfinalco
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag = (element != NULL);
-      rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+      rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
       {
+        rc = mal_encoder_encode_short_form(encoder, cursor, TESTAREA_TESTSERVICE_TESTFINALCOMPOSITEB_SHORT_FORM);
+        if (rc < 0)
+          return rc;
         rc = testarea_testservice_testfinalcompositeb_encode_malbinary(element, encoder, cursor);
         if (rc < 0)
           return rc;
@@ -266,9 +296,10 @@ int testarea_testservice_testsend_send_decode_2(void * cursor, mal_decoder_t * d
   switch (decoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag;
-      rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+      rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -296,15 +327,18 @@ int testarea_testservice_testsubmit_submit(mal_endpoint_t * endpoint, mal_messag
   return rc;
 }
 
-int testarea_testservice_testsubmit_submit_add_encoding_length_0(mal_encoder_t *encoder, testarea_testservice_testcomposite_t * element, void *cursor)
+int testarea_testservice_testsubmit_submit_add_encoding_length_0(mal_encoder_t * encoder, testarea_testservice_testcomposite_t * element, void * cursor)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
-      ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
-      if (element != NULL)
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      if (rc < 0)
+        return rc;
+      if ((element != NULL))
       {
         rc = testarea_testservice_testcomposite_add_encoding_length_malbinary(element, encoder, cursor);
         if (rc < 0)
@@ -318,15 +352,16 @@ int testarea_testservice_testsubmit_submit_add_encoding_length_0(mal_encoder_t *
   return rc;
 }
 
-int testarea_testservice_testsubmit_submit_encode_0(void *cursor, mal_encoder_t *encoder, testarea_testservice_testcomposite_t * element)
+int testarea_testservice_testsubmit_submit_encode_0(void * cursor, mal_encoder_t * encoder, testarea_testservice_testcomposite_t * element)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag = (element != NULL);
-      rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+      rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -343,15 +378,16 @@ int testarea_testservice_testsubmit_submit_encode_0(void *cursor, mal_encoder_t 
   return rc;
 }
 
-int testarea_testservice_testsubmit_submit_decode_0(void *cursor, mal_decoder_t *decoder, testarea_testservice_testcomposite_t ** element_res)
+int testarea_testservice_testsubmit_submit_decode_0(void * cursor, mal_decoder_t * decoder, testarea_testservice_testcomposite_t ** element_res)
 {
   int rc = 0;
   switch (decoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag;
-      rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+      rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -374,15 +410,18 @@ int testarea_testservice_testsubmit_submit_decode_0(void *cursor, mal_decoder_t 
   return rc;
 }
 
-int testarea_testservice_testsubmit_submit_add_encoding_length_1(mal_encoder_t *encoder, mal_string_list_t * element, void *cursor)
+int testarea_testservice_testsubmit_submit_add_encoding_length_1(mal_encoder_t * encoder, mal_string_list_t * element, void * cursor)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
-      ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
-      if (element != NULL)
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      if (rc < 0)
+        return rc;
+      if ((element != NULL))
       {
         rc = mal_string_list_add_encoding_length_malbinary(element, encoder, cursor);
         if (rc < 0)
@@ -396,15 +435,16 @@ int testarea_testservice_testsubmit_submit_add_encoding_length_1(mal_encoder_t *
   return rc;
 }
 
-int testarea_testservice_testsubmit_submit_encode_1(void *cursor, mal_encoder_t *encoder, mal_string_list_t * element)
+int testarea_testservice_testsubmit_submit_encode_1(void * cursor, mal_encoder_t * encoder, mal_string_list_t * element)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag = (element != NULL);
-      rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+      rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -421,15 +461,16 @@ int testarea_testservice_testsubmit_submit_encode_1(void *cursor, mal_encoder_t 
   return rc;
 }
 
-int testarea_testservice_testsubmit_submit_decode_1(void *cursor, mal_decoder_t *decoder, mal_string_list_t ** element_res)
+int testarea_testservice_testsubmit_submit_decode_1(void * cursor, mal_decoder_t * decoder, mal_string_list_t ** element_res)
 {
   int rc = 0;
   switch (decoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag;
-      rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+      rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -470,15 +511,18 @@ int testarea_testservice_testrequest_request(mal_endpoint_t * endpoint, mal_mess
   return rc;
 }
 
-int testarea_testservice_testrequest_request_add_encoding_length_0(mal_encoder_t *encoder, testarea_testservice_testcomposite_t * element, void *cursor)
+int testarea_testservice_testrequest_request_add_encoding_length_0(mal_encoder_t * encoder, testarea_testservice_testcomposite_t * element, void * cursor)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
-      ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
-      if (element != NULL)
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      if (rc < 0)
+        return rc;
+      if ((element != NULL))
       {
         rc = testarea_testservice_testcomposite_add_encoding_length_malbinary(element, encoder, cursor);
         if (rc < 0)
@@ -492,15 +536,16 @@ int testarea_testservice_testrequest_request_add_encoding_length_0(mal_encoder_t
   return rc;
 }
 
-int testarea_testservice_testrequest_request_encode_0(void *cursor, mal_encoder_t *encoder, testarea_testservice_testcomposite_t * element)
+int testarea_testservice_testrequest_request_encode_0(void * cursor, mal_encoder_t * encoder, testarea_testservice_testcomposite_t * element)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag = (element != NULL);
-      rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+      rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -517,15 +562,16 @@ int testarea_testservice_testrequest_request_encode_0(void *cursor, mal_encoder_
   return rc;
 }
 
-int testarea_testservice_testrequest_request_decode_0(void *cursor, mal_decoder_t *decoder, testarea_testservice_testcomposite_t ** element_res)
+int testarea_testservice_testrequest_request_decode_0(void * cursor, mal_decoder_t * decoder, testarea_testservice_testcomposite_t ** element_res)
 {
   int rc = 0;
   switch (decoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag;
-      rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+      rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -548,15 +594,18 @@ int testarea_testservice_testrequest_request_decode_0(void *cursor, mal_decoder_
   return rc;
 }
 
-int testarea_testservice_testrequest_request_add_encoding_length_1(mal_encoder_t *encoder, mal_string_list_t * element, void *cursor)
+int testarea_testservice_testrequest_request_add_encoding_length_1(mal_encoder_t * encoder, mal_string_list_t * element, void * cursor)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
-      ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
-      if (element != NULL)
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      if (rc < 0)
+        return rc;
+      if ((element != NULL))
       {
         rc = mal_string_list_add_encoding_length_malbinary(element, encoder, cursor);
         if (rc < 0)
@@ -570,15 +619,16 @@ int testarea_testservice_testrequest_request_add_encoding_length_1(mal_encoder_t
   return rc;
 }
 
-int testarea_testservice_testrequest_request_encode_1(void *cursor, mal_encoder_t *encoder, mal_string_list_t * element)
+int testarea_testservice_testrequest_request_encode_1(void * cursor, mal_encoder_t * encoder, mal_string_list_t * element)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag = (element != NULL);
-      rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+      rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -595,15 +645,16 @@ int testarea_testservice_testrequest_request_encode_1(void *cursor, mal_encoder_
   return rc;
 }
 
-int testarea_testservice_testrequest_request_decode_1(void *cursor, mal_decoder_t *decoder, mal_string_list_t ** element_res)
+int testarea_testservice_testrequest_request_decode_1(void * cursor, mal_decoder_t * decoder, mal_string_list_t ** element_res)
 {
   int rc = 0;
   switch (decoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag;
-      rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+      rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -634,15 +685,18 @@ int testarea_testservice_testrequest_request_response(mal_endpoint_t * endpoint,
   return rc;
 }
 
-int testarea_testservice_testrequest_request_response_add_encoding_length_0(mal_encoder_t *encoder, mal_string_list_t * element, void *cursor)
+int testarea_testservice_testrequest_request_response_add_encoding_length_0(mal_encoder_t * encoder, mal_string_list_t * element, void * cursor)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
-      ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
-      if (element != NULL)
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      if (rc < 0)
+        return rc;
+      if ((element != NULL))
       {
         rc = mal_string_list_add_encoding_length_malbinary(element, encoder, cursor);
         if (rc < 0)
@@ -656,15 +710,16 @@ int testarea_testservice_testrequest_request_response_add_encoding_length_0(mal_
   return rc;
 }
 
-int testarea_testservice_testrequest_request_response_encode_0(void *cursor, mal_encoder_t *encoder, mal_string_list_t * element)
+int testarea_testservice_testrequest_request_response_encode_0(void * cursor, mal_encoder_t * encoder, mal_string_list_t * element)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag = (element != NULL);
-      rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+      rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -681,15 +736,16 @@ int testarea_testservice_testrequest_request_response_encode_0(void *cursor, mal
   return rc;
 }
 
-int testarea_testservice_testrequest_request_response_decode_0(void *cursor, mal_decoder_t *decoder, mal_string_list_t ** element_res)
+int testarea_testservice_testrequest_request_response_decode_0(void * cursor, mal_decoder_t * decoder, mal_string_list_t ** element_res)
 {
   int rc = 0;
   switch (decoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag;
-      rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+      rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -722,15 +778,18 @@ int testarea_testservice_testinvoke_invoke(mal_endpoint_t * endpoint, mal_messag
   return rc;
 }
 
-int testarea_testservice_testinvoke_invoke_add_encoding_length_0(mal_encoder_t *encoder, mal_string_list_t * element, void *cursor)
+int testarea_testservice_testinvoke_invoke_add_encoding_length_0(mal_encoder_t * encoder, mal_string_list_t * element, void * cursor)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
-      ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
-      if (element != NULL)
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      if (rc < 0)
+        return rc;
+      if ((element != NULL))
       {
         rc = mal_string_list_add_encoding_length_malbinary(element, encoder, cursor);
         if (rc < 0)
@@ -744,15 +803,16 @@ int testarea_testservice_testinvoke_invoke_add_encoding_length_0(mal_encoder_t *
   return rc;
 }
 
-int testarea_testservice_testinvoke_invoke_encode_0(void *cursor, mal_encoder_t *encoder, mal_string_list_t * element)
+int testarea_testservice_testinvoke_invoke_encode_0(void * cursor, mal_encoder_t * encoder, mal_string_list_t * element)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag = (element != NULL);
-      rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+      rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -769,15 +829,16 @@ int testarea_testservice_testinvoke_invoke_encode_0(void *cursor, mal_encoder_t 
   return rc;
 }
 
-int testarea_testservice_testinvoke_invoke_decode_0(void *cursor, mal_decoder_t *decoder, mal_string_list_t ** element_res)
+int testarea_testservice_testinvoke_invoke_decode_0(void * cursor, mal_decoder_t * decoder, mal_string_list_t ** element_res)
 {
   int rc = 0;
   switch (decoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag;
-      rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+      rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -816,15 +877,18 @@ int testarea_testservice_testinvoke_invoke_response(mal_endpoint_t * endpoint, m
   return rc;
 }
 
-int testarea_testservice_testinvoke_invoke_response_add_encoding_length_0(mal_encoder_t *encoder, mal_string_list_t * element, void *cursor)
+int testarea_testservice_testinvoke_invoke_response_add_encoding_length_0(mal_encoder_t * encoder, mal_string_list_t * element, void * cursor)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
-      ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
-      if (element != NULL)
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      if (rc < 0)
+        return rc;
+      if ((element != NULL))
       {
         rc = mal_string_list_add_encoding_length_malbinary(element, encoder, cursor);
         if (rc < 0)
@@ -838,15 +902,16 @@ int testarea_testservice_testinvoke_invoke_response_add_encoding_length_0(mal_en
   return rc;
 }
 
-int testarea_testservice_testinvoke_invoke_response_encode_0(void *cursor, mal_encoder_t *encoder, mal_string_list_t * element)
+int testarea_testservice_testinvoke_invoke_response_encode_0(void * cursor, mal_encoder_t * encoder, mal_string_list_t * element)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag = (element != NULL);
-      rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+      rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -863,15 +928,16 @@ int testarea_testservice_testinvoke_invoke_response_encode_0(void *cursor, mal_e
   return rc;
 }
 
-int testarea_testservice_testinvoke_invoke_response_decode_0(void *cursor, mal_decoder_t *decoder, mal_string_list_t ** element_res)
+int testarea_testservice_testinvoke_invoke_response_decode_0(void * cursor, mal_decoder_t * decoder, mal_string_list_t ** element_res)
 {
   int rc = 0;
   switch (decoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag;
-      rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+      rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -904,15 +970,18 @@ int testarea_testservice_testprogress_progress(mal_endpoint_t * endpoint, mal_me
   return rc;
 }
 
-int testarea_testservice_testprogress_progress_add_encoding_length_0(mal_encoder_t *encoder, mal_string_list_t * element, void *cursor)
+int testarea_testservice_testprogress_progress_add_encoding_length_0(mal_encoder_t * encoder, mal_string_list_t * element, void * cursor)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
-      ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
-      if (element != NULL)
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      if (rc < 0)
+        return rc;
+      if ((element != NULL))
       {
         rc = mal_string_list_add_encoding_length_malbinary(element, encoder, cursor);
         if (rc < 0)
@@ -926,15 +995,16 @@ int testarea_testservice_testprogress_progress_add_encoding_length_0(mal_encoder
   return rc;
 }
 
-int testarea_testservice_testprogress_progress_encode_0(void *cursor, mal_encoder_t *encoder, mal_string_list_t * element)
+int testarea_testservice_testprogress_progress_encode_0(void * cursor, mal_encoder_t * encoder, mal_string_list_t * element)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag = (element != NULL);
-      rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+      rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -951,15 +1021,16 @@ int testarea_testservice_testprogress_progress_encode_0(void *cursor, mal_encode
   return rc;
 }
 
-int testarea_testservice_testprogress_progress_decode_0(void *cursor, mal_decoder_t *decoder, mal_string_list_t ** element_res)
+int testarea_testservice_testprogress_progress_decode_0(void * cursor, mal_decoder_t * decoder, mal_string_list_t ** element_res)
 {
   int rc = 0;
   switch (decoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag;
-      rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+      rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -1006,15 +1077,18 @@ int testarea_testservice_testprogress_progress_response(mal_endpoint_t * endpoin
   return rc;
 }
 
-int testarea_testservice_testprogress_progress_response_add_encoding_length_0(mal_encoder_t *encoder, mal_string_list_t * element, void *cursor)
+int testarea_testservice_testprogress_progress_response_add_encoding_length_0(mal_encoder_t * encoder, mal_string_list_t * element, void * cursor)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
-      ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
-      if (element != NULL)
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      if (rc < 0)
+        return rc;
+      if ((element != NULL))
       {
         rc = mal_string_list_add_encoding_length_malbinary(element, encoder, cursor);
         if (rc < 0)
@@ -1028,15 +1102,16 @@ int testarea_testservice_testprogress_progress_response_add_encoding_length_0(ma
   return rc;
 }
 
-int testarea_testservice_testprogress_progress_response_encode_0(void *cursor, mal_encoder_t *encoder, mal_string_list_t * element)
+int testarea_testservice_testprogress_progress_response_encode_0(void * cursor, mal_encoder_t * encoder, mal_string_list_t * element)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag = (element != NULL);
-      rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+      rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -1053,15 +1128,16 @@ int testarea_testservice_testprogress_progress_response_encode_0(void *cursor, m
   return rc;
 }
 
-int testarea_testservice_testprogress_progress_response_decode_0(void *cursor, mal_decoder_t *decoder, mal_string_list_t ** element_res)
+int testarea_testservice_testprogress_progress_response_decode_0(void * cursor, mal_decoder_t * decoder, mal_string_list_t ** element_res)
 {
   int rc = 0;
   switch (decoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag;
-      rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+      rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -1086,15 +1162,18 @@ int testarea_testservice_testprogress_progress_response_decode_0(void *cursor, m
 
 // generated code for operation testarea_testservice_testmonitor
 
-int testarea_testservice_testmonitor_update_add_encoding_length_0(mal_encoder_t *encoder, testarea_testservice_testupdate_list_t * element, void *cursor)
+int testarea_testservice_testmonitor_update_add_encoding_length_0(mal_encoder_t * encoder, testarea_testservice_testupdate_list_t * element, void * cursor)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
-      ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
-      if (element != NULL)
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      if (rc < 0)
+        return rc;
+      if ((element != NULL))
       {
         rc = testarea_testservice_testupdate_list_add_encoding_length_malbinary(element, encoder, cursor);
         if (rc < 0)
@@ -1108,15 +1187,16 @@ int testarea_testservice_testmonitor_update_add_encoding_length_0(mal_encoder_t 
   return rc;
 }
 
-int testarea_testservice_testmonitor_update_encode_0(void *cursor, mal_encoder_t *encoder, testarea_testservice_testupdate_list_t * element)
+int testarea_testservice_testmonitor_update_encode_0(void * cursor, mal_encoder_t * encoder, testarea_testservice_testupdate_list_t * element)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag = (element != NULL);
-      rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+      rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -1133,15 +1213,16 @@ int testarea_testservice_testmonitor_update_encode_0(void *cursor, mal_encoder_t
   return rc;
 }
 
-int testarea_testservice_testmonitor_update_decode_0(void *cursor, mal_decoder_t *decoder, testarea_testservice_testupdate_list_t ** element_res)
+int testarea_testservice_testmonitor_update_decode_0(void * cursor, mal_decoder_t * decoder, testarea_testservice_testupdate_list_t ** element_res)
 {
   int rc = 0;
   switch (decoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag;
-      rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+      rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -1164,15 +1245,18 @@ int testarea_testservice_testmonitor_update_decode_0(void *cursor, mal_decoder_t
   return rc;
 }
 
-int testarea_testservice_testmonitor_update_add_encoding_length_1(mal_encoder_t *encoder, mal_string_list_t * element, void *cursor)
+int testarea_testservice_testmonitor_update_add_encoding_length_1(mal_encoder_t * encoder, mal_string_list_t * element, void * cursor)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
-      ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
-      if (element != NULL)
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      if (rc < 0)
+        return rc;
+      if ((element != NULL))
       {
         rc = mal_string_list_add_encoding_length_malbinary(element, encoder, cursor);
         if (rc < 0)
@@ -1186,15 +1270,16 @@ int testarea_testservice_testmonitor_update_add_encoding_length_1(mal_encoder_t 
   return rc;
 }
 
-int testarea_testservice_testmonitor_update_encode_1(void *cursor, mal_encoder_t *encoder, mal_string_list_t * element)
+int testarea_testservice_testmonitor_update_encode_1(void * cursor, mal_encoder_t * encoder, mal_string_list_t * element)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag = (element != NULL);
-      rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+      rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -1211,15 +1296,16 @@ int testarea_testservice_testmonitor_update_encode_1(void *cursor, mal_encoder_t
   return rc;
 }
 
-int testarea_testservice_testmonitor_update_decode_1(void *cursor, mal_decoder_t *decoder, mal_string_list_t ** element_res)
+int testarea_testservice_testmonitor_update_decode_1(void * cursor, mal_decoder_t * decoder, mal_string_list_t ** element_res)
 {
   int rc = 0;
   switch (decoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag;
-      rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+      rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -1293,15 +1379,18 @@ int testarea_testservice_testinvokealltypes_invoke(mal_endpoint_t * endpoint, ma
   return rc;
 }
 
-int testarea_testservice_testinvokealltypes_invoke_add_encoding_length_0(mal_encoder_t *encoder, testarea_testservice_testfullcomposite_t * element, void *cursor)
+int testarea_testservice_testinvokealltypes_invoke_add_encoding_length_0(mal_encoder_t * encoder, testarea_testservice_testfullcomposite_t * element, void * cursor)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
-      ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
-      if (element != NULL)
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      if (rc < 0)
+        return rc;
+      if ((element != NULL))
       {
         rc = testarea_testservice_testfullcomposite_add_encoding_length_malbinary(element, encoder, cursor);
         if (rc < 0)
@@ -1315,15 +1404,16 @@ int testarea_testservice_testinvokealltypes_invoke_add_encoding_length_0(mal_enc
   return rc;
 }
 
-int testarea_testservice_testinvokealltypes_invoke_encode_0(void *cursor, mal_encoder_t *encoder, testarea_testservice_testfullcomposite_t * element)
+int testarea_testservice_testinvokealltypes_invoke_encode_0(void * cursor, mal_encoder_t * encoder, testarea_testservice_testfullcomposite_t * element)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag = (element != NULL);
-      rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+      rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -1340,15 +1430,16 @@ int testarea_testservice_testinvokealltypes_invoke_encode_0(void *cursor, mal_en
   return rc;
 }
 
-int testarea_testservice_testinvokealltypes_invoke_decode_0(void *cursor, mal_decoder_t *decoder, testarea_testservice_testfullcomposite_t ** element_res)
+int testarea_testservice_testinvokealltypes_invoke_decode_0(void * cursor, mal_decoder_t * decoder, testarea_testservice_testfullcomposite_t ** element_res)
 {
   int rc = 0;
   switch (decoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag;
-      rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+      rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -1387,15 +1478,18 @@ int testarea_testservice_testinvokealltypes_invoke_response(mal_endpoint_t * end
   return rc;
 }
 
-int testarea_testservice_testinvokealltypes_invoke_response_add_encoding_length_0(mal_encoder_t *encoder, testarea_testservice_testfullcomposite_t * element, void *cursor)
+int testarea_testservice_testinvokealltypes_invoke_response_add_encoding_length_0(mal_encoder_t * encoder, testarea_testservice_testfullcomposite_t * element, void * cursor)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
-      ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
-      if (element != NULL)
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      if (rc < 0)
+        return rc;
+      if ((element != NULL))
       {
         rc = testarea_testservice_testfullcomposite_add_encoding_length_malbinary(element, encoder, cursor);
         if (rc < 0)
@@ -1409,15 +1503,16 @@ int testarea_testservice_testinvokealltypes_invoke_response_add_encoding_length_
   return rc;
 }
 
-int testarea_testservice_testinvokealltypes_invoke_response_encode_0(void *cursor, mal_encoder_t *encoder, testarea_testservice_testfullcomposite_t * element)
+int testarea_testservice_testinvokealltypes_invoke_response_encode_0(void * cursor, mal_encoder_t * encoder, testarea_testservice_testfullcomposite_t * element)
 {
   int rc = 0;
   switch (encoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag = (element != NULL);
-      rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+      rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -1434,15 +1529,16 @@ int testarea_testservice_testinvokealltypes_invoke_response_encode_0(void *curso
   return rc;
 }
 
-int testarea_testservice_testinvokealltypes_invoke_response_decode_0(void *cursor, mal_decoder_t *decoder, testarea_testservice_testfullcomposite_t ** element_res)
+int testarea_testservice_testinvokealltypes_invoke_response_decode_0(void * cursor, mal_decoder_t * decoder, testarea_testservice_testfullcomposite_t ** element_res)
 {
   int rc = 0;
   switch (decoder->encoding_format_code)
   {
     case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
     {
       bool presence_flag;
-      rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+      rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
       if (rc < 0)
         return rc;
       if (presence_flag)
@@ -1469,12 +1565,12 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
 {
   int enumerated_value = 0;
   int rc = 0;
-  rc = malbinary_decoder_decode_short_form(decoder, cursor, &element_holder->short_form);
+  rc = mal_decoder_decode_short_form(decoder, cursor, &element_holder->short_form);
   if (rc < 0)
     return rc;
   if (element_holder->short_form == MAL_BLOB_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_blob(decoder, cursor, &element_holder->value.blob_value);
+    rc = mal_decoder_decode_blob(decoder, cursor, &element_holder->value.blob_value);
     if (rc < 0)
       return rc;
   }
@@ -1488,7 +1584,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_BOOLEAN_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_boolean(decoder, cursor, &element_holder->value.boolean_value);
+    rc = mal_decoder_decode_boolean(decoder, cursor, &element_holder->value.boolean_value);
     if (rc < 0)
       return rc;
   }
@@ -1502,7 +1598,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_DOUBLE_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_double(decoder, cursor, &element_holder->value.double_value);
+    rc = mal_decoder_decode_double(decoder, cursor, &element_holder->value.double_value);
     if (rc < 0)
       return rc;
   }
@@ -1516,7 +1612,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_DURATION_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_duration(decoder, cursor, &element_holder->value.duration_value);
+    rc = mal_decoder_decode_duration(decoder, cursor, &element_holder->value.duration_value);
     if (rc < 0)
       return rc;
   }
@@ -1578,7 +1674,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_FINETIME_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_finetime(decoder, cursor, &element_holder->value.finetime_value);
+    rc = mal_decoder_decode_finetime(decoder, cursor, &element_holder->value.finetime_value);
     if (rc < 0)
       return rc;
   }
@@ -1592,7 +1688,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_FLOAT_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_float(decoder, cursor, &element_holder->value.float_value);
+    rc = mal_decoder_decode_float(decoder, cursor, &element_holder->value.float_value);
     if (rc < 0)
       return rc;
   }
@@ -1622,7 +1718,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_IDENTIFIER_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_identifier(decoder, cursor, &element_holder->value.identifier_value);
+    rc = mal_decoder_decode_identifier(decoder, cursor, &element_holder->value.identifier_value);
     if (rc < 0)
       return rc;
   }
@@ -1636,7 +1732,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_INTEGER_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_integer(decoder, cursor, &element_holder->value.integer_value);
+    rc = mal_decoder_decode_integer(decoder, cursor, &element_holder->value.integer_value);
     if (rc < 0)
       return rc;
   }
@@ -1650,7 +1746,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_INTERACTIONTYPE_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_small_enum(decoder, cursor, &enumerated_value);
+    rc = mal_decoder_decode_small_enum(decoder, cursor, &enumerated_value);
     if (rc < 0)
       return rc;
     element_holder->value.enumerated_value = (mal_interactiontype_t) enumerated_value;
@@ -1665,7 +1761,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_LONG_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_long(decoder, cursor, &element_holder->value.long_value);
+    rc = mal_decoder_decode_long(decoder, cursor, &element_holder->value.long_value);
     if (rc < 0)
       return rc;
   }
@@ -1695,7 +1791,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_OCTET_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_octet(decoder, cursor, &element_holder->value.octet_value);
+    rc = mal_decoder_decode_octet(decoder, cursor, &element_holder->value.octet_value);
     if (rc < 0)
       return rc;
   }
@@ -1725,7 +1821,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_QOSLEVEL_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_small_enum(decoder, cursor, &enumerated_value);
+    rc = mal_decoder_decode_small_enum(decoder, cursor, &enumerated_value);
     if (rc < 0)
       return rc;
     element_holder->value.enumerated_value = (mal_qoslevel_t) enumerated_value;
@@ -1740,7 +1836,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_SESSIONTYPE_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_small_enum(decoder, cursor, &enumerated_value);
+    rc = mal_decoder_decode_small_enum(decoder, cursor, &enumerated_value);
     if (rc < 0)
       return rc;
     element_holder->value.enumerated_value = (mal_sessiontype_t) enumerated_value;
@@ -1755,7 +1851,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_SHORT_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_short(decoder, cursor, &element_holder->value.short_value);
+    rc = mal_decoder_decode_short(decoder, cursor, &element_holder->value.short_value);
     if (rc < 0)
       return rc;
   }
@@ -1769,7 +1865,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_STRING_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_string(decoder, cursor, &element_holder->value.string_value);
+    rc = mal_decoder_decode_string(decoder, cursor, &element_holder->value.string_value);
     if (rc < 0)
       return rc;
   }
@@ -1799,7 +1895,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_TIME_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_time(decoder, cursor, &element_holder->value.time_value);
+    rc = mal_decoder_decode_time(decoder, cursor, &element_holder->value.time_value);
     if (rc < 0)
       return rc;
   }
@@ -1813,7 +1909,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_UINTEGER_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_uinteger(decoder, cursor, &element_holder->value.uinteger_value);
+    rc = mal_decoder_decode_uinteger(decoder, cursor, &element_holder->value.uinteger_value);
     if (rc < 0)
       return rc;
   }
@@ -1827,7 +1923,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_ULONG_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_ulong(decoder, cursor, &element_holder->value.ulong_value);
+    rc = mal_decoder_decode_ulong(decoder, cursor, &element_holder->value.ulong_value);
     if (rc < 0)
       return rc;
   }
@@ -1841,7 +1937,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_UOCTET_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_uoctet(decoder, cursor, &element_holder->value.uoctet_value);
+    rc = mal_decoder_decode_uoctet(decoder, cursor, &element_holder->value.uoctet_value);
     if (rc < 0)
       return rc;
   }
@@ -1855,7 +1951,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_URI_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_uri(decoder, cursor, &element_holder->value.uri_value);
+    rc = mal_decoder_decode_uri(decoder, cursor, &element_holder->value.uri_value);
     if (rc < 0)
       return rc;
   }
@@ -1869,7 +1965,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_USHORT_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_ushort(decoder, cursor, &element_holder->value.ushort_value);
+    rc = mal_decoder_decode_ushort(decoder, cursor, &element_holder->value.ushort_value);
     if (rc < 0)
       return rc;
   }
@@ -1899,7 +1995,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == MAL_UPDATETYPE_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_small_enum(decoder, cursor, &enumerated_value);
+    rc = mal_decoder_decode_small_enum(decoder, cursor, &enumerated_value);
     if (rc < 0)
       return rc;
     element_holder->value.enumerated_value = (mal_updatetype_t) enumerated_value;
@@ -1994,7 +2090,7 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   }
   else if (element_holder->short_form == TESTAREA_TESTENUMERATION_SHORT_FORM)
   {
-    rc = malbinary_decoder_decode_small_enum(decoder, cursor, &enumerated_value);
+    rc = mal_decoder_decode_small_enum(decoder, cursor, &enumerated_value);
     if (rc < 0)
       return rc;
     element_holder->value.enumerated_value = (testarea_testenumeration_t) enumerated_value;
@@ -2007,101 +2103,10 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
     if (rc < 0)
       return rc;
   }
+  else
+    return -1;
   return rc;
 }
-
-//int testarea_testservice_testsend_send_add_encoding_length_2_testarea_testservice_testfinalcompositea(
-//    mal_encoder_t *encoder,
-//    testarea_testservice_testfinalcompositea_t *element,
-//    void *cursor) {
-//  int rc = 0;
-//  switch (encoder->encoding_format_code) {
-//  case MALBINARY_FORMAT_CODE: {
-//    rc = malbinary_encoder_add_presence_flag_encoding_length(encoder, cursor);
-//    if (rc < 0)
-//      return rc;
-//    if (element != NULL) {
-//      rc = malbinary_encoder_add_short_form_encoding_length(encoder, cursor);
-//      if (rc < 0)
-//        return rc;
-//      rc =
-//          testarea_testservice_testfinalcompositea_add_encoding_length_malbinary(
-//              element, encoder, cursor);
-//      if (rc < 0)
-//        return rc;
-//    }
-//    break;
-//  }
-//  default:
-//    rc = -1;
-//  }
-//  return rc;
-//}
-//
-//int testarea_testservice_testsend_send_encode_2_testarea_testservice_testfinalcompositea(
-//    void *cursor, mal_encoder_t *encoder,
-//    testarea_testservice_testfinalcompositea_t *element) {
-//  int rc = 0;
-//  switch (encoder->encoding_format_code) {
-//  case MALBINARY_FORMAT_CODE: {
-//    bool presence_flag = (element != NULL);
-//    rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
-//    if (rc < 0)
-//      return rc;
-//    if (element != NULL) {
-//      rc = malbinary_encoder_encode_short_form(encoder, cursor, TESTAREA_TESTSERVICE_TESTFINALCOMPOSITEA_SHORT_FORM);
-//      if (rc < 0)
-//        return rc;
-//      rc = testarea_testservice_testfinalcompositea_encode_malbinary(element, encoder, cursor);
-//      if (rc < 0)
-//        return rc;
-//    }
-//    break;
-//  }
-//  default:
-//    rc = -1;
-//  }
-//  return rc;
-//}
-//
-//int testarea_testservice_testsend_send_decode_2(
-//    void *cursor, mal_decoder_t *decoder, long *short_form_res,
-//    void **res) {
-//  int rc = 0;
-//  switch (decoder->encoding_format_code) {
-//  case MALBINARY_FORMAT_CODE: {
-//    bool presence_flag;
-//    rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
-//    if (rc < 0)
-//      return rc;
-//    void *element;
-//    long short_form;
-//    if (presence_flag) {
-//      malbinary_decoder_decode_short_form(decoder, cursor, &short_form);
-//      if (short_form == TESTAREA_TESTSERVICE_TESTFINALCOMPOSITEA_SHORT_FORM) {
-//        testarea_testservice_testfinalcompositea_t *composite =
-//            testarea_testservice_testfinalcompositea_new();
-//        rc = testarea_testservice_testfinalcompositea_decode_malbinary(
-//            composite, decoder, cursor);
-//        element = composite;
-//      } else {
-//        rc = -1;
-//      }
-//      if (rc < 0)
-//        return rc;
-//    } else {
-//      short_form = 0;
-//      element = NULL;
-//    }
-//    (*res) = element;
-//    (*short_form_res) = short_form;
-//    break;
-//  }
-//  default:
-//    rc = -1;
-//  }
-//  return rc;
-//}
 
 // test function
 void testarea_test(bool verbose)

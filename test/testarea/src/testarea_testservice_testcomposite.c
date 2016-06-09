@@ -80,95 +80,103 @@ testarea_testservice_testcomposite_t * testarea_testservice_testcomposite_new(vo
 }
 
 // encoding functions related to transport malbinary
-int testarea_testservice_testcomposite_add_encoding_length_malbinary(testarea_testservice_testcomposite_t * self, mal_encoder_t *encoder, void *cursor)
+int testarea_testservice_testcomposite_add_encoding_length_malbinary(testarea_testservice_testcomposite_t * self, mal_encoder_t * encoder, void * cursor)
 {
   int rc = 0;
-  ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
-  if (self->stringfield != NULL)
+  rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (self->stringfield != NULL));
+  if (rc < 0)
+    return rc;
+  if ((self->stringfield != NULL))
   {
-    rc = malbinary_encoder_add_string_encoding_length(encoder, self->stringfield, cursor);
+    rc = mal_encoder_add_string_encoding_length(encoder, self->stringfield, cursor);
     if (rc < 0)
       return rc;
   }
-  ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
+  rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, self->intfield_is_present);
+  if (rc < 0)
+    return rc;
   if (self->intfield_is_present)
   {
-    rc = malbinary_encoder_add_integer_encoding_length(encoder, self->intfield, cursor);
+    rc = mal_encoder_add_integer_encoding_length(encoder, self->intfield, cursor);
     if (rc < 0)
       return rc;
   }
-  ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
+  rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, self->floatfield_is_present);
+  if (rc < 0)
+    return rc;
   if (self->floatfield_is_present)
   {
-    rc = malbinary_encoder_add_float_encoding_length(encoder, self->floatfield, cursor);
+    rc = mal_encoder_add_float_encoding_length(encoder, self->floatfield, cursor);
     if (rc < 0)
       return rc;
   }
-  ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
+  rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, self->doublefield_is_present);
+  if (rc < 0)
+    return rc;
   if (self->doublefield_is_present)
   {
-    rc = malbinary_encoder_add_double_encoding_length(encoder, self->doublefield, cursor);
+    rc = mal_encoder_add_double_encoding_length(encoder, self->doublefield, cursor);
     if (rc < 0)
       return rc;
   }
   return rc;
 }
-int testarea_testservice_testcomposite_encode_malbinary(testarea_testservice_testcomposite_t * self, mal_encoder_t *encoder, void *cursor)
+int testarea_testservice_testcomposite_encode_malbinary(testarea_testservice_testcomposite_t * self, mal_encoder_t * encoder, void * cursor)
 {
   int rc = 0;
   bool presence_flag;
   presence_flag = (self->stringfield != NULL);
-  rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+  rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_encoder_encode_string(encoder, cursor, self->stringfield);
+    rc = mal_encoder_encode_string(encoder, cursor, self->stringfield);
     if (rc < 0)
       return rc;
   }
   presence_flag = self->intfield_is_present;
-  rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+  rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_encoder_encode_integer(encoder, cursor, self->intfield);
+    rc = mal_encoder_encode_integer(encoder, cursor, self->intfield);
     if (rc < 0)
       return rc;
   }
   presence_flag = self->floatfield_is_present;
-  rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+  rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_encoder_encode_float(encoder, cursor, self->floatfield);
+    rc = mal_encoder_encode_float(encoder, cursor, self->floatfield);
     if (rc < 0)
       return rc;
   }
   presence_flag = self->doublefield_is_present;
-  rc = malbinary_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+  rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_encoder_encode_double(encoder, cursor, self->doublefield);
+    rc = mal_encoder_encode_double(encoder, cursor, self->doublefield);
     if (rc < 0)
       return rc;
   }
   return rc;
 }
-int testarea_testservice_testcomposite_decode_malbinary(testarea_testservice_testcomposite_t * self, mal_decoder_t *decoder, void *cursor)
+int testarea_testservice_testcomposite_decode_malbinary(testarea_testservice_testcomposite_t * self, mal_decoder_t * decoder, void * cursor)
 {
   int rc = 0;
   bool presence_flag;
-  rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+  rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_decoder_decode_string(decoder, cursor, &self->stringfield);
+    rc = mal_decoder_decode_string(decoder, cursor, &self->stringfield);
     if (rc < 0)
       return rc;
   }
@@ -176,32 +184,32 @@ int testarea_testservice_testcomposite_decode_malbinary(testarea_testservice_tes
   {
     self->stringfield = NULL;
   }
-  rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+  rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_decoder_decode_integer(decoder, cursor, &self->intfield);
+    rc = mal_decoder_decode_integer(decoder, cursor, &self->intfield);
     if (rc < 0)
       return rc;
   }
   self->intfield_is_present = presence_flag;
-  rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+  rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_decoder_decode_float(decoder, cursor, &self->floatfield);
+    rc = mal_decoder_decode_float(decoder, cursor, &self->floatfield);
     if (rc < 0)
       return rc;
   }
   self->floatfield_is_present = presence_flag;
-  rc = malbinary_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+  rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_decoder_decode_double(decoder, cursor, &self->doublefield);
+    rc = mal_decoder_decode_double(decoder, cursor, &self->doublefield);
     if (rc < 0)
       return rc;
   }

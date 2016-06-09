@@ -26,9 +26,9 @@ void testarea_testservice_testcomposite_set_doublefield(testarea_testservice_tes
 testarea_testservice_testcomposite_t * testarea_testservice_testcomposite_new(void);
 
 // encoding functions related to transport malbinary
-int testarea_testservice_testcomposite_add_encoding_length_malbinary(testarea_testservice_testcomposite_t * self, mal_encoder_t *encoder, void *cursor);
-int testarea_testservice_testcomposite_encode_malbinary(testarea_testservice_testcomposite_t * self, mal_encoder_t *encoder, void *cursor);
-int testarea_testservice_testcomposite_decode_malbinary(testarea_testservice_testcomposite_t * self, mal_decoder_t *decoder, void *cursor);
+int testarea_testservice_testcomposite_add_encoding_length_malbinary(testarea_testservice_testcomposite_t * self, mal_encoder_t * encoder, void * cursor);
+int testarea_testservice_testcomposite_encode_malbinary(testarea_testservice_testcomposite_t * self, mal_encoder_t * encoder, void * cursor);
+int testarea_testservice_testcomposite_decode_malbinary(testarea_testservice_testcomposite_t * self, mal_decoder_t * decoder, void * cursor);
 
 // destructor
 void testarea_testservice_testcomposite_destroy(testarea_testservice_testcomposite_t ** self_p);
