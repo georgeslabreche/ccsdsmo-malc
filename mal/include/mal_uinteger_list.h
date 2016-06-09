@@ -18,8 +18,6 @@ bool *mal_uinteger_list_get_presence_flags(mal_uinteger_list_t *self);
 
 mal_uinteger_t *mal_uinteger_list_get_content(mal_uinteger_list_t *self);
 
-void mal_uinteger_list_add_element(mal_uinteger_list_t *self, int index, mal_uinteger_t element);
-
 int mal_uinteger_list_add_encoding_length_malbinary(mal_uinteger_list_t *self,
     mal_encoder_t *encoder, void *cursor);
 
