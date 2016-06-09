@@ -46,8 +46,10 @@
         You need not specify subdependencies if they are implied. -->
     <use project = "malattributes" />
     <use project = "malbinary" />
+    <use project = "malsplitbinary" />
     <use project = "mal" />
     <use project = "malzmq" />
+    <use project = "maltcp" />
     <use project = "testarea" />
     <use project = "malactor" />
 

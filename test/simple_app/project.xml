@@ -45,9 +45,11 @@
         known projects is maintained in the zproject_known_projects.xml model.
         You need not specify subdependencies if they are implied. -->
     <use project = "malattributes" />
-    <use project = "malbinary" />
     <use project = "mal" />
+    <use project = "malbinary" />
+    <use project = "malsplitbinary" />
     <use project = "malzmq" />
+    <use project = "maltcp" />
     <use project = "testarea" />
 
     <!-- Header Files
