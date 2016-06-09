@@ -1,7 +1,9 @@
 #include "mal.h"
 
+
+// structure definition for composite mal_entitykey
 struct _mal_entitykey_t {
-  mal_identifier_t *firstsubkey;
+  mal_identifier_t * firstsubkey;
   bool secondsubkey_is_present;
   mal_long_t secondsubkey;
   bool thirdsubkey_is_present;
@@ -10,231 +12,227 @@ struct _mal_entitykey_t {
   mal_long_t fourthsubkey;
 };
 
-mal_entitykey_t *mal_entitykey_new(void) {
-  mal_entitykey_t *self = (mal_entitykey_t *) malloc(sizeof(mal_entitykey_t));
+// fields accessors for composite mal_entitykey
+mal_identifier_t * mal_entitykey_get_firstsubkey(mal_entitykey_t * self)
+{
+  return self->firstsubkey;
+}
+void mal_entitykey_set_firstsubkey(mal_entitykey_t * self, mal_identifier_t * firstsubkey)
+{
+  self->firstsubkey = firstsubkey;
+}
+bool mal_entitykey_secondsubkey_is_present(mal_entitykey_t * self)
+{
+  return self->secondsubkey_is_present;
+}
+void mal_entitykey_secondsubkey_set_present(mal_entitykey_t * self, bool is_present)
+{
+  self->secondsubkey_is_present = is_present;
+}
+mal_long_t mal_entitykey_get_secondsubkey(mal_entitykey_t * self)
+{
+  return self->secondsubkey;
+}
+void mal_entitykey_set_secondsubkey(mal_entitykey_t * self, mal_long_t secondsubkey)
+{
+  self->secondsubkey = secondsubkey;
+}
+bool mal_entitykey_thirdsubkey_is_present(mal_entitykey_t * self)
+{
+  return self->thirdsubkey_is_present;
+}
+void mal_entitykey_thirdsubkey_set_present(mal_entitykey_t * self, bool is_present)
+{
+  self->thirdsubkey_is_present = is_present;
+}
+mal_long_t mal_entitykey_get_thirdsubkey(mal_entitykey_t * self)
+{
+  return self->thirdsubkey;
+}
+void mal_entitykey_set_thirdsubkey(mal_entitykey_t * self, mal_long_t thirdsubkey)
+{
+  self->thirdsubkey = thirdsubkey;
+}
+bool mal_entitykey_fourthsubkey_is_present(mal_entitykey_t * self)
+{
+  return self->fourthsubkey_is_present;
+}
+void mal_entitykey_fourthsubkey_set_present(mal_entitykey_t * self, bool is_present)
+{
+  self->fourthsubkey_is_present = is_present;
+}
+mal_long_t mal_entitykey_get_fourthsubkey(mal_entitykey_t * self)
+{
+  return self->fourthsubkey;
+}
+void mal_entitykey_set_fourthsubkey(mal_entitykey_t * self, mal_long_t fourthsubkey)
+{
+  self->fourthsubkey = fourthsubkey;
+}
+
+// default constructor
+mal_entitykey_t * mal_entitykey_new(void)
+{
+  mal_entitykey_t *self = (mal_entitykey_t *) calloc(1, sizeof(mal_entitykey_t));
   if (!self)
     return NULL;
   return self;
 }
 
-void mal_entitykey_destroy(mal_entitykey_t **self_p) {
-  if (*self_p) {
-    mal_entitykey_t *self = *self_p;
-    mal_identifier_destroy(&(self->firstsubkey));
-    free(self);
-    *self_p = NULL;
-  }
-}
-
-int mal_entitykey_add_encoding_length_malbinary(mal_entitykey_t *self,
-    mal_encoder_t *encoder, void *cursor) {
+// encoding functions related to transport malbinary
+int mal_entitykey_add_encoding_length_malbinary(mal_entitykey_t * self, mal_encoder_t * mal_encoder, void * cursor)
+{
   int rc = 0;
-  if (self == NULL) {
-    rc = -1;
+  rc = mal_encoder_add_presence_flag_encoding_length(mal_encoder, cursor, (self->firstsubkey != NULL));
+  if (rc < 0)
     return rc;
-  }
-
-  // Field 'firstsubkey' (canBeNull='true')
-  rc = malbinary_encoder_add_presence_flag_encoding_length(encoder, cursor);
-  if (self->firstsubkey != NULL) {
-    rc = malbinary_encoder_add_string_encoding_length(encoder, self->firstsubkey, cursor);
+  if ((self->firstsubkey != NULL))
+  {
+    rc = mal_encoder_add_identifier_encoding_length(mal_encoder, self->firstsubkey, cursor);
     if (rc < 0)
       return rc;
   }
-
-  // Field 'secondsubkey' (canBeNull='true')
-  rc = malbinary_encoder_add_presence_flag_encoding_length(encoder, cursor);
+  rc = mal_encoder_add_presence_flag_encoding_length(mal_encoder, cursor, self->secondsubkey_is_present);
   if (rc < 0)
     return rc;
-  if (self->secondsubkey_is_present) {
-    rc = malbinary_encoder_add_long_encoding_length(encoder, self->secondsubkey, cursor);
+  if (self->secondsubkey_is_present)
+  {
+    rc = mal_encoder_add_long_encoding_length(mal_encoder, self->secondsubkey, cursor);
     if (rc < 0)
       return rc;
   }
-
-  // Field 'thirdsubkey' (canBeNull='true')
-  rc = malbinary_encoder_add_presence_flag_encoding_length(encoder, cursor);
+  rc = mal_encoder_add_presence_flag_encoding_length(mal_encoder, cursor, self->thirdsubkey_is_present);
   if (rc < 0)
     return rc;
-  if (self->thirdsubkey_is_present) {
-    rc = malbinary_encoder_add_long_encoding_length(encoder, self->thirdsubkey, cursor);
+  if (self->thirdsubkey_is_present)
+  {
+    rc = mal_encoder_add_long_encoding_length(mal_encoder, self->thirdsubkey, cursor);
     if (rc < 0)
       return rc;
   }
-
-  // Field 'fourthsubkey' (canBeNull='true')
-  rc = malbinary_encoder_add_presence_flag_encoding_length(encoder, cursor);
+  rc = mal_encoder_add_presence_flag_encoding_length(mal_encoder, cursor, self->fourthsubkey_is_present);
   if (rc < 0)
     return rc;
-  if (self->fourthsubkey_is_present) {
-    rc = malbinary_encoder_add_long_encoding_length(encoder, self->fourthsubkey, cursor);
+  if (self->fourthsubkey_is_present)
+  {
+    rc = mal_encoder_add_long_encoding_length(mal_encoder, self->fourthsubkey, cursor);
     if (rc < 0)
       return rc;
-  }
-
-  return rc;
-}
-
-// 'binary' refers to the "binary encoding" specified in MAL/SPP BB
-int mal_entitykey_encode_malbinary(mal_entitykey_t *self,
-    mal_encoder_t *encoder, void *cursor) {
-  int rc = 0;
-
-  bool is_present = (self->firstsubkey != NULL);
-  rc = malbinary_encoder_encode_presence_flag(encoder, cursor,
-      is_present);
-  if (is_present) {
-    rc = malbinary_encoder_encode_identifier(encoder, cursor,
-        self->firstsubkey);
-    if (rc < 0)
-      return rc;
-  }
-
-  rc = malbinary_encoder_encode_presence_flag(encoder, cursor,
-      self->secondsubkey_is_present);
-  if (rc < 0)
-    return rc;
-  if (self->secondsubkey_is_present) {
-    rc = malbinary_encoder_encode_long(encoder, cursor,
-        self->secondsubkey);
-  }
-
-  rc = malbinary_encoder_encode_presence_flag(encoder, cursor,
-      self->thirdsubkey_is_present);
-  if (rc < 0)
-    return rc;
-  if (self->thirdsubkey_is_present) {
-    rc = malbinary_encoder_encode_long(encoder, cursor,
-        self->thirdsubkey);
-  }
-
-  rc = malbinary_encoder_encode_presence_flag(encoder, cursor,
-      self->fourthsubkey_is_present);
-  if (rc < 0)
-    return rc;
-  if (self->fourthsubkey_is_present) {
-    rc = malbinary_encoder_encode_long(encoder, cursor,
-        self->fourthsubkey);
-  }
-
-  return rc;
-}
-
-// 'binary' refers to the "binary encoding" specified in MAL/SPP BB
-int mal_entitykey_decode_malbinary(mal_entitykey_t *self,
-    mal_decoder_t *decoder, void *cursor) {
-  int rc = 0;
-  rc = malbinary_decoder_decode_presence_flag(decoder, cursor,
-      &(self->secondsubkey_is_present));
-  if (rc < 0)
-    return rc;
-  if (self->secondsubkey_is_present) {
-    rc = malbinary_decoder_decode_identifier(decoder, cursor,
-        &(self->firstsubkey));
-    if (rc < 0)
-      return rc;
-  }
-
-  rc = malbinary_decoder_decode_presence_flag(decoder, cursor,
-      &(self->secondsubkey_is_present));
-  if (rc < 0)
-    return rc;
-  if (self->secondsubkey_is_present) {
-    rc = malbinary_decoder_decode_long(decoder, cursor,
-        &(self->secondsubkey));
-  }
-
-  rc = malbinary_decoder_decode_presence_flag(decoder, cursor,
-      &(self->thirdsubkey_is_present));
-  if (rc < 0)
-    return rc;
-  if (self->thirdsubkey_is_present) {
-    rc = malbinary_decoder_decode_long(decoder, cursor,
-        &(self->thirdsubkey));
-  }
-
-  rc = malbinary_decoder_decode_presence_flag(decoder, cursor,
-      &(self->fourthsubkey_is_present));
-  if (rc < 0)
-    return rc;
-  if (self->fourthsubkey_is_present) {
-    rc = malbinary_decoder_decode_long(decoder, cursor,
-        &(self->fourthsubkey));
   }
   return rc;
 }
-
-mal_identifier_t *mal_entitykey_get_firstsubkey(mal_entitykey_t *self) {
-  return self->firstsubkey;
+int mal_entitykey_encode_malbinary(mal_entitykey_t * self, mal_encoder_t * mal_encoder, void * cursor)
+{
+  int rc = 0;
+  bool presence_flag;
+  presence_flag = (self->firstsubkey != NULL);
+  rc = mal_encoder_encode_presence_flag(mal_encoder, cursor, presence_flag);
+  if (rc < 0)
+    return rc;
+  if (presence_flag)
+  {
+    rc = mal_encoder_encode_identifier(mal_encoder, cursor, self->firstsubkey);
+    if (rc < 0)
+      return rc;
+  }
+  presence_flag = self->secondsubkey_is_present;
+  rc = mal_encoder_encode_presence_flag(mal_encoder, cursor, presence_flag);
+  if (rc < 0)
+    return rc;
+  if (presence_flag)
+  {
+    rc = mal_encoder_encode_long(mal_encoder, cursor, self->secondsubkey);
+    if (rc < 0)
+      return rc;
+  }
+  presence_flag = self->thirdsubkey_is_present;
+  rc = mal_encoder_encode_presence_flag(mal_encoder, cursor, presence_flag);
+  if (rc < 0)
+    return rc;
+  if (presence_flag)
+  {
+    rc = mal_encoder_encode_long(mal_encoder, cursor, self->thirdsubkey);
+    if (rc < 0)
+      return rc;
+  }
+  presence_flag = self->fourthsubkey_is_present;
+  rc = mal_encoder_encode_presence_flag(mal_encoder, cursor, presence_flag);
+  if (rc < 0)
+    return rc;
+  if (presence_flag)
+  {
+    rc = mal_encoder_encode_long(mal_encoder, cursor, self->fourthsubkey);
+    if (rc < 0)
+      return rc;
+  }
+  return rc;
+}
+int mal_entitykey_decode_malbinary(mal_entitykey_t * self, mal_decoder_t * mal_decoder, void * cursor)
+{
+  int rc = 0;
+  bool presence_flag;
+  rc = mal_decoder_decode_presence_flag(mal_decoder, cursor, &presence_flag);
+  if (rc < 0)
+    return rc;
+  if (presence_flag)
+  {
+    rc = mal_decoder_decode_identifier(mal_decoder, cursor, &self->firstsubkey);
+    if (rc < 0)
+      return rc;
+  }
+  else
+  {
+    self->firstsubkey = NULL;
+  }
+  rc = mal_decoder_decode_presence_flag(mal_decoder, cursor, &presence_flag);
+  if (rc < 0)
+    return rc;
+  if (presence_flag)
+  {
+    rc = mal_decoder_decode_long(mal_decoder, cursor, &self->secondsubkey);
+    if (rc < 0)
+      return rc;
+  }
+  self->secondsubkey_is_present = presence_flag;
+  rc = mal_decoder_decode_presence_flag(mal_decoder, cursor, &presence_flag);
+  if (rc < 0)
+    return rc;
+  if (presence_flag)
+  {
+    rc = mal_decoder_decode_long(mal_decoder, cursor, &self->thirdsubkey);
+    if (rc < 0)
+      return rc;
+  }
+  self->thirdsubkey_is_present = presence_flag;
+  rc = mal_decoder_decode_presence_flag(mal_decoder, cursor, &presence_flag);
+  if (rc < 0)
+    return rc;
+  if (presence_flag)
+  {
+    rc = mal_decoder_decode_long(mal_decoder, cursor, &self->fourthsubkey);
+    if (rc < 0)
+      return rc;
+  }
+  self->fourthsubkey_is_present = presence_flag;
+  return rc;
 }
 
-void mal_entitykey_set_firstsubkey(mal_entitykey_t *self,
-    mal_identifier_t *firstsubkey) {
-  self->firstsubkey = firstsubkey;
+// destructor
+void mal_entitykey_destroy(mal_entitykey_t ** self_p)
+{
+  if ((*self_p)->firstsubkey != NULL)
+  {
+    mal_identifier_destroy(& (*self_p)->firstsubkey);
+  }
+  free(*self_p);
+  (*self_p) = NULL;
 }
 
-mal_long_t mal_entitykey_secondsubkey_is_present(mal_entitykey_t *self) {
-  return self->secondsubkey;
-}
-
-void mal_entitykey_secondsubkey_set_present(mal_entitykey_t *self,
-    mal_long_t is_present) {
-  self->secondsubkey_is_present = is_present;
-}
-
-mal_long_t mal_entitykey_get_secondsubkey(mal_entitykey_t *self) {
-  return self->secondsubkey;
-}
-
-void mal_entitykey_set_secondsubkey(mal_entitykey_t *self,
-    mal_long_t secondsubkey) {
-  self->secondsubkey = secondsubkey;
-}
-
-mal_long_t mal_entitykey_thirdsubkey_is_present(mal_entitykey_t *self) {
-  return self->thirdsubkey;
-}
-
-void mal_entitykey_thirdsubkey_set_present(mal_entitykey_t *self,
-    mal_long_t is_present) {
-  self->thirdsubkey_is_present = is_present;
-}
-
-mal_long_t mal_entitykey_get_thirdsubkey(mal_entitykey_t *self) {
-  return self->thirdsubkey;
-}
-
-void mal_entitykey_set_thirdsubkey(mal_entitykey_t *self,
-    mal_long_t thirdsubkey) {
-  self->thirdsubkey = thirdsubkey;
-}
-
-mal_long_t mal_entitykey_fourthsubkey_is_present(mal_entitykey_t *self) {
-  return self->fourthsubkey;
-}
-
-void mal_entitykey_fourthsubkey_set_present(mal_entitykey_t *self,
-    mal_long_t is_present) {
-  self->fourthsubkey_is_present = is_present;
-}
-
-mal_long_t mal_entitykey_get_fourthsubkey(mal_entitykey_t *self) {
-  return self->fourthsubkey;
-}
-
-void mal_entitykey_set_fourthsubkey(mal_entitykey_t *self,
-    mal_long_t fourthsubkey) {
-  self->fourthsubkey = fourthsubkey;
-}
-
-void mal_entitykey_test(bool verbose) {
-  printf(" * mal_entitykey: ");
+// test function
+void mal_entitykey_test(bool verbose)
+{
+  printf(" * MAL:EntityKey: ");
   if (verbose)
     printf("\n");
-
-  //  @selftest
-  // ...
-  //  @end
   printf("OK\n");
 }
-

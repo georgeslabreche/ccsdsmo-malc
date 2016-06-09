@@ -1,141 +1,134 @@
-/*
- */
-
 #include "mal.h"
 
 struct _mal_interactiontype_list_t {
   unsigned int element_count;
-  bool *presence_flags;
-  mal_interactiontype_t *content;
+  bool * presence_flags;
+  mal_interactiontype_t * content;
 };
 
-mal_interactiontype_list_t *mal_interactiontype_list_new(
-    unsigned int element_count) {
-  mal_interactiontype_list_t *self = (mal_interactiontype_list_t *) malloc(
-      sizeof(mal_interactiontype_list_t));
+// default constructor
+mal_interactiontype_list_t * mal_interactiontype_list_new(unsigned int element_count)
+{
+  mal_interactiontype_list_t *self = (mal_interactiontype_list_t *) calloc(1, sizeof(mal_interactiontype_list_t));
   if (!self)
     return NULL;
-
   self->element_count = element_count;
-  self->presence_flags = (bool *) malloc(sizeof(bool) * element_count);
-  self->content = (mal_interactiontype_t *) malloc(
-      sizeof(mal_interactiontype_t) * element_count);
-
+  if (element_count == 0)
+    return self;
+  self->presence_flags = (bool *) calloc(element_count, sizeof(bool));
+  if (!self->presence_flags)
+  {
+    free(self);
+    return NULL;
+  }
+  self->content = (mal_interactiontype_t *) calloc(element_count, sizeof(mal_interactiontype_t));
+  if (!self->content)
+  {
+    free(self->presence_flags);
+    free(self);
+    return NULL;
+  }
   return self;
 }
 
-void mal_interactiontype_list_destroy(mal_interactiontype_list_t **self_p) {
-  if (*self_p) {
-    mal_interactiontype_list_t *self = *self_p;
-    free(self->presence_flags);
-    free(self->content);
-    free(self);
-    *self_p = NULL;
+// destructor, free the list and its content
+void mal_interactiontype_list_destroy(mal_interactiontype_list_t ** self_p)
+{
+  if ((*self_p)->element_count > 0)
+  {
+    free((*self_p)->presence_flags);
+    free((*self_p)->content);
   }
+  free (*self_p);
+  (*self_p) = NULL;
 }
 
-unsigned int mal_interactiontype_list_get_element_count(
-    mal_interactiontype_list_t *self) {
+// fields accessors for enumeration list mal_interactiontype_list
+unsigned int mal_interactiontype_list_get_element_count(mal_interactiontype_list_t * self)
+{
   return self->element_count;
 }
-
-bool *mal_interactiontype_list_get_presence_flags(
-    mal_interactiontype_list_t *self) {
+bool * mal_interactiontype_list_get_presence_flags(mal_interactiontype_list_t * self)
+{
   return self->presence_flags;
 }
-
-mal_interactiontype_t *mal_interactiontype_list_get_content(
-    mal_interactiontype_list_t *self) {
+mal_interactiontype_t * mal_interactiontype_list_get_content(mal_interactiontype_list_t * self)
+{
   return self->content;
 }
 
-void mal_interactiontype_list_add_element(mal_interactiontype_list_t *self, int index, mal_interactiontype_t element) {
-  self->content[index] = element;
-  self->presence_flags[index] = true;
-}
-
-int mal_interactiontype_list_add_encoding_length_malbinary(
-    mal_interactiontype_list_t *self,
-    mal_encoder_t *encoder, void *cursor) {
+// encoding functions related to transport malbinary
+int mal_interactiontype_list_add_encoding_length_malbinary(mal_interactiontype_list_t * self, mal_encoder_t * mal_encoder, void * cursor)
+{
   int rc = 0;
   unsigned int list_size = self->element_count;
-  malbinary_encoder_add_list_size_encoding_length(encoder, list_size, cursor);
-  bool *presence_flags = self->presence_flags;
-  // Presence flags
-  malbinary_add_length((malbinary_cursor_t *) cursor, list_size);
-  for (int i = 0; i < list_size; i++) {
-    bool presence_flag = presence_flags[i];
-    if (presence_flag) {
-      // Small enum
-      malbinary_add_length((malbinary_cursor_t *) cursor, 1);
-    }
-  }
-  return rc;
-}
-
-int mal_interactiontype_list_encode_malbinary(mal_interactiontype_list_t *self,
-    mal_encoder_t *encoder, void *cursor) {
-  int rc = 0;
-  unsigned int list_size = self->element_count;
-  malbinary_encoder_encode_list_size(encoder, cursor, list_size);
-  bool *presence_flags = self->presence_flags;
-  mal_interactiontype_t *content = self->content;
-  for (int i = 0; i < list_size; i++) {
-    bool presence_flag = presence_flags[i];
-    rc = malbinary_encoder_encode_presence_flag(encoder, cursor,
-        presence_flag);
-    if (rc < 0)
-      return rc;
-    mal_interactiontype_t enumerated = content[i];
-    if (presence_flag) {
-      rc = malbinary_encoder_encode_small_enum(encoder, cursor,
-          enumerated);
+  mal_encoder_add_list_size_encoding_length(mal_encoder, list_size, cursor);
+  for (int i = 0; i < list_size; i++)
+  {
+    bool presence_flag = self->presence_flags[i];
+    mal_encoder_add_presence_flag_encoding_length(mal_encoder, cursor, presence_flag);
+    if (presence_flag)
+    {
+      rc = mal_encoder_add_small_enum_encoding_length(mal_encoder, self->content[i], cursor);
       if (rc < 0)
         return rc;
     }
   }
   return rc;
 }
-
-int mal_interactiontype_list_decode_malbinary(mal_interactiontype_list_t *self,
-    mal_decoder_t *decoder, void *cursor) {
+int mal_interactiontype_list_encode_malbinary(mal_interactiontype_list_t * self, mal_encoder_t * mal_encoder, void * cursor)
+{
+  int rc = 0;
+  unsigned int list_size = self->element_count;
+  rc = mal_encoder_encode_list_size(mal_encoder, cursor, list_size);
+  if (rc < 0)
+    return rc;
+  for (int i = 0; i < list_size; i++)
+  {
+    bool presence_flag = self->presence_flags[i];
+    rc = mal_encoder_encode_presence_flag(mal_encoder, cursor, presence_flag);
+    if (rc < 0)
+      return rc;
+    if (presence_flag)
+    {
+      rc = mal_encoder_encode_small_enum(mal_encoder, cursor, self->content[i]);
+      if (rc < 0)
+        return rc;
+    }
+  }
+  return rc;
+}
+int mal_interactiontype_list_decode_malbinary(mal_interactiontype_list_t * self, mal_decoder_t * mal_decoder, void * cursor)
+{
   int rc = 0;
   unsigned int list_size;
-  malbinary_decoder_decode_list_size(decoder, cursor, &list_size);
-  bool *presence_flags = (bool *) malloc(sizeof(bool) * list_size);
-  mal_interactiontype_t *list_content = (mal_interactiontype_t *) malloc(
-      sizeof(mal_interactiontype_t) * list_size);
-  for (int i = 0; i < list_size; i++) {
-    int list_element;
+  rc = mal_decoder_decode_list_size(mal_decoder, cursor, &list_size);
+  if (rc < 0)
+    return rc;
+  for (int i = 0; i < list_size; i++)
+  {
     bool presence_flag;
-    rc = malbinary_decoder_decode_presence_flag(decoder, cursor,
-        &presence_flag);
+    int enumerated_value;
+    rc = mal_decoder_decode_presence_flag(mal_decoder, cursor, &presence_flag);
     if (rc < 0)
       return rc;
-    if (presence_flag) {
-      rc = malbinary_decoder_decode_small_enum(decoder, cursor,
-          &list_element);
+    self->presence_flags[i] = presence_flag;
+    if (presence_flag)
+    {
+      rc = mal_decoder_decode_small_enum(mal_decoder, cursor, &enumerated_value);
       if (rc < 0)
         return rc;
-      presence_flags[i] = true;
-      list_content[i] = (mal_interactiontype_t) list_element;
-    } else {
-      presence_flags[i] = false;
+      self->content[i] = (mal_interactiontype_t) enumerated_value;
     }
   }
-  self->presence_flags = presence_flags;
-  self->content = list_content;
   return rc;
 }
 
-void mal_interactiontype_list_test(bool verbose) {
-  printf(" * mal_interactiontype_list: ");
+// test function
+void mal_interactiontype_list_test(bool verbose)
+{
+  printf(" * list of mal_interactiontype: ");
   if (verbose)
     printf("\n");
-
-  //  @selftest
-  // ...
-  //  @end
   printf("OK\n");
 }
-

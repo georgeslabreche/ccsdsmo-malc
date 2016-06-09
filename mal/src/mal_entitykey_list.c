@@ -1,124 +1,132 @@
-/*
- */
-
 #include "mal.h"
 
-mal_entitykey_list_t *mal_entitykey_list_new(unsigned int element_count) {
-  mal_entitykey_list_t *self = (mal_entitykey_list_t *) malloc(
-      sizeof(mal_entitykey_list_t));
+struct _mal_entitykey_list_t {
+  unsigned int element_count;
+  mal_entitykey_t ** content;
+};
+
+// default constructor
+mal_entitykey_list_t * mal_entitykey_list_new(unsigned int element_count)
+{
+  mal_entitykey_list_t *self = (mal_entitykey_list_t *) calloc(1, sizeof(mal_entitykey_list_t));
   if (!self)
     return NULL;
-
   self->element_count = element_count;
-  self->content = (mal_entitykey_t **) malloc(
-      sizeof(mal_entitykey_t *) * element_count);
-
+  self->content = (mal_entitykey_t **) calloc(element_count, sizeof(mal_entitykey_t *));
+  if (!self->content && (element_count > 0))
+  {
+    free(self);
+    return NULL;
+  }
   return self;
 }
 
-void mal_entitykey_list_destroy(mal_entitykey_list_t **self_p) {
-  if (*self_p) {
-    mal_entitykey_list_t *self = *self_p;
-    unsigned int list_size = self->element_count;
-    mal_entitykey_t **content = self->content;
-    for (int i = 0; i < list_size; i++) {
-      mal_entitykey_destroy(&content[i]);
+// destructor, free the list, its content and its elements
+void mal_entitykey_list_destroy(mal_entitykey_list_t ** self_p)
+{
+  if ((*self_p)->element_count > 0)
+  {
+    for (int i = 0; i < (*self_p)->element_count; i++)
+    {
+      if ((*self_p)->content[i] != NULL)
+        mal_entitykey_destroy(&(*self_p)->content[i]);
     }
-    free(self->content);
-    free(self);
-    *self_p = NULL;
+    free((*self_p)->content);
   }
+  free (*self_p);
+  (*self_p) = NULL;
 }
 
-unsigned int mal_entitykey_list_get_element_count(
-    mal_entitykey_list_t *self) {
+// fields accessors for composite list mal_entitykey_list
+unsigned int mal_entitykey_list_get_element_count(mal_entitykey_list_t * self)
+{
   return self->element_count;
 }
-
-mal_entitykey_t **mal_entitykey_list_get_content(
-    mal_entitykey_list_t *self) {
+mal_entitykey_t ** mal_entitykey_list_get_content(mal_entitykey_list_t * self)
+{
   return self->content;
 }
 
-int mal_entitykey_list_add_encoding_length_malbinary(
-    mal_entitykey_list_t *self, mal_encoder_t *encoder,
-    void *cursor) {
+// encoding functions related to transport malbinary
+int mal_entitykey_list_add_encoding_length_malbinary(mal_entitykey_list_t * self, mal_encoder_t * mal_encoder, void * cursor)
+{
   int rc = 0;
   unsigned int list_size = self->element_count;
-  malbinary_encoder_add_list_size_encoding_length(encoder, list_size, cursor);
-  // Presence flags
-  malbinary_add_length((malbinary_cursor_t *) cursor, list_size);
-  mal_entitykey_t **content = self->content;
-  for (int i = 0; i < list_size; i++) {
-    mal_entitykey_t *list_element = content[i];
-    if (list_element != NULL) {
-      rc = mal_entitykey_add_encoding_length_malbinary(list_element, encoder, cursor);
+  mal_encoder_add_list_size_encoding_length(mal_encoder, list_size, cursor);
+  for (int i = 0; i < list_size; i++)
+  {
+    mal_entitykey_t * list_element = self->content[i];
+    bool presence_flag = (list_element != NULL);
+    mal_encoder_add_presence_flag_encoding_length(mal_encoder, cursor, presence_flag);
+    if (presence_flag)
+    {
+      rc = mal_entitykey_add_encoding_length_malbinary(list_element, mal_encoder, cursor);
       if (rc < 0)
         return rc;
     }
   }
   return rc;
 }
-
-int mal_entitykey_list_encode_malbinary(mal_entitykey_list_t *self,
-    mal_encoder_t *encoder, void *cursor) {
+int mal_entitykey_list_encode_malbinary(mal_entitykey_list_t * self, mal_encoder_t * mal_encoder, void * cursor)
+{
   int rc = 0;
   unsigned int list_size = self->element_count;
-  malbinary_encoder_encode_list_size(encoder, cursor, list_size);
-  mal_entitykey_t **content = self->content;
-  for (int i = 0; i < list_size; i++) {
+  rc = mal_encoder_encode_list_size(mal_encoder, cursor, list_size);
+  if (rc < 0)
+    return rc;
+  mal_entitykey_t ** content = self->content;
+  for (int i = 0; i < list_size; i++)
+  {
     mal_entitykey_t *list_element = content[i];
     bool presence_flag = (list_element != NULL);
-    rc = malbinary_encoder_encode_presence_flag(encoder, cursor,
-        presence_flag);
+    rc = mal_encoder_encode_presence_flag(mal_encoder, cursor, presence_flag);
     if (rc < 0)
       return rc;
-    if (presence_flag) {
-      rc = mal_entitykey_encode_malbinary(list_element, encoder, cursor);
+    if (presence_flag)
+    {
+      rc = mal_entitykey_encode_malbinary(list_element, mal_encoder, cursor);
       if (rc < 0)
         return rc;
     }
   }
   return rc;
 }
-
-int mal_entitykey_list_decode_malbinary(mal_entitykey_list_t *self,
-    mal_decoder_t *decoder, void *cursor) {
-  int rc = 0;
-  unsigned int list_size;
-  malbinary_decoder_decode_list_size(decoder, cursor, &list_size);
-  mal_entitykey_t **list_content = (mal_entitykey_t **) malloc(
-      sizeof(mal_entitykey_t *) * list_size);
-  for (int i = 0; i < list_size; i++) {
-    mal_entitykey_t *list_element;
+int mal_entitykey_list_decode_malbinary(mal_entitykey_list_t * self, mal_decoder_t * mal_decoder, void * cursor)
+{
+  int rc = mal_decoder_decode_list_size(mal_decoder, cursor, &self->element_count);
+  if (rc < 0)
+    return rc;
+  if (self->element_count == 0)
+  {
+    self->content = NULL;
+    return 0;
+  }
+  self->content = (mal_entitykey_t **) calloc(self->element_count, sizeof(mal_entitykey_t *));
+  if (self->content == NULL)
+    return -1;
+  for (int i = 0; i < self->element_count; i++)
+  {
     bool presence_flag;
-    rc = malbinary_decoder_decode_presence_flag(decoder, cursor,
-        &presence_flag);
+    rc = mal_decoder_decode_presence_flag(mal_decoder, cursor, &presence_flag);
     if (rc < 0)
       return rc;
-    if (presence_flag) {
-      list_element = mal_entitykey_new();
-      rc = mal_entitykey_decode_malbinary(list_element, decoder, cursor);
+    if (presence_flag)
+    {
+      self->content[i] = mal_entitykey_new();
+      if (self->content[i] == NULL) return -1;
+      rc = mal_entitykey_decode_malbinary(self->content[i], mal_decoder, cursor);
       if (rc < 0)
         return rc;
-    } else {
-      list_element = NULL;
     }
-    list_content[i] = list_element;
   }
-  self->element_count = list_size;
-  self->content = list_content;
   return rc;
 }
 
-void mal_entitykey_list_test(bool verbose) {
-  printf(" * mal_entitykey_list: ");
+// test function
+void mal_entitykey_list_test(bool verbose)
+{
+  printf(" * list of mal_entitykey: ");
   if (verbose)
     printf("\n");
-
-//  @selftest
-// ...
-//  @end
   printf("OK\n");
 }
-
