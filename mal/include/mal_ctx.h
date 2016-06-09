@@ -24,7 +24,10 @@ void mal_ctx_set_binding(
     mal_binding_ctx_send_message_fn *send_message,
     mal_binding_ctx_recv_message_fn *recv_message,
     mal_binding_ctx_poller_wait_fn *poller_wait,
-    mal_binding_ctx_destroy_message_fn *destroy_message);
+    mal_binding_ctx_destroy_message_fn *destroy_message,
+    mal_binding_ctx_start_fn *mal_ctx_start,
+    mal_binding_ctx_stop_fn *mal_ctx_stop,
+    mal_binding_ctx_destroy_fn *mal_ctx_destroy);
 
 void *mal_ctx_get_binding(mal_ctx_t *self);
 
@@ -61,6 +64,10 @@ int mal_ctx_poller_wait(
     int timeout);
 
 int mal_ctx_destroy_message(mal_ctx_t *self, mal_message_t *message);
+
+int mal_binding_ctx_start(mal_ctx_t *self);
+int mal_binding_ctx_stop(mal_ctx_t *self);
+int mal_binding_ctx_destroy(mal_ctx_t *self);
 
 //  Self test of this class
 void mal_ctx_test(bool verbose);

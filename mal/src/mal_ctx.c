@@ -16,6 +16,9 @@ struct _mal_ctx_t {
   mal_binding_ctx_recv_message_fn *recv_message;
   mal_binding_ctx_poller_wait_fn *poller_wait;
   mal_binding_ctx_destroy_message_fn *destroy_message;
+  mal_binding_ctx_start_fn *mal_binding_ctx_start;
+  mal_binding_ctx_stop_fn *mal_binding_ctx_stop;
+  mal_binding_ctx_destroy_fn *mal_binding_ctx_destroy;
 };
 
 mal_ctx_t *mal_ctx_new() {
@@ -35,9 +38,13 @@ mal_ctx_t *mal_ctx_new() {
   self->recv_message = NULL;
   self->poller_wait = NULL;
   self->destroy_message = NULL;
+  self->mal_binding_ctx_start = NULL;
+  self->mal_binding_ctx_stop = NULL;
+  self->mal_binding_ctx_destroy = NULL;
 
   return self;
 }
+
 
 void mal_ctx_destroy(mal_ctx_t **self_p) {
   if (*self_p) {
@@ -59,7 +66,10 @@ void mal_ctx_set_binding(
     mal_binding_ctx_send_message_fn *send_message,
     mal_binding_ctx_recv_message_fn *recv_message,
     mal_binding_ctx_poller_wait_fn *poller_wait,
-    mal_binding_ctx_destroy_message_fn *destroy_message) {
+    mal_binding_ctx_destroy_message_fn *destroy_message,
+    mal_binding_ctx_start_fn *mal_binding_ctx_start,
+    mal_binding_ctx_stop_fn *mal_binding_ctx_stop,
+    mal_binding_ctx_destroy_fn *mal_binding_ctx_destroy) {
   self->mal_binding_ctx = mal_binding_ctx;
   self->create_uri = create_uri;
   self->create_endpoint = create_endpoint;
@@ -72,6 +82,9 @@ void mal_ctx_set_binding(
   self->recv_message = recv_message;
   self->poller_wait = poller_wait;
   self->destroy_message = destroy_message;
+  self->mal_binding_ctx_start = mal_binding_ctx_start;
+  self->mal_binding_ctx_stop = mal_binding_ctx_stop;
+  self->mal_binding_ctx_destroy = mal_binding_ctx_destroy;
 }
 
 void *mal_ctx_get_binding(mal_ctx_t *self) {
@@ -132,6 +145,16 @@ int mal_ctx_poller_wait(
 
 int mal_ctx_destroy_message(mal_ctx_t *self, mal_message_t *message) {
   return self->destroy_message(self->mal_binding_ctx, message);
+}
+
+int mal_binding_ctx_start(mal_ctx_t *self) {
+  return self->mal_binding_ctx_start(self->mal_binding_ctx);
+}
+int mal_binding_ctx_stop(mal_ctx_t *self) {
+  return self->mal_binding_ctx_stop(self->mal_binding_ctx);
+}
+int mal_binding_ctx_destroy(mal_ctx_t *self) {
+  return self->mal_binding_ctx_destroy(&self->mal_binding_ctx);
 }
 
 void mal_ctx_test(bool verbose) {
