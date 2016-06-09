@@ -431,23 +431,33 @@ malzmq_ctx_t *malzmq_ctx_new(mal_ctx_t *mal_ctx,
       malzmq_ctx_poller_add_endpoint, malzmq_ctx_poller_del_endpoint,
       malzmq_ctx_send_message, malzmq_ctx_recv_message,
       malzmq_ctx_poller_wait,
-      malzmq_ctx_destroy_message);
+      malzmq_ctx_destroy_message,
+      malzmq_ctx_start,
+      malzmq_ctx_stop,
+      malzmq_ctx_destroy);
 
   return self;
 }
 
-int malzmq_ctx_start(malzmq_ctx_t *self) {
+int malzmq_ctx_start(void *self) {
   clog_debug(malzmq_logger, "malzmq_ctx: running...\n");
-  return zloop_start(self->zloop);
+  return zloop_start(((malzmq_ctx_t *)self)->zloop);
 }
 
-void malzmq_ctx_destroy(malzmq_ctx_t **self_p) {
+int malzmq_ctx_stop(void *self) {
+  clog_debug(malzmq_logger, "malzmq_ctx: stop...\n");
+  zloop_destroy(&((malzmq_ctx_t *)self)->zloop);
+  return 0;
+}
+
+int malzmq_ctx_destroy(void **self_p) {
   if (*self_p) {
-    malzmq_ctx_t *self = *self_p;
+    malzmq_ctx_t *self = (malzmq_ctx_t *) *self_p;
     free(self->malzmq_header);
     free(self);
     *self_p = NULL;
   }
+  return 0;
 }
 
 // Must be compliant with MAL virtual function: void *self

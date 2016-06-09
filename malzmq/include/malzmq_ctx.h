@@ -36,9 +36,9 @@ malzmq_ctx_t *malzmq_ctx_new(
 mal_encoder_t *malzmq_get_encoder(malzmq_ctx_t *self);
 mal_decoder_t *malzmq_get_decoder(malzmq_ctx_t *self);
 
-int malzmq_ctx_start(malzmq_ctx_t *self);
-
-void malzmq_ctx_destroy(malzmq_ctx_t **self_p);
+int malzmq_ctx_start(void *self);
+int malzmq_ctx_stop(void *self);
+int malzmq_ctx_destroy(void **self);
 
 // Must be compliant with MAL virtual function: void *self
 int malzmq_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
