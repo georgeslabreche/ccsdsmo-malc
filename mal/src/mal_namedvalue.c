@@ -48,18 +48,24 @@ mal_namedvalue_t * mal_namedvalue_new(void)
 int mal_namedvalue_add_encoding_length_malbinary(mal_namedvalue_t * self, mal_encoder_t * mal_encoder, void * cursor)
 {
   int rc = 0;
-  ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
-  if (self->name != NULL)
+  rc = mal_encoder_add_presence_flag_encoding_length(mal_encoder, cursor, (self->name != NULL));
+  if (rc < 0)
+    return rc;
+  if ((self->name != NULL))
   {
-    rc = malbinary_encoder_add_identifier_encoding_length(mal_encoder, self->name, cursor);
+    rc = mal_encoder_add_identifier_encoding_length(mal_encoder, self->name, cursor);
     if (rc < 0)
       return rc;
   }
-  ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
+  rc = mal_encoder_add_presence_flag_encoding_length(mal_encoder, cursor, self->value_is_present);
+  if (rc < 0)
+    return rc;
   if (self->value_is_present)
   {
-    ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_ATTRIBUTE_TAG_SIZE;
-    rc = malbinary_encoder_add_attribute_encoding_length(mal_encoder, self->value_attribute_tag, self->value, cursor);
+    rc = mal_encoder_add_attribute_tag_encoding_length(mal_encoder, self->value_attribute_tag, cursor);
+    if (rc < 0)
+      return rc;
+    rc = mal_encoder_add_attribute_encoding_length(mal_encoder, self->value_attribute_tag, self->value, cursor);
     if (rc < 0)
       return rc;
   }
@@ -70,25 +76,25 @@ int mal_namedvalue_encode_malbinary(mal_namedvalue_t * self, mal_encoder_t * mal
   int rc = 0;
   bool presence_flag;
   presence_flag = (self->name != NULL);
-  rc = malbinary_encoder_encode_presence_flag(mal_encoder, cursor, presence_flag);
+  rc = mal_encoder_encode_presence_flag(mal_encoder, cursor, presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_encoder_encode_identifier(mal_encoder, cursor, self->name);
+    rc = mal_encoder_encode_identifier(mal_encoder, cursor, self->name);
     if (rc < 0)
       return rc;
   }
   presence_flag = self->value_is_present;
-  rc = malbinary_encoder_encode_presence_flag(mal_encoder, cursor, presence_flag);
+  rc = mal_encoder_encode_presence_flag(mal_encoder, cursor, presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_encoder_encode_attribute_tag(mal_encoder, cursor, self->value_attribute_tag);
+    rc = mal_encoder_encode_attribute_tag(mal_encoder, cursor, self->value_attribute_tag);
     if (rc < 0)
       return rc;
-    rc = malbinary_encoder_encode_attribute(mal_encoder, cursor, self->value_attribute_tag, self->value);
+    rc = mal_encoder_encode_attribute(mal_encoder, cursor, self->value_attribute_tag, self->value);
     if (rc < 0)
       return rc;
   }
@@ -98,12 +104,12 @@ int mal_namedvalue_decode_malbinary(mal_namedvalue_t * self, mal_decoder_t * mal
 {
   int rc = 0;
   bool presence_flag;
-  rc = malbinary_decoder_decode_presence_flag(mal_decoder, cursor, &presence_flag);
+  rc = mal_decoder_decode_presence_flag(mal_decoder, cursor, &presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_decoder_decode_identifier(mal_decoder, cursor, &self->name);
+    rc = mal_decoder_decode_identifier(mal_decoder, cursor, &self->name);
     if (rc < 0)
       return rc;
   }
@@ -111,15 +117,15 @@ int mal_namedvalue_decode_malbinary(mal_namedvalue_t * self, mal_decoder_t * mal
   {
     self->name = NULL;
   }
-  rc = malbinary_decoder_decode_presence_flag(mal_decoder, cursor, &presence_flag);
+  rc = mal_decoder_decode_presence_flag(mal_decoder, cursor, &presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = malbinary_decoder_decode_attribute_tag(mal_decoder, cursor, &self->value_attribute_tag);
+    rc = mal_decoder_decode_attribute_tag(mal_decoder, cursor, &self->value_attribute_tag);
     if (rc < 0)
       return rc;
-    rc = malbinary_decoder_decode_attribute(mal_decoder, cursor, self->value_attribute_tag, self->value);
+    rc = mal_decoder_decode_attribute(mal_decoder, cursor, self->value_attribute_tag, self->value);
     if (rc < 0)
       return rc;
   }

@@ -52,13 +52,13 @@ int mal_file_list_add_encoding_length_malbinary(mal_file_list_t * self, mal_enco
 {
   int rc = 0;
   unsigned int list_size = self->element_count;
-  malbinary_encoder_add_list_size_encoding_length(mal_encoder, list_size, cursor);
-  malbinary_add_length((malbinary_cursor_t *) cursor, list_size);
-  mal_file_t ** content = self->content;
+  mal_encoder_add_list_size_encoding_length(mal_encoder, list_size, cursor);
   for (int i = 0; i < list_size; i++)
   {
-    mal_file_t * list_element = content[i];
-    if (list_element != NULL)
+    mal_file_t * list_element = self->content[i];
+    bool presence_flag = (list_element != NULL);
+    mal_encoder_add_presence_flag_encoding_length(mal_encoder, cursor, presence_flag);
+    if (presence_flag)
     {
       rc = mal_file_add_encoding_length_malbinary(list_element, mal_encoder, cursor);
       if (rc < 0)
@@ -71,7 +71,7 @@ int mal_file_list_encode_malbinary(mal_file_list_t * self, mal_encoder_t * mal_e
 {
   int rc = 0;
   unsigned int list_size = self->element_count;
-  rc = malbinary_encoder_encode_list_size(mal_encoder, cursor, list_size);
+  rc = mal_encoder_encode_list_size(mal_encoder, cursor, list_size);
   if (rc < 0)
     return rc;
   mal_file_t ** content = self->content;
@@ -79,7 +79,7 @@ int mal_file_list_encode_malbinary(mal_file_list_t * self, mal_encoder_t * mal_e
   {
     mal_file_t *list_element = content[i];
     bool presence_flag = (list_element != NULL);
-    rc = malbinary_encoder_encode_presence_flag(mal_encoder, cursor, presence_flag);
+    rc = mal_encoder_encode_presence_flag(mal_encoder, cursor, presence_flag);
     if (rc < 0)
       return rc;
     if (presence_flag)
@@ -93,7 +93,7 @@ int mal_file_list_encode_malbinary(mal_file_list_t * self, mal_encoder_t * mal_e
 }
 int mal_file_list_decode_malbinary(mal_file_list_t * self, mal_decoder_t * mal_decoder, void * cursor)
 {
-  int rc = malbinary_decoder_decode_list_size(mal_decoder, cursor, &self->element_count);
+  int rc = mal_decoder_decode_list_size(mal_decoder, cursor, &self->element_count);
   if (rc < 0)
     return rc;
   if (self->element_count == 0)
@@ -107,7 +107,7 @@ int mal_file_list_decode_malbinary(mal_file_list_t * self, mal_decoder_t * mal_d
   for (int i = 0; i < self->element_count; i++)
   {
     bool presence_flag;
-    rc = malbinary_decoder_decode_presence_flag(mal_decoder, cursor, &presence_flag);
+    rc = mal_decoder_decode_presence_flag(mal_decoder, cursor, &presence_flag);
     if (rc < 0)
       return rc;
     if (presence_flag)
