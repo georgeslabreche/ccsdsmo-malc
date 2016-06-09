@@ -13,10 +13,10 @@ cd $PROGDIR/util;
 cd $PROGDIR/malattributes;
 ./genmake $*
 
-cd $PROGDIR/malbinary;
+cd $PROGDIR/mal;
 ./genmake $*
 
-cd $PROGDIR/mal;
+cd $PROGDIR/malbinary;
 ./genmake $*
 
 cd $PROGDIR/malzmq;
@@ -35,16 +35,16 @@ cd $PROGDIR/test/testarea;
 #./genmake $*
 
 #cd $PROGDIR/test/send_app;
-#./genmake $*
+./genmake $*
 
 #cd $PROGDIR/test/submit_app;
-#./genmake $*
+./genmake $*
 
 #cd $PROGDIR/test/request_app;
-#./genmake $*
+./genmake $*
 
 #cd $PROGDIR/test/invoke_app;
-#./genmake $*
+./genmake $*
 
 cd $PROGDIR/test/progress_app;
 ./genmake $*
