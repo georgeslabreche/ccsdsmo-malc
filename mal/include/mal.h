@@ -11,7 +11,6 @@ extern "C" {
 #include "clog.h"
 
 #include "malattributes.h"
-#include "malbinary.h"
 
 //  MAL API version macros for compile-time API detection
 
@@ -53,6 +52,9 @@ void mal_set_log_level(int level);
 #define MAL_IP_STAGE_PUBSUB_DEREGISTER_ACK 8
 #define MAL_IP_STAGE_PUBSUB_PUBLISH_DEREGISTER 9
 #define MAL_IP_STAGE_PUBSUB_PUBLISH_DEREGISTER_ACK 10
+
+typedef struct _mal_encoder_t mal_encoder_t;
+typedef struct _mal_decoder_t mal_decoder_t;
 
 typedef struct _mal_ctx_t mal_ctx_t;
 typedef struct _mal_message_t mal_message_t;
@@ -222,6 +224,10 @@ typedef int mal_binding_ctx_poller_wait_fn(
 // Function to be provided by a MAL binding to destroy a message
 typedef int mal_binding_ctx_destroy_message_fn(void *mal_binding_ctx, mal_message_t *message);
 
+typedef int mal_binding_ctx_start_fn(void *mal_binding_ctx);
+typedef int mal_binding_ctx_stop_fn(void *mal_binding_ctx);
+typedef int mal_binding_ctx_destroy_fn(void **mal_binding_ctx);
+
 /* ***** ***** ***** ***** ***** ***** ***** ***** ***** *****
  * Encoding API
  * ***** ***** ***** ***** ***** ***** ***** ***** ***** ******/
@@ -387,6 +393,7 @@ void mal_test(bool verbose);
 #include "mal_qoslevel_list.h"
 #include "mal_encoder.h"
 #include "mal_decoder.h"
+
 
 #ifdef __cplusplus
 }
