@@ -46,8 +46,8 @@
         You need not specify subdependencies if they are implied. -->
     <use project = "czmq" />
     <use project = "malattributes" />
-    <use project = "malbinary" />
     <use project = "mal" />
+    <use project = "malbinary" />
 
     <!-- Header Files
          name := The name the header file to include without file ending
