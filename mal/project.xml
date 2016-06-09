@@ -48,7 +48,6 @@
     -->
     <use project = "util" />
     <use project = "malattributes" />
-    <use project = "malbinary" />
 
     <!-- Header Files
          name := The name the header file to include without file ending
