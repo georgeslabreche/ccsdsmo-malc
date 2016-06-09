@@ -18,8 +18,6 @@ bool *mal_ulong_list_get_presence_flags(mal_ulong_list_t *self);
 
 mal_ulong_t *mal_ulong_list_get_content(mal_ulong_list_t *self);
 
-void mal_ulong_list_add_element(mal_ulong_list_t *self, int index, mal_ulong_t element);
-
 int mal_ulong_list_add_encoding_length_malbinary(mal_ulong_list_t *self,
     mal_encoder_t *encoder, void *cursor);
 

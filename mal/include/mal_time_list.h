@@ -18,8 +18,6 @@ bool *mal_time_list_get_presence_flags(mal_time_list_t *self);
 
 mal_time_t *mal_time_list_get_content(mal_time_list_t *self);
 
-void mal_time_list_add_element(mal_time_list_t *self, int index, mal_time_t element);
-
 int mal_time_list_add_encoding_length_malbinary(mal_time_list_t *self,
     mal_encoder_t *encoder, void *cursor);
 

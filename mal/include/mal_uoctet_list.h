@@ -18,8 +18,6 @@ bool *mal_uoctet_list_get_presence_flags(mal_uoctet_list_t *self);
 
 mal_uoctet_t *mal_uoctet_list_get_content(mal_uoctet_list_t *self);
 
-void mal_uoctet_list_add_element(mal_uoctet_list_t *self, int index, mal_uoctet_t element);
-
 int mal_uoctet_list_add_encoding_length_malbinary(mal_uoctet_list_t *self,
     mal_encoder_t *encoder, void *cursor);
 

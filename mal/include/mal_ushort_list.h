@@ -18,8 +18,6 @@ bool *mal_ushort_list_get_presence_flags(mal_ushort_list_t *self);
 
 mal_ushort_t *mal_ushort_list_get_content(mal_ushort_list_t *self);
 
-void mal_ushort_list_add_element(mal_ushort_list_t *self, int index, mal_ushort_t element);
-
 int mal_ushort_list_add_encoding_length_malbinary(mal_ushort_list_t *self,
     mal_encoder_t *encoder, void *cursor);
 
