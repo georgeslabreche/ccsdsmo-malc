@@ -9,8 +9,8 @@
 #define MAL_INCLUDE_MAL_DECODER_H_
 
 #include "clog.h"
+#include "mal.h"
 
-typedef struct _mal_decoder_t mal_decoder_t;
 
 /** ***** ***** ***** ***** ***** ***** ***** ***** ***** *****
  * Encoding API
@@ -72,6 +72,46 @@ int mal_decoder_decode_attribute(mal_decoder_t *decoder, void *cursor,
     unsigned char attribute_tag, union mal_attribute_t self);
 int mal_decoder_decode_attribute_tag(mal_decoder_t *self, void *cursor, unsigned char *result);
 
+int mal_decoder_decode_entitykey(mal_entitykey_t * self, mal_decoder_t * mal_decoder, void * cursor);
+int mal_decoder_decode_entityrequest(mal_entityrequest_t * self, mal_decoder_t * mal_decoder, void * cursor);
+int mal_decoder_decode_file(mal_file_t * self, mal_decoder_t * mal_decoder, void * cursor);
+int mal_decoder_decode_idbooleanpair(mal_idbooleanpair_t * self, mal_decoder_t * mal_decoder, void * cursor);
+int mal_decoder_decode_namedvalue(mal_namedvalue_t * self, mal_decoder_t * mal_decoder, void * cursor);
+int mal_decoder_decode_pair(mal_pair_t * self, mal_decoder_t * mal_decoder, void * cursor);
+int mal_decoder_decode_subscription(mal_subscription_t * self, mal_decoder_t * mal_decoder, void * cursor);
+int mal_decoder_decode_updateheader(mal_updateheader_t * self, mal_decoder_t * mal_decoder, void * cursor);
+
+int mal_decoder_decode_blob_list(mal_blob_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_boolean_list(mal_boolean_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_double_list(mal_double_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_duration_list(mal_duration_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_entitykey_list(mal_entitykey_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_entityrequest_list(mal_entityrequest_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_file_list(mal_file_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_finetime_list(mal_finetime_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_float_list(mal_float_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_idbooleanpair_list(mal_idbooleanpair_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_identifier_list(mal_identifier_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_integer_list(mal_integer_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_interactiontype_list(mal_interactiontype_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_long_list(mal_long_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_namedvalue_list(mal_namedvalue_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_octet_list(mal_octet_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_pair_list(mal_pair_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_qoslevel_list(mal_qoslevel_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_sessiontype_list(mal_sessiontype_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_short_list(mal_short_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_string_list(mal_string_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_subscription_list(mal_subscription_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_time_list(mal_time_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_uinteger_list(mal_uinteger_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_ulong_list(mal_ulong_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_uoctet_list(mal_uoctet_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_updateheader_list(mal_updateheader_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_updatetype_list(mal_updatetype_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_uri_list(mal_uri_list_t *self, mal_decoder_t *decoder, void *cursor);
+int mal_decoder_decode_ushort_list(mal_ushort_list_t *self, mal_decoder_t *decoder, void *cursor);
+
 /** ***** ***** ***** ***** ***** ***** ***** ***** ***** *****
  * Encoding SPI
  * ***** ***** ***** ***** ***** ***** ***** ***** ***** ***** */
@@ -121,6 +161,46 @@ typedef int mal_decoder_decode_attribute_fn(mal_decoder_t *decoder, void *cursor
     unsigned char attribute_tag, union mal_attribute_t self);
 typedef int mal_decoder_decode_attribute_tag_fn(mal_decoder_t *self, void *cursor, unsigned char *result);
 
+typedef int mal_decoder_decode_entitykey_fn(mal_entitykey_t * self, mal_decoder_t * mal_decoder, void * cursor);
+typedef int mal_decoder_decode_entityrequest_fn(mal_entityrequest_t * self, mal_decoder_t * mal_decoder, void * cursor);
+typedef int mal_decoder_decode_file_fn(mal_file_t * self, mal_decoder_t * mal_decoder, void * cursor);
+typedef int mal_decoder_decode_idbooleanpair_fn(mal_idbooleanpair_t * self, mal_decoder_t * mal_decoder, void * cursor);
+typedef int mal_decoder_decode_namedvalue_fn(mal_namedvalue_t * self, mal_decoder_t * mal_decoder, void * cursor);
+typedef int mal_decoder_decode_pair_fn(mal_pair_t * self, mal_decoder_t * mal_decoder, void * cursor);
+typedef int mal_decoder_decode_subscription_fn(mal_subscription_t * self, mal_decoder_t * mal_decoder, void * cursor);
+typedef int mal_decoder_decode_updateheader_fn(mal_updateheader_t * self, mal_decoder_t * mal_decoder, void * cursor);
+
+typedef int mal_decoder_decode_blob_list_fn(mal_blob_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_boolean_list_fn(mal_boolean_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_double_list_fn(mal_double_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_duration_list_fn(mal_duration_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_entitykey_list_fn(mal_entitykey_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_entityrequest_list_fn(mal_entityrequest_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_file_list_fn(mal_file_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_finetime_list_fn(mal_finetime_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_float_list_fn(mal_float_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_idbooleanpair_list_fn(mal_idbooleanpair_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_identifier_list_fn(mal_identifier_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_integer_list_fn(mal_integer_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_interactiontype_list_fn(mal_interactiontype_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_long_list_fn(mal_long_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_namedvalue_list_fn(mal_namedvalue_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_octet_list_fn(mal_octet_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_pair_list_fn(mal_pair_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_qoslevel_list_fn(mal_qoslevel_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_sessiontype_list_fn(mal_sessiontype_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_short_list_fn(mal_short_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_string_list_fn(mal_string_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_subscription_list_fn(mal_subscription_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_time_list_fn(mal_time_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_uinteger_list_fn(mal_uinteger_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_ulong_list_fn(mal_ulong_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_uoctet_list_fn(mal_uoctet_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_updateheader_list_fn(mal_updateheader_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_updatetype_list_fn(mal_updatetype_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_uri_list_fn(mal_uri_list_t *self, mal_decoder_t *decoder, void *cursor);
+typedef int mal_decoder_decode_ushort_list_fn(mal_ushort_list_t *self, mal_decoder_t *decoder, void *cursor);
+
 /*
  * Prototype of initialization function for decoding handles structure.
  */
@@ -160,7 +240,47 @@ typedef void mal_decoder_initialize_functions_fn(
     mal_decoder_decode_ulong_fn *mal_decoder_decode_ulong,
     mal_decoder_decode_finetime_fn *mal_decoder_decode_finetime,
     mal_decoder_decode_attribute_fn *mal_decoder_decode_attribute,
-    mal_decoder_decode_attribute_tag_fn *mal_decoder_decode_attribute_tag);
+    mal_decoder_decode_attribute_tag_fn *mal_decoder_decode_attribute_tag,
+
+    mal_decoder_decode_entitykey_fn *mal_decoder_decode_entitykey,
+    mal_decoder_decode_entityrequest_fn *mal_decoder_decode_entityrequest,
+    mal_decoder_decode_file_fn *mal_decoder_decode_file,
+    mal_decoder_decode_idbooleanpair_fn *mal_decoder_decode_idbooleanpair,
+    mal_decoder_decode_namedvalue_fn *mal_decoder_decode_namedvalue,
+    mal_decoder_decode_pair_fn *mal_decoder_decode_pair,
+    mal_decoder_decode_subscription_fn *mal_decoder_decode_subscription,
+    mal_decoder_decode_updateheader_fn *mal_decoder_decode_updateheader,
+
+    mal_decoder_decode_blob_list_fn *mal_decoder_decode_blob_list,
+    mal_decoder_decode_boolean_list_fn *mal_decoder_decode_boolean_list,
+    mal_decoder_decode_double_list_fn *mal_decoder_decode_double_list,
+    mal_decoder_decode_duration_list_fn *mal_decoder_decode_duration_list,
+    mal_decoder_decode_entitykey_list_fn *mal_decoder_decode_entitykey_list,
+    mal_decoder_decode_entityrequest_list_fn *mal_decoder_decode_entityrequest_list,
+    mal_decoder_decode_file_list_fn *mal_decoder_decode_file_list,
+    mal_decoder_decode_finetime_list_fn *mal_decoder_decode_finetime_list,
+    mal_decoder_decode_float_list_fn *mal_decoder_decode_float_list,
+    mal_decoder_decode_idbooleanpair_list_fn *mal_decoder_decode_idbooleanpair_list,
+    mal_decoder_decode_identifier_list_fn *mal_decoder_decode_identifier_list,
+    mal_decoder_decode_integer_list_fn *mal_decoder_decode_integer_list,
+    mal_decoder_decode_interactiontype_list_fn *mal_decoder_decode_interactiontype_list,
+    mal_decoder_decode_long_list_fn *mal_decoder_decode_long_list,
+    mal_decoder_decode_namedvalue_list_fn *mal_decoder_decode_namedvalue_list,
+    mal_decoder_decode_octet_list_fn *mal_decoder_decode_octet_list,
+    mal_decoder_decode_pair_list_fn *mal_decoder_decode_pair_list,
+    mal_decoder_decode_qoslevel_list_fn *mal_decoder_decode_qoslevel_list,
+    mal_decoder_decode_sessiontype_list_fn *mal_decoder_decode_sessiontype_list,
+    mal_decoder_decode_short_list_fn *mal_decoder_decode_short_list,
+    mal_decoder_decode_string_list_fn *mal_decoder_decode_string_list,
+    mal_decoder_decode_subscription_list_fn *mal_decoder_decode_subscription_list,
+    mal_decoder_decode_time_list_fn *mal_decoder_decode_time_list,
+    mal_decoder_decode_uinteger_list_fn *mal_decoder_decode_uinteger_list,
+    mal_decoder_decode_ulong_list_fn *mal_decoder_decode_ulong_list,
+    mal_decoder_decode_uoctet_list_fn *mal_decoder_decode_uoctet_list,
+    mal_decoder_decode_updateheader_list_fn *mal_decoder_decode_updateheader_list,
+    mal_decoder_decode_updatetype_list_fn *mal_decoder_decode_updatetype_list,
+    mal_decoder_decode_uri_list_fn *mal_decoder_decode_uri_list,
+    mal_decoder_decode_ushort_list_fn *mal_decoder_decode_ushort_list);
 
 /*
  * Currently this function can not be used by the decoding modules as it causes
@@ -219,6 +339,46 @@ struct _mal_decoder_t {
   mal_decoder_decode_finetime_fn *mal_decoder_decode_finetime;
   mal_decoder_decode_attribute_fn *mal_decoder_decode_attribute;
   mal_decoder_decode_attribute_tag_fn *mal_decoder_decode_attribute_tag;
+
+  mal_decoder_decode_entitykey_fn *mal_decoder_decode_entitykey;
+  mal_decoder_decode_entityrequest_fn *mal_decoder_decode_entityrequest;
+  mal_decoder_decode_file_fn *mal_decoder_decode_file;
+  mal_decoder_decode_idbooleanpair_fn *mal_decoder_decode_idbooleanpair;
+  mal_decoder_decode_namedvalue_fn *mal_decoder_decode_namedvalue;
+  mal_decoder_decode_pair_fn *mal_decoder_decode_pair;
+  mal_decoder_decode_subscription_fn *mal_decoder_decode_subscription;
+  mal_decoder_decode_updateheader_fn *mal_decoder_decode_updateheader;
+
+  mal_decoder_decode_blob_list_fn *mal_decoder_decode_blob_list;
+  mal_decoder_decode_boolean_list_fn *mal_decoder_decode_boolean_list;
+  mal_decoder_decode_double_list_fn *mal_decoder_decode_double_list;
+  mal_decoder_decode_duration_list_fn *mal_decoder_decode_duration_list;
+  mal_decoder_decode_entitykey_list_fn *mal_decoder_decode_entitykey_list;
+  mal_decoder_decode_entityrequest_list_fn *mal_decoder_decode_entityrequest_list;
+  mal_decoder_decode_file_list_fn *mal_decoder_decode_file_list;
+  mal_decoder_decode_finetime_list_fn *mal_decoder_decode_finetime_list;
+  mal_decoder_decode_float_list_fn *mal_decoder_decode_float_list;
+  mal_decoder_decode_idbooleanpair_list_fn *mal_decoder_decode_idbooleanpair_list;
+  mal_decoder_decode_identifier_list_fn *mal_decoder_decode_identifier_list;
+  mal_decoder_decode_integer_list_fn *mal_decoder_decode_integer_list;
+  mal_decoder_decode_interactiontype_list_fn *mal_decoder_decode_interactiontype_list;
+  mal_decoder_decode_long_list_fn *mal_decoder_decode_long_list;
+  mal_decoder_decode_namedvalue_list_fn *mal_decoder_decode_namedvalue_list;
+  mal_decoder_decode_octet_list_fn *mal_decoder_decode_octet_list;
+  mal_decoder_decode_pair_list_fn *mal_decoder_decode_pair_list;
+  mal_decoder_decode_qoslevel_list_fn *mal_decoder_decode_qoslevel_list;
+  mal_decoder_decode_sessiontype_list_fn *mal_decoder_decode_sessiontype_list;
+  mal_decoder_decode_short_list_fn *mal_decoder_decode_short_list;
+  mal_decoder_decode_string_list_fn *mal_decoder_decode_string_list;
+  mal_decoder_decode_subscription_list_fn *mal_decoder_decode_subscription_list;
+  mal_decoder_decode_time_list_fn *mal_decoder_decode_time_list;
+  mal_decoder_decode_uinteger_list_fn *mal_decoder_decode_uinteger_list;
+  mal_decoder_decode_ulong_list_fn *mal_decoder_decode_ulong_list;
+  mal_decoder_decode_uoctet_list_fn *mal_decoder_decode_uoctet_list;
+  mal_decoder_decode_updateheader_list_fn *mal_decoder_decode_updateheader_list;
+  mal_decoder_decode_updatetype_list_fn *mal_decoder_decode_updatetype_list;
+  mal_decoder_decode_uri_list_fn *mal_decoder_decode_uri_list;
+  mal_decoder_decode_ushort_list_fn *mal_decoder_decode_ushort_list;
 };
 
 void mal_decoder_test(bool verbose);

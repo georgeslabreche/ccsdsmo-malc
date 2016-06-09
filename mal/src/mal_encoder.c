@@ -1,7 +1,6 @@
 /*
  */
 
-#include "malattributes.h"
 #include "mal_encoder.h"
 
 /** ***** ***** ***** ***** ***** ***** ***** ***** ***** *****
@@ -69,8 +68,8 @@ int mal_encoder_add_string_encoding_length(mal_encoder_t *self, mal_string_t *to
   return self->mal_encoder_add_string_encoding_length(self, to_encode, cursor);
 }
 
-int mal_encoder_add_presence_flag_encoding_length(mal_encoder_t *self, void *cursor) {
-  return self->mal_encoder_add_presence_flag_encoding_length(self, cursor);
+int mal_encoder_add_presence_flag_encoding_length(mal_encoder_t *self, void *cursor, unsigned int length) {
+  return self->mal_encoder_add_presence_flag_encoding_length(self, cursor, length);
 }
 
 int mal_encoder_add_short_form_encoding_length(mal_encoder_t *self, long to_encode, void *cursor) {
@@ -161,9 +160,130 @@ int mal_encoder_add_finetime_encoding_length(mal_encoder_t *self, mal_finetime_t
   return self->mal_encoder_add_finetime_encoding_length(self, to_encode, cursor);
 }
 
+int mal_encoder_add_attribute_tag_encoding_length(mal_encoder_t *encoder,
+    unsigned char attribute_tag, void *cursor) {
+  return encoder->mal_encoder_add_attribute_tag_encoding_length(encoder, attribute_tag, cursor);
+}
+
 int mal_encoder_add_attribute_encoding_length(mal_encoder_t *encoder,
     unsigned char attribute_tag, union mal_attribute_t self, void *cursor) {
   return encoder->mal_encoder_add_attribute_encoding_length(encoder, attribute_tag, self, cursor);
+}
+
+int mal_encoder_add_entitykey_encoding_length(mal_entitykey_t * self, mal_encoder_t * mal_encoder, void * cursor) {
+  return mal_encoder->mal_encoder_add_entitykey_encoding_length(self, mal_encoder, cursor);
+}
+int mal_encoder_add_entityrequest_encoding_length(mal_entityrequest_t * self, mal_encoder_t * mal_encoder, void * cursor) {
+  return mal_encoder->mal_encoder_add_entityrequest_encoding_length(self, mal_encoder, cursor);
+}
+int mal_encoder_add_file_encoding_length(mal_file_t * self, mal_encoder_t * mal_encoder, void * cursor) {
+  return mal_encoder->mal_encoder_add_file_encoding_length(self, mal_encoder, cursor);
+}
+int mal_encoder_add_idbooleanpair_encoding_length(mal_idbooleanpair_t * self, mal_encoder_t * mal_encoder, void * cursor) {
+  return mal_encoder->mal_encoder_add_idbooleanpair_encoding_length(self, mal_encoder, cursor);
+}
+int mal_encoder_add_namedvalue_encoding_length(mal_namedvalue_t * self, mal_encoder_t * mal_encoder, void * cursor) {
+  return mal_encoder->mal_encoder_add_namedvalue_encoding_length(self, mal_encoder, cursor);
+}
+int mal_encoder_add_pair_encoding_length(mal_pair_t * self, mal_encoder_t * mal_encoder, void * cursor) {
+  return mal_encoder->mal_encoder_add_pair_encoding_length(self, mal_encoder, cursor);
+}
+int mal_encoder_add_subscription_encoding_length(mal_subscription_t * self, mal_encoder_t * mal_encoder, void * cursor) {
+  return mal_encoder->mal_encoder_add_subscription_encoding_length(self, mal_encoder, cursor);
+}
+int mal_encoder_add_updateheader_encoding_length(mal_updateheader_t * self, mal_encoder_t * mal_encoder, void * cursor) {
+  return mal_encoder->mal_encoder_add_updateheader_encoding_length(self, mal_encoder, cursor);
+}
+
+int mal_encoder_blob_list_add_encoding_length(mal_blob_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_blob_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_boolean_list_add_encoding_length(mal_boolean_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_boolean_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_double_list_add_encoding_length(mal_double_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_double_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_duration_list_add_encoding_length(mal_duration_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_duration_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_entitykey_list_add_encoding_length(mal_entitykey_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_entitykey_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_entityrequest_list_add_encoding_length(mal_entityrequest_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_entityrequest_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_file_list_add_encoding_length(mal_file_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_file_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_finetime_list_add_encoding_length(mal_finetime_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_finetime_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_float_list_add_encoding_length(mal_float_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_float_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_idbooleanpair_list_add_encoding_length(mal_idbooleanpair_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_idbooleanpair_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_identifier_list_add_encoding_length(mal_identifier_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_identifier_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_integer_list_add_encoding_length(mal_integer_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_integer_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_interactiontype_list_add_encoding_length(mal_interactiontype_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_interactiontype_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_long_list_add_encoding_length(mal_long_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_long_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_namedvalue_list_add_encoding_length(mal_namedvalue_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_namedvalue_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_octet_list_add_encoding_length(mal_octet_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_octet_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_pair_list_add_encoding_length(mal_pair_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_pair_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_qoslevel_list_add_encoding_length(mal_qoslevel_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_qoslevel_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_sessiontype_list_add_encoding_length(mal_sessiontype_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_sessiontype_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_short_list_add_encoding_length(mal_short_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_short_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_string_list_add_encoding_length(mal_string_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_string_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_subscription_list_add_encoding_length(mal_subscription_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_subscription_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_time_list_add_encoding_length(mal_time_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_time_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_uinteger_list_add_encoding_length(mal_uinteger_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_uinteger_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_ulong_list_add_encoding_length(mal_ulong_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_ulong_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_uoctet_list_add_encoding_length(mal_uoctet_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_uoctet_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_updateheader_list_add_encoding_length(mal_updateheader_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_updateheader_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_updatetype_list_add_encoding_length(mal_updatetype_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_updatetype_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_uri_list_add_encoding_length(mal_uri_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_uri_list_add_encoding_length(self, encoder,cursor);
+}
+int mal_encoder_ushort_list_add_encoding_length(mal_ushort_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_ushort_list_add_encoding_length(self, encoder,cursor);
 }
 
 
@@ -286,6 +406,122 @@ int mal_encoder_encode_attribute_tag(mal_encoder_t *self, void *cursor, unsigned
   return self->mal_encoder_encode_attribute_tag(self, cursor, to_encode);
 }
 
+int mal_encoder_encode_entitykey(mal_entitykey_t * self, mal_encoder_t * mal_encoder, void * cursor) {
+  return mal_encoder->mal_encoder_encode_entitykey(self, mal_encoder, cursor);
+}
+int mal_encoder_encode_entityrequest(mal_entityrequest_t * self, mal_encoder_t * mal_encoder, void * cursor) {
+  return mal_encoder->mal_encoder_encode_entityrequest(self, mal_encoder, cursor);
+}
+int mal_encoder_encode_file(mal_file_t * self, mal_encoder_t * mal_encoder, void * cursor) {
+  return mal_encoder->mal_encoder_encode_file(self, mal_encoder, cursor);
+}
+int mal_encoder_encode_idbooleanpair(mal_idbooleanpair_t * self, mal_encoder_t * mal_encoder, void * cursor) {
+  return mal_encoder->mal_encoder_encode_idbooleanpair(self, mal_encoder, cursor);
+}
+int mal_encoder_encode_namedvalue(mal_namedvalue_t * self, mal_encoder_t * mal_encoder, void * cursor) {
+  return mal_encoder->mal_encoder_encode_namedvalue(self, mal_encoder, cursor);
+}
+int mal_encoder_encode_pair(mal_pair_t * self, mal_encoder_t * mal_encoder, void * cursor) {
+  return mal_encoder->mal_encoder_encode_pair(self, mal_encoder, cursor);
+}
+int mal_encoder_encode_subscription(mal_subscription_t * self, mal_encoder_t * mal_encoder, void * cursor) {
+  return mal_encoder->mal_encoder_encode_subscription(self, mal_encoder, cursor);
+}
+int mal_encoder_encode_updateheader(mal_updateheader_t * self, mal_encoder_t * mal_encoder, void * cursor) {
+  return mal_encoder->mal_encoder_encode_updateheader(self, mal_encoder, cursor);
+}
+
+int mal_encoder_encode_blob_list(mal_blob_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_blob_list(self, encoder, cursor);
+}
+int mal_encoder_encode_boolean_list(mal_boolean_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_boolean_list(self, encoder, cursor);
+}
+int mal_encoder_encode_double_list(mal_double_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_double_list(self, encoder, cursor);
+}
+int mal_encoder_encode_duration_list(mal_duration_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_duration_list(self, encoder, cursor);
+}
+int mal_encoder_encode_entitykey_list(mal_entitykey_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_entitykey_list(self, encoder, cursor);
+}
+int mal_encoder_encode_entityrequest_list(mal_entityrequest_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_entityrequest_list(self, encoder, cursor);
+}
+int mal_encoder_encode_file_list(mal_file_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_file_list(self, encoder, cursor);
+}
+int mal_encoder_encode_finetime_list(mal_finetime_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_finetime_list(self, encoder, cursor);
+}
+int mal_encoder_encode_float_list(mal_float_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_float_list(self, encoder, cursor);
+}
+int mal_encoder_encode_idbooleanpair_list(mal_idbooleanpair_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_idbooleanpair_list(self, encoder, cursor);
+}
+int mal_encoder_encode_identifier_list(mal_identifier_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_identifier_list(self, encoder, cursor);
+}
+int mal_encoder_encode_integer_list(mal_integer_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_integer_list(self, encoder, cursor);
+}
+int mal_encoder_encode_interactiontype_list(mal_interactiontype_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_interactiontype_list(self, encoder, cursor);
+}
+int mal_encoder_encode_long_list(mal_long_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_long_list(self, encoder, cursor);
+}
+int mal_encoder_encode_namedvalue_list(mal_namedvalue_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_namedvalue_list(self, encoder, cursor);
+}
+int mal_encoder_encode_octet_list(mal_octet_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_octet_list(self, encoder, cursor);
+}
+int mal_encoder_encode_pair_list(mal_pair_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_pair_list(self, encoder, cursor);
+}
+int mal_encoder_encode_qoslevel_list(mal_qoslevel_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_qoslevel_list(self, encoder, cursor);
+}
+int mal_encoder_encode_sessiontype_list(mal_sessiontype_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_sessiontype_list(self, encoder, cursor);
+}
+int mal_encoder_encode_short_list(mal_short_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_short_list(self, encoder, cursor);
+}
+int mal_encoder_encode_string_list(mal_string_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_string_list(self, encoder, cursor);
+}
+int mal_encoder_encode_subscription_list(mal_subscription_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_subscription_list(self, encoder, cursor);
+}
+int mal_encoder_encode_time_list(mal_time_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_time_list(self, encoder, cursor);
+}
+int mal_encoder_encode_uinteger_list(mal_uinteger_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_uinteger_list(self, encoder, cursor);
+}
+int mal_encoder_encode_ulong_list(mal_ulong_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_ulong_list(self, encoder, cursor);
+}
+int mal_encoder_encode_uoctet_list(mal_uoctet_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_uoctet_list(self, encoder, cursor);
+}
+int mal_encoder_encode_updateheader_list(mal_updateheader_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_updateheader_list(self, encoder, cursor);
+}
+int mal_encoder_encode_updatetype_list(mal_updatetype_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_updatetype_list(self, encoder, cursor);
+}
+int mal_encoder_encode_uri_list(mal_uri_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_uri_list(self, encoder, cursor);
+}
+int mal_encoder_encode_ushort_list(mal_ushort_list_t *self, mal_encoder_t *encoder, void *cursor) {
+  return encoder->mal_encoder_encode_ushort_list(self, encoder, cursor);
+}
+
 /*
  * Currently this function can not be used by the encoding modules as it causes
  * a circular dependency. Encoding modules must declare an initialization function
@@ -324,7 +560,49 @@ void mal_encoder_initialize_functions(
     mal_encoder_add_short_encoding_length_fn *mal_encoder_add_short_encoding_length,
     mal_encoder_add_ulong_encoding_length_fn *mal_encoder_add_ulong_encoding_length,
     mal_encoder_add_finetime_encoding_length_fn *mal_encoder_add_finetime_encoding_length,
+    mal_encoder_add_attribute_tag_encoding_length_fn *mal_encoder_add_attribute_tag_encoding_length,
     mal_encoder_add_attribute_encoding_length_fn *mal_encoder_add_attribute_encoding_length,
+
+    mal_encoder_add_entitykey_encoding_length_fn *mal_encoder_add_entitykey_encoding_length,
+    mal_encoder_add_entityrequest_encoding_length_fn *mal_encoder_add_entityrequest_encoding_length,
+    mal_encoder_add_file_encoding_length_fn *mal_encoder_add_file_encoding_length,
+    mal_encoder_add_idbooleanpair_encoding_length_fn *mal_encoder_add_idbooleanpair_encoding_length,
+    mal_encoder_add_namedvalue_encoding_length_fn *mal_encoder_add_namedvalue_encoding_length,
+    mal_encoder_add_pair_encoding_length_fn *mal_encoder_add_pair_encoding_length,
+    mal_encoder_add_subscription_encoding_length_fn *mal_encoder_add_subscription_encoding_length,
+    mal_encoder_add_updateheader_encoding_length_fn *mal_encoder_add_updateheader_encoding_length,
+
+    mal_encoder_blob_list_add_encoding_length_fn *mal_encoder_blob_list_add_encoding_length,
+    mal_encoder_boolean_list_add_encoding_length_fn *mal_encoder_boolean_list_add_encoding_length,
+    mal_encoder_double_list_add_encoding_length_fn *mal_encoder_double_list_add_encoding_length,
+    mal_encoder_duration_list_add_encoding_length_fn *mal_encoder_duration_list_add_encoding_length,
+    mal_encoder_entitykey_list_add_encoding_length_fn *mal_encoder_entitykey_list_add_encoding_length,
+    mal_encoder_entityrequest_list_add_encoding_length_fn *mal_encoder_entityrequest_list_add_encoding_length,
+    mal_encoder_file_list_add_encoding_length_fn *mal_encoder_file_list_add_encoding_length,
+    mal_encoder_finetime_list_add_encoding_length_fn *mal_encoder_finetime_list_add_encoding_length,
+    mal_encoder_float_list_add_encoding_length_fn *mal_encoder_float_list_add_encoding_length,
+    mal_encoder_idbooleanpair_list_add_encoding_length_fn * mal_encoder_idbooleanpair_list_add_encoding_length,
+    mal_encoder_identifier_list_add_encoding_length_fn *mal_encoder_identifier_list_add_encoding_length,
+    mal_encoder_integer_list_add_encoding_length_fn *mal_encoder_integer_list_add_encoding_length,
+    mal_encoder_interactiontype_list_add_encoding_length_fn * mal_encoder_interactiontype_list_add_encoding_length,
+    mal_encoder_long_list_add_encoding_length_fn *mal_encoder_long_list_add_encoding_length,
+    mal_encoder_namedvalue_list_add_encoding_length_fn *mal_encoder_namedvalue_list_add_encoding_length,
+    mal_encoder_octet_list_add_encoding_length_fn *mal_encoder_octet_list_add_encoding_length,
+    mal_encoder_pair_list_add_encoding_length_fn *mal_encoder_pair_list_add_encoding_length,
+    mal_encoder_qoslevel_list_add_encoding_length_fn *mal_encoder_qoslevel_list_add_encoding_length,
+    mal_encoder_sessiontype_list_add_encoding_length_fn *mal_encoder_sessiontype_list_add_encoding_length,
+    mal_encoder_short_list_add_encoding_length_fn *mal_encoder_short_list_add_encoding_length,
+    mal_encoder_string_list_add_encoding_length_fn *mal_encoder_string_list_add_encoding_length,
+    mal_encoder_subscription_list_add_encoding_length_fn *mal_encoder_subscription_list_add_encoding_length,
+    mal_encoder_time_list_add_encoding_length_fn *mal_encoder_time_list_add_encoding_length,
+    mal_encoder_uinteger_list_add_encoding_length_fn *mal_encoder_uinteger_list_add_encoding_length,
+    mal_encoder_ulong_list_add_encoding_length_fn *mal_encoder_ulong_list_add_encoding_length,
+    mal_encoder_uoctet_list_add_encoding_length_fn *mal_encoder_uoctet_list_add_encoding_length,
+    mal_encoder_updateheader_list_add_encoding_length_fn *mal_encoder_updateheader_list_add_encoding_length,
+    mal_encoder_updatetype_list_add_encoding_length_fn *mal_encoder_updatetype_list_add_encoding_length,
+    mal_encoder_uri_list_add_encoding_length_fn *mal_encoder_uri_list_add_encoding_length,
+    mal_encoder_ushort_list_add_encoding_length_fn *mal_encoder_ushort_list_add_encoding_length,
+
     mal_encoder_encode_string_fn *mal_encoder_encode_string,
     mal_encoder_encode_presence_flag_fn *mal_encoder_encode_presence_flag,
     mal_encoder_encode_short_form_fn *mal_encoder_encode_short_form,
@@ -353,7 +631,47 @@ void mal_encoder_initialize_functions(
     mal_encoder_encode_ulong_fn *mal_encoder_encode_ulong,
     mal_encoder_encode_finetime_fn *mal_encoder_encode_finetime,
     mal_encoder_encode_attribute_fn *mal_encoder_encode_attribute,
-    mal_encoder_encode_attribute_tag_fn *mal_encoder_encode_attribute_tag) {
+    mal_encoder_encode_attribute_tag_fn *mal_encoder_encode_attribute_tag,
+
+    mal_encoder_encode_entitykey_fn *mal_encoder_encode_entitykey,
+    mal_encoder_encode_entityrequest_fn *mal_encoder_encode_entityrequest,
+    mal_encoder_encode_file_fn *mal_encoder_encode_file,
+    mal_encoder_encode_idbooleanpair_fn *mal_encoder_encode_idbooleanpair,
+    mal_encoder_encode_namedvalue_fn *mal_encoder_encode_namedvalue,
+    mal_encoder_encode_pair_fn *mal_encoder_encode_pair,
+    mal_encoder_encode_subscription_fn *mal_encoder_encode_subscription,
+    mal_encoder_encode_updateheader_fn *mal_encoder_encode_updateheader,
+
+    mal_encoder_encode_blob_list_fn *mal_encoder_encode_blob_list,
+    mal_encoder_encode_boolean_list_fn *mal_encoder_encode_boolean_list,
+    mal_encoder_encode_double_list_fn *mal_encoder_encode_double_list,
+    mal_encoder_encode_duration_list_fn *mal_encoder_encode_duration_list,
+    mal_encoder_encode_entitykey_list_fn *mal_encoder_encode_entitykey_list,
+    mal_encoder_encode_entityrequest_list_fn *mal_encoder_encode_entityrequest_list,
+    mal_encoder_encode_file_list_fn *mal_encoder_encode_file_list,
+    mal_encoder_encode_finetime_list_fn *mal_encoder_encode_finetime_list,
+    mal_encoder_encode_float_list_fn *mal_encoder_encode_float_list,
+    mal_encoder_encode_idbooleanpair_list_fn *mal_encoder_encode_idbooleanpair_list,
+    mal_encoder_encode_identifier_list_fn *mal_encoder_encode_identifier_list,
+    mal_encoder_encode_integer_list_fn *mal_encoder_encode_integer_list,
+    mal_encoder_encode_interactiontype_list_fn *mal_encoder_encode_interactiontype_list,
+    mal_encoder_encode_long_list_fn *mal_encoder_encode_long_list,
+    mal_encoder_encode_namedvalue_list_fn *mal_encoder_encode_namedvalue_list,
+    mal_encoder_encode_octet_list_fn *mal_encoder_encode_octet_list,
+    mal_encoder_encode_pair_list_fn *mal_encoder_encode_pair_list,
+    mal_encoder_encode_qoslevel_list_fn *mal_encoder_encode_qoslevel_list,
+    mal_encoder_encode_sessiontype_list_fn *mal_encoder_encode_sessiontype_list,
+    mal_encoder_encode_short_list_fn *mal_encoder_encode_short_list,
+    mal_encoder_encode_string_list_fn *mal_encoder_encode_string_list,
+    mal_encoder_encode_subscription_list_fn *mal_encoder_encode_subscription_list,
+    mal_encoder_encode_time_list_fn *mal_encoder_encode_time_list,
+    mal_encoder_encode_uinteger_list_fn *mal_encoder_encode_uinteger_list,
+    mal_encoder_encode_ulong_list_fn *mal_encoder_encode_ulong_list,
+    mal_encoder_encode_uoctet_list_fn *mal_encoder_encode_uoctet_list,
+    mal_encoder_encode_updateheader_list_fn *mal_encoder_encode_updateheader_list,
+    mal_encoder_encode_updatetype_list_fn *mal_encoder_encode_updatetype_list,
+    mal_encoder_encode_uri_list_fn *mal_encoder_encode_uri_list,
+    mal_encoder_encode_ushort_list_fn *mal_encoder_encode_ushort_list) {
   /* Cursor manipulation */
 
   self->new_cursor = new_cursor;
@@ -390,7 +708,48 @@ void mal_encoder_initialize_functions(
   self->mal_encoder_add_short_encoding_length = mal_encoder_add_short_encoding_length;
   self->mal_encoder_add_ulong_encoding_length = mal_encoder_add_ulong_encoding_length;
   self->mal_encoder_add_finetime_encoding_length = mal_encoder_add_finetime_encoding_length;
+  self->mal_encoder_add_attribute_tag_encoding_length = mal_encoder_add_attribute_tag_encoding_length;
   self->mal_encoder_add_attribute_encoding_length = mal_encoder_add_attribute_encoding_length;
+
+  self->mal_encoder_add_entitykey_encoding_length = mal_encoder_add_entitykey_encoding_length;
+  self->mal_encoder_add_entityrequest_encoding_length = mal_encoder_add_entityrequest_encoding_length;
+  self->mal_encoder_add_file_encoding_length = mal_encoder_add_file_encoding_length;
+  self->mal_encoder_add_idbooleanpair_encoding_length = mal_encoder_add_idbooleanpair_encoding_length;
+  self->mal_encoder_add_namedvalue_encoding_length = mal_encoder_add_namedvalue_encoding_length;
+  self->mal_encoder_add_pair_encoding_length = mal_encoder_add_pair_encoding_length;
+  self->mal_encoder_add_subscription_encoding_length = mal_encoder_add_subscription_encoding_length;
+  self->mal_encoder_add_updateheader_encoding_length = mal_encoder_add_updateheader_encoding_length;
+
+  self->mal_encoder_blob_list_add_encoding_length = mal_encoder_blob_list_add_encoding_length;
+  self->mal_encoder_boolean_list_add_encoding_length = mal_encoder_boolean_list_add_encoding_length;
+  self->mal_encoder_double_list_add_encoding_length = mal_encoder_double_list_add_encoding_length;
+  self->mal_encoder_duration_list_add_encoding_length = mal_encoder_duration_list_add_encoding_length;
+  self->mal_encoder_entitykey_list_add_encoding_length = mal_encoder_entitykey_list_add_encoding_length;
+  self->mal_encoder_entityrequest_list_add_encoding_length = mal_encoder_entityrequest_list_add_encoding_length;
+  self->mal_encoder_file_list_add_encoding_length = mal_encoder_file_list_add_encoding_length;
+  self->mal_encoder_finetime_list_add_encoding_length = mal_encoder_finetime_list_add_encoding_length;
+  self->mal_encoder_float_list_add_encoding_length = mal_encoder_float_list_add_encoding_length;
+  self->mal_encoder_idbooleanpair_list_add_encoding_length =  mal_encoder_idbooleanpair_list_add_encoding_length;
+  self->mal_encoder_identifier_list_add_encoding_length = mal_encoder_identifier_list_add_encoding_length;
+  self->mal_encoder_integer_list_add_encoding_length = mal_encoder_integer_list_add_encoding_length;
+  self->mal_encoder_interactiontype_list_add_encoding_length =  mal_encoder_interactiontype_list_add_encoding_length;
+  self->mal_encoder_long_list_add_encoding_length = mal_encoder_long_list_add_encoding_length;
+  self->mal_encoder_namedvalue_list_add_encoding_length = mal_encoder_namedvalue_list_add_encoding_length;
+  self->mal_encoder_octet_list_add_encoding_length = mal_encoder_octet_list_add_encoding_length;
+  self->mal_encoder_pair_list_add_encoding_length = mal_encoder_pair_list_add_encoding_length;
+  self->mal_encoder_qoslevel_list_add_encoding_length = mal_encoder_qoslevel_list_add_encoding_length;
+  self->mal_encoder_sessiontype_list_add_encoding_length = mal_encoder_sessiontype_list_add_encoding_length;
+  self->mal_encoder_short_list_add_encoding_length = mal_encoder_short_list_add_encoding_length;
+  self->mal_encoder_string_list_add_encoding_length = mal_encoder_string_list_add_encoding_length;
+  self->mal_encoder_subscription_list_add_encoding_length = mal_encoder_subscription_list_add_encoding_length;
+  self->mal_encoder_time_list_add_encoding_length = mal_encoder_time_list_add_encoding_length;
+  self->mal_encoder_uinteger_list_add_encoding_length = mal_encoder_uinteger_list_add_encoding_length;
+  self->mal_encoder_ulong_list_add_encoding_length = mal_encoder_ulong_list_add_encoding_length;
+  self->mal_encoder_uoctet_list_add_encoding_length = mal_encoder_uoctet_list_add_encoding_length;
+  self->mal_encoder_updateheader_list_add_encoding_length = mal_encoder_updateheader_list_add_encoding_length;
+  self->mal_encoder_updatetype_list_add_encoding_length = mal_encoder_updatetype_list_add_encoding_length;
+  self->mal_encoder_uri_list_add_encoding_length = mal_encoder_uri_list_add_encoding_length;
+  self->mal_encoder_ushort_list_add_encoding_length = mal_encoder_ushort_list_add_encoding_length;
 
   /* Encoding functions */
 
@@ -423,6 +782,46 @@ void mal_encoder_initialize_functions(
   self->mal_encoder_encode_finetime = mal_encoder_encode_finetime;
   self->mal_encoder_encode_attribute = mal_encoder_encode_attribute;
   self->mal_encoder_encode_attribute_tag = mal_encoder_encode_attribute_tag;
+
+  self->mal_encoder_encode_entitykey = mal_encoder_encode_entitykey;
+  self->mal_encoder_encode_entityrequest = mal_encoder_encode_entityrequest;
+  self->mal_encoder_encode_file = mal_encoder_encode_file;
+  self->mal_encoder_encode_idbooleanpair = mal_encoder_encode_idbooleanpair;
+  self->mal_encoder_encode_namedvalue = mal_encoder_encode_namedvalue;
+  self->mal_encoder_encode_pair = mal_encoder_encode_pair;
+  self->mal_encoder_encode_subscription = mal_encoder_encode_subscription;
+  self->mal_encoder_encode_updateheader = mal_encoder_encode_updateheader;
+
+  self->mal_encoder_encode_blob_list = mal_encoder_encode_blob_list;
+  self->mal_encoder_encode_boolean_list = mal_encoder_encode_boolean_list;
+  self->mal_encoder_encode_double_list = mal_encoder_encode_double_list;
+  self->mal_encoder_encode_duration_list = mal_encoder_encode_duration_list;
+  self->mal_encoder_encode_entitykey_list = mal_encoder_encode_entitykey_list;
+  self->mal_encoder_encode_entityrequest_list = mal_encoder_encode_entityrequest_list;
+  self->mal_encoder_encode_file_list = mal_encoder_encode_file_list;
+  self->mal_encoder_encode_finetime_list = mal_encoder_encode_finetime_list;
+  self->mal_encoder_encode_float_list = mal_encoder_encode_float_list;
+  self->mal_encoder_encode_idbooleanpair_list = mal_encoder_encode_idbooleanpair_list;
+  self->mal_encoder_encode_identifier_list = mal_encoder_encode_identifier_list;
+  self->mal_encoder_encode_integer_list = mal_encoder_encode_integer_list;
+  self->mal_encoder_encode_interactiontype_list = mal_encoder_encode_interactiontype_list;
+  self->mal_encoder_encode_long_list = mal_encoder_encode_long_list;
+  self->mal_encoder_encode_namedvalue_list = mal_encoder_encode_namedvalue_list;
+  self->mal_encoder_encode_octet_list = mal_encoder_encode_octet_list;
+  self->mal_encoder_encode_pair_list = mal_encoder_encode_pair_list;
+  self->mal_encoder_encode_qoslevel_list = mal_encoder_encode_qoslevel_list;
+  self->mal_encoder_encode_sessiontype_list = mal_encoder_encode_sessiontype_list;
+  self->mal_encoder_encode_short_list = mal_encoder_encode_short_list;
+  self->mal_encoder_encode_string_list = mal_encoder_encode_string_list;
+  self->mal_encoder_encode_subscription_list = mal_encoder_encode_subscription_list;
+  self->mal_encoder_encode_time_list = mal_encoder_encode_time_list;
+  self->mal_encoder_encode_uinteger_list = mal_encoder_encode_uinteger_list;
+  self->mal_encoder_encode_ulong_list = mal_encoder_encode_ulong_list;
+  self->mal_encoder_encode_uoctet_list = mal_encoder_encode_uoctet_list;
+  self->mal_encoder_encode_updateheader_list = mal_encoder_encode_updateheader_list;
+  self->mal_encoder_encode_updatetype_list = mal_encoder_encode_updatetype_list;
+  self->mal_encoder_encode_uri_list = mal_encoder_encode_uri_list;
+  self->mal_encoder_encode_ushort_list = mal_encoder_encode_ushort_list;
 }
 
 /*

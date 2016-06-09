@@ -1,8 +1,6 @@
 /*
  */
 
-// TODO (AF): To remove
-#include "malattributes.h"
 #include "mal_decoder.h"
 
 int mal_decoder_get_encoding_format_code(mal_decoder_t *self) {
@@ -171,6 +169,122 @@ int mal_decoder_decode_attribute_tag(mal_decoder_t *self, void *cursor, unsigned
   return self->mal_decoder_decode_attribute_tag(self, cursor, result);
 }
 
+int mal_decoder_decode_entitykey(mal_entitykey_t * self, mal_decoder_t * mal_decoder, void * cursor) {
+  return mal_decoder->mal_decoder_decode_entitykey(self, mal_decoder, cursor);
+}
+int mal_decoder_decode_entityrequest(mal_entityrequest_t * self, mal_decoder_t * mal_decoder, void * cursor) {
+  return mal_decoder->mal_decoder_decode_entityrequest(self, mal_decoder, cursor);
+}
+int mal_decoder_decode_file(mal_file_t * self, mal_decoder_t * mal_decoder, void * cursor) {
+  return mal_decoder->mal_decoder_decode_file(self, mal_decoder, cursor);
+}
+int mal_decoder_decode_idbooleanpair(mal_idbooleanpair_t * self, mal_decoder_t * mal_decoder, void * cursor) {
+  return mal_decoder->mal_decoder_decode_idbooleanpair(self, mal_decoder, cursor);
+}
+int mal_decoder_decode_namedvalue(mal_namedvalue_t * self, mal_decoder_t * mal_decoder, void * cursor) {
+  return mal_decoder->mal_decoder_decode_namedvalue(self, mal_decoder, cursor);
+}
+int mal_decoder_decode_pair(mal_pair_t * self, mal_decoder_t * mal_decoder, void * cursor) {
+  return mal_decoder->mal_decoder_decode_pair(self, mal_decoder, cursor);
+}
+int mal_decoder_decode_subscription(mal_subscription_t * self, mal_decoder_t * mal_decoder, void * cursor) {
+  return mal_decoder->mal_decoder_decode_subscription(self, mal_decoder, cursor);
+}
+int mal_decoder_decode_updateheader(mal_updateheader_t * self, mal_decoder_t * mal_decoder, void * cursor) {
+  return mal_decoder->mal_decoder_decode_updateheader(self, mal_decoder, cursor);
+}
+
+int mal_decoder_decode_blob_list(mal_blob_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_blob_list(self, decoder, cursor);
+}
+int mal_decoder_decode_boolean_list(mal_boolean_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_boolean_list(self, decoder, cursor);
+}
+int mal_decoder_decode_double_list(mal_double_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_double_list(self, decoder, cursor);
+}
+int mal_decoder_decode_duration_list(mal_duration_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_duration_list(self, decoder, cursor);
+}
+int mal_decoder_decode_entitykey_list(mal_entitykey_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_entitykey_list(self, decoder, cursor);
+}
+int mal_decoder_decode_entityrequest_list(mal_entityrequest_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_entityrequest_list(self, decoder, cursor);
+}
+int mal_decoder_decode_file_list(mal_file_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_file_list(self, decoder, cursor);
+}
+int mal_decoder_decode_finetime_list(mal_finetime_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_finetime_list(self, decoder, cursor);
+}
+int mal_decoder_decode_float_list(mal_float_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_float_list(self, decoder, cursor);
+}
+int mal_decoder_decode_idbooleanpair_list(mal_idbooleanpair_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_idbooleanpair_list(self, decoder, cursor);
+}
+int mal_decoder_decode_identifier_list(mal_identifier_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_identifier_list(self, decoder, cursor);
+}
+int mal_decoder_decode_integer_list(mal_integer_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_integer_list(self, decoder, cursor);
+}
+int mal_decoder_decode_interactiontype_list(mal_interactiontype_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_interactiontype_list(self, decoder, cursor);
+}
+int mal_decoder_decode_long_list(mal_long_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_long_list(self, decoder, cursor);
+}
+int mal_decoder_decode_namedvalue_list(mal_namedvalue_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_namedvalue_list(self, decoder, cursor);
+}
+int mal_decoder_decode_octet_list(mal_octet_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_octet_list(self, decoder, cursor);
+}
+int mal_decoder_decode_pair_list(mal_pair_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_pair_list(self, decoder, cursor);
+}
+int mal_decoder_decode_qoslevel_list(mal_qoslevel_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_qoslevel_list(self, decoder, cursor);
+}
+int mal_decoder_decode_sessiontype_list(mal_sessiontype_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_sessiontype_list(self, decoder, cursor);
+}
+int mal_decoder_decode_short_list(mal_short_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_short_list(self, decoder, cursor);
+}
+int mal_decoder_decode_string_list(mal_string_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_string_list(self, decoder, cursor);
+}
+int mal_decoder_decode_subscription_list(mal_subscription_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_subscription_list(self, decoder, cursor);
+}
+int mal_decoder_decode_time_list(mal_time_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_time_list(self, decoder, cursor);
+}
+int mal_decoder_decode_uinteger_list(mal_uinteger_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_uinteger_list(self, decoder, cursor);
+}
+int mal_decoder_decode_ulong_list(mal_ulong_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_ulong_list(self, decoder, cursor);
+}
+int mal_decoder_decode_uoctet_list(mal_uoctet_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_uoctet_list(self, decoder, cursor);
+}
+int mal_decoder_decode_updateheader_list(mal_updateheader_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_updateheader_list(self, decoder, cursor);
+}
+int mal_decoder_decode_updatetype_list(mal_updatetype_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_updatetype_list(self, decoder, cursor);
+}
+int mal_decoder_decode_uri_list(mal_uri_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_uri_list(self, decoder, cursor);
+}
+int mal_decoder_decode_ushort_list(mal_ushort_list_t *self, mal_decoder_t *decoder, void *cursor) {
+  return decoder->mal_decoder_decode_ushort_list(self, decoder, cursor);
+}
+
 /*
  * Currently this function can not be used by the decoding modules as it causes
  * a circular dependency. Decoding modules must declare an initialization function
@@ -212,7 +326,47 @@ void mal_decoder_initialize_functions(
     mal_decoder_decode_ulong_fn *mal_decoder_decode_ulong,
     mal_decoder_decode_finetime_fn *mal_decoder_decode_finetime,
     mal_decoder_decode_attribute_fn *mal_decoder_decode_attribute,
-    mal_decoder_decode_attribute_tag_fn *mal_decoder_decode_attribute_tag) {
+    mal_decoder_decode_attribute_tag_fn *mal_decoder_decode_attribute_tag,
+
+    mal_decoder_decode_entitykey_fn *mal_decoder_decode_entitykey,
+    mal_decoder_decode_entityrequest_fn *mal_decoder_decode_entityrequest,
+    mal_decoder_decode_file_fn *mal_decoder_decode_file,
+    mal_decoder_decode_idbooleanpair_fn *mal_decoder_decode_idbooleanpair,
+    mal_decoder_decode_namedvalue_fn *mal_decoder_decode_namedvalue,
+    mal_decoder_decode_pair_fn *mal_decoder_decode_pair,
+    mal_decoder_decode_subscription_fn *mal_decoder_decode_subscription,
+    mal_decoder_decode_updateheader_fn *mal_decoder_decode_updateheader,
+
+    mal_decoder_decode_blob_list_fn *mal_decoder_decode_blob_list,
+    mal_decoder_decode_boolean_list_fn *mal_decoder_decode_boolean_list,
+    mal_decoder_decode_double_list_fn *mal_decoder_decode_double_list,
+    mal_decoder_decode_duration_list_fn *mal_decoder_decode_duration_list,
+    mal_decoder_decode_entitykey_list_fn *mal_decoder_decode_entitykey_list,
+    mal_decoder_decode_entityrequest_list_fn *mal_decoder_decode_entityrequest_list,
+    mal_decoder_decode_file_list_fn *mal_decoder_decode_file_list,
+    mal_decoder_decode_finetime_list_fn *mal_decoder_decode_finetime_list,
+    mal_decoder_decode_float_list_fn *mal_decoder_decode_float_list,
+    mal_decoder_decode_idbooleanpair_list_fn *mal_decoder_decode_idbooleanpair_list,
+    mal_decoder_decode_identifier_list_fn *mal_decoder_decode_identifier_list,
+    mal_decoder_decode_integer_list_fn *mal_decoder_decode_integer_list,
+    mal_decoder_decode_interactiontype_list_fn *mal_decoder_decode_interactiontype_list,
+    mal_decoder_decode_long_list_fn *mal_decoder_decode_long_list,
+    mal_decoder_decode_namedvalue_list_fn *mal_decoder_decode_namedvalue_list,
+    mal_decoder_decode_octet_list_fn *mal_decoder_decode_octet_list,
+    mal_decoder_decode_pair_list_fn *mal_decoder_decode_pair_list,
+    mal_decoder_decode_qoslevel_list_fn *mal_decoder_decode_qoslevel_list,
+    mal_decoder_decode_sessiontype_list_fn *mal_decoder_decode_sessiontype_list,
+    mal_decoder_decode_short_list_fn *mal_decoder_decode_short_list,
+    mal_decoder_decode_string_list_fn *mal_decoder_decode_string_list,
+    mal_decoder_decode_subscription_list_fn *mal_decoder_decode_subscription_list,
+    mal_decoder_decode_time_list_fn *mal_decoder_decode_time_list,
+    mal_decoder_decode_uinteger_list_fn *mal_decoder_decode_uinteger_list,
+    mal_decoder_decode_ulong_list_fn *mal_decoder_decode_ulong_list,
+    mal_decoder_decode_uoctet_list_fn *mal_decoder_decode_uoctet_list,
+    mal_decoder_decode_updateheader_list_fn *mal_decoder_decode_updateheader_list,
+    mal_decoder_decode_updatetype_list_fn *mal_decoder_decode_updatetype_list,
+    mal_decoder_decode_uri_list_fn *mal_decoder_decode_uri_list,
+    mal_decoder_decode_ushort_list_fn *mal_decoder_decode_ushort_list) {
   /* Cursor manipulation */
 
   self->new_cursor = new_cursor;
@@ -253,6 +407,46 @@ void mal_decoder_initialize_functions(
   self->mal_decoder_decode_finetime = mal_decoder_decode_finetime;
   self->mal_decoder_decode_attribute = mal_decoder_decode_attribute;
   self->mal_decoder_decode_attribute_tag = mal_decoder_decode_attribute_tag;
+
+  self->mal_decoder_decode_entitykey = mal_decoder_decode_entitykey;
+  self->mal_decoder_decode_entityrequest = mal_decoder_decode_entityrequest;
+  self->mal_decoder_decode_file = mal_decoder_decode_file;
+  self->mal_decoder_decode_idbooleanpair = mal_decoder_decode_idbooleanpair;
+  self->mal_decoder_decode_namedvalue = mal_decoder_decode_namedvalue;
+  self->mal_decoder_decode_pair = mal_decoder_decode_pair;
+  self->mal_decoder_decode_subscription = mal_decoder_decode_subscription;
+  self->mal_decoder_decode_updateheader = mal_decoder_decode_updateheader;
+
+  self->mal_decoder_decode_blob_list = mal_decoder_decode_blob_list;
+  self->mal_decoder_decode_boolean_list = mal_decoder_decode_boolean_list;
+  self->mal_decoder_decode_double_list = mal_decoder_decode_double_list;
+  self->mal_decoder_decode_duration_list = mal_decoder_decode_duration_list;
+  self->mal_decoder_decode_entitykey_list = mal_decoder_decode_entitykey_list;
+  self->mal_decoder_decode_entityrequest_list = mal_decoder_decode_entityrequest_list;
+  self->mal_decoder_decode_file_list = mal_decoder_decode_file_list;
+  self->mal_decoder_decode_finetime_list = mal_decoder_decode_finetime_list;
+  self->mal_decoder_decode_float_list = mal_decoder_decode_float_list;
+  self->mal_decoder_decode_idbooleanpair_list = mal_decoder_decode_idbooleanpair_list;
+  self->mal_decoder_decode_identifier_list = mal_decoder_decode_identifier_list;
+  self->mal_decoder_decode_integer_list = mal_decoder_decode_integer_list;
+  self->mal_decoder_decode_interactiontype_list = mal_decoder_decode_interactiontype_list;
+  self->mal_decoder_decode_long_list = mal_decoder_decode_long_list;
+  self->mal_decoder_decode_namedvalue_list = mal_decoder_decode_namedvalue_list;
+  self->mal_decoder_decode_octet_list = mal_decoder_decode_octet_list;
+  self->mal_decoder_decode_pair_list = mal_decoder_decode_pair_list;
+  self->mal_decoder_decode_qoslevel_list = mal_decoder_decode_qoslevel_list;
+  self->mal_decoder_decode_sessiontype_list = mal_decoder_decode_sessiontype_list;
+  self->mal_decoder_decode_short_list = mal_decoder_decode_short_list;
+  self->mal_decoder_decode_string_list = mal_decoder_decode_string_list;
+  self->mal_decoder_decode_subscription_list = mal_decoder_decode_subscription_list;
+  self->mal_decoder_decode_time_list = mal_decoder_decode_time_list;
+  self->mal_decoder_decode_uinteger_list = mal_decoder_decode_uinteger_list;
+  self->mal_decoder_decode_ulong_list = mal_decoder_decode_ulong_list;
+  self->mal_decoder_decode_uoctet_list = mal_decoder_decode_uoctet_list;
+  self->mal_decoder_decode_updateheader_list = mal_decoder_decode_updateheader_list;
+  self->mal_decoder_decode_updatetype_list = mal_decoder_decode_updatetype_list;
+  self->mal_decoder_decode_uri_list = mal_decoder_decode_uri_list;
+  self->mal_decoder_decode_ushort_list = mal_decoder_decode_ushort_list;
 }
 
 /*
