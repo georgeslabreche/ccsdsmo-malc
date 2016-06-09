@@ -443,15 +443,8 @@ int malbinary_decoder_decode_attribute(mal_decoder_t *decoder, void *cursor,
 // TODO (AF): The malbinary decoding functions should be private and only used through
 // the mal_decoder_t structure.
 
-mal_decoder_initialize_functions_fn malbinary_decoder_initialize_functions;
-
 void malbinary_init_decode_functions(mal_decoder_t *self) {
-  // TODO (AF): Currently the use of the MAL generic initialization function
-  // (malbinary_decoder_initialize_functions) is not possible as it causes a
-  // circular dependency with the mal module.
-  // The malbinary_decoder_initialize_functions below must have exactly the
-  // same signature and code of the corresponding MAL function.
-  malbinary_decoder_initialize_functions(self,
+  mal_decoder_initialize_functions(self,
       malbinary_decoder_new_cursor,
       malbinary_decoder_cursor_reset,
       malbinary_cursor_destroy,
@@ -486,85 +479,47 @@ void malbinary_init_decode_functions(mal_decoder_t *self) {
       malbinary_decoder_decode_ulong,
       malbinary_decoder_decode_finetime,
       malbinary_decoder_decode_attribute,
-      malbinary_decoder_decode_attribute_tag);
-}
+      malbinary_decoder_decode_attribute_tag,
 
-// TODO: This function below must always have exactly the same signature and code
-// of the corresponding MAL function (malbinary_decoder_initialize_functions).
-void malbinary_decoder_initialize_functions(
-    mal_decoder_t *self,
-    mal_decoder_new_cursor_fn *new_cursor,
-    mal_decoder_cursor_reset_fn *cursor_reset,
-    mal_decoder_cursor_destroy_fn *cursor_destroy,
-    mal_decoder_cursor_get_length_fn *cursor_get_length,
-    mal_decoder_cursor_get_offset_fn *cursor_get_offset,
-    mal_decoder_cursor_assert_fn *cursor_assert,
-    mal_read16_fn *mal_read16,
-    mal_read32_fn *mal_read32,
-    mal_read64_fn *mal_read64,
-    mal_decoder_decode_string_fn *mal_decoder_decode_string,
-    mal_decoder_decode_presence_flag_fn *mal_decoder_decode_presence_flag,
-    mal_decoder_decode_short_form_fn *mal_decoder_decode_short_form,
-    mal_decoder_decode_small_enum_fn *mal_decoder_decode_small_enum,
-    mal_decoder_decode_medium_enum_fn *mal_decoder_decode_medium_enum,
-    mal_decoder_decode_large_enum_fn *mal_decoder_decode_large_enum,
-    mal_decoder_decode_integer_fn *mal_decoder_decode_integer,
-    mal_decoder_decode_list_size_fn *mal_decoder_decode_list_size,
-    mal_decoder_decode_uri_fn *mal_decoder_decode_uri,
-    mal_decoder_decode_blob_fn *mal_decoder_decode_blob,
-    mal_decoder_decode_time_fn *mal_decoder_decode_time,
-    mal_decoder_decode_uinteger_fn *mal_decoder_decode_uinteger,
-    mal_decoder_decode_identifier_fn *mal_decoder_decode_identifier,
-    mal_decoder_decode_uoctet_fn *mal_decoder_decode_uoctet,
-    mal_decoder_decode_long_fn *mal_decoder_decode_long,
-    mal_decoder_decode_ushort_fn *mal_decoder_decode_ushort,
-    mal_decoder_decode_boolean_fn *mal_decoder_decode_boolean,
-    mal_decoder_decode_duration_fn *mal_decoder_decode_duration,
-    mal_decoder_decode_float_fn *mal_decoder_decode_float,
-    mal_decoder_decode_double_fn *mal_decoder_decode_double,
-    mal_decoder_decode_octet_fn *mal_decoder_decode_octet,
-    mal_decoder_decode_short_fn *mal_decoder_decode_short,
-    mal_decoder_decode_ulong_fn *mal_decoder_decode_ulong,
-    mal_decoder_decode_finetime_fn *mal_decoder_decode_finetime,
-    mal_decoder_decode_attribute_fn *mal_decoder_decode_attribute,
-    mal_decoder_decode_attribute_tag_fn *mal_decoder_decode_attribute_tag) {
-  // TODO (AF): Initializes the structure with parameters !!
-  self->new_cursor = malbinary_decoder_new_cursor;
-  self->cursor_reset = malbinary_decoder_cursor_reset;
-  self->cursor_destroy = malbinary_cursor_destroy;
-  self->cursor_get_length = malbinary_cursor_get_length;
-  self->cursor_get_offset = malbinary_cursor_get_offset;
-  self->cursor_assert = malbinary_cursor_assert;
+      mal_entitykey_decode_malbinary,
+      mal_entityrequest_decode_malbinary,
+      mal_file_decode_malbinary,
+      mal_idbooleanpair_decode_malbinary,
+      mal_namedvalue_decode_malbinary,
+      mal_pair_decode_malbinary,
+      mal_subscription_decode_malbinary,
+      mal_updateheader_decode_malbinary,
 
-  self->mal_read16 = malbinary_read16;
-  self->mal_read32 = malbinary_read32;
-  self->mal_read64 = malbinary_read64;
-  self->mal_decoder_decode_string = malbinary_decoder_decode_string;
-  self->mal_decoder_decode_presence_flag = malbinary_decoder_decode_presence_flag;
-  self->mal_decoder_decode_short_form = malbinary_decoder_decode_short_form;
-  self->mal_decoder_decode_small_enum = malbinary_decoder_decode_small_enum;
-  self->mal_decoder_decode_medium_enum = malbinary_decoder_decode_medium_enum;
-  self->mal_decoder_decode_large_enum = malbinary_decoder_decode_large_enum;
-  self->mal_decoder_decode_integer = malbinary_decoder_decode_integer;
-  self->mal_decoder_decode_list_size = malbinary_decoder_decode_list_size;
-  self->mal_decoder_decode_uri = malbinary_decoder_decode_uri;
-  self->mal_decoder_decode_blob = malbinary_decoder_decode_blob;
-  self->mal_decoder_decode_time = malbinary_decoder_decode_time;
-  self->mal_decoder_decode_uinteger = malbinary_decoder_decode_uinteger;
-  self->mal_decoder_decode_identifier = malbinary_decoder_decode_identifier;
-  self->mal_decoder_decode_uoctet = malbinary_decoder_decode_uoctet;
-  self->mal_decoder_decode_long = malbinary_decoder_decode_long;
-  self->mal_decoder_decode_ushort = malbinary_decoder_decode_ushort;
-  self->mal_decoder_decode_boolean = malbinary_decoder_decode_boolean;
-  self->mal_decoder_decode_duration = malbinary_decoder_decode_duration;
-  self->mal_decoder_decode_float = malbinary_decoder_decode_float;
-  self->mal_decoder_decode_double = malbinary_decoder_decode_double;
-  self->mal_decoder_decode_octet = malbinary_decoder_decode_octet;
-  self->mal_decoder_decode_short = malbinary_decoder_decode_short;
-  self->mal_decoder_decode_ulong = malbinary_decoder_decode_ulong;
-  self->mal_decoder_decode_finetime = malbinary_decoder_decode_finetime;
-  self->mal_decoder_decode_attribute = malbinary_decoder_decode_attribute;
-  self->mal_decoder_decode_attribute_tag = malbinary_decoder_decode_attribute_tag;
+      mal_blob_list_decode_malbinary,
+      mal_boolean_list_decode_malbinary,
+      mal_double_list_decode_malbinary,
+      mal_duration_list_decode_malbinary,
+      mal_entitykey_list_decode_malbinary,
+      mal_entityrequest_list_decode_malbinary,
+      mal_file_list_decode_malbinary,
+      mal_finetime_list_decode_malbinary,
+      mal_float_list_decode_malbinary,
+      mal_idbooleanpair_list_decode_malbinary,
+      mal_identifier_list_decode_malbinary,
+      mal_integer_list_decode_malbinary,
+      mal_interactiontype_list_decode_malbinary,
+      mal_long_list_decode_malbinary,
+      mal_namedvalue_list_decode_malbinary,
+      mal_octet_list_decode_malbinary,
+      mal_pair_list_decode_malbinary,
+      mal_qoslevel_list_decode_malbinary,
+      mal_sessiontype_list_decode_malbinary,
+      mal_short_list_decode_malbinary,
+      mal_string_list_decode_malbinary,
+      mal_subscription_list_decode_malbinary,
+      mal_time_list_decode_malbinary,
+      mal_uinteger_list_decode_malbinary,
+      mal_ulong_list_decode_malbinary,
+      mal_uoctet_list_decode_malbinary,
+      mal_updateheader_list_decode_malbinary,
+      mal_updatetype_list_decode_malbinary,
+      mal_uri_list_decode_malbinary,
+      mal_ushort_list_decode_malbinary);
 }
 
 // Test
