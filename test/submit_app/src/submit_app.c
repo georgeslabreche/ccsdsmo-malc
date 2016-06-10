@@ -1,7 +1,10 @@
 /* */
 #include "submit_app.h"
 
-bool split = false;
+mal_actor_t *provider_actor = NULL;
+mal_actor_t *consumer_actor = NULL;
+
+bool split = true;
 bool tcp = true;
 
 //  --------------------------------------------------------------------------
@@ -18,8 +21,7 @@ int submit_app_create_provider(
 
   submit_app_myprovider_t *provider = submit_app_myprovider_new(encoder, decoder);
 
-//  mal_actor_t *provider_actor =
-  mal_actor_new(
+  provider_actor = mal_actor_new(
       mal_ctx,
       provider_uri, provider,
       submit_app_myprovider_initialize, submit_app_myprovider_finalize);
@@ -52,8 +54,7 @@ int submit_app_create_consumer(
   mal_uri_t *consumer_uri = mal_ctx_create_uri(mal_ctx, "submit_app/myconsumer");
   printf("submit_app: consumer URI: %s\n", consumer_uri);
 
-//  mal_actor_t *consumer_actor =
-  mal_actor_new(
+  consumer_actor = mal_actor_new(
       mal_ctx,
       consumer_uri, consumer,
       submit_app_myconsumer_initialize, submit_app_myconsumer_finalize);
