@@ -19,6 +19,9 @@ cd $PROGDIR/mal;
 cd $PROGDIR/malbinary;
 ./genmake $*
 
+cd $PROGDIR/malsplitbinary;
+./genmake $*
+
 cd $PROGDIR/malzmq;
 ./genmake $*
 
@@ -34,16 +37,16 @@ cd $PROGDIR/test/testarea;
 #cd $PROGDIR/test/simple_app;
 #./genmake $*
 
-#cd $PROGDIR/test/send_app;
+cd $PROGDIR/test/send_app;
 ./genmake $*
 
-#cd $PROGDIR/test/submit_app;
+cd $PROGDIR/test/submit_app;
 ./genmake $*
 
-#cd $PROGDIR/test/request_app;
+cd $PROGDIR/test/request_app;
 ./genmake $*
 
-#cd $PROGDIR/test/invoke_app;
+cd $PROGDIR/test/invoke_app;
 ./genmake $*
 
 cd $PROGDIR/test/progress_app;
