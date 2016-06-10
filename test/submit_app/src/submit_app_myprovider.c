@@ -136,7 +136,7 @@ int submit_app_myprovider_testarea_testservice_testsubmit(
   } else {
     if (parameter_2.short_form == TESTAREA_TESTSERVICE_TESTFINALCOMPOSITEA_SHORT_FORM) {
       testarea_testservice_testfinalcompositea_t *testfinalcompositea =
-          (testarea_testservice_testfinalcompositea_t *) &parameter_2.value;
+          (testarea_testservice_testfinalcompositea_t *) parameter_2.value.composite_value;
       mal_integer_t int_value =
           testarea_testservice_testfinalcompositea_get_intfield2(testfinalcompositea);
       printf("int_value=%d\n", int_value);
