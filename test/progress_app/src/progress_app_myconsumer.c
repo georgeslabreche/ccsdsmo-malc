@@ -239,7 +239,7 @@ int progress_app_myconsumer_testarea_testservice_testprogress_response(
   mal_actor_send_command(provider_actor, "$TERM");
   mal_actor_send_command(consumer_actor, "$TERM");
   zclock_sleep(1000);
-  mal_binding_ctx_stop(mal_ctx);
+  mal_ctx_stop(mal_ctx);
 
 	return 0;
 }

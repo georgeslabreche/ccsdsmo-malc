@@ -213,7 +213,7 @@ int submit_app_myconsumer_testarea_testservice_testsubmitack(
 
   printf("Consumer done.\n");
 
-  mal_binding_ctx_stop(mal_ctx);
+  mal_ctx_stop(mal_ctx);
 
   return rc;
 }

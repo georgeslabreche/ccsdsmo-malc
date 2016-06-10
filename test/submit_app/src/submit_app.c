@@ -2,7 +2,7 @@
 #include "submit_app.h"
 
 bool split = false;
-bool tcp = false;
+bool tcp = true;
 
 //  --------------------------------------------------------------------------
 //  Selftest
@@ -121,9 +121,8 @@ void submit_app_test(bool verbose) {
   //  @end
   printf("OK\n");
 
-  mal_binding_ctx_start(mal_ctx);
+  mal_ctx_start(mal_ctx);
   printf("Stopped.\n");
-  mal_binding_ctx_destroy(mal_ctx);
   mal_ctx_destroy(&mal_ctx);
   printf("destroyed.\n");
 }

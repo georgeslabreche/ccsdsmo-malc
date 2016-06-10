@@ -185,11 +185,7 @@ int simple_app_myprovider_testarea_testservice_testsend(
 
   printf("Provider done.\n");
 
-  zactor_destroy(&consumer_actor);
-  printf("Provider done 1.\n");
-  zactor_destroy(&provider_actor);
-  printf("Provider done 2.\n");
-  mal_binding_ctx_stop(mal_ctx);
+  mal_ctx_stop(mal_ctx);
 
   return rc;
 }

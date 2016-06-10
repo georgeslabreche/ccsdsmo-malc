@@ -91,7 +91,7 @@ int send_app_myprovider_testarea_testservice_testsend(
   testarea_testservice_testcomposite_print(parameter_0);
   printf("\n");
 
-  printf("send_app_myprovider: offset=%d", mal_decoder_cursor_get_offset(provider->decoder, cursor));
+  printf("send_app_myprovider: offset=%d\n", mal_decoder_cursor_get_offset(provider->decoder, cursor));
 
   mal_string_list_t *parameter_1;
   printf("send_app_myprovider: decode second parameter\n");
@@ -104,7 +104,7 @@ int send_app_myprovider_testarea_testservice_testsend(
   mal_string_list_print(parameter_1);
   printf("\n");
 
-  printf("send_app_myprovider: offset=%d", mal_decoder_cursor_get_offset(provider->decoder, cursor));
+  printf("send_app_myprovider: offset=%d\n", mal_decoder_cursor_get_offset(provider->decoder, cursor));
 
   mal_element_holder_t element_holder;
   printf("send_app_myprovider: decode third parameter\n");
@@ -114,7 +114,7 @@ int send_app_myprovider_testarea_testservice_testsend(
   if (rc < 0)
     return rc;
 
-  printf("send_app_myprovider: offset=%d", mal_decoder_cursor_get_offset(provider->decoder, cursor));
+  printf("send_app_myprovider: offset=%d\n", mal_decoder_cursor_get_offset(provider->decoder, cursor));
   mal_decoder_cursor_destroy(provider->decoder, cursor);
 
   printf("send_app_myprovider: decoding done, short form=%lu\n", element_holder.short_form);
@@ -161,7 +161,7 @@ int send_app_myprovider_testarea_testservice_testsend(
 
   mal_actor_send_command(provider_actor, "$TERM");
   mal_actor_send_command(consumer_actor, "$TERM");
-  mal_binding_ctx_stop(mal_ctx);
+  mal_ctx_stop(mal_ctx);
 
   return rc;
 }

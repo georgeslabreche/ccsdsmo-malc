@@ -170,7 +170,7 @@ int request_app_myprovider_testarea_testservice_testrequest(
 
   printf("Provider done.\n");
 
-  mal_binding_ctx_stop(mal_ctx);
+  mal_ctx_stop(mal_ctx);
 
   return rc;
 }
