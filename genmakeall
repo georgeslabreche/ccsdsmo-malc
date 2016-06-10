@@ -5,54 +5,76 @@ echo "genmakeall PROGDIR=${PROGDIR}"
 
 echo "### Generate MAL/C from $PROGDIR to $MAL_LOCAL"
 
-# TODO: Stop when an error occurs
+#Stop when an error occurs
+check() {
+if  [ "$?" -ne "0" ]; then
+    echo "ERROR in $PWD" 1>&2
+    exit 1
+fi
+}
 
 cd $PROGDIR/util;
 ./genmake $*
+check
 
 cd $PROGDIR/malattributes;
 ./genmake $*
+check
 
 cd $PROGDIR/mal;
 ./genmake $*
+check
 
 cd $PROGDIR/malbinary;
 ./genmake $*
+check
 
 cd $PROGDIR/malsplitbinary;
 ./genmake $*
+check
 
 cd $PROGDIR/malzmq;
 ./genmake $*
+check
 
 cd $PROGDIR/maltcp;
 ./genmake $*
+check
 
 cd $PROGDIR/malactor;
 ./genmake $*
+check
 
 cd $PROGDIR/test/testarea;
 ./genmake $*
+check
 
 #cd $PROGDIR/test/simple_app;
 #./genmake $*
+#check
 
 cd $PROGDIR/test/send_app;
 ./genmake $*
+check
 
 cd $PROGDIR/test/submit_app;
 ./genmake $*
+check
 
 cd $PROGDIR/test/request_app;
 ./genmake $*
+check
 
 cd $PROGDIR/test/invoke_app;
 ./genmake $*
+check
 
 cd $PROGDIR/test/progress_app;
 ./genmake $*
+check
 
 #cd $PROGDIR/test/pubsub_app;
 #./genmake $*
+#check
 
 # TODO: If clean should remove $MAL_LOCAL or print a message
