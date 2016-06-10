@@ -200,8 +200,6 @@ int submit_app_myconsumer_testarea_testservice_testsubmitack(
     mal_endpoint_t *mal_endpoint, mal_message_t *message) {
   int rc = 0;
 
-//  submit_app_myconsumer_t *consumer = (submit_app_myconsumer_t *) self;
-
   printf("#### submit_app_myconsumer_testarea_testservice_testsubmitack: URI To=%s\n",
       mal_message_get_uri_to(message));
 
@@ -213,6 +211,9 @@ int submit_app_myconsumer_testarea_testservice_testsubmitack(
 
   printf("Consumer done.\n");
 
+  mal_actor_send_command(provider_actor, "$TERM");
+  mal_actor_send_command(consumer_actor, "$TERM");
+  zclock_sleep(1000);
   mal_ctx_stop(mal_ctx);
 
   return rc;
