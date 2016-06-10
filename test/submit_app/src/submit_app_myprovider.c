@@ -75,7 +75,7 @@ int submit_app_myprovider_testarea_testservice_testsubmit(
       mal_message_get_body_offset(message) + mal_message_get_body_length(message),
       mal_message_get_body_offset(message));
 
-  printf("submit_app_myprovider: offset=%d", mal_message_get_body_offset(message));
+  printf("submit_app_myprovider: offset=%d\n", mal_message_get_body_offset(message));
 
   testarea_testservice_testcomposite_t *parameter_0;
   printf("submit_app_myprovider: decode first parameter\n");
@@ -89,7 +89,7 @@ int submit_app_myprovider_testarea_testservice_testsubmit(
   testarea_testservice_testcomposite_print(parameter_0);
   printf("\n");
 
-  printf("submit_app_myprovider: offset=%d", mal_decoder_cursor_get_offset(provider->decoder, cursor));
+  printf("submit_app_myprovider: offset=%d\n", mal_decoder_cursor_get_offset(provider->decoder, cursor));
 
   mal_string_list_t *parameter_1;
   printf("submit_app_myprovider: decode second parameter\n");
@@ -103,7 +103,7 @@ int submit_app_myprovider_testarea_testservice_testsubmit(
   mal_string_list_print(parameter_1);
   printf("\n");
 
-  printf("submit_app_myprovider: offset=%d", mal_decoder_cursor_get_offset(provider->decoder, cursor));
+  printf("submit_app_myprovider: offset=%d\n", mal_decoder_cursor_get_offset(provider->decoder, cursor));
 
   mal_element_holder_t parameter_2;
   printf("submit_app_myprovider: decode third parameter\n");
@@ -113,7 +113,7 @@ int submit_app_myprovider_testarea_testservice_testsubmit(
   if (rc < 0)
     return rc;
 
-  printf("submit_app_myprovider: offset=%d", mal_decoder_cursor_get_offset(provider->decoder, cursor));
+  printf("submit_app_myprovider: offset=%d\n", mal_decoder_cursor_get_offset(provider->decoder, cursor));
   mal_decoder_cursor_destroy(provider->decoder, cursor);
 
   if (parameter_2.presence_flag)
