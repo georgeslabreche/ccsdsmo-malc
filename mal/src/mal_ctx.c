@@ -49,6 +49,7 @@ mal_ctx_t *mal_ctx_new() {
 void mal_ctx_destroy(mal_ctx_t **self_p) {
   if (*self_p) {
     mal_ctx_t *self = *self_p;
+    self->mal_binding_ctx_destroy(&self->mal_binding_ctx);
     free(self);
     *self_p = NULL;
   }
@@ -147,14 +148,11 @@ int mal_ctx_destroy_message(mal_ctx_t *self, mal_message_t *message) {
   return self->destroy_message(self->mal_binding_ctx, message);
 }
 
-int mal_binding_ctx_start(mal_ctx_t *self) {
+int mal_ctx_start(mal_ctx_t *self) {
   return self->mal_binding_ctx_start(self->mal_binding_ctx);
 }
-int mal_binding_ctx_stop(mal_ctx_t *self) {
+int mal_ctx_stop(mal_ctx_t *self) {
   return self->mal_binding_ctx_stop(self->mal_binding_ctx);
-}
-int mal_binding_ctx_destroy(mal_ctx_t *self) {
-  return self->mal_binding_ctx_destroy(&self->mal_binding_ctx);
 }
 
 void mal_ctx_test(bool verbose) {

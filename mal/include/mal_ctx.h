@@ -65,9 +65,8 @@ int mal_ctx_poller_wait(
 
 int mal_ctx_destroy_message(mal_ctx_t *self, mal_message_t *message);
 
-int mal_binding_ctx_start(mal_ctx_t *self);
-int mal_binding_ctx_stop(mal_ctx_t *self);
-int mal_binding_ctx_destroy(mal_ctx_t *self);
+int mal_ctx_start(mal_ctx_t *self);
+int mal_ctx_stop(mal_ctx_t *self);
 
 //  Self test of this class
 void mal_ctx_test(bool verbose);
