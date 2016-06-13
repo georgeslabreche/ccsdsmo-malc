@@ -52,6 +52,12 @@ has to be updated in order to contain the right versions of czmq, and the defini
         cmake_name = "MALBINARY">
     </use>
 
+    <use project = "malsplitbinary"
+        repository = ""
+        test = "malsplitbinary_encoder_test"
+        cmake_name = "MALSPLITBINARY">
+    </use>
+
     <use project = "malzmq"
         repository = ""
         test = "malzmq_ctx_test"
