@@ -18,7 +18,16 @@ Source code and comments in the source code are in English so you can proably ge
 
 ## INSTALLATION
 
-### REQUIREMENTS
+### GSL
+
+The project requires **GSL** version 4.1 to be installed. **GSL** can be found [here](https://github.com/imatix/gsl.git).
+
+
+### CZMQ
+
+The project requires **CZMQ** version 3.0.3 to be installed. **CZMQ** can be found [here](http://github.com/zeromq/czmq).
+
+### ZPROJECT
 
 The project requires **zproject** to be installed. **zproject** can be found [here](https://github.com/zeromq/zproject).
 
@@ -82,7 +91,11 @@ has to be updated in order to contain the right versions of czmq, and the defini
         cmake_name = "MALACTOR">
     </use>
 ```
-    
+
+### ZEROMQ
+
+Download the current stable version of ZeroMQ (4.1.3) from [here](http://zeromq.org/intro:get-the-software).
+
 ### MAL/C QUICK INSTALLATION
 
 Download the sources from github (https://github.com/ccsdsmo/malc) in the MAL_HOME
