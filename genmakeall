@@ -73,8 +73,8 @@ cd $PROGDIR/test/progress_app;
 ./genmake $*
 check
 
-#cd $PROGDIR/test/pubsub_app;
-#./genmake $*
-#check
+cd $PROGDIR/test/pubsub_app;
+./genmake $*
+check
 
 # TODO: If clean should remove $MAL_LOCAL or print a message
