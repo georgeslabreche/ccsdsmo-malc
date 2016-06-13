@@ -161,6 +161,7 @@ int send_app_myprovider_testarea_testservice_testsend(
 
   mal_actor_send_command(provider_actor, "$TERM");
   mal_actor_send_command(consumer_actor, "$TERM");
+  
   mal_ctx_stop(mal_ctx);
 
   return rc;
