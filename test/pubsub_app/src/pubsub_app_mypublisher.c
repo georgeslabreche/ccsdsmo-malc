@@ -146,13 +146,13 @@ int pubsub_app_mypublisher_initialize(void *self, mal_actor_t *mal_actor) {
   // TODO: add missing parameters in UpdateHeader constructor
   mal_updateheader_t *updateheader0 = mal_updateheader_new();
 
-  mal_updateheader_set_source_uri(updateheader0, mal_endpoint_get_uri(mal_endpoint));
-  printf("== updateheader0->source_uri = %s\n", mal_updateheader_get_source_uri(updateheader0));
+  mal_updateheader_set_sourceuri(updateheader0, mal_endpoint_get_uri(mal_endpoint));
+  printf("== updateheader0->source_uri = %s\n", mal_updateheader_get_sourceuri(updateheader0));
   mal_updateheader_set_updatetype(updateheader0, MAL_UPDATETYPE_CREATION);
   mal_updateheader_set_timestamp(updateheader0, 0L);
   mal_entitykey_t *entitykey = mal_entitykey_new();
   mal_entitykey_set_firstsubkey(entitykey, mal_identifier_new("MY FirstSubkey"));
-  mal_updateheader_set_entitykey(updateheader0, entitykey);
+  mal_updateheader_set_key(updateheader0, entitykey);
 
   mal_updateheader_t **updateheader_list_content =
       mal_updateheader_list_get_content(updateheader_list);

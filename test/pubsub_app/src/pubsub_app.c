@@ -1,8 +1,9 @@
 /* */
 #include "pubsub_app.h"
 
-#include "malbinary.h"
-#include "malzmq.h"
+mal_actor_t *consumer_actor = NULL;
+mal_actor_t *provider_actor = NULL;
+mal_actor_t *broker_actor = NULL;
 
 //  --------------------------------------------------------------------------
 //  Selftest
@@ -29,7 +30,7 @@ int pubsub_app_create_provider(
       authentication_id, qoslevel, priority, domain, network_zone, session,
       session_name, encoder, decoder);
 
-  mal_actor_t *provider_actor = mal_actor_new(
+  provider_actor = mal_actor_new(
       mal_ctx,
       provider_uri, provider,
       pubsub_app_mypublisher_initialize, pubsub_app_mypublisher_finalize);
@@ -62,7 +63,7 @@ int pubsub_app_create_consumer(
       authentication_id, qoslevel, priority, domain, network_zone, session,
       session_name, encoder, decoder);
 
-  mal_actor_t *consumer_actor = mal_actor_new(
+  consumer_actor = mal_actor_new(
       mal_ctx,
       consumer_uri, consumer,
       pubsub_app_mysubscriber_initialize, pubsub_app_mysubscriber_finalize);
@@ -97,7 +98,7 @@ int pubsub_app_create_broker(
       session_name, encoder, decoder);
   assert(broker);
 
-  mal_actor_t *broker_actor = mal_actor_new(
+  broker_actor = mal_actor_new(
       mal_ctx,
       broker_uri, broker,
       pubsub_app_broker_initialize, pubsub_app_broker_finalize);
@@ -123,7 +124,7 @@ void pubsub_app_test(bool verbose) {
   // This test uses the same encoding configuration at the MAL/ZMQ transport
   // level (MAL header encoding) and at the application
   // level (MAL message body encoding)
-  malzmq_ctx_t *malzmq_ctx = malzmq_ctx_new(
+  malzmq_ctx_new(
       mal_ctx,
       NULL,                 // Use default transformation of MAL URI to ZMQ URI
       "localhost", "6666",
@@ -147,8 +148,8 @@ void pubsub_app_test(bool verbose) {
   printf("OK\n");
 
   // Start blocks until interrupted (see zloop).
-  malzmq_ctx_start(malzmq_ctx);
-
+  mal_ctx_start(mal_ctx);
+  printf("Stopped.\n");
   mal_ctx_destroy(&mal_ctx);
-  malzmq_ctx_destroy(&malzmq_ctx);
+  printf("destroyed.\n");
 }

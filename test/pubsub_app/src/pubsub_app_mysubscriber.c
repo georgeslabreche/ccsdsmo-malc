@@ -203,8 +203,8 @@ int pubsub_app_mysubscriber_testnotify(void *self, mal_ctx_t *mal_ctx,
   printf("== updateheader_list \n\tcount = %d\n", uh_count);
   assert(uh_count > 0);
   mal_updateheader_t **updateheaders = mal_updateheader_list_get_content(updateheader_list);
-  printf("\tsrc_uri = %s\n", mal_updateheader_get_source_uri(updateheaders[uh_count-1]));
-  printf("\tfirstsubkey = %s\n\n", mal_entitykey_get_firstsubkey(mal_updateheader_get_entitykey(updateheaders[uh_count-1])));
+  printf("\tsrc_uri = %s\n", mal_updateheader_get_sourceuri(updateheaders[uh_count-1]));
+  printf("\tfirstsubkey = %s\n\n", mal_entitykey_get_firstsubkey(mal_updateheader_get_key(updateheaders[uh_count-1])));
 
   printf("== testupdate_list\n");
   testarea_testservice_testupdate_list_t *parameter_0;
@@ -233,6 +233,12 @@ int pubsub_app_mysubscriber_testnotify(void *self, mal_ctx_t *mal_ctx,
   mal_message_destroy(&message, mal_ctx);
 
   printf("Subscriber done.\n");
+
+  mal_actor_send_command(provider_actor, "$TERM");
+  mal_actor_send_command(consumer_actor, "$TERM");
+  mal_actor_send_command(broker_actor, "$TERM");
+  zclock_sleep(1000);
+  mal_ctx_stop(mal_ctx);
   return rc;
 }
 
