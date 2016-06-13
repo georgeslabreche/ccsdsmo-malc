@@ -134,8 +134,11 @@ void progress_app_test(bool verbose) {
   //  @end
   printf("OK\n");
 
+  // Start blocks until interrupted (see zloop).
   mal_ctx_start(mal_ctx);
+  
   printf("Stopped.\n");
+  
   mal_ctx_destroy(&mal_ctx);
   printf("destroyed.\n");
 }
