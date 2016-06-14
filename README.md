@@ -2,7 +2,7 @@
 
 This project is an implementation of the [CCSDS MO MAL Standard](https://en.wikipedia.org/wiki/CCSDS_Mission_Operations) in C using [ZeroMQ](zeromq.org) as transport backend.
 
-CCSDS Mission Operation implementations for other langages (e.g. Java) can be found on the [CCSDS MO WebSite](http://ccsdsmo.github.io/)
+CCSDS Mission Operation implementations for other languages (e.g. Java) can be found on the [CCSDS MO WebSite](http://ccsdsmo.github.io/)
 
 Complete MAL specification can be found on the [CCSDS website](http://public.ccsds.org/publications/BlueBooks.aspx) in the *published documents* section.
 
