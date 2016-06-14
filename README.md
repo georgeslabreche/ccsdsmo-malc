@@ -2,7 +2,9 @@
 
 This project is an implementation of the [CCSDS MO MAL Standard](https://en.wikipedia.org/wiki/CCSDS_Mission_Operations) in C using [ZeroMQ](zeromq.org) as transport backend.
 
-Complete standard specification can be found on the [CCSDS website](http://public.ccsds.org/publications/BlueBooks.aspx) in the published docue.
+CCSDS Mission Operation implementations for other langages (e.g. Java) can be found on the [CCSDS MO WebSite](http://ccsdsmo.github.io/)
+
+Complete MAL specification can be found on the [CCSDS website](http://public.ccsds.org/publications/BlueBooks.aspx) in the *published documents* section.
 
 ## ABOUT
 
@@ -192,6 +194,6 @@ For NULL Macro:
 
 Project documentation is entirely in Markdown and lives in the `docs` directory. It is compiled into a static site thanks to [mkdocs](http://www.mkdocs.org/).
 
-After updating the content of the `docs` directory in the `master` branch, you can autmatically upload the docs to Github Pages with the following command:
+After updating the content of the `docs` directory in the `master` branch, you can automatically upload the docs to Github Pages with the following command:
 
     mkdocs gh-deploy --clean
