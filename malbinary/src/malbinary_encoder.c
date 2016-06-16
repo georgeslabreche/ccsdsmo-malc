@@ -201,7 +201,7 @@ int malbinary_encoder_add_string_encoding_length(mal_encoder_t *self, mal_string
   return rc;
 }
 
-int malbinary_encoder_add_presence_flag_encoding_length(mal_encoder_t *self, void *cursor, unsigned int length) {
+int malbinary_encoder_add_presence_flag_encoding_length(mal_encoder_t *self, unsigned int length, void *cursor) {
   int rc = 0;
   if (length > 1)
     ((malbinary_cursor_t *) cursor)->body_length += length;
