@@ -53,57 +53,57 @@ mal_updateheader_t * mal_updateheader_new(void)
 }
 
 // encoding functions related to transport malbinary
-int mal_updateheader_add_encoding_length_malbinary(mal_updateheader_t * self, mal_encoder_t * mal_encoder, void * cursor)
+int mal_updateheader_add_encoding_length_malbinary(mal_updateheader_t * self, mal_encoder_t * encoder, void * cursor)
 {
   int rc = 0;
-  rc = mal_encoder_add_time_encoding_length(mal_encoder, self->timestamp, cursor);
+  rc = mal_encoder_add_time_encoding_length(encoder, self->timestamp, cursor);
   if (rc < 0)
     return rc;
-  rc = mal_encoder_add_uri_encoding_length(mal_encoder, self->sourceuri, cursor);
+  rc = mal_encoder_add_uri_encoding_length(encoder, self->sourceuri, cursor);
   if (rc < 0)
     return rc;
-  rc = mal_encoder_add_small_enum_encoding_length(mal_encoder, self->updatetype, cursor);
+  rc = mal_encoder_add_small_enum_encoding_length(encoder, self->updatetype, cursor);
   if (rc < 0)
     return rc;
-  rc = mal_entitykey_add_encoding_length_malbinary(self->key, mal_encoder, cursor);
+  rc = mal_entitykey_add_encoding_length_malbinary(self->key, encoder, cursor);
   if (rc < 0)
     return rc;
   return rc;
 }
-int mal_updateheader_encode_malbinary(mal_updateheader_t * self, mal_encoder_t * mal_encoder, void * cursor)
+int mal_updateheader_encode_malbinary(mal_updateheader_t * self, mal_encoder_t * encoder, void * cursor)
 {
   int rc = 0;
-  rc = mal_encoder_encode_time(mal_encoder, cursor, self->timestamp);
+  rc = mal_encoder_encode_time(encoder, cursor, self->timestamp);
   if (rc < 0)
     return rc;
-  rc = mal_encoder_encode_uri(mal_encoder, cursor, self->sourceuri);
+  rc = mal_encoder_encode_uri(encoder, cursor, self->sourceuri);
   if (rc < 0)
     return rc;
-  rc = mal_encoder_encode_small_enum(mal_encoder, cursor, self->updatetype);
+  rc = mal_encoder_encode_small_enum(encoder, cursor, self->updatetype);
   if (rc < 0)
     return rc;
-  rc = mal_entitykey_encode_malbinary(self->key, mal_encoder, cursor);
+  rc = mal_entitykey_encode_malbinary(self->key, encoder, cursor);
   if (rc < 0)
     return rc;
   return rc;
 }
-int mal_updateheader_decode_malbinary(mal_updateheader_t * self, mal_decoder_t * mal_decoder, void * cursor)
+int mal_updateheader_decode_malbinary(mal_updateheader_t * self, mal_decoder_t * decoder, void * cursor)
 {
   int rc = 0;
   int enumerated_value;
-  rc = mal_decoder_decode_time(mal_decoder, cursor, &self->timestamp);
+  rc = mal_decoder_decode_time(decoder, cursor, &self->timestamp);
   if (rc < 0)
     return rc;
-  rc = mal_decoder_decode_uri(mal_decoder, cursor, &self->sourceuri);
+  rc = mal_decoder_decode_uri(decoder, cursor, &self->sourceuri);
   if (rc < 0)
     return rc;
-  rc = mal_decoder_decode_small_enum(mal_decoder, cursor, &enumerated_value);
+  rc = mal_decoder_decode_small_enum(decoder, cursor, &enumerated_value);
   if (rc < 0)
     return rc;
   self->updatetype = (mal_updatetype_t) enumerated_value;
   self->key = mal_entitykey_new();
   if (self->key == NULL) return -1;
-  rc = mal_entitykey_decode_malbinary(self->key, mal_decoder, cursor);
+  rc = mal_entitykey_decode_malbinary(self->key, decoder, cursor);
   if (rc < 0)
     return rc;
   return rc;

@@ -48,30 +48,34 @@ mal_subscription_t ** mal_subscription_list_get_content(mal_subscription_list_t 
 }
 
 // encoding functions related to transport malbinary
-int mal_subscription_list_add_encoding_length_malbinary(mal_subscription_list_t * self, mal_encoder_t * mal_encoder, void * cursor)
+int mal_subscription_list_add_encoding_length_malbinary(mal_subscription_list_t * self, mal_encoder_t * encoder, void * cursor)
 {
   int rc = 0;
   unsigned int list_size = self->element_count;
-  mal_encoder_add_list_size_encoding_length(mal_encoder, list_size, cursor);
+  rc = mal_encoder_add_list_size_encoding_length(encoder, list_size, cursor);
+  if (rc < 0)
+    return rc;
   for (int i = 0; i < list_size; i++)
   {
     mal_subscription_t * list_element = self->content[i];
     bool presence_flag = (list_element != NULL);
-    mal_encoder_add_presence_flag_encoding_length(mal_encoder, cursor, presence_flag);
+    rc = mal_encoder_add_presence_flag_encoding_length(encoder, presence_flag, cursor);
+    if (rc < 0)
+      return rc;
     if (presence_flag)
     {
-      rc = mal_subscription_add_encoding_length_malbinary(list_element, mal_encoder, cursor);
+      rc = mal_subscription_add_encoding_length_malbinary(list_element, encoder, cursor);
       if (rc < 0)
         return rc;
     }
   }
   return rc;
 }
-int mal_subscription_list_encode_malbinary(mal_subscription_list_t * self, mal_encoder_t * mal_encoder, void * cursor)
+int mal_subscription_list_encode_malbinary(mal_subscription_list_t * self, mal_encoder_t * encoder, void * cursor)
 {
   int rc = 0;
   unsigned int list_size = self->element_count;
-  rc = mal_encoder_encode_list_size(mal_encoder, cursor, list_size);
+  rc = mal_encoder_encode_list_size(encoder, cursor, list_size);
   if (rc < 0)
     return rc;
   mal_subscription_t ** content = self->content;
@@ -79,42 +83,46 @@ int mal_subscription_list_encode_malbinary(mal_subscription_list_t * self, mal_e
   {
     mal_subscription_t *list_element = content[i];
     bool presence_flag = (list_element != NULL);
-    rc = mal_encoder_encode_presence_flag(mal_encoder, cursor, presence_flag);
+    rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
     if (rc < 0)
       return rc;
     if (presence_flag)
     {
-      rc = mal_subscription_encode_malbinary(list_element, mal_encoder, cursor);
+      rc = mal_subscription_encode_malbinary(list_element, encoder, cursor);
       if (rc < 0)
         return rc;
     }
   }
   return rc;
 }
-int mal_subscription_list_decode_malbinary(mal_subscription_list_t * self, mal_decoder_t * mal_decoder, void * cursor)
+int mal_subscription_list_decode_malbinary(mal_subscription_list_t * self, mal_decoder_t * decoder, void * cursor)
 {
-  int rc = mal_decoder_decode_list_size(mal_decoder, cursor, &self->element_count);
+  int rc = 0;
+  unsigned int list_size;
+  rc = mal_decoder_decode_list_size(decoder, cursor, &list_size);
   if (rc < 0)
     return rc;
-  if (self->element_count == 0)
+  if (list_size == 0)
   {
+    self->element_count = 0;
     self->content = NULL;
     return 0;
   }
-  self->content = (mal_subscription_t **) calloc(self->element_count, sizeof(mal_subscription_t *));
+  self->content = (mal_subscription_t **) calloc(list_size, sizeof(mal_subscription_t *));
   if (self->content == NULL)
     return -1;
-  for (int i = 0; i < self->element_count; i++)
+  self->element_count = list_size;
+  for (int i = 0; i < list_size; i++)
   {
     bool presence_flag;
-    rc = mal_decoder_decode_presence_flag(mal_decoder, cursor, &presence_flag);
+    rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
     if (rc < 0)
       return rc;
     if (presence_flag)
     {
       self->content[i] = mal_subscription_new();
       if (self->content[i] == NULL) return -1;
-      rc = mal_subscription_decode_malbinary(self->content[i], mal_decoder, cursor);
+      rc = mal_subscription_decode_malbinary(self->content[i], decoder, cursor);
       if (rc < 0)
         return rc;
     }

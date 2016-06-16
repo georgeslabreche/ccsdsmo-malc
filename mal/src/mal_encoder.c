@@ -68,8 +68,8 @@ int mal_encoder_add_string_encoding_length(mal_encoder_t *self, mal_string_t *to
   return self->mal_encoder_add_string_encoding_length(self, to_encode, cursor);
 }
 
-int mal_encoder_add_presence_flag_encoding_length(mal_encoder_t *self, void *cursor, unsigned int length) {
-  return self->mal_encoder_add_presence_flag_encoding_length(self, cursor, length);
+int mal_encoder_add_presence_flag_encoding_length(mal_encoder_t *self, unsigned int length, void *cursor) {
+  return self->mal_encoder_add_presence_flag_encoding_length(self, length, cursor);
 }
 
 int mal_encoder_add_short_form_encoding_length(mal_encoder_t *self, long to_encode, void *cursor) {

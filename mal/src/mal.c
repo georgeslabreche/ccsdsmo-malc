@@ -15,7 +15,7 @@ void mal_set_log_level(int level) {
 
 int mal_register_add_encoding_length(mal_encoder_t *encoder,
     mal_subscription_t *element, void *cursor) {
-  int rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+  int rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
   if (rc < 0)
     return rc;
   if (element != NULL) {
@@ -58,7 +58,7 @@ int mal_register_decode(void *cursor, mal_decoder_t *decoder, mal_subscription_t
 
 int mal_publish_register_add_encoding_length_entitykey_list(
     mal_encoder_t *encoder, mal_entitykey_list_t *element, void *cursor) {
-  int rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+  int rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
   if (rc < 0)
     return rc;
   if (element != NULL) {
@@ -104,7 +104,7 @@ int mal_publish_decode_entitykey_list( void *cursor, mal_decoder_t *decoder, mal
 int mal_publish_add_encoding_length_updateheader_list(
     mal_encoder_t *encoder, mal_updateheader_list_t *element,
     void *cursor) {
-  int rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+  int rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
   if (rc < 0)
     return rc;
   if (element != NULL) {

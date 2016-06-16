@@ -35,37 +35,37 @@ mal_subscription_t * mal_subscription_new(void)
 }
 
 // encoding functions related to transport malbinary
-int mal_subscription_add_encoding_length_malbinary(mal_subscription_t * self, mal_encoder_t * mal_encoder, void * cursor)
+int mal_subscription_add_encoding_length_malbinary(mal_subscription_t * self, mal_encoder_t * encoder, void * cursor)
 {
   int rc = 0;
-  rc = mal_encoder_add_identifier_encoding_length(mal_encoder, self->subscriptionid, cursor);
+  rc = mal_encoder_add_identifier_encoding_length(encoder, self->subscriptionid, cursor);
   if (rc < 0)
     return rc;
-  rc = mal_entityrequest_list_add_encoding_length_malbinary(self->entities, mal_encoder, cursor);
+  rc = mal_entityrequest_list_add_encoding_length_malbinary(self->entities, encoder, cursor);
   if (rc < 0)
     return rc;
   return rc;
 }
-int mal_subscription_encode_malbinary(mal_subscription_t * self, mal_encoder_t * mal_encoder, void * cursor)
+int mal_subscription_encode_malbinary(mal_subscription_t * self, mal_encoder_t * encoder, void * cursor)
 {
   int rc = 0;
-  rc = mal_encoder_encode_identifier(mal_encoder, cursor, self->subscriptionid);
+  rc = mal_encoder_encode_identifier(encoder, cursor, self->subscriptionid);
   if (rc < 0)
     return rc;
-  rc = mal_entityrequest_list_encode_malbinary(self->entities, mal_encoder, cursor);
+  rc = mal_entityrequest_list_encode_malbinary(self->entities, encoder, cursor);
   if (rc < 0)
     return rc;
   return rc;
 }
-int mal_subscription_decode_malbinary(mal_subscription_t * self, mal_decoder_t * mal_decoder, void * cursor)
+int mal_subscription_decode_malbinary(mal_subscription_t * self, mal_decoder_t * decoder, void * cursor)
 {
   int rc = 0;
-  rc = mal_decoder_decode_identifier(mal_decoder, cursor, &self->subscriptionid);
+  rc = mal_decoder_decode_identifier(decoder, cursor, &self->subscriptionid);
   if (rc < 0)
     return rc;
   self->entities = mal_entityrequest_list_new(0);
   if (self->entities == NULL) return -1;
-  rc = mal_entityrequest_list_decode_malbinary(self->entities, mal_decoder, cursor);
+  rc = mal_entityrequest_list_decode_malbinary(self->entities, decoder, cursor);
   if (rc < 0)
     return rc;
   return rc;

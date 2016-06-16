@@ -71,78 +71,78 @@ mal_entityrequest_t * mal_entityrequest_new(void)
 }
 
 // encoding functions related to transport malbinary
-int mal_entityrequest_add_encoding_length_malbinary(mal_entityrequest_t * self, mal_encoder_t * mal_encoder, void * cursor)
+int mal_entityrequest_add_encoding_length_malbinary(mal_entityrequest_t * self, mal_encoder_t * encoder, void * cursor)
 {
   int rc = 0;
-  rc = mal_encoder_add_presence_flag_encoding_length(mal_encoder, cursor, (self->subdomain != NULL));
+  rc = mal_encoder_add_presence_flag_encoding_length(encoder, (self->subdomain != NULL), cursor);
   if (rc < 0)
     return rc;
   if ((self->subdomain != NULL))
   {
-    rc = mal_identifier_list_add_encoding_length_malbinary(self->subdomain, mal_encoder, cursor);
+    rc = mal_identifier_list_add_encoding_length_malbinary(self->subdomain, encoder, cursor);
     if (rc < 0)
       return rc;
   }
-  rc = mal_encoder_add_boolean_encoding_length(mal_encoder, self->allareas, cursor);
+  rc = mal_encoder_add_boolean_encoding_length(encoder, self->allareas, cursor);
   if (rc < 0)
     return rc;
-  rc = mal_encoder_add_boolean_encoding_length(mal_encoder, self->allservices, cursor);
+  rc = mal_encoder_add_boolean_encoding_length(encoder, self->allservices, cursor);
   if (rc < 0)
     return rc;
-  rc = mal_encoder_add_boolean_encoding_length(mal_encoder, self->alloperations, cursor);
+  rc = mal_encoder_add_boolean_encoding_length(encoder, self->alloperations, cursor);
   if (rc < 0)
     return rc;
-  rc = mal_encoder_add_boolean_encoding_length(mal_encoder, self->onlyonchange, cursor);
+  rc = mal_encoder_add_boolean_encoding_length(encoder, self->onlyonchange, cursor);
   if (rc < 0)
     return rc;
-  rc = mal_entitykey_list_add_encoding_length_malbinary(self->entitykeys, mal_encoder, cursor);
+  rc = mal_entitykey_list_add_encoding_length_malbinary(self->entitykeys, encoder, cursor);
   if (rc < 0)
     return rc;
   return rc;
 }
-int mal_entityrequest_encode_malbinary(mal_entityrequest_t * self, mal_encoder_t * mal_encoder, void * cursor)
+int mal_entityrequest_encode_malbinary(mal_entityrequest_t * self, mal_encoder_t * encoder, void * cursor)
 {
   int rc = 0;
   bool presence_flag;
   presence_flag = (self->subdomain != NULL);
-  rc = mal_encoder_encode_presence_flag(mal_encoder, cursor, presence_flag);
+  rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = mal_identifier_list_encode_malbinary(self->subdomain, mal_encoder, cursor);
+    rc = mal_identifier_list_encode_malbinary(self->subdomain, encoder, cursor);
     if (rc < 0)
       return rc;
   }
-  rc = mal_encoder_encode_boolean(mal_encoder, cursor, self->allareas);
+  rc = mal_encoder_encode_boolean(encoder, cursor, self->allareas);
   if (rc < 0)
     return rc;
-  rc = mal_encoder_encode_boolean(mal_encoder, cursor, self->allservices);
+  rc = mal_encoder_encode_boolean(encoder, cursor, self->allservices);
   if (rc < 0)
     return rc;
-  rc = mal_encoder_encode_boolean(mal_encoder, cursor, self->alloperations);
+  rc = mal_encoder_encode_boolean(encoder, cursor, self->alloperations);
   if (rc < 0)
     return rc;
-  rc = mal_encoder_encode_boolean(mal_encoder, cursor, self->onlyonchange);
+  rc = mal_encoder_encode_boolean(encoder, cursor, self->onlyonchange);
   if (rc < 0)
     return rc;
-  rc = mal_entitykey_list_encode_malbinary(self->entitykeys, mal_encoder, cursor);
+  rc = mal_entitykey_list_encode_malbinary(self->entitykeys, encoder, cursor);
   if (rc < 0)
     return rc;
   return rc;
 }
-int mal_entityrequest_decode_malbinary(mal_entityrequest_t * self, mal_decoder_t * mal_decoder, void * cursor)
+int mal_entityrequest_decode_malbinary(mal_entityrequest_t * self, mal_decoder_t * decoder, void * cursor)
 {
   int rc = 0;
   bool presence_flag;
-  rc = mal_decoder_decode_presence_flag(mal_decoder, cursor, &presence_flag);
+  rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
     self->subdomain = mal_identifier_list_new(0);
     if (self->subdomain == NULL) return -1;
-    rc = mal_identifier_list_decode_malbinary(self->subdomain, mal_decoder, cursor);
+    rc = mal_identifier_list_decode_malbinary(self->subdomain, decoder, cursor);
     if (rc < 0)
       return rc;
   }
@@ -150,21 +150,21 @@ int mal_entityrequest_decode_malbinary(mal_entityrequest_t * self, mal_decoder_t
   {
     self->subdomain = NULL;
   }
-  rc = mal_decoder_decode_boolean(mal_decoder, cursor, &self->allareas);
+  rc = mal_decoder_decode_boolean(decoder, cursor, &self->allareas);
   if (rc < 0)
     return rc;
-  rc = mal_decoder_decode_boolean(mal_decoder, cursor, &self->allservices);
+  rc = mal_decoder_decode_boolean(decoder, cursor, &self->allservices);
   if (rc < 0)
     return rc;
-  rc = mal_decoder_decode_boolean(mal_decoder, cursor, &self->alloperations);
+  rc = mal_decoder_decode_boolean(decoder, cursor, &self->alloperations);
   if (rc < 0)
     return rc;
-  rc = mal_decoder_decode_boolean(mal_decoder, cursor, &self->onlyonchange);
+  rc = mal_decoder_decode_boolean(decoder, cursor, &self->onlyonchange);
   if (rc < 0)
     return rc;
   self->entitykeys = mal_entitykey_list_new(0);
   if (self->entitykeys == NULL) return -1;
-  rc = mal_entitykey_list_decode_malbinary(self->entitykeys, mal_decoder, cursor);
+  rc = mal_entitykey_list_decode_malbinary(self->entitykeys, decoder, cursor);
   if (rc < 0)
     return rc;
   return rc;
