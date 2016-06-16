@@ -1,5 +1,12 @@
 #include "testarea.h"
 
+int TESTAREA_TESTENUMERATION_NUMERIC_VALUES[] =
+{
+  1,
+  2,
+  100000
+};
+
 // generated code for operation testarea_testservice_testsend
 
 int testarea_testservice_testsend_send(mal_endpoint_t * endpoint, mal_message_t * init_message, mal_uri_t * provider_uri)
@@ -18,7 +25,7 @@ int testarea_testservice_testsend_send_add_encoding_length_0(mal_encoder_t * enc
     case MALBINARY_FORMAT_CODE:
     case MALSPLITBINARY_FORMAT_CODE:
     {
-      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
       if (rc < 0)
         return rc;
       if ((element != NULL))
@@ -101,7 +108,7 @@ int testarea_testservice_testsend_send_add_encoding_length_1(mal_encoder_t * enc
     case MALBINARY_FORMAT_CODE:
     case MALSPLITBINARY_FORMAT_CODE:
     {
-      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
       if (rc < 0)
         return rc;
       if ((element != NULL))
@@ -184,7 +191,7 @@ int testarea_testservice_testsend_send_add_encoding_length_2_testarea_testservic
     case MALBINARY_FORMAT_CODE:
     case MALSPLITBINARY_FORMAT_CODE:
     {
-      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
       if (rc < 0)
         return rc;
       if ((element != NULL))
@@ -241,7 +248,7 @@ int testarea_testservice_testsend_send_add_encoding_length_2_testarea_testservic
     case MALBINARY_FORMAT_CODE:
     case MALSPLITBINARY_FORMAT_CODE:
     {
-      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
       if (rc < 0)
         return rc;
       if ((element != NULL))
@@ -335,7 +342,7 @@ int testarea_testservice_testsubmit_submit_add_encoding_length_0(mal_encoder_t *
     case MALBINARY_FORMAT_CODE:
     case MALSPLITBINARY_FORMAT_CODE:
     {
-      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
       if (rc < 0)
         return rc;
       if ((element != NULL))
@@ -418,7 +425,7 @@ int testarea_testservice_testsubmit_submit_add_encoding_length_1(mal_encoder_t *
     case MALBINARY_FORMAT_CODE:
     case MALSPLITBINARY_FORMAT_CODE:
     {
-      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
       if (rc < 0)
         return rc;
       if ((element != NULL))
@@ -519,7 +526,7 @@ int testarea_testservice_testrequest_request_add_encoding_length_0(mal_encoder_t
     case MALBINARY_FORMAT_CODE:
     case MALSPLITBINARY_FORMAT_CODE:
     {
-      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
       if (rc < 0)
         return rc;
       if ((element != NULL))
@@ -602,7 +609,7 @@ int testarea_testservice_testrequest_request_add_encoding_length_1(mal_encoder_t
     case MALBINARY_FORMAT_CODE:
     case MALSPLITBINARY_FORMAT_CODE:
     {
-      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
       if (rc < 0)
         return rc;
       if ((element != NULL))
@@ -693,7 +700,7 @@ int testarea_testservice_testrequest_request_response_add_encoding_length_0(mal_
     case MALBINARY_FORMAT_CODE:
     case MALSPLITBINARY_FORMAT_CODE:
     {
-      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
       if (rc < 0)
         return rc;
       if ((element != NULL))
@@ -786,7 +793,7 @@ int testarea_testservice_testinvoke_invoke_add_encoding_length_0(mal_encoder_t *
     case MALBINARY_FORMAT_CODE:
     case MALSPLITBINARY_FORMAT_CODE:
     {
-      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
       if (rc < 0)
         return rc;
       if ((element != NULL))
@@ -885,7 +892,7 @@ int testarea_testservice_testinvoke_invoke_response_add_encoding_length_0(mal_en
     case MALBINARY_FORMAT_CODE:
     case MALSPLITBINARY_FORMAT_CODE:
     {
-      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
       if (rc < 0)
         return rc;
       if ((element != NULL))
@@ -978,7 +985,7 @@ int testarea_testservice_testprogress_progress_add_encoding_length_0(mal_encoder
     case MALBINARY_FORMAT_CODE:
     case MALSPLITBINARY_FORMAT_CODE:
     {
-      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
       if (rc < 0)
         return rc;
       if ((element != NULL))
@@ -1085,7 +1092,7 @@ int testarea_testservice_testprogress_progress_response_add_encoding_length_0(ma
     case MALBINARY_FORMAT_CODE:
     case MALSPLITBINARY_FORMAT_CODE:
     {
-      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
       if (rc < 0)
         return rc;
       if ((element != NULL))
@@ -1170,7 +1177,7 @@ int testarea_testservice_testmonitor_update_add_encoding_length_0(mal_encoder_t 
     case MALBINARY_FORMAT_CODE:
     case MALSPLITBINARY_FORMAT_CODE:
     {
-      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
       if (rc < 0)
         return rc;
       if ((element != NULL))
@@ -1253,7 +1260,7 @@ int testarea_testservice_testmonitor_update_add_encoding_length_1(mal_encoder_t 
     case MALBINARY_FORMAT_CODE:
     case MALSPLITBINARY_FORMAT_CODE:
     {
-      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
       if (rc < 0)
         return rc;
       if ((element != NULL))
@@ -1387,7 +1394,7 @@ int testarea_testservice_testinvokealltypes_invoke_add_encoding_length_0(mal_enc
     case MALBINARY_FORMAT_CODE:
     case MALSPLITBINARY_FORMAT_CODE:
     {
-      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
       if (rc < 0)
         return rc;
       if ((element != NULL))
@@ -1486,7 +1493,7 @@ int testarea_testservice_testinvokealltypes_invoke_response_add_encoding_length_
     case MALBINARY_FORMAT_CODE:
     case MALSPLITBINARY_FORMAT_CODE:
     {
-      rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (element != NULL));
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
       if (rc < 0)
         return rc;
       if ((element != NULL))

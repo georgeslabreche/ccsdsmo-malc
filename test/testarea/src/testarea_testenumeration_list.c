@@ -62,11 +62,15 @@ int testarea_testenumeration_list_add_encoding_length_malbinary(testarea_testenu
 {
   int rc = 0;
   unsigned int list_size = self->element_count;
-  mal_encoder_add_list_size_encoding_length(encoder, list_size, cursor);
+  rc = mal_encoder_add_list_size_encoding_length(encoder, list_size, cursor);
+  if (rc < 0)
+    return rc;
   for (int i = 0; i < list_size; i++)
   {
     bool presence_flag = self->presence_flags[i];
-    mal_encoder_add_presence_flag_encoding_length(encoder, cursor, presence_flag);
+    rc = mal_encoder_add_presence_flag_encoding_length(encoder, presence_flag, cursor);
+    if (rc < 0)
+      return rc;
     if (presence_flag)
     {
       rc = mal_encoder_add_small_enum_encoding_length(encoder, self->content[i], cursor);
@@ -105,6 +109,24 @@ int testarea_testenumeration_list_decode_malbinary(testarea_testenumeration_list
   rc = mal_decoder_decode_list_size(decoder, cursor, &list_size);
   if (rc < 0)
     return rc;
+  if (list_size == 0)
+  {
+    self->element_count = 0;
+    self->presence_flags = NULL;
+    self->content = NULL;
+    return 0;
+  }
+  self->presence_flags = (bool *) calloc(list_size, sizeof(bool));
+  if (self->presence_flags == NULL)
+    return -1;
+  self->content = (testarea_testenumeration_t *) calloc(list_size, sizeof(testarea_testenumeration_t));
+  if (self->content == NULL)
+  {
+    free(self->presence_flags);
+    self->presence_flags = NULL;
+    return -1;
+  }
+  self->element_count = list_size;
   for (int i = 0; i < list_size; i++)
   {
     bool presence_flag;

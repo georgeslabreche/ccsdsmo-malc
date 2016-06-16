@@ -29,7 +29,7 @@ testarea_testservice_testupdate_t * testarea_testservice_testupdate_new(void)
 int testarea_testservice_testupdate_add_encoding_length_malbinary(testarea_testservice_testupdate_t * self, mal_encoder_t * encoder, void * cursor)
 {
   int rc = 0;
-  rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (self->stringfield != NULL));
+  rc = mal_encoder_add_presence_flag_encoding_length(encoder, (self->stringfield != NULL), cursor);
   if (rc < 0)
     return rc;
   if ((self->stringfield != NULL))

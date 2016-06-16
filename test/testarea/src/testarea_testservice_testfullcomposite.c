@@ -150,7 +150,7 @@ int testarea_testservice_testfullcomposite_add_encoding_length_malbinary(testare
   rc = mal_encoder_add_boolean_encoding_length(encoder, self->boolfield, cursor);
   if (rc < 0)
     return rc;
-  rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, self->intfield_is_present);
+  rc = mal_encoder_add_presence_flag_encoding_length(encoder, self->intfield_is_present, cursor);
   if (rc < 0)
     return rc;
   if (self->intfield_is_present)
@@ -159,7 +159,7 @@ int testarea_testservice_testfullcomposite_add_encoding_length_malbinary(testare
     if (rc < 0)
       return rc;
   }
-  rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (self->stringfield != NULL));
+  rc = mal_encoder_add_presence_flag_encoding_length(encoder, (self->stringfield != NULL), cursor);
   if (rc < 0)
     return rc;
   if ((self->stringfield != NULL))
@@ -174,7 +174,7 @@ int testarea_testservice_testfullcomposite_add_encoding_length_malbinary(testare
   rc = mal_encoder_add_small_enum_encoding_length(encoder, self->enumfield, cursor);
   if (rc < 0)
     return rc;
-  rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (self->compfield != NULL));
+  rc = mal_encoder_add_presence_flag_encoding_length(encoder, (self->compfield != NULL), cursor);
   if (rc < 0)
     return rc;
   if ((self->compfield != NULL))
@@ -183,7 +183,7 @@ int testarea_testservice_testfullcomposite_add_encoding_length_malbinary(testare
     if (rc < 0)
       return rc;
   }
-  rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (self->boollistfield != NULL));
+  rc = mal_encoder_add_presence_flag_encoding_length(encoder, (self->boollistfield != NULL), cursor);
   if (rc < 0)
     return rc;
   if ((self->boollistfield != NULL))
@@ -198,7 +198,7 @@ int testarea_testservice_testfullcomposite_add_encoding_length_malbinary(testare
   rc = mal_string_list_add_encoding_length_malbinary(self->stringlistfield, encoder, cursor);
   if (rc < 0)
     return rc;
-  rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (self->bloblistfield != NULL));
+  rc = mal_encoder_add_presence_flag_encoding_length(encoder, (self->bloblistfield != NULL), cursor);
   if (rc < 0)
     return rc;
   if ((self->bloblistfield != NULL))
@@ -207,7 +207,7 @@ int testarea_testservice_testfullcomposite_add_encoding_length_malbinary(testare
     if (rc < 0)
       return rc;
   }
-  rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (self->enumlistfield != NULL));
+  rc = mal_encoder_add_presence_flag_encoding_length(encoder, (self->enumlistfield != NULL), cursor);
   if (rc < 0)
     return rc;
   if ((self->enumlistfield != NULL))

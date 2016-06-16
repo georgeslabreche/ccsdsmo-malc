@@ -83,7 +83,7 @@ testarea_testservice_testcomposite_t * testarea_testservice_testcomposite_new(vo
 int testarea_testservice_testcomposite_add_encoding_length_malbinary(testarea_testservice_testcomposite_t * self, mal_encoder_t * encoder, void * cursor)
 {
   int rc = 0;
-  rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, (self->stringfield != NULL));
+  rc = mal_encoder_add_presence_flag_encoding_length(encoder, (self->stringfield != NULL), cursor);
   if (rc < 0)
     return rc;
   if ((self->stringfield != NULL))
@@ -92,7 +92,7 @@ int testarea_testservice_testcomposite_add_encoding_length_malbinary(testarea_te
     if (rc < 0)
       return rc;
   }
-  rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, self->intfield_is_present);
+  rc = mal_encoder_add_presence_flag_encoding_length(encoder, self->intfield_is_present, cursor);
   if (rc < 0)
     return rc;
   if (self->intfield_is_present)
@@ -101,7 +101,7 @@ int testarea_testservice_testcomposite_add_encoding_length_malbinary(testarea_te
     if (rc < 0)
       return rc;
   }
-  rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, self->floatfield_is_present);
+  rc = mal_encoder_add_presence_flag_encoding_length(encoder, self->floatfield_is_present, cursor);
   if (rc < 0)
     return rc;
   if (self->floatfield_is_present)
@@ -110,7 +110,7 @@ int testarea_testservice_testcomposite_add_encoding_length_malbinary(testarea_te
     if (rc < 0)
       return rc;
   }
-  rc = mal_encoder_add_presence_flag_encoding_length(encoder, cursor, self->doublefield_is_present);
+  rc = mal_encoder_add_presence_flag_encoding_length(encoder, self->doublefield_is_present, cursor);
   if (rc < 0)
     return rc;
   if (self->doublefield_is_present)
