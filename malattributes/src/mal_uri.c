@@ -7,15 +7,14 @@
 mal_uri_t *mal_uri_new(char *char_content) {
   // Add final '\0'
   size_t bytes_count = strlen(char_content) + 1;
-  char *self = (char *) malloc(sizeof(char) * bytes_count);
+  char *self = (char *) calloc(bytes_count, sizeof(char));
   strncpy(self, char_content, bytes_count);
   return self;
 }
 
 void mal_uri_destroy(mal_uri_t **self_p) {
   if (*self_p) {
-    mal_uri_t *self = *self_p;
-    free(self);
+    free((*self_p));
     *self_p = NULL;
   }
 }

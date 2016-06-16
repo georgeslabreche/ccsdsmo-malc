@@ -9,13 +9,11 @@ struct _mal_blob_t {
 };
 
 mal_blob_t *mal_blob_new(unsigned int length) {
-  mal_blob_t *self = (mal_blob_t *) malloc(sizeof(mal_blob_t));
+  mal_blob_t *self = (mal_blob_t *) calloc(1, sizeof(mal_blob_t));
   if (!self)
     return NULL;
-
+  self->content = (char *) calloc(length, sizeof(char));
   self->length = length;
-  self->content = (char *) malloc(sizeof(char) * length);
-
   return self;
 }
 
@@ -23,7 +21,8 @@ void mal_blob_destroy(mal_blob_t **self_p) {
   if (*self_p) {
     mal_blob_t *self = *self_p;
     free(self->content);
-    free(self);
+    self->content = NULL;
+    free((*self_p));
     *self_p = NULL;
   }
 }
