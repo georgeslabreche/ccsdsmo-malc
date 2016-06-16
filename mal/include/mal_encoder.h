@@ -39,7 +39,7 @@ void mal_encoder_cursor_assert(mal_encoder_t *self, void *cursor);
 /* Encoding length functions */
 
 int mal_encoder_add_string_encoding_length(mal_encoder_t *self, mal_string_t *to_encode, void *cursor);
-int mal_encoder_add_presence_flag_encoding_length( mal_encoder_t *self, void *cursor, unsigned int length);
+int mal_encoder_add_presence_flag_encoding_length( mal_encoder_t *self, unsigned int length, void *cursor);
 int mal_encoder_add_short_form_encoding_length(mal_encoder_t *self, long to_encode, void *cursor);
 int mal_encoder_add_integer_encoding_length(mal_encoder_t *self, mal_integer_t to_encode, void *cursor);
 int mal_encoder_add_identifier_encoding_length(mal_encoder_t *self, mal_identifier_t *to_encode, void *cursor);
@@ -202,7 +202,7 @@ typedef void mal_encoder_cursor_assert_fn(void *cursor);
 /* Encoding length functions */
 
 typedef int mal_encoder_add_string_encoding_length_fn(mal_encoder_t *self, mal_string_t *to_encode, void *cursor);
-typedef int mal_encoder_add_presence_flag_encoding_length_fn( mal_encoder_t *self, void *cursor, unsigned int length);
+typedef int mal_encoder_add_presence_flag_encoding_length_fn( mal_encoder_t *self, unsigned int length, void *cursor);
 typedef int mal_encoder_add_short_form_encoding_length_fn(mal_encoder_t *self, long to_encode, void *cursor);
 typedef int mal_encoder_add_integer_encoding_length_fn(mal_encoder_t *self, mal_integer_t to_encode, void *cursor);
 typedef int mal_encoder_add_identifier_encoding_length_fn(mal_encoder_t *self, mal_identifier_t *to_encode, void *cursor);
