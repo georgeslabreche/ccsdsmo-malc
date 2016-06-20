@@ -49,6 +49,10 @@ int malzmq_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint,
     mal_message_t **message);
 
 // Must be compliant with corresponding MAL virtual function
+int malzmq_ctx_endpoint_init_operation(mal_endpoint_t *mal_endpoint,
+    mal_message_t *message, mal_uri_t *uri_to, bool set_tid);
+
+// Must be compliant with corresponding MAL virtual function
 int malzmq_ctx_destroy_message(void *self, mal_message_t *mal_message);
 
 // Must be compliant with MAL virtual function: void *self
