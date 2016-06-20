@@ -26,16 +26,13 @@ void mal_entitykey_list_destroy(mal_entitykey_list_t ** self_p)
 {
   if ((*self_p)->element_count > 0)
   {
-    printf("-- mal_entitykey_list_destroy count = %d\n", (*self_p)->element_count);//NTA tmp
     for (int i = 0; i < (*self_p)->element_count; i++)
     {
       if ((*self_p)->content[i] != NULL)
         mal_entitykey_destroy(&(*self_p)->content[i]);
     }
-    printf("-- mal_entitykey_list_destroy free (*self_p)->content=%p\n", (void *)(*self_p)->content);//NTA tmp
     free((*self_p)->content);
   }
-  printf("-- mal_entitykey_list_destroy free *self_p= %p\n", (void *)(*self_p));//NTA tmp
   free (*self_p);
   (*self_p) = NULL;
 }

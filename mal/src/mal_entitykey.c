@@ -222,10 +222,8 @@ void mal_entitykey_destroy(mal_entitykey_t ** self_p)
 {
   if ((*self_p)->firstsubkey != NULL)
   {
-    printf("-- mal_entitykey_destroy firstsubkey= %s\n", (*self_p)->firstsubkey);//NTA tmp
     mal_identifier_destroy(& (*self_p)->firstsubkey);
   }
-  printf("-- mal_entitykey_destroy free (*self_p)= %p\n", (void *)(*self_p));//NTA tmp
   free(*self_p);
   (*self_p) = NULL;
 }
