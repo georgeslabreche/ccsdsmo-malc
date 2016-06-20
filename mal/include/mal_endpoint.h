@@ -16,6 +16,7 @@ mal_endpoint_t *mal_endpoint_actor(
 void mal_endpoint_destroy(mal_endpoint_t **self_p);
 
 mal_uri_t *mal_endpoint_get_uri(mal_endpoint_t *self);
+long mal_endpoint_get_next_transaction_id_counter(mal_endpoint_t *self);
 mal_ctx_t *mal_endpoint_get_mal_ctx(mal_endpoint_t *self);
 
 void *mal_endpoint_get_endpoint_data(mal_endpoint_t *self);
