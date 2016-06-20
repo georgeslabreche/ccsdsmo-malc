@@ -28,6 +28,12 @@ int pubsub_app_broker_on_deregister(void *self, mal_ctx_t *mal_ctx,
 int pubsub_app_broker_on_publish(void *self, mal_ctx_t *mal_ctx,
     mal_endpoint_t *mal_endpoint, mal_message_t *message);
 
+int pubsub_app_broker_on_publish_register(void *self, mal_ctx_t *mal_ctx,
+    mal_endpoint_t *mal_endpoint, mal_message_t *message);
+
+int pubsub_app_broker_on_publish_deregister(void *self, mal_ctx_t *mal_ctx,
+    mal_endpoint_t *mal_endpoint, mal_message_t *message);
+
 mal_uri_t *pubsub_app_broker_get_consumer_uri(pubsub_app_broker_t *self);
 
 mal_uri_t *pubsub_app_broker_get_provider_uri(pubsub_app_broker_t *self);

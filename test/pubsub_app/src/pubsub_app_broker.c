@@ -109,7 +109,9 @@ int pubsub_app_broker_initialize(void *self, mal_actor_t *mal_actor) {
       pubsub_app_broker_on_notify_error,
       pubsub_app_broker_on_register,
       pubsub_app_broker_on_deregister,
-      pubsub_app_broker_on_publish);
+      pubsub_app_broker_on_publish,
+      pubsub_app_broker_on_publish_register,
+      pubsub_app_broker_on_publish_deregister);
   assert(rc == 0);
 
   return rc;
@@ -413,6 +415,28 @@ int pubsub_app_broker_on_deregister(void *self, mal_ctx_t *mal_ctx,
    mal_message_destroy(&ack_message, mal_ctx);
 
    return rc;
+}
+
+/**
+ * This code implements the reaction to a PUBLISH_REGISTER message.
+ */
+int pubsub_app_broker_on_publish_register(void *self, mal_ctx_t *mal_ctx,
+    mal_endpoint_t *mal_endpoint, mal_message_t *message) {
+  int rc = 0;
+  printf("==== pubsub_app_broker_on_publish_register\n");
+
+  return rc;
+}
+
+/**
+ * This code implements the reaction to a PUBLISH_DEREGISTER message.
+ */
+int pubsub_app_broker_on_publish_deregister(void *self, mal_ctx_t *mal_ctx,
+    mal_endpoint_t *mal_endpoint, mal_message_t *message) {
+  int rc = 0;
+  printf("==== pubsub_app_broker_on_publish_deregister\n");
+
+  return rc;
 }
 
 void pubsub_app_broker_test(bool verbose) {
