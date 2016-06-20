@@ -157,7 +157,7 @@ int invoke_app_myprovider_testarea_testservice_testinvoke(
   printf("destroy MAL init message\n");
   mal_message_destroy(&message, mal_ctx);
 
-  printf("destroy parameter_0\n");
+  printf("destroy string_list\n");
   mal_string_list_destroy(&string_list);
 
   printf("destroy MAL result message\n");
