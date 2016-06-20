@@ -216,6 +216,9 @@ typedef int mal_binding_ctx_recv_message_fn(
     void *mal_binding_ctx,
     mal_endpoint_t *mal_endpoint, mal_message_t **message);
 
+typedef int mal_binding_ctx_init_operation_fn(
+    mal_endpoint_t *mal_endpoint, mal_message_t *message, mal_uri_t *uri_to, bool set_tid);
+
 // Function to be provided by a MAL binding to wait on a MAL poller
 typedef int mal_binding_ctx_poller_wait_fn(
     void *mal_binding_ctx,
@@ -243,7 +246,15 @@ int mal_publish_register_add_encoding_length_entitykey_list(
     mal_encoder_t *encoder, mal_entitykey_list_t *element,
     void *cursor);
 
+int mal_publish_deregister_add_encoding_length_entitykey_list(
+    mal_encoder_t *encoder, mal_entitykey_list_t *element,
+    void *cursor);
+
 int mal_publish_register_encode_entitykey_list(
+    void *cursor, mal_encoder_t *encoder,
+    mal_entitykey_list_t *element);
+
+int mal_publish_deregister_encode_entitykey_list(
     void *cursor, mal_encoder_t *encoder,
     mal_entitykey_list_t *element);
 
