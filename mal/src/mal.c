@@ -3,6 +3,39 @@
 
 #include "mal.h"
 
+int MAL_INTERACTIONTYPE_NUMERIC_VALUES[] =
+{
+  1,
+  2,
+  3,
+  4,
+  5,
+  6
+};
+
+int MAL_SESSIONTYPE_NUMERIC_VALUES[] =
+{
+  1,
+  2,
+  3
+};
+
+int MAL_QOSLEVEL_NUMERIC_VALUES[] =
+{
+  1,
+  2,
+  3,
+  4
+};
+
+int MAL_UPDATETYPE_NUMERIC_VALUES[] =
+{
+  1,
+  2,
+  3,
+  4
+};
+
 clog_logger_t mal_logger = CLOG_WARN_LEVEL;
 
 void mal_set_log_level(int level) {
@@ -98,6 +131,33 @@ int mal_publish_decode_entitykey_list( void *cursor, mal_decoder_t *decoder, mal
     element = NULL;
   }
   (*res) = element;
+  return rc;
+}
+
+int mal_publish_deregister_add_encoding_length_entitykey_list(
+    mal_encoder_t *encoder, mal_entitykey_list_t *element, void *cursor) {
+  int rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
+  if (rc < 0)
+    return rc;
+  if (element != NULL) {
+    rc = mal_entitykey_list_add_encoding_length_malbinary(element, encoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  return rc;
+}
+
+int mal_publish_deregister_encode_entitykey_list(
+    void *cursor, mal_encoder_t *encoder,
+    mal_entitykey_list_t *element) {
+  int rc = mal_encoder_encode_presence_flag(encoder, cursor, (element != NULL));
+  if (rc < 0)
+    return rc;
+  if (element != NULL) {
+    rc = mal_entitykey_list_encode_malbinary(element, encoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
   return rc;
 }
 
