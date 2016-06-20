@@ -112,6 +112,8 @@ struct _mal_routing_broker_pubsub_handler_t {
   mal_routing_on_message_fn *on_register;
   mal_routing_on_message_fn *on_deregister;
   mal_routing_on_message_fn *on_publish;
+  mal_routing_on_message_fn *on_publish_register;
+  mal_routing_on_message_fn *on_publish_deregister;
 };
 
 struct _mal_routing_handler_t {
@@ -387,7 +389,9 @@ int mal_routing_register_broker_pubsub_handler(
     mal_routing_on_message_fn *on_notify_error,
     mal_routing_on_message_fn *on_register,
     mal_routing_on_message_fn *on_deregister,
-    mal_routing_on_message_fn *on_publish) {
+    mal_routing_on_message_fn *on_publish,
+    mal_routing_on_message_fn *on_publish_register,
+    mal_routing_on_message_fn *on_publish_deregister) {
   clog_info(mal_logger, " *** mal_routing_register_broker_pubsub_handler: %hd %hhd %hd %hd\n", area, area_version, service, operation);
 
   // Allocates a new structure and initialize it
@@ -398,6 +402,8 @@ int mal_routing_register_broker_pubsub_handler(
   handler->spec.broker_pubsub_handler.on_register = on_register;
   handler->spec.broker_pubsub_handler.on_deregister = on_deregister;
   handler->spec.broker_pubsub_handler.on_publish = on_publish;
+  handler->spec.broker_pubsub_handler.on_publish_register = on_publish_register;
+  handler->spec.broker_pubsub_handler.on_publish_deregister = on_publish_deregister;
   return mal_routing_register_handler(mal_routing, handler);
 
 }
@@ -741,9 +747,8 @@ int mal_routing_handle(
     }
     case MAL_IP_STAGE_PUBSUB_PUBLISH_REGISTER: {
       clog_error(mal_logger, " *** mal_routing_handle: MAL_INTERACTIONTYPE_PUBSUB/MAL_IP_STAGE_PUBSUB_PUBLISH_REGISTER\n");
-      // Should never happen
-      assert(false);
-      /*
+      // Should never happen with ZMQ Transport
+
         mal_routing_handler_t* handler = mal_routing_get_handler(
             self,
             MAL_ACTOR_BROKER_PUBSUB_HANDLER,
@@ -758,7 +763,6 @@ int mal_routing_handle(
           clog_error(mal_logger, "ERROR: %s\n", MAL_ROUTING_NO_HANDLER_MSG);
           rc = MAL_ROUTING_NO_HANDLER;
         }
-       */
       break;
     }
     case MAL_IP_STAGE_PUBSUB_PUBLISH_REGISTER_ACK: {
@@ -858,24 +862,22 @@ int mal_routing_handle(
     }
     case MAL_IP_STAGE_PUBSUB_PUBLISH_DEREGISTER: {
       clog_error(mal_logger, " *** mal_routing_handle: MAL_INTERACTIONTYPE_PUBSUB/MAL_IP_STAGE_PUBSUB_PUBLISH_DEREGISTER\n");
-      // Should never happen
-      assert(false);
-      /*
-        mal_routing_handler_t* handler = mal_routing_get_handler(
-            self,
-            MAL_ACTOR_BROKER_PUBSUB_HANDLER,
-            mal_message_get_service_area(message),
-            mal_message_get_area_version(message),
-            mal_message_get_service(message),
-            mal_message_get_operation(message));
+      // Should never happen  with ZMQ Transport
 
-        if (handler != NULL) {
-          rc = handler->spec.broker_pubsub_handler.on_publish_deregister(self->state, mal_ctx, self->mal_endpoint, message);
-        } else {
-          clog_error(mal_logger, "ERROR: %s\n", MAL_ROUTING_NO_HANDLER_MSG);
-          rc = MAL_ROUTING_NO_HANDLER;
-        }
-       */
+      mal_routing_handler_t* handler = mal_routing_get_handler(
+          self,
+          MAL_ACTOR_BROKER_PUBSUB_HANDLER,
+          mal_message_get_service_area(message),
+          mal_message_get_area_version(message),
+          mal_message_get_service(message),
+          mal_message_get_operation(message));
+
+      if (handler != NULL) {
+        rc = handler->spec.broker_pubsub_handler.on_publish_deregister(self->state, mal_ctx, self->mal_endpoint, message);
+      } else {
+        clog_error(mal_logger, "ERROR: %s\n", MAL_ROUTING_NO_HANDLER_MSG);
+        rc = MAL_ROUTING_NO_HANDLER;
+      }
       break;
     }
     case MAL_IP_STAGE_PUBSUB_PUBLISH_DEREGISTER_ACK: {

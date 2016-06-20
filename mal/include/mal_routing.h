@@ -132,7 +132,9 @@ int mal_routing_register_broker_pubsub_handler(
     mal_routing_on_message_fn *on_notify_error,
     mal_routing_on_message_fn *on_register,
     mal_routing_on_message_fn *on_deregister,
-    mal_routing_on_message_fn *on_publish);
+    mal_routing_on_message_fn *on_publish,
+    mal_routing_on_message_fn *on_publish_register,
+    mal_routing_on_message_fn *on_publish_deregister);
 
 int mal_routing_remove_handler(
     mal_routing_t *mal_routing,
