@@ -23,6 +23,7 @@ void mal_ctx_set_binding(
     mal_binding_ctx_poller_del_endpoint_fn *poller_del_endpoint,
     mal_binding_ctx_send_message_fn *send_message,
     mal_binding_ctx_recv_message_fn *recv_message,
+    mal_binding_ctx_init_operation_fn *init_operation,
     mal_binding_ctx_poller_wait_fn *poller_wait,
     mal_binding_ctx_destroy_message_fn *destroy_message,
     mal_binding_ctx_start_fn *mal_ctx_start,
@@ -57,6 +58,9 @@ int mal_ctx_send_message(mal_ctx_t *self, mal_endpoint_t *mal_endpoint,
 int mal_ctx_recv_message(
     mal_ctx_t *self, mal_endpoint_t *mal_endpoint,
     mal_message_t **message);
+
+int mal_ctx_init_operation(mal_ctx_t *self, mal_endpoint_t *mal_endpoint,
+    mal_message_t *message, mal_uri_t *uri_to, bool set_tid);
 
 int mal_ctx_poller_wait(
     mal_ctx_t *self, mal_poller_t *mal_poller,
