@@ -40,7 +40,7 @@ For each data type to encode, three functions are defined:
 
   -	a function to get the size required to encode the data; it accepts the current state of the computed size as input parameter, adds the size of the data, and return the updated size value; the generic API allows for complex size computation, such as the one defined in the split binary encoding;
   -	a function to encode the data in a preallocated buffer;
-  -	a function to  decode the data.
+  -	a function to decode the data.
 
 Encoder
 -------
