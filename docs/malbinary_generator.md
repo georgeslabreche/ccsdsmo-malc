@@ -1,329 +1,327 @@
-Génération du code d'encodage 'malbinary'
-=========================================
+'malbinary' encoding code generation
+====================================
 
-Ce code est partagé par les fonctions d'encodage générées par Area et par Composite (voir sections 10.1.2 et 10.2.2).
+This code is used for both Area and Composite encoding functions (cf sections 10.1.2 and 10.2.2).
 
-Calcul de la taille encodée
----------------------------
+Computing the encoding length
+-----------------------------
 
-Les paramètres suivants doivent être transmis par le code appelant :
+The following parameters are provided by the calling code:
 
-  -	<element> : élément MAL à encoder en fonction de son type
-  -	presence_flag : champ de présence si l'élément n'est pas de type pointeur
-  -	attribute_tag : identifiant du type d'Attribut en cas de polymorphisme d'Attribut
-  -	malbinary_encoder : configuration de l'encodeur
-  -	cursor : index virtuel dans les structures d'encodage, contient le r�sultat du calcul de la taille.
+  -	\<element>: MAL element to encode depending on its type
+  -	presence_flag: presence flag when the element is not of a pointer type
+  -	attribute_tag: identifier of the Attribute type in case of polymorphism of Attribute
+  -	short_form: identifier of the type in case of polymorphism of Element
+  -	encoder: configuration of the encoder, which should have been created as a malbinary encoder
+  -	cursor: a virtual index in the encoding structures, holds the result of the encoding length computation
 
-### Champ optionnel
+### Non mandatory field
 
-Ajout de la taille du champ de présence :
+Add the size of the presence flag:
 
 ```c
-malbinary_add_length(cursor, MALBINARY_PRESENCE_FLAG_SIZE);
+mal_encoder_add_presence_flag_encoding_length(encoder, presence_flag, cursor);
 ```
 
-Si le champ est de type pointeur :
+If the field is of a pointer type:
 
 ```c
 if (<element> != NULL) {
 ```
 
-Sinon, test du champ de présence :
+Else test the presence flag:
 
 ```c
 if (presence_flag) {
 ```
 
-Ajout de la taille de l'élément encodé. Voir section 11.1.2.
+Add the size of the encoded element. Cf section 11.1.2.
 
 ```c
 }
 ```
 
-### Champ non optionnel
+### Mandatory field
 
-#### Polymorphisme
+#### Polymorphism
 
-En cas de polymorphisme d'Attribut :
-
-```c
-malbinary_add_length(cursor, MALBINARY_ATTRIBUTE_TAG_SIZE);
-```
-
-En cas de polymorphisme d'élément :
+In case of polymorphisme of Attribute:
 
 ```c
-malbinary_add_length(cursor, MALBINARY_SHORT_FORM_SIZE);
+mal_encoder_add_attribute_tag_encoding_length(encoder, attribute_tag, cursor);
 ```
 
-
-#### Valeur de l'élément
-
-Si le type déclaré est `MAL::Attribute` :
+In case of polymorphisme of Element:
 
 ```c
-rc = malbinary_encoder_add_attribute_encoding_length(malbinary_encoder,
-  <attribute_tag>, <element>, cursor);
+mal_encoder_add_short_form_encoding_length(encoder, short_form, cursor);
 ```
 
-Si le type de l'élément est un Attribut :
+
+#### Element value
+
+If the declared type is `MAL::Attribute`:
 
 ```c
-rc = malbinary_encoder_add_<attribute>_encoding_length(malbinary_encoder,
-  <element>, cursor);
+rc = mal_encoder_add_attribute_encoding_length(encoder,
+  attribute_tag, <element>, cursor);
 ```
 
-Si l'élément est de type Composite :
+If the element type is an Attribute:
+
+```c
+rc = mal_encoder_add_<attribute>_encoding_length(encoder, <element>, cursor);
+```
+
+If the element type is a Composite:
 
 ```c
 rc = <area>_[<service>_]<composite>_add_encoding_length_malbinary(
-  <element>, malbinary_encoder, cursor);
+  <element>, encoder, cursor);
 ```
 
-Si l'élément est de type liste:
+If the element type is a list:
 
 ```c
 rc = <area>_[<service>_]<type>_list_add_encoding_length_malbinary(
-  <element>, malbinary_encoder, cursor);
+  <element>, encoder, cursor);
 ```
 
-Si l'élément est de type Enumeration :
+If the element type is an Enumeration:
 
-  -	Si la taille de l'énumération est inférieure à 2^8 :
+  -	If the enumeration size is lower than 2^8:
 
 ```c
-malbinary_add_length(cursor, MALBINARY_SMALL_ENUM_SIZE);
+	rc = mal_encoder_add_small_enum_encoding_length(encoder, <element>, cursor);
 ```
 
-  -	Si la taille de l'énumération est inférieure à 2^16 :
+  -	If the enumeration size is lower than 2^16:
   
 ```c
-malbinary_add_length(cursor, MALBINARY_MEDIUM_ENUM_SIZE);
+	rc = mal_encoder_add_medium_enum_encoding_length(encoder, <element>, cursor);
 ```
 
-  -	Si la taille de l'énumération est inférieure à 2^32 :
+  -	If the enumeration size is lower than 2^32:
 
 ```c
-malbinary_add_length(cursor, MALBINARY_LARGE_ENUM_SIZE);
+	rc = mal_encoder_add_large_enum_encoding_length(encoder, <element>, cursor);
 ```
-Test du code d'erreur :
+Test the error code:
 ```c
 if (rc < 0) return rc;
 ```
 
-Encodage
+Encoding
 --------
 
-Les paramètres suivants doivent être transmis par le code appelant :
+The following parameters are provided by the calling code:
 
-  -	`<element>` : élément MAL à encoder en fonction de son type
-  -	`presence_flag` : champ de présence si l'élément n'est pas de type pointeur
-  -	`attribute_tag` : identifiant du type d'Attribut en cas de polymorphisme d'Attribut
-  -	`malbinary_encoder` : configuration de l'encodeur MALBinary
-  -	`cursor` : index virtuel dans les structures d'encodage
+  -	\<element>: MAL element to encode depending on its type
+  -	presence_flag: presence flag when the element is not of a pointer type
+  -	attribute_tag: identifier of the Attribute type in case of polymorphism of Attribute
+  -	short_form: identifier of the type in case of polymorphism of Element
+  -	encoder: configuration of the encoder, which should have been created as a malbinary encoder
+  -	cursor: a virtual index in the encoding structures, holds the result of the encoding length computation
 
-### Champ optionnel
+### Non mandatory field
 
-Encodage du champ de présence :
+Encoding the presence flag:
 
 ```c
-rc = malbinary_encoder_encode_presence_flag(malbinary_encoder,
-  cursor, <presence_flag>);
+rc = mal_encoder_encode_presence_flag(encoder, cursor, <presence_flag>);
 if (rc < 0) return rc;
 ```
 
-Test du champ de présence :
+Test the presence flag:
 ```c
 if (<presence_flag>) {
 ```
 
-Encodage de l'élément. Voir section 11.2.2.
+Encoding the element. Cf section 11.2.2.
 ```c
 }
 ```
 
-### Champ non optionnel
+### Mandatory field
 
-#### Polymorphisme
+#### Polymorphism
 
-En cas de polymorphisme d'Attribut, encodage du tag d'attribut (voir section 5.2.2 du livre MAL/SPP) :
+In case of polymorphism of Attribute, encoding the attribute tag (cf section 5.2.2 of the MAL/SPP book):
 
 ```c
-rc = malbinary_encoder_encode_attribute_tag(malbinary_encoder,
-  cursor, <attribute_tag>);
+rc = mal_encoder_encode_attribute_tag(encoder, cursor, <attribute_tag>);
 ```
 
-En cas de polymorphisme d'élément :
+In case of polymorphism of Element:
 
 ```c
-rc = malbinary_encoder_encode_short_form(malbinary_encoder,
+rc = mal_encoder_encode_short_form(encoder,
   cursor, <AREA>_[<SERVICE>_]<TYPE>_SHORT_FORM);
 ```
 
-Test du code d'erreur :
+Test the error code:
 
 ```c
 if (rc < 0) return rc;
 ```
 
-#### Valeur de l'élément
+#### Element value
 
-Si le type déclaré est `MAL::Attribute` :
+If the declared type is `MAL::Attribute`:
 
 ```c
-rc = malbinary_encoder_encode_attribute(malbinary_encoder,
+rc = mal_encoder_encode_attribute(encoder,
   cursor, <attribute_tag>, <element>);
 ```
 
-Si le type de l'élément est un Attribut :
+If the element type is an Attribute:
 
 ```c
-rc = malbinary_encoder_encode_<attribute>(malbinary_encoder,
+rc = mal_encoder_encode_<attribute>(encoder,
   cursor, <element>);
 ```
 
-Si l'élément est de type Composite:
+If the element type is a Composite:
 ```c
 rc = <area>_[<service>_]<composite>_encode_malbinary(
-  <element>, malbinary_encoder, cursor);
+  <element>, encoder, cursor);
 ```
 
-Si l'élément est de type liste:
+If the element type is a list:
 ```c
 rc = <area>_[<service>_]<type>_list_encode_malbinary(
-  <element>, malbinary_encoder, cursor);
+  <element>, encoder, cursor);
 ```
 
-Si l'élément est de type Enumeration :
+If the element type is an Enumeration:
 
-  -	Si la taille de l'énumération est inférieure à 2^8 :
+  -	If the enumeration size is lower than 2^8:
 
 ```c
-rc = malbinary_encoder_encode_small_enum(malbinary_encoder, cursor, <element>);
+	rc = mal_encoder_encode_small_enum(encoder, cursor, <element>);
 ```
 
-  -	Si la taille de l'énumération est inférieure à 2^16 :
+  -	If the enumeration size is lower than 2^16:
 
 ```c
-rc = malbinary_encoder_encode_medium_enum(malbinary_encoder, cursor, <element>);
+	rc = mal_encoder_encode_medium_enum(encoder, cursor, <element>);
 ```
 
-  -	Si la taille de l'énumération est inférieure à 2^32 :
+  -	If the enumeration size is lower than 2^32:
 
 ```c
-rc = malbinary_encoder_encode_large_enum(malbinary_encoder, cursor, <element>);
+	rc = mal_encoder_encode_large_enum(encoder, cursor, <element>);
 ```
 
-Test du code d'erreur :
+Test the error code:
 
 ```c
 if (rc < 0) return rc;
 ```
 
-Décodage
+Decoding
 --------
 
-Les paramètres suivants doivent être transmis par le code appelant :
+The following parameters are provided by the calling code:
 
-  -	`presence_flag` : champ de présence décodé
-  -	`malbinary_decoder` : configuration de l'encodeur MALBinary
-  -	`cursor` : index virtuel dans les structures de d�codage
+  -	presence_flag: presence flag when the element is not of a pointer type
+  -	decoder: configuration of the decoder, which should have been created as a malbinary decoder
+  -	cursor: a virtual index in the encoding structures
 
-### Champ optionnel
+### Non mandatory field
 
-Décodage du champ de présence :
+Decoding the presence flag:
 
 ```c
-rc = malbinary_decoder_decode_presence_flag(malbinary_decoder,
-  cursor, &presence_flag);
+rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
 if (rc < 0) return rc;
 if (presence_flag) {
 ```
 
-Décodage de l'élément. Voir section 11.3.2.
+Decoding the element. Cf section 11.3.2.
 
 ```c
 }
 ```
 
-Si le champ est de type pointeur :
+If the field is of a pointer type:
 
 ```c
 else {
   <element> = NULL;
-
 }
 ```
 
-### Champ non optionnel
+### Mandatory field
 
-#### Polymorphisme d'Attribut
+#### Polymorphism of Attribute
 
-En cas de polymorphisme d'Attribut, décodage du tag d'Attribut :
+In case of polymorphism of Attribute, decoding the Attribute tag:
 ```c
 <unsigned char attribute_tag;>
 ```
 
 ```c
-rc = malbinary_decoder_decode_attribute_tag(malbinary_decoder,
+rc = mal_decoder_decode_attribute_tag(decoder,
   cursor, &<attribute_tag>);
 ```
 
-Test du code d'erreur :
+Test the error code:
 
 ```c
 if (rc < 0) return rc;
 ```
 
-Décodage de l'attribut :
+Decoding the attribute:
 
 ```c
-rc = malbinary_decoder_decode_attribute(malbinary_decoder,
+rc = mal_decoder_decode_attribute(decoder,
     cursor, attribute_tag , &<element>);
 ```
 
-#### Polymorphisme d'élément
+#### Polymorphism of Element
 
-En cas de polymorphisme d'élément, décodage du `short form` :
+In case of polymorphism of Element, decoding the `short form`:
 
 ```c
-rc = malbinary_decoder_decode_short_form(malbinary_decoder,
+rc = mal_decoder_decode_short_form(decoder,
   cursor, &element_holder->short_form);
 ```
 
-Test du code d'erreur :
+Test the error code:
 
 ```c
 if (rc < 0) return rc;
 ```
 
-Pour chaque valeur de 'short_form' qui correspond à un type conforme au type abstrait :
+For each possible value of 'short_form' corresponding to a concrete type conforming to the abstract type:
 
 ```c
 if (element_holder->short_form == <AREA>_[<SERVICE>_]<TYPE>_SHORT_FORM) {
 ```
 
-Décodage d'un élément du type spécifié. Voir section 11.3.2.3. L'élément est décodé directement dans la structure :
+Decoding an element of the specified type. Cf section 11.3.2.3.
+The element is decoded directly in the structure:
 
-  -	Si le type de l'élément est un Attribut :
+  -	If the element type is an Attribute:
 
 ```c
-      &element_holder->value.<attribute>_value
+	&element_holder->value.<attribute>_value
 ```
 
-  -	Si l'élément est de type Composite :
+  -	If the element type is a Composite:
 
 ```c
       &element_holder->value.composite_value
 ```
 
-  -	Si l'élément est de type liste :
+  -	If the element type is a list:
 
 ```c
       &element_holder->value.list_value
 ```
 
-  -	Si l'élément est de type Enumeration :
+  -	If the element type is an Enumeration:
 
 ```c
       &element_holder->value.enumerated_value
@@ -333,66 +331,66 @@ Décodage d'un élément du type spécifié. Voir section 11.3.2.3. L'élément 
 }[ else ]
 ```
 
-#### Valeur de l'élément
+#### Element value
 
-Si le type de l'élément est un Attribut :
+If the element type is an Attribute:
 
 ```c
-rc = malbinary_decoder_decode_<attribute>(malbinary_decoder,
+rc = mal_decoder_decode_<attribute>(decoder,
   cursor, &<element>);
 ```
 
-Si l'élément est de type Composite :
+If the element type is a Composite:
 
 ```c
 <element> = <area>_[<service>_]<composite>_new();
 if (<element> == NULL) return -1;
 rc = <area>_[<service>_]<composite>_decode_malbinary(
-  <element>, malbinary_decoder, cursor);
+  <element>, decoder, cursor);
 ```
 
-Si l'élément est de type liste :
+If the element type is a list:
 
 ```c
 <element> = <area>_[<service>_]<type>_list_new(0);
 if (<element> == NULL) return -1;
 rc = <area>_[<service>_]<type>_list_decode_malbinary(
-  <element>, malbinary_decoder, cursor);
+  <element>, decoder, cursor);
 ```
 
-Si l'élément est de type Enumeration :
+If the element type is an Enumeration :
 
 ```c
 int enumerated_value;
 ```
 
-  -	Si la taille de l'énumération est inférieure ou égale à 2^8 :
+  -	If the enumeration size is lower than 2^8:
 
 ```c
-rc = malbinary_decoder_decode_small_enum(malbinary_decoder,
+	rc = mal_decoder_decode_small_enum(decoder,
   cursor, &enumerated_value);
 ```
 
-  -	Si la taille de l'énumération est inférieure ou égale à 2^16 :
+  -	If the enumeration size is lower than 2^16:
 
 ```c
-rc = malbinary_decoder_decode_medium_enum(malbinary_decoder,
+	rc = mal_decoder_decode_medium_enum(decoder,
   cursor, &enumerated_value);
 ```
 
-  -	Si la taille de l'énumération est inférieure ou égale à 2^32 :
+  -	If the enumeration size is lower than 2^32:
 
 ```c
-rc = malbinary_decoder_decode_large_enum(malbinary_decoder,
+	rc = mal_decoder_decode_large_enum(decoder,
   cursor, &enumerated_value);
 ```
 
-Affectation de l'élément décodé :
+Setting the decoded value:
 ```c
 <element> = (<area>_[<service>_]<enum>_t) enumerated_value;
 ```
 
-Test du code d'erreur :
+Test the error code:
 ```c
 if (rc < 0) return rc;
 ```
