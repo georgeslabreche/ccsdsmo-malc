@@ -1,19 +1,19 @@
-Génération du code des stubs
-============================
+Stubs code generation
+=====================
 
-Le code généré est produit pour une mission donnée utilisant un ensemble d'Areas de service.
+Generated code is produced for a dedicated mission which uses a set of service Areas.
 
-L'instruction 'calloc' (initialise à '0' les octets alloués) est utilisée pour allouer des structures ou des tableaux de pointeurs afin d'éviter, en cas d'initialisation incomplète, que le destructeur ne libère de la mémoire au travers de faux pointeurs.
+The C statement 'calloc' (initializes allocated bytes with 0) is used to allocate the structures and pointers arrays. It guarantees that the destructor will not free memory through false pointers when the initialization has not completed properly.
 
 Area
 ----
-Un nouveau projet de type 'zproject' est créé pour chaque Area. Il porte le nom de l'Area en carcatères minuscules : `<area>`
+A new project of type 'zproject' is created for each Area. Il is named as the area name in lower case: `<area>`
 
-### Fichier include (.h)
+### Include file (.h)
 
-Un fichier `<area>.h` est défini pour chaque area.
+A file `<area>.h` is defined for each area.
 
-#### Entête
+#### Header
 
 ```c
 #ifndef __<AREA>_H_INCLUDED__
@@ -24,40 +24,40 @@ extern "C" {
 #endif
 ```
 
-Déclaration de la dépendance avec l'Area MAL :
+Declare the dependency on the MAL Area:
 
 ```c
 #include "mal.h"
 ```
 
-Pour chaque Area requise :
+For each required Area:
 
 ```c
 #include "<required area>.h"
 ```
 
-#### Constantes
+#### Constants
 
-Définition des constantes suivantes :
+Definition of area specific constants:
 
 ```c
 #define <AREA>_AREA_NUMBER <area number>
 #define <AREA>_AREA_VERSION <version>
 ```
 
-Pour chaque service :
+For each service:
 
 ```c
 #define <AREA>_<SERVICE>_SERVICE_NUMBER <service number>
 ```
 
-Pour chaque opération de service :
+For each service operation:
 
 ```c
 #define <AREA>_<SERVICE>_<OPERATION>_OPERATION_NUMBER <operation number>
 ```
 
-Pour chaque erreur levée par une opération :
+For each error raised by an operation:
 
 ```c
 #define <AREA>_<SERVICE>_<OPERATION>_<ERROR>_ERROR_NUMBER <error number>
@@ -65,7 +65,7 @@ Pour chaque erreur levée par une opération :
 
 #### Types
 
-Pour chaque type Enumeration :
+For each Enumeration type:
 
 ```c
 typedef enum {
@@ -73,35 +73,35 @@ typedef enum {
 } <area>_[<service>_]<enumeration>_t;
 ```
 
-Pour chaque Composite :
+For each Composite type:
 
 ```c
 typedef struct _<area>_[<service>_]<composite>_t
   <area>_[<service>_]<composite>_t;
 ```
 
-Pour chaque type de donnée défini précédemment (Enumeration, Composite) :
+For each data type defined above (Enumeration, Composite):
 
 ```c
 typedef struct _<area>_[<service>_]<type>_list_t
   <area>_[<service>_]<type>_list_t;
 ```
 
-Pour chaque type de donnée, calcul de l'identifiant entier 'short form' (typé 'long') comme défini en section 5.2.3 du livre MAL/SPP :
+For each data type, define the numerical identifier 'short form' (typed as 'long') according to the definition in section 5.2.3 of the MAL/SPP book:
 
 ```c
 #define <AREA>_[<SERVICE>_]<TYPE>_SHORT_FORM <short form>
 #define <AREA>_[<SERVICE>_]<TYPE>_LIST_SHORT_FORM <short form>
 ```
 
-#### Opérations
+#### Operations
 
-Pour chaque opération de service, excepté si le pattern d'interaction est Publish/Subscribe, les fonctions suivantes sont définies :
+For each service operation, except when the IP is Publish/Subscribe, the following functions are defined:
 
-  -	une fonction d'envoi de message pour l'initiation d'une interaction (première étape) ;
-  -	une fonction d'envoi de message pour chaque étape de résultat d'une interaction (seconde étape et suivantes).
+  -	a function sending a message to initiate the interaction (first step);
+  -	a function sending a message for each result step of the interaction (second and following steps).
 
-Initiation d'interaction (excepté Publish/Subscribe)
+Interaction initiation (except Publish/Subscribe)
 
 ```c
 int <area>_<service>_<operation>_<first stage>(
@@ -110,7 +110,7 @@ int <area>_<service>_<operation>_<first stage>(
   mal_uri_t *provider_uri);
 ```
 
-Résultat d'interaction (excepté Publish/Subscribe)
+Interaction result (except Publish/Subscribe)
 
 ```c
 int <area>_<service>_<operation>_<result stage>(
@@ -119,9 +119,9 @@ int <area>_<service>_<operation>_<result stage>(
   bool is_error_message);
 ```
 
-Pour chaque opération de service dont le pattern d'interaction est Publish/Subscribe, des fonctions sont définies pour les étapes suivantes de l'interaction : register, publishRegister, publish, deregister, publishDeregister.
+For each service operation when the IP is Publish/Subscribe, functions are defined for the following interaction steps: register, publishRegister, publish, deregister, publishDeregister.
 
-Abonnement (Publish/Subscribe)
+Subscription (Publish/Subscribe)
 
 ```c
 int <area>_<service>_<operation>_register(
@@ -129,7 +129,7 @@ int <area>_<service>_<operation>_register(
   mal_uri_t *broker_uri);
 ```
 
-Déclaration de publication (Publish/Subscribe)
+Declaration of publish (Publish/Subscribe)
 
 ```c
 int <area>_<service>_<operation>_publish_register(
@@ -138,7 +138,7 @@ int <area>_<service>_<operation>_publish_register(
   mal_uri_t *broker_uri);
 ```
 
-Publication (Publish/Subscribe)
+Publish (Publish/Subscribe)
 
 ```c
 int <area>_<service>_<operation>_publish(
@@ -148,7 +148,7 @@ int <area>_<service>_<operation>_publish(
   long initial_publish_register_tid);
 ```
 
-Désabonnement (Publish/Subscribe)
+Unsubscription (Publish/Subscribe)
 
 ```c
 int <area>_<service>_<operation>_deregister(
@@ -157,7 +157,7 @@ int <area>_<service>_<operation>_deregister(
   mal_uri_t *broker_uri);
 ```
 
-Arrêt de publication (Publish/Subscribe)
+Stop of publish (Publish/Subscribe)
 
 ```c
 int <area>_<service>_<operation>_publish_deregister(
@@ -166,164 +166,163 @@ int <area>_<service>_<operation>_publish_deregister(
   mal_uri_t *broker_uri);
 ```
 
-### Fonctions d'encodage
+#### Encoding functions
 
-Pour chaque message d'étape d'interaction de chaque opération de service, les fonctions suivantes sont définies :
+For each message of an interaction step, the following functions are defined:
 
-  -	pour chaque élément de corps de message (identifié par son index), et pour chaque type en cas de polymorphisme (voir 9.4.1) :
-  -	une fonction de calcul de taille d'encodage
-  -	une fonction d'encodage
-  -	pour chaque élément de corps de message (identifié par son index et son type déclaré) :
-    - une fonction de décodage
+  -	for each element of a message body (identified by its index), and for each type in case of polymorphism (cf 9.4.1):
+  	- a function to get the size required to encode the data
+  	- a function to encode the data
+  -	for each element of a message body (identified by its index and its declared type):
+  	- a function to decode the data
 
-Les opérations dont le pattern d'interaction est Publish/Subscribe sont traitées de manière particulière. Les trois fonctions d'encodage ne sont générées que pour une seule étape d'interaction fictive, l'étape update, qui correspond aux deux étapes publish et notify, et dont les types de paramètres sont définis dans la spécification de l'opération sous la forme d'un message publishNotify. De plus les paramètres effectivement utilisés dans les fonctions d'encodage sont des listes du type déclaré dans la spécification.
+The operations with IP Publish/Subscribe are handled in a special way. The three en/decoding functions are only generated for a single fictional interaction step, the update step, which matches the two steps publish and notify. The parameters types of those interaction steps are defined in the operation specification as a publishNotify message. Moreover the actual parameters types used in the functions, and in the en/decoding functions, are lists of the types declared in the specification.
 
-Les fonctions d'encodage liées aux messages d'erreur suivent le schéma général avec les particularités suivantes :
+The en/decoding functions related to the error messages follow the general schema with the following specificities:
 
-  -	le nom des fonctions ne comprend pas d'index,
-  -	le nom des fonctions d'encodage comprend systématiquement le suffixe de type <_qftype>,
-  -	la fonction de décodage suit le modèle de décodage avec polymorphisme d'Element.
+  -	the name of the functions does not include an index,
+  -	the name of the encoding functions always includes the type suffix <_qftype>,
+  -	the decoding function follows the rule of decoding with polymorphism of Element.
 
-#### Calcul de taille d'encodage
+##### Computing the encoding length
 
-En cas de polymorphisme d'Attribut :
+In case of polymorphism of Attribute:
 
 ```c
 int <qfop>_<stage|error>_add_encoding_length[_<index>][_<qftype>](
-  int encoding_format_code, void *encoder, bool presence_flag,
+  mal_encoder_t *encoder, bool presence_flag,
   unsigned char attribute_tag, union mal_attribute_t element,
-  unsigned int *encoding_length);
+  void *cursor);
 ```
 
-Sinon, le type de l'élément est connu (même en cas de polymorphisme) :
+Else the type of the element is known (even in case of polymorphism):
 
-  -	Si l’élément est un Attribut non pointeur, ou un énuméré :
+  -	If the element is a non pointer Attribute or an enumerated value:
 ```c
 int <qfop>_<stage|error>_add_encoding_length[_<index>][_<qftype>](
-  int encoding_format_code, void *encoder, bool presence_flag,
-  <qftype>_t element, unsigned int *encoding_length);
+  mal_encoder_t *encoder, bool presence_flag,
+  <qftype>_t element, void *cursor);
 ```
-  -	Si l’élément est un Attribut pointeur, un Composite ou une liste :
+  -	If the element is a pointer Attribute, a Composite or a list:
 ```c
 int <qfop>_<stage|error>_add_encoding_length[_<index>][_<qftype>](
-  int encoding_format_code, void *encoder, <qftype>_[list_]t *element,
-  unsigned int *encoding_length);
+  mal_encoder_t *encoder, <qftype>_[list_]t *element,
+  void *cursor);
 ```
 
-Si l'opération est Pub/Sub, la fonction est générée pour le type liste du type déclaré dans la spécification :
+If the operation is Pub/Sub, the function is generated for the type list of the type declared in the specification:
 ```c
 int <qfop>_update_add_encoding_length[_<index>][_<qftype>_list](
-    int encoding_format_code, void * encoder,
+  mal_encoder_t *encoder,
     <qftype>_list_t *element,
-    unsigned int *encoding_length);
+    void *cursor);
 ```
 
-#### Encodage
+##### Encoding
 
-En cas de polymorphisme d'Attribut :
+In case of polymorphism of Attribute:
 
 ```c
 int <qfop>_<stage|error>_encode[_<index>][_<qftype>](
-  int encoding_format_code, char *bytes, unsigned int *offset,
-  void *encoder, bool presence_flag, unsigned char attribute_tag,
+  void *cursor, mal_encoder_t *encoder,
+  bool presence_flag, unsigned char attribute_tag,
   union mal_attribute_t element);
 ```
 
-Sinon, le type de l'élément est connu (même en cas de polymorphisme) :
+Else the type of the element is known (even in case of polymorphism):
 
-  -	Si l’élément est un Attribut non pointeur ou un énuméré :
+  -	If the element is a non pointer Attribute or an enumerated value:
 
 ```c
 int <qfop>_<stage|error>_encode[_<index>][_<qftype>](
-  int encoding_format_code, char *bytes, unsigned int *offset,
-  void *encoder, bool presence_flag, <qftype>_t element);
+  void *cursor, mal_encoder_t *encoder,
+  bool presence_flag, <qftype>_t element);
 ```
   
-  -	Si l’élément est un Attribut pointeur, un Composite, ou une liste :
+  -	If the element is a pointer Attribute, a Composite or a list:
 ```c
 int <qfop>_<stage|error>_encode[_<index>][_<qftype>](
-  int encoding_format_code, char *bytes, unsigned int *offset,
-  void *encoder, <qftype>_[list_]t *element);
+  void *cursor, mal_encoder_t *encoder,
+  <qftype>_[list_]t *element);
 ```
 
-Si l'opération est Pub/Sub, la fonction est générée pour le type liste du type déclaré dans la spécification :
+If the operation is Pub/Sub, the function is generated for the type list of the type declared in the specification:
 
 ```c
 int <qfop>_update_encode[_<index>][_<qftype>_list](
-  int encoding_format_code, char *bytes, unsigned int *offset,
-  void *encoder, <qftype>_list_t *element);
+  void *cursor, mal_encoder_t *encoder,
+  <qftype>_list_t *element);
 ```
 
-#### Décodage
+##### Decoding
 
-En cas de polymorphisme d'Attribut :
+In case of polymorphism of Attribute:
 
 ```c
 int <qfop>_<stage>_decode[_<index>](
-  int encoding_format_code, char *bytes, unsigned int *offset,
-  void *decoder, bool *presence_flag_res,
-  unsigned char *attribute_tag_res, union mal_attribute_t *element_res);
+  void *cursor, mal_decoder_t *decoder,
+  bool *presence_flag_res, unsigned char *attribute_tag_res,
+  union mal_attribute_t *element_res);
 ```
 
-En cas de polymorphisme d'élément, y compris si l'opération est PubSub (stage = update), et/ou pour un message d'erreur :
+In case of polymorphism of Element, including if the operation is PubSub (stage = update), and/or for an error message:
 
 ```c
 int <qfop>_<stage|error>_decode[_<index>](
-  int encoding_format_code,
-  char *bytes, unsigned int *offset, void *decoder,
+  void *cursor, mal_decoder_t *decoder,
   mal_element_holder_t *element_holder);
 ```
 
-Si le type de l'élément est connu :
+If the element type is known:
 
-  -	Si l’élément est un Attribut non pointeur ou un énuméré :
+  -	If the element is a non pointer Attribute or an enumerated value:
 ```c
 int <qfop>_<stage>_decode[_<index>](
-  int encoding_format_code, char *bytes, unsigned int *offset,
-  void *decoder, bool *presence_flag_res, <qftype>_t *element_res);
+  void *cursor, mal_decoder_t *decoder,
+  bool *presence_flag_res, <qftype>_t *element_res);
 ```
 
-  -	Si l’élément est un Attribut pointeur, un Composite ou une liste :
+  -	If the element is a pointer Attribute, a Composite or a list:
 ```c
 int <qfop>_<stage>_decode[_<index>](
-  int encoding_format_code, char *bytes, unsigned int *offset,
-  void *decoder, <qftype>_[list_]t **element_res);
+  void *cursor, mal_decoder_t *decoder,
+  <qftype>_[list_]t **element_res);
 ```
 
-Si l'opération est Pub/Sub, la fonction est générée pour le type liste du type déclaré dans la spécification, excepté en cas de polymorphisme où le cas standard de polymorphisme d'élément est repris.
+If the operation is Pub/Sub, the function is generated for the type list of the type declared in the specification, except in case of polymorphism where the standard case of polymorphism of Element is reused.
 
 ```c
 int <qfop>_update_decode[_<index>](
-  int encoding_format_code, char *bytes, unsigned int *offset,
-  void *decoder, <qftype>_list_t **element_res);
+  void *cursor, mal_decoder_t *decoder,
+  <qftype>_list_t **element_res);
 ```
 
-#### Fin du fichier
+#### End of file
 
-Une fonction de test :
+A test function:
 ```c
 void <area>_test(bool verbose);
 ```
 
-Pour chaque structure Composite :
+For each Composite structure:
 
 ```c
 #include "<area>_[<service>_]<composite>.h"
 ```
 
-Pour chaque liste de Composite :
+For each list of Composite:
 
 ```c
 #include "<area>_[<service>_]<composite>_list.h"
 ```
 
-Pour chaque liste d'énuméré:
+For each list of enumrated values:
 
 ```c
 #include "<area>_[<service>_]<enumeration>_list.h"
 ```
 
-Fin du ficher :
+end of file:
 ```c
 #ifdef __cplusplus
 }
@@ -332,13 +331,13 @@ Fin du ficher :
 #endif
 ```
 
-###	Fichier source (.c)
+### Source file (.c)
 
 ```c
 #include "<area>.h"
 ```
 
-Pour chaque énumération :
+For each enumeration:
 
 ```c
 int <AREA>_[<SERVICE>_]<ENUMERATION>_NUMERIC_VALUES[] = {
@@ -346,7 +345,7 @@ int <AREA>_[<SERVICE>_]<ENUMERATION>_NUMERIC_VALUES[] = {
 }
 ```
 
-#### Initiation d'interaction (excepté Publish/Subscribe)
+#### Interaction initiation (except Publish/Subscribe)
 
 ```c
 int <area>_<service>_<operation>_<first stage>(
@@ -356,7 +355,7 @@ int <area>_<service>_<operation>_<first stage>(
   int rc = 0;
 ```
 
-Affectation des champs liés à l'opération appelée :
+Set the fields related to the called operation:
 
 ```c
   mal_message_init(init_message, <AREA>_AREA_NUMBER,
@@ -366,7 +365,7 @@ Affectation des champs liés à l'opération appelée :
     MAL_IP_STAGE_<STAGE>);
 ```
 
-Envoi du message :
+Send the message:
 
 ```c
   rc = mal_endpoint_init_operation(
@@ -375,7 +374,7 @@ Envoi du message :
 }
 ```
 
-#### Résultat d'interaction (excepté Publish/Subscribe)
+#### Interaction result (except Publish/Subscribe)
 
 ```c
 int <area>_<service>_<operation>_<result stage>(
@@ -386,7 +385,7 @@ int <area>_<service>_<operation>_<result stage>(
   int rc = 0;
 ```
 
-Affectation des champs liés à l'opération :
+Set the fields related to the called operation:
 
 ```c
   mal_message_init(result_message, <AREA>_AREA_NUMBER,
@@ -396,7 +395,7 @@ Affectation des champs liés à l'opération :
     MAL_IP_STAGE_<STAGE>);
 ```
 
-Envoi du message :
+Send the message:
 
 ```c
   rc = mal_endpoint_return_operation(
@@ -405,7 +404,7 @@ Envoi du message :
 }
 ```
 
-#### Abonnement (Publish/Subscribe)
+#### Subscription (Publish/Subscribe)
 
 ```c
 int <area>_<service>_<operation>_register(
@@ -413,7 +412,7 @@ int <area>_<service>_<operation>_register(
   int rc = 0;
 ```
 
-Affectation des champs liés à l'opération :
+Set the fields related to the called operation:
 
 ```c
   mal_message_init(message, <AREA>_AREA_NUMBER,
@@ -423,7 +422,7 @@ Affectation des champs liés à l'opération :
     MAL_IP_STAGE_PUBSUB_REGISTER);
 ```
 
-Envoi du message :
+Send the message:
 
 ```c
   rc = mal_endpoint_init_operation(endpoint, message, broker_uri, true);
@@ -431,7 +430,7 @@ Envoi du message :
 }
 ```
 
-#### Déclaration de publication (Publish/Subscribe)
+#### Declaration of publish (Publish/Subscribe)
 
 ```c
 int <area>_<service>_<operation>_publish_register(
@@ -441,7 +440,7 @@ int <area>_<service>_<operation>_publish_register(
   int rc = 0;
 ```
 
-Affectation des champs liés à l'opération :
+Set the fields related to the called operation:
 
 ```c
   mal_message_init(message, <AREA>_AREA_NUMBER,
@@ -451,7 +450,7 @@ Affectation des champs liés à l'opération :
     MAL_IP_STAGE_PUBSUB_PUBLISH_REGISTER);
 ```
 
-Envoi du message :
+Send the message:
 
 ```c
   rc = mal_endpoint_init_operation(endpoint, message, broker_uri, true);
@@ -459,7 +458,7 @@ Envoi du message :
 }
 ```
 
-#### Publication (Publish/Subscribe)
+#### Publish (Publish/Subscribe)
 
 ```c
 int <area>_<service>_<operation>_publish(
@@ -470,7 +469,7 @@ int <area>_<service>_<operation>_publish(
   int rc = 0;
 ```
 
-Affectation des champs liés à l'opération :
+Set the fields related to the called operation:
 
 ```c
   mal_message_init(message, <AREA>_AREA_NUMBER,
@@ -480,13 +479,13 @@ Affectation des champs liés à l'opération :
     MAL_IP_STAGE_PUBSUB_PUBLISH);
 ```
 
-Affectation du `Transaction Id` :
+Set the `Transaction Id`:
 
 ```c
   mal_message_set_transaction_id(message, initial_publish_register_tid);
 ```
 
-Envoi du message :
+Send the message:
 
 ```c
   rc = mal_endpoint_init_operation(endpoint, message, broker_uri, false);
@@ -494,7 +493,7 @@ Envoi du message :
 }
 ```
 
-#### Désabonnement (Publish/Subscribe)
+#### Unsubscription (Publish/Subscribe)
 
 ```c
 int <area>_<service>_<operation>_deregister(
@@ -504,7 +503,7 @@ int <area>_<service>_<operation>_deregister(
   int rc = 0;
 ```
 
-Affectation des champs liés à l'opération :
+Set the fields related to the called operation:
 
 ```c
   mal_message_init(message, <AREA>_AREA_NUMBER,
@@ -514,14 +513,14 @@ Affectation des champs liés à l'opération :
     MAL_IP_STAGE_PUBSUB_DEREGISTER);
 ```
 
-Envoi du message :
+Send the message:
 ```c
   rc = mal_endpoint_init_operation(endpoint, message, broker_uri, true);
   return rc;
 }
 ```
 
-#### Arrêt de publication (Publish/Subscribe)
+#### Stop of publish (Publish/Subscribe)
 ```c
 int <area>_<service>_<operation>_publish_deregister(
   mal_endpoint_t *endpoint,
@@ -530,7 +529,7 @@ int <area>_<service>_<operation>_publish_deregister(
   int rc = 0;
 ```
 
-Affectation des champs liés à l'opération :
+Set the fields related to the called operation:
 ```c
   mal_message_init(message, <AREA>_AREA_NUMBER,
     <AREA>_AREA_VERSION, <AREA>_<SERVICE>_SERVICE_NUMBER,
@@ -538,62 +537,61 @@ Affectation des champs liés à l'opération :
     MAL_INTERACTIONTYPE_PUBSUB,
     MAL_IP_STAGE_PUBSUB_PUBLISH_DEREGISTER);
 ```
-Envoi du message :
+
+Send the message:
 ```c
   rc = mal_endpoint_init_operation(endpoint, message, broker_uri, true);
   return rc;
 }
 ```
 
-#### Calcul de taille d'encodage
+#### Computing the encoding length
 
-En cas de polymorphisme d'Attribut :
+In case of polymorphism of Attribute:
 ```c
 int <qfop>_<stage|error>_add_encoding_length[_<index>][_<qftype>](
-  int encoding_format_code, void *encoder, bool presence_flag,
+  mal_encoder_t *encoder, bool presence_flag,
   unsigned char attribute_tag, union mal_attribute_t element,
-  unsigned int *encoding_length) {
+  void *cursor) {
 ```
 
-Sinon, le type de l'élément est connu (même en cas de polymorphisme) :
+Else the type of the element is known (even in case of polymorphism):
 
-  -	Si l’élément est un Attribut non pointeur, ou un énuméré :
+  -	If the element is a non pointer Attribute or an enumerated value:
 
 ```c
 int <qfop>_<stage|error>_add_encoding_length[_<index>][_<qftype>](
-  int encoding_format_code, void *encoder, bool presence_flag,
-  <qftype>_t element, unsigned int *encoding_length) {
+  mal_encoder_t *encoder, bool presence_flag,
+  <qftype>_t element, void *cursor) {
 ```
 
-  -	Si l’élément est un Attribut pointeur, un Composite ou une liste :
+  -	If the element is a pointer Attribute, a Composite or a list:
 
 ```c
 int <qfop>_<stage|error>_add_encoding_length[_<index>][_<qftype>](
-  int encoding_format_code, void *encoder, <qftype>_[list_]t *element,
-  unsigned int *encoding_length) {
+  mal_encoder_t *encoder, <qftype>_[list_]t *element,
+  void *cursor) {
 ```c
 
-Initialisation du code d'erreur :
+Initialize the error code:
 
 ```c
   int rc = 0;
 ```
 
-Test du type de l'encodage :
+Test the encoding format allowing for format specific encoding:
 
 ```c
-  switch (encoding_format_code) {
+  switch (encoder->encoding_format_code) {
 ```
 
-Pour chaque format disponible :
+For each available format:
 ```c
   case <FORMAT>_FORMAT_CODE: {
-    <format>_encoder_t *<format>_encoder =
-      (<format>_encoder_t *) encoder;
 ```
 
-Calcul de la taille d'encodage d'un champ optionnel :
-  -	Pour le format `malbinary`, voir section 11.1.1.
+Compute the encoding length of an optional field:
+  -	For the encoding format `malbinary`, cf section 11.1.1.
 ```c
     break;
   }
@@ -604,58 +602,57 @@ Calcul de la taille d'encodage d'un champ optionnel :
 }
 ```
 
-#### Encodage
+#### Encoding
 
-En cas de polymorphisme d'Attribut :
+In case of polymorphism of Attribute:
 
 ```c
 int <qfop>_<stage|error>_encode[_<index>][_<qftype>](
-  int encoding_format_code, char *bytes, unsigned int *offset,
-  void *encoder, bool presence_flag, unsigned char attribute_tag,
+  void *cursor, mal_encoder_t *encoder,
+  bool presence_flag, unsigned char attribute_tag,
   union mal_attribute_t element) {
 ```
 
-Sinon, le type de l'élément est connu (même en cas de polymorphisme) :
-  -	Si l’élément est un Attribut non pointeur ou un énuméré :
+Else the type of the element is known (even in case of polymorphism):
+
+  -	If the element is a non pointer Attribute or an enumerated value:
 
 ```c
 int <qfop>_<stage|error>_encode[_<index>][_<qftype>](
-  int encoding_format_code, char *bytes, unsigned int *offset,
-  void *encoder, bool presence_flag, <qftype>_t element) {
+  void *cursor, mal_encoder_t *encoder,
+  bool presence_flag, <qftype>_t element) {
 ```
 
-  -	Si l’élément est un Attribut pointeur, un Composite, ou une liste :
+  -	If the element is a pointer Attribute, a Composite or a list:
 
 ```c
 int <qfop>_<stage|error>_encode[_<index>][_<qftype>](
-  int encoding_format_code, char *bytes, unsigned int *offset,
-  void *encoder, <qftype>_[list_]t *element) {
-  presence_flag = (element != NULL);
+  void *cursor, mal_encoder_t *encoder,
+  <qftype>_[list_]t *element) {
+  bool presence_flag = (element != NULL);
 ```
 
-Initialisation du code d'erreur :
+Initialize the error code:
 
 ```c
   int rc = 0;
 ```
 
-Test du type de l'encodage :
+Test the encoding format allowing for format specific encoding:
 
 ```c
-  switch (encoding_format_code) {
+  switch (encoder->encoding_format_code) {
 ```
 
-Pour chaque format disponible :
+For each available format:
 
 ```c
   case <FORMAT>_FORMAT_CODE: {
-    <format>_encoder_t *<format>_encoder =
-      (<format>_encoder_t *) encoder;
 ```
 
-Encodage d'un champ optionnel :
+Encode an optional field:
 
-  -	Pour le format `malbinary`, voir section 11.2.2.
+  -	For the encoding format `malbinary`, cf section 11.2.2.
 ```c
     break;
   }
@@ -666,72 +663,79 @@ Encodage d'un champ optionnel :
 }
 ```
 
-#### Décodage
+#### Decoding
 
-En cas de polymorphisme d'Attribut :
+In case of polymorphism of Attribute:
 
 ```c
 int <qfop>_<stage>_decode[_<index>](
-  int encoding_format_code, char *bytes, unsigned int *offset,
-  void *decoder, bool *presence_flag_res,
-  unsigned char *attribute_tag_res, union mal_attribute_t *element_res) {
+  void *cursor, mal_decoder_t *decoder,
+  bool *presence_flag_res, unsigned char *attribute_tag_res,
+  union mal_attribute_t *element_res) {
 ```
 
-En cas de polymorphisme d'élément et/ou pour un message d'erreur :
+In case of polymorphism of Element and/or for an error message:
 
 ```c
 int <qfop>_<stage|error>_decode[_<index>](
-  int encoding_format_code,
-  char *bytes, unsigned int *offset, void *decoder,
+  void *cursor, mal_decoder_t *decoder,
   mal_element_holder_t *element_holder) {
 ```
 
-Si le type de l'élément est connu :
+If the element type is known:
 
-  -	Si l’élément est un Attribut non pointeur ou un énuméré :
+  -	If the element is a non pointer Attribute or an enumerated value:
 
 ```c
 int <qfop>_<stage>_decode[_<index>](
-  int encoding_format_code, char *bytes , unsigned int *offset,
-  void *decoder, bool *presence_flag_res, <qftype>_t *element_res) {
+  void *cursor, mal_decoder_t *decoder,
+  bool *presence_flag_res, <qftype>_t *element_res) {
 ```
 
-  -	Si l’élément est un Attribut pointeur, un Composite ou une liste :
+  -	If the element is a pointer Attribute, a Composite or a list:
 ```c
 int <qfop>_<stage>_decode[_<index>](
-  int encoding_format_code, char *bytes, unsigned int *offset,
-  void *decoder, <qftype>_[list_]t **element_res) {
+  void *cursor, mal_decoder_t *decoder,
+  <qftype>_[list_]t **element_res) {
 ```
 
-Initialisation du code d'erreur :
+Initialize the error code:
 
 ```c
   int rc = 0;
 ```
 
-Test du type de l'encodage :
+Test the decoding format allowing for format specific decoding:
 
 ```c
-  switch (encoding_format_code) {
+  switch (decoder->encoding_format_code) {
 ```
 
-Pour chaque format disponible :
+For each available format:
 
 ```c
   case <FORMAT>_FORMAT_CODE: {
-    <format>_decoder_t *<format>_decoder =
-      (<format>_encoder_t *) decoder;
       bool presence_flag;
 ```
 
-Décodage d'un champ optionnel :
+Decode an optional field:
 
-  -	Pour le format `malbinary`, voir section 11.3.1.
-  -	Le décodage est réalisé directement dans la structure ou le pointeur résultat.
-    - En cas de polymorphisme d'Attribut ou si l’élément est un Attribut non pointeur ou un énuméré : `(*presence_flag_res) = presence_flag;`
-    - En cas de polymorphisme d'élément : `mal_element_holder_set_presence_flag(element_holder, presence_flag);`
+  -	For the encoding format `malbinary`, cf section 11.3.1.
+  - Data are decoded directly into the result structure or pointer.
 
-Fin du décodage.
+In case of polymorphism of Attribute or if the element is a non pointer Attribute or an enumerated value:
+
+```c
+    (*presence_flag_res) = presence_flag;
+```
+
+In case of polymorphism of Element:
+
+```c
+    mal_element_holder_set_presence_flag(element_holder, presence_flag);
+```
+
+End of decoding.
 ```c
     break;
   }
@@ -745,7 +749,7 @@ Fin du décodage.
 Composite
 ---------
 
-### Fichier include (.h)
+### Include file (.h)
 
 ```c
 #ifndef __<AREA>_[<SERVICE>_]<COMPOSITE>_H_INCLUDED__
@@ -756,30 +760,30 @@ extern "C" {
 #endif
 ```
 
-Constructeur sans paramètre :
+Empty constructor:
 
 ```c
 <area>_[<service>_]<composite>_t
   *<area>_[<service>_]<composite>_new(void);
 ```
 
-Pour chaque format d'encodage :
+For each encoding format:
 
 ```c
 int <area>_[<service>_]<composite>_add_encoding_length_<format>(
-    <area>_[<service>_]<composite>_t *self, <format>_encoder_t *encoder,
-    unsigned int *encoding_length);
+    <area>_[<service>_]<composite>_t *self, mal_encoder_t *encoder,
+    void *cursor);
 
 int <area>_[<service>_]<composite>_encode_<format>(
-    <area>_[<service>_]<composite>_t *self, <format>_encoder_t *encoder,
-    char *bytes, unsigned int *offset);
+    <area>_[<service>_]<composite>_t *self, mal_encoder_t *encoder,
+    void *cursor);
 
 int <area>_[<service>_]<composite>_decode_<format>(
-    <area>_[<service>_]<composite>_t *self, <format>_decoder_t *decoder,
-    char *bytes, unsigned int *offset);
+    <area>_[<service>_]<composite>_t *self, mal_decoder_t *decoder,
+    void *cursor);
 ```
 
-Pour chaque champ du composite (y compris les champs hérités) :
+For each field in the composite (including nherited fields):
 ```c
 <field type> <area>_[<service>_]<composite>_get_<field>(
     <area>_[<service>_]<composite>_t *self);
@@ -788,7 +792,7 @@ void <area>_[<service>_]<composite>_set_<field>(
     <area>_[<service>_]<composite>_t *self, <field type> <field>);
 ```
 
-Si le champ n'est pas un pointeur (valeur NULL interdite) :
+If the field is not a pointer (cannot store a NULL value):
 ```c
 bool <area>_[<service>_]<composite>_<field>_is_present(
     <area>_[<service>_]<composite>_t *self);
@@ -797,7 +801,7 @@ void <area>_[<service>_]<composite>_<field>_set_present(
     <area>_[<service>_]<composite>_t *self, bool is_present);
 ```
 
-En cas de polymorphisme d'Attribut :
+In case of polymorphism of Attribute:
 ```c
 unsigned char <area>_[<service>_]<composite>_<field>_get_attribute_tag(
     <area>_[<service>_]<composite>_t *self);
@@ -806,20 +810,20 @@ void <area>_[<service>_]<composite>_<field>_set_attribute_tag(
     <area>_[<service>_]<composite>_t *self, unsigned char attribute_tag);
 ```
 
-Destructeur :
+Destructor:
 
 ```c
 void <area>_[<service>_]<composite>_destroy(
     <area>_[<service>_]<composite>_t **self_p);
 ```
 
-Fonction de test :
+Test function:
 
 ```c
 void <area>_[<service>_]<composite>_test(bool verbose);
 ```
 
-Fin du fichier :
+End of file:
 ```c
 #ifdef __cplusplus
 }
@@ -828,34 +832,60 @@ Fin du fichier :
 #endif
 ```
 
-### Fichier source (.c)
+### Source file (.c)
 
 ```c
 #include "<area>.h"
 ```
 
-#### Définition de la structure
+#### Define the structure
 
 ```c
 struct _<area>_[<service>_]<composite>_t {
 ```
 
-Pour chaque champ (y compris les champs hérités) :
+For each field (including inherited fields):
 
-  -	En cas de polymorphisme d'Attribut :
-  -	Si le champ est optionnel (canBeNull = 'true') : `bool <field>_is_present`;
-  -	Déclaration du champ :
+  -	In case of polymorphism of Attribute:
+	- If the field is not mandatory (canBeNull = 'true'):
+	
+		```c
+		bool <field>_is_present;
+		```
+        
+	- Declare the field:
+	
+		```c
+		unsigned char <field>_attribute_tag;
+		union mal_attribute_t <field>;
+		```
+        
+  -	If the element is a non pointer Attribute or an enumerated value:
+  	- If the field is not mandatory (canBeNull = 'true'):
+	
+		```c
+		bool <field>_is_present;
+		```
+        
+	- Declare the field:
+	
+		```c
+		<field type> \<field>;
+		```
+        
+  -	Else:
+	
+	```c
+	<field type> *\<field>;
+	```
+        
+End the structure definition*:
+	
 ```c
-  unsigned char <field>_attribute_tag;
-  union mal_attribute_t <field>;
+};
 ```
-  -	Si le champ est de type Attribut non pointeur, ou énuméré :
-  -	Si le champ est optionnel (canBeNull = 'true') : `bool <field>_is_present;`
-  -	Déclaration du champ : `<field type> <field>;`
-  -	Sinon : `<field type> *<field>;`
-Fin de la définition de la structure : `};`
 
-#### Constructeur
+#### Constructor
 
 ```c
 <area>_[<service>_]<composite>_t
@@ -869,9 +899,9 @@ Fin de la définition de la structure : `};`
 }
 ```
 
-#### Getters et setters
+#### Getters and setters
 
-Pour chaque champ du composite (y compris les champs hérités) :
+For each field (including inherited fields):
 
 ```c
 <field type> <area>_[<service>_]<composite>_get_<field>(
@@ -880,7 +910,7 @@ Pour chaque champ du composite (y compris les champs hérités) :
 }
 ```
 
-La fonction `setter` n'affecte que la valeur du champ. Le flag de présence ne doit pas être modifié.
+The `setter` function only changes the field value. It shall leave the presence flag unchanged.
 
 ```c
 void <area>_[<service>_]<composite>_set_<field>(
@@ -889,7 +919,7 @@ void <area>_[<service>_]<composite>_set_<field>(
 }
 ```
 
-Si le champ est optionnel (canBeNull = 'true') et si le champ n'est pas un pointeur :
+If the field is not mandatory (canBeNull = 'true') and if the field is not a pointer:
 
 ```c
 bool <area>_[<service>_]<composite>_<field>_is_present(
@@ -903,7 +933,7 @@ void <area>_[<service>_]<composite>_<field>_set_present(
 }
 ```
 
-En cas de polymorphisme d'Attribut :
+In case of polymorphism of Attribute:
 ```c
 unsigned char <area>_[<service>_]<composite>_<field>_get_attribute_tag(
     <area>_[<service>_]<composite>_t *self) {
@@ -917,128 +947,131 @@ void <area>_[<service>_]<composite>_<field>_set_attribute_tag(
 }
 ```
 
-#### Calcul de la taille encodée (`malbinary`)
+#### Computing the encoding length (`malbinary`)
 
 ```c
 int <area>_[<service>_]<composite>_add_encoding_length_malbinary(
-    <area>_[<service>_]<composite>_t *self,
-    malbinary_encoder_t *malbinary_encoder,
-    unsigned int *encoding_length) {
+    <area>_[<service>_]<composite>_t *self, mal_encoder_t *mal_encoder,
+    void *cursor) {
   int rc = 0;
 ```
 
-Pour chaque champ (les champs hérités en premier) :
+For each field (inherited fields first):
 
-  -	Si le champ est optionnel, voir section 11.1.1.
-  -	Sinon voir section 11.1.2.
+  -	If the field is not mandatory, cf section 11.1.1.
+  -	Else cf section 11.1.2.
+
+End of function:
 ```c
-Fin de la fonction :
   return rc;
 }
 ```
 
-#### Encodage (`malbinary`)
+#### Encoding (`malbinary`)
 
 ```c
 int <area>_[<service>_]<composite>_encode_malbinary(
-    <area>_[<service>_]<composite>_t *self,
-    malbinary_encoder_t *malbinary_encoder,
-    char *bytes, unsigned int *offset) {
+    <area>_[<service>_]<composite>_t *self, mal_encoder_t *mal_encoder,
+    void *cursor) {
 ```
 
-S'il existe au moins un champ optionnel :
+If there is at least one non mandatory field:
 
 ```c
   bool presence_flag;
 ```
 
-Pour chaque champ (les champs hérités en premier) :
+For each field (inherited fields first):
 
-  -	Si le champ est optionnel :
-  -	Si le champ est de type Attribut non pointeur, ou énuméré : 
-```c
-presence_flag = self-><field>_is_present;
-```
-  -	Sinon : 
-```c
-presence_flag = (self-><field> != NULL);
-```
-  -	Voir section 11.2.1.
-  -	Sinon voir section 11.2.2.
+  -	If the field is not mandatory:
+	  -	If the field is a non pointer Attribute or an enumerated value: 
+		```c
+		presence_flag = self-><field>_is_present;
+		```
+	  -	Else: 
+		```c
+		presence_flag = (self-><field> != NULL);
+		```
+	  -	Cf section 11.2.1.
+  -	Else cf section 11.2.2.
 
-Fin de l'encodage :
+End of encoding:
 ```c
   return rc;
 }
 ```
 
-#### Décodage (`malbinary`)
+#### Decoding (`malbinary`)
 
 ```c
 int <area>_[<service>_]<composite>_decode_malbinary(
-    <area>_[<service>_]<composite>_t *self,
-    malbinary_decoder_t *malbinary_decoder,
-    char *bytes, unsigned int *offset) {
+    <area>_[<service>_]<composite>_t *self, mal_decoder_t *mal_decoder,
+    void *cursor) {
 ```
 
-S'il existe au moins un champ optionnel : `bool presence_flag;`
+If there is at least one non mandatory field:
+```c
+  bool presence_flag;
+```
 
-Pour chaque champ (les champs hérités en premier) :
+For each field (inherited fields first):
 
-  -	Si le champ est optionnel, voir section 11.3.1.
-  -	Sinon voir section 11.3.2.
+  -	If the field is not mandatory, cf section 11.3.1.
+  -	Else cf section 11.3.2.
 
-Le décodage est réalisé directement dans la structure ou le pointeur résultat.
-Si le champ est optionnel et de type Attribut abstrait, Attribut non pointeur, ou énuméré :
+Data are decoded directly into the result structure or pointer.
+
+If the field is not mandatory and is typed as an abstract Attribute, a non pointer Attribute or an enumerated value:
 
 ```c
     self-><field>_is_present = presence_flag;
 ```
 
-Fin du décodage :
+End of decoding:
 
 ```c
   return rc;
 }
 ```
 
-#### Destructeur
+#### Destructor
 
-Détruit la structure composite et les structures contenues dans les champs (composites, listes, chaînes de caractères, Blobs).
+Frees the composite structure and the structures embedded in the composite fields (composites, lists, Strings, Blobs).
 
 ```c
 void <area>_[<service>_]<composite>_destroy(
     <area>_[<service>_]<composite>_t **self_p) {
 ```
 
-Pour chaque champ, y compris les champs hérités :
+For each field, including inherited fields:
 
- - En cas de polymorphisme d'Attribut, si le champ est optionnel (canBeNull = 'true') :
-```c
-  if ((*self_p)-><field>_is_present)
-```
- - En cas de polymorphisme d'Attribut, destruction du champ optionnel:
-```c
-  mal_attribute_destroy(&(*self_p)-><field>,
-    (*self_p)-><field>_attribute_tag);
-```
-  -	Si le champ est de type Attribut pointeur :
-```c
-  if ((*self_p)-><field>!= NULL)
-    mal_<attribute>_destroy(&(*self_p)-><field>);
-```
-  -	Si le champ est de type Composite :
-```c
-  if ((*self_p)-><field>!= NULL)
-    <area>_[<service>_]<composite>_destroy(&(*self_p)-><field>);
-```
-  -	Si le champ est de type liste :
-```c
-  if ((*self_p)-><field>!= NULL)
-    <area>_[<service>_]<type>_list_destroy(&(*self_p)-><field>);
-```
+ - In case of polymorphism of Attribute:
+ 	- if the field is not mandatory (canBeNull = 'true'):
+		```c
+		if ((*self_p)-><field>_is_present)
+		```
+ 	- free the field:
+		```c
+		mal_attribute_destroy(&(*self_p)-><field>,
+		  (*self_p)-><field>_attribute_tag);
+		```
+  -	If the field is a pointer Attribute:
+	```c
+	if ((*self_p)-><field>!= NULL)
+	  mal_<attribute>_destroy(&(*self_p)-><field>);
+	```
+  -	If the field is a Composite:
+	```c
+	if ((*self_p)-><field>!= NULL)
+	  <area>_[<service>_]<composite>_destroy(&(*self_p)-><field>);
+	```
+  -	If the field is a list:
+	```c
+	if ((*self_p)-><field>!= NULL)
+	  <area>_[<service>_]<type>_list_destroy(&(*self_p)-><field>);
+	```
 
-Libération de la mémoire et effacement du pointeur :
+Free the memory and reset the pointer:
 
 ```c
   free(*self_p);
@@ -1046,10 +1079,10 @@ Libération de la mémoire et effacement du pointeur :
 }
 ```
 
-Listes de Composite
+Lists of Composite
 -------------------
 
-### Fichier include (.h)
+### Include file (.h)
 
 ```c
 #ifndef __<AREA>_[<SERVICE>_]<COMPOSITE>_LIST_H_INCLUDED__
@@ -1060,14 +1093,14 @@ extern "C" {
 #endif
 ```
 
-#### Constructeur :
+#### Constructor:
 
 ```c
 <area>_[<service>_]<composite>_list_t
   *<area>_[<service>_]<composite>_list_new(unsigned int element_count);
 ```
 
-#### Getters :
+#### Getters:
 
 ```c
 unsigned int <area>_[<service>_]<composite>_list_get_element_count(
@@ -1077,36 +1110,36 @@ unsigned int <area>_[<service>_]<composite>_list_get_element_count(
   <area>_[<service>_]<composite>_list_t *self);
 ```
 
-#### Pour chaque format d'encodage :
+#### For each encoding format:
 
 ```c
 int <area>_[<service>_]<composite>_list_add_encoding_length_<format>(
   <area>_[<service>_]<composite>_list_t *self,
-  <format>_encoder_t *encoder, unsigned int *encoding_length);
+  mal_encoder_t *encoder, void *cursor);
 
 int <area>_[<service>_]<composite>_list_encode_<format>(
   <area>_[<service>_]<composite>_list_t *self,
-  <format>_encoder_t *encoder, char *bytes, unsigned int *offset);
+  mal_encoder_t *encoder, void *cursor);
 
 int <area>_[<service>_]<composite>_list_decode_<format>(
   <area>_[<service>_]<composite>_t *self,
-  <format>_decoder_t *decoder, char *bytes, unsigned int *offset);
+  mal_decoder_t *decoder, void *cursor);
 ```
 
-#### Destructeur :
+#### Destructor:
 
 ```c
 void <area>_[<service>_]<composite>_list_destroy(
     <area>_[<service>_]<composite>_list_t **self_p);
 ```
 
-#### Fonction de test :
+#### Test function:
 
 ```c
 void <area>_[<service>_]<composite>_list_test(bool verbose);
 ```
 
-#### Fin du fichier :
+#### End of file :
 
 ```c
 #ifdef __cplusplus
@@ -1116,15 +1149,15 @@ void <area>_[<service>_]<composite>_list_test(bool verbose);
 #endif
 ```
 
-### Fichier source (.c)
+### Source file (.c)
 
 ```c
 #include "<area>.h"
 ```
 
-#### Constructeur
+#### Constructor
 
-Définition de la structure :
+Structure definition:
 
 ```c
 struct _<area>_[<service>_]<composite>_list_t {
@@ -1133,7 +1166,7 @@ struct _<area>_[<service>_]<composite>_list_t {
 };
 ```
 
-Constructeur :
+Constructor:
 
 ```c
 <area>_[<service>_]<composite>_list_t
@@ -1164,30 +1197,23 @@ unsigned int <area>_[<service>_]<composite>_list_get_element_count(
 }
 ```
 
-#### Calcul de la taille d'encodage (`malbinary`)
+#### Computing the encoding length (`malbinary`)
 
 ```c
 int <area>_[<service>_]<composite>_list_add_encoding_length_malbinary(
   <area>_[<service>_]<composite>_list_t *self,
-  malbinary_encoder_t *encoder, unsigned int *encoding_length) {
+  mal_encoder_t *encoder, void *cursor) {
   int rc = 0;
   unsigned int list_size = self->element_count;
 ```
 
-Encodage de la taille de la liste :
+Encoding the list size:
 
 ```c
-  malbinary_encoder_add_list_size_encoding_length(encoder, list_size,
-      encoding_length);
+  mal_encoder_add_list_size_encoding_length(encoder, list_size, cursor);
 ```
 
-Tous les éléments de la liste peuvent être nuls. Un champ de présence doit donc être ajouté pour chacun d'eux :
-
-```c
-  (*encoding_length) += list_size;
-```
-
-Encodage des éléments de la liste :
+Encoding the list elements:
 
 ```c
   <area>_[<service>_]<composite>_t **content = self->content;
@@ -1195,7 +1221,14 @@ Encodage des éléments de la liste :
     <area>_[<service>_]<composite>_t *element = content[i];
 ```
 
-Calcul de la taille d'encodage d'un champ Composite optionnel : voir section 11.1.1.
+All the elements of the list may be null. A presence flag is encoded for each of them:
+
+```c
+    bool presence_flag = (element != NULL);
+    mal_encoder_add_presence_flag_encoding_length(encoder, presence_flag, cursor);
+```
+
+Compute the encoding length of a non mandatory composite field: cf section 11.1.1.
 
 ```c
   }
@@ -1203,57 +1236,62 @@ Calcul de la taille d'encodage d'un champ Composite optionnel : voir section 11.
 }
 ```
 
-#### Encodage (`malbinary`)
+#### Encoding (`malbinary`)
 
 ```c
 int <area>_[<service>_]<composite>_list_encode_malbinary(
   <area>_[<service>_]<composite>_list_t *self,
-  malbinary_encoder_t *encoder, char *bytes, unsigned int *offset) {
+  mal_encoder_t *encoder, void *cursor) {
   int rc = 0;
   unsigned int list_size = self->element_count;
-  malbinary_encoder_encode_list_size(encoder, bytes, offset, list_size);
-  <area>_[<service>_]<composite>_t *content = self->content;
+  rc = mal_encoder_encode_list_size(encoder, cursor, list_size);
+  if (rc < 0) return rc;
+  <area>_[<service>_]<composite>_t **content = self->content;
   for (int i = 0; i < list_size; i++) {
     <area>_[<service>_]<composite>_t *element = content[i];
 ```
 
-Encodage d'un Composite optionnel : voir section 11.2.1.
+Encoding a non mandatory Composite : cf section 11.2.1.
+
 ```c
   }
   return rc;
 }
 ```
 
-#### Décodage (`malbinary`)
+#### Decoding (`malbinary`)
 
 ```c
 int <area>_[<service>_]<composite>_list_decode_malbinary(
   <area>_[<service>_]<composite>_list_t *self,
-  malbinary_decoder_t *decoder, char *bytes, unsigned int *offset) {
+  mal_decoder_t *decoder, void *cursor) {
   int rc = 0;
-  unsigned int list_size;
-  malbinary_decoder_decode_list_size(decoder, bytes, offset, &list_size);
-  <area>_[<service>_]<composite>_t **list_content =
-    (<area>_[<service>_]<composite>_t **) calloc(
-      sizeof(<area>_[<service>_]<composite>_t *) * list_size);
-  for (int i = 0; i < list_size; i++) {
-    <area>_[<service>_]<composite>_t *element;
+  int rc = mal_decoder_decode_list_size(decoder, cursor, &self->element_count);
+  if (rc < 0) return rc;
+  if (self->element_count == 0) {
+    self->content = NULL;
+    return 0;
+  }
+  self->content = (<area>_[<service>_]<composite>_t **) calloc(
+      sizeof(<area>_[<service>_]<composite>_t *) * self->element_count);
+  if (self->content == NULL)
+    return -1;
+  for (int i = 0; i < self->element_count; i++) {
 ```
 
-Décodage d'un Composite optionnel : voir section 11.3.1.
+Decoding a non mandatory Composite: cf section 11.3.1.
+
+Data are decoded directly into the result structure or pointer (i.e. `self->content[i]`).
 
 ```c
-    list_content[i] = element;
   }
-  self->element_count = list_size;
-  self->content = list_content;
   return rc;
 }
 ```
 
-#### Destructeur
+#### Destructor
 
-Détruit la liste, son contenu et les éléments de la liste.
+Frees the list, its content, and the list elements.
 
 ```c
 void <area>_[<service>_]<composite>_list_destroy(
@@ -1270,10 +1308,10 @@ void <area>_[<service>_]<composite>_list_destroy(
 }
 ```
 
-Listes d'énuméré
-----------------
+Lists of enumerated values
+--------------------------
 
-### Fichier include (.h)
+### Include file (.h)
 
 ```c
 #ifndef __<AREA>_[<SERVICE>_]<ENUMERATION>_LIST_H_INCLUDED__
@@ -1284,7 +1322,7 @@ extern "C" {
 #endif
 ```
 
-#### Constructeur :
+#### Constructor:
 
 ```c
 <area>_[<service>_]<enumeration>_list_t
@@ -1292,7 +1330,7 @@ extern "C" {
     unsigned int element_count);
 ```
 
-#### Getters :
+#### Getters:
 
 ```c
 unsigned int <area>_[<service>_]<enumeration>_list_get_element_count(
@@ -1305,23 +1343,23 @@ bool *<area>_[<service>_]<enumeration>_list_get_presence_flags(
   <area>_[<service>_]<enumeration>_list_t *self);
 ```
 
-#### Pour chaque format d'encodage :
+#### For each encoding format:
 
 ```c
 int <area>_[<service>_]<enumeration>_list_add_encoding_length_<format>(
   <area>_[<service>_]<enumeration>_list_t *self,
-  <format>_encoder_t *encoder, unsigned int *encoding_length);
+  mal_encoder_t *encoder, void *cursor);
 
 int <area>_[<service>_]<enumeration>_list_encode_<format>(
   <area>_[<service>_]<enumeration>_list_t *self,
-  <format>_encoder_t *encoder, char *bytes, unsigned int *offset);
+  mal_encoder_t *encoder, void *cursor);
 
 int <area>_[<service>_]<enumeration>_list_decode_<format>(
   <area>_[<service>_]<enumeration>_t *self,
-  <format>_decoder_t *decoder, char *bytes, unsigned int *offset);
+  <format>_decoder_t *decoder, void *cursor);
 ```
 
-#### Destructeur :
+#### Destructor:
 
 ```c
 void <area>_[<service>_]<enumeration>_list_destroy(
@@ -1330,7 +1368,7 @@ Fonction de test :
 void <area>_[<service>_]<enumeration>_list_test(bool verbose);
 ```
 
-##### Fin du fichier :
+##### End of file:
 
 ```c
 #ifdef __cplusplus
@@ -1340,15 +1378,15 @@ void <area>_[<service>_]<enumeration>_list_test(bool verbose);
 #endif
 ```
 
-### Fichier source (.c)
+### Source file (.c)
 
 ```c
 #include "<area>.h"
 ```
 
-#### Constructeur
+#### Constructor
 
-Déclaration de la structure :
+Declare the structure:
 
 ```c
 struct _<area>_[<service>_]<enumeration>_list_t {
@@ -1358,7 +1396,7 @@ struct _<area>_[<service>_]<enumeration>_list_t {
 };
 ```
 
-Constructeur :
+Constructor:
 
 ```c
 <area>_[<service>_]<enumeration>_list_t
@@ -1406,102 +1444,106 @@ bool *<area>_[<service>_]<enumeration>_list_get_presence_flags(
 }
 ```
 
-#### Calcul de la taille d'encodage (`malbinary`)
+#### Computing the encoding length (`malbinary`)
 
 ```c
 int <area>_[<service>_]<enumeration>_list_add_encoding_length_malbinary(
   <area>_[<service>_]<enumeration>_list_t *self,
-  malbinary_encoder_t *encoder, unsigned int *encoding_length) {
+  mal_encoder_t *encoder, void *cursor) {
   int rc = 0;
   unsigned int list_size = self->element_count;
 ```
 
-Encodage de la taille de la liste :
+Encoding the list size:
 
 ```c
-  malbinary_encoder_add_list_size_encoding_length(encoder, list_size,
-      encoding_length);
+  mal_encoder_add_list_size_encoding_length(encoder, list_size, cursor);
 ```
 
-Tous les éléments de la liste peuvent être nuls. Un champ de présence doit donc être ajouté pour chacun d'eux :
+Encoding the list elements:
 
 ```c
-  (*encoding_length) += list_size * MALBINARY_PRESENCE_FLAG_SIZE;
-```
-
-Encodage des éléments de la liste :
-
-```c
-  bool *presence_flags = self->presence_flags;
-  <area>_[<service>_]<enumeration>_t *content = self->content;
+  <area>_[<service>_]<composite>_t **content = self->content;
   for (int i = 0; i < list_size; i++) {
-    bool presence_flag = presence_flags[i];
-    <area>_[<service>_]<enumeration>_t element = content[i];
+    <area>_[<service>_]<composite>_t *element = content[i];
 ```
 
-Calcul de la taille d'encodage d'un champ énuméré optionnel : voir section 11.1.1.
+All the elements of the list may be null. A presence flag is encoded for each of them:
+
+```c
+    bool presence_flag = self->presence_flags[i];
+    mal_encoder_add_presence_flag_encoding_length(encoder, presence_flag, cursor);
+```
+
+Compute the encoding length of a non mandatory enumeration field: cf section 11.1.1.
+
 ```c
   }
   return rc;
 }
 ```
 
-#### Encodage (`malbinary`)
+#### Encoding (`malbinary`)
 
 ```c
 int <area>_[<service>_]<enumeration>_list_encode_malbinary(
   <area>_[<service>_]<enumeration>_list_t *self,
-  malbinary_encoder_t *encoder, char *bytes, unsigned int *offset) {
+  mal_encoder_t *encoder, void *cursor) {
   int rc = 0;
   unsigned int list_size = self->element_count;
-  malbinary_encoder_encode_list_size(encoder, bytes, offset, list_size);
-  <area>_[<service>_]<enumeration>_t *content = self->content;
+  rc = mal_encoder_encode_list_size(encoder, cursor, list_size);
+  if (rc < 0) return rc;
   for (int i = 0; i < list_size; i++) {
-    bool presence_flag = presence_flags[i];
-    <area>_[<service>_]<enumeration>_t *element = content[i];
+    bool presence_flag = self->presence_flags[i];
+    <area>_[<service>_]<enumeration>_t element = self->content[i];
 ```
 
-Encodage d'un énuméré optionnel : voir section 11.2.1.
+Encoding a non mandatory enumerated value: cf section 11.2.1.
+
 ```c
   }
   return rc;
 }
 ```
 
-#### Décodage (`malbinary`)
+#### Decoding (`malbinary`)
 
 ```c
 int <area>_[<service>_]<enumeration>_list_decode_malbinary(
   <area>_[<service>_]<enumeration>_list_t *self,
-  malbinary_decoder_t *decoder, char *bytes, unsigned int *offset) {
+  mal_decoder_t *decoder, void *cursor) {
   int rc = 0;
-  unsigned int list_size;
-  malbinary_decoder_decode_list_size(decoder, bytes, offset, &list_size);
-  bool *presence_flags = (bool *) malloc(sizeof(bool) * list_size);
-  <area>_[<service>_]<enumeration>_t *list_content =
-    <area>_[<service>_]<enumeration>_t *list_content =
-    (<area>_[<service>_]<enumeration>_t *) malloc(
-      sizeof(<area>_[<service>_]<enumeration>_t) * list_size);
-  for (int i = 0; i < list_size; i++) {
-    bool presence_flag;
-    int element;
+  rc = mal_decoder_decode_list_size(decoder, cursor, &self->element_count);
+  if (rc < 0) return rc;
+  if (self->element_count == 0) {
+    self->presence_flags = NULL;
+    self->content = NULL;
+    return 0;
+  }
+  self->presence_flags = (bool *) calloc(self->element_count, sizeof(bool));
+  if (self->presence_flags == NULL)
+    return -1;
+  self->content = (<area>_[<service>_]<enumeration>_t *) calloc(self->element_count, sizeof(<area>_[<service>_]<enumeration>_t));
+  if (self->content == NULL) {
+    free(self->presence_flags);
+    return -1;
+  }
+  for (int i = 0; i < self->element_count; i++) {
 ```
 
-Décodage d'un énuméré optionnel : voir section 11.3.1.
+Decoding a non mandatory enumerated value: cf section 11.3.1.
+
+Data are decoded directly into the result structure or pointer (i.e. `self->presence_flags[i]` and `self->content[i]`).
+
 ```c
-    presence_flags[i] = presence_flag;
-    list_content[i] = (<area>_[<service>_]<enumeration>_t) element;
   }
-  self->element_count = list_size;
-  self-> presence_flags = presence_flags;
-  self->content = list_content;
   return rc;
 }
 ```
 
-#### Destructeur
+#### Destructor
 
-Détruit la liste et son contenu (tableau).
+Free the list and its content.
 
 ```c
 void <area>_[<service>_]<enum>_list_destroy(
