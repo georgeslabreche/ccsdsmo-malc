@@ -643,8 +643,9 @@ int malzmq_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
   return rc;
 }
 
-// TODO: Currently catch the PUBLISH_(DE)REGISTER message in order to automatically send the
-// corresponding ack. This code corresponds to the ZMQ implementation of the Pub/Sub interaction,
+// NOTE: Currently catch the PUBLISH_(DE)REGISTER message in order to automatically send
+// the corresponding ack. This code corresponds to the current ZMQ implementation of the
+// Pub/Sub interaction.
 int trap_publish_register(mal_endpoint_t *mal_endpoint, mal_message_t *init_message, mal_uoctet_t stage) {
   mal_message_t *result_message = mal_message_new(
       mal_message_get_authentication_id(init_message),
@@ -687,8 +688,9 @@ int malzmq_ctx_endpoint_init_operation(mal_endpoint_t *mal_endpoint,
     mal_message_set_transaction_id(message, mal_endpoint_get_next_transaction_id_counter(mal_endpoint));
   }
 
-  // TODO: Currently catch the PUBLISH_(DE)REGISTER message in order to automatically send the
-  // corresponding ack. This code corresponds to the ZMQ implementation of the Pub/Sub interaction,
+  // Note: Currently catch the PUBLISH_(DE)REGISTER message in order to automatically send
+  // the corresponding ack. This code corresponds to the current ZMQ implementation of the
+  // Pub/Sub interaction.
   mal_uoctet_t stage = mal_message_get_interaction_stage(message);
   if (stage == MAL_IP_STAGE_PUBSUB_PUBLISH_REGISTER) {
     return trap_publish_register(mal_endpoint, message, MAL_IP_STAGE_PUBSUB_PUBLISH_REGISTER_ACK);
