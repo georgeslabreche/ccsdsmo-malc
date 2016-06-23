@@ -73,6 +73,10 @@ cd $PROGDIR/test/progress_app;
 ./genmake $*
 check
 
+cd $PROGDIR/test/maltcp_pubsub_app;
+./genmake $*
+check
+
 cd $PROGDIR/test/pubsub_app;
 ./genmake $*
 check
