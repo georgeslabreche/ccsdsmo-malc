@@ -370,7 +370,7 @@ int malzmq_encode_string(
       clog_error(malzmq_logger, "malzmq_encode_string, bad optional key: %d.", opt_mdk);
       return -1;
     }
-    // TODO: varint
+    // TODO: varint ?
     malbinary_write32(opt_mdk, cursor);
   } else {
     // check length is not too large
@@ -542,7 +542,8 @@ int malzmq_decode_uri(malzmq_mapping_directory_t *mapping_directory,
 int malzmq_decode_uri_to(malzmq_header_t *malzmq_header,
     mal_decoder_t *decoder, char *bytes, unsigned int length,
     mal_uri_t **uri_to) {
-  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+  // Note: We could use virtual allocation and initialization functions from encoder
+  // rather than malbinary interface.
   malbinary_cursor_t cursor;
   malbinary_cursor_init(&cursor, bytes, length, 0);
   

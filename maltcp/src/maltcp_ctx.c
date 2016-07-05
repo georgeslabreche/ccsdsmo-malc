@@ -211,7 +211,8 @@ mal_uri_t *get_ptp_uri(maltcp_ctx_t *self, mal_uri_t *uri) {
 }
 
 mal_uinteger_t maltcp_decode_body_length(char *bytes, unsigned int length) {
-  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+  // Note: We could use virtual allocation and initialization functions from encoder
+  // rather than malbinary interface.
   malbinary_cursor_t cursor;
 
   // 'URI To' offset
@@ -481,7 +482,8 @@ int maltcp_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
 
   clog_debug(maltcp_logger, "maltcp_ctx: mal_message_add_encoding_length_malbinary\n");
 
-  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+  // Note: We could use virtual allocation and initialization functions from encoder
+  // rather than malbinary interface.
   malbinary_cursor_t cursor;
   malbinary_cursor_reset(&cursor);
 
@@ -500,7 +502,8 @@ int maltcp_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
 
   clog_debug(maltcp_logger, "maltcp_ctx: encoding_length=%d\n", malbinary_cursor_get_length(&cursor));
 
-  // TODO (AF): Replace by a virtual function
+  // Note: We could use virtual allocation and initialization functions from encoder
+  // rather than malbinary interface.
   malbinary_cursor_init(&cursor,
       (char *) malloc(malbinary_cursor_get_length(&cursor)),
       malbinary_cursor_get_length(&cursor),
@@ -581,10 +584,11 @@ int maltcp_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
 
     *message = mal_message_new_void();
 
-    // MALTCP always uses the 'malbinary' encoding format for the messages encoding (another format
-    // may be used at the application layer for the message body).
+    // MALTCP always uses the 'malbinary' encoding format for the messages encoding (another
+    // format may be used at the application layer for the message body).
 
-    // TODO (AF): Use virtual allocation and initialization functions from encoder.
+    // Note: We could use virtual allocation and initialization functions from encoder
+    // rather than malbinary interface.
     malbinary_cursor_t cursor;
     malbinary_cursor_init(&cursor, (char *) mal_msg_bytes, mal_msg_bytes_length, 0);
 
@@ -597,7 +601,7 @@ int maltcp_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
       clog_error(maltcp_logger, "maltcp_ctx_recv_message, cannot decode message\n");
       return -1;
     }
-    // TODO (AF): Remove mal_message_length
+    // Note: Currently the message length is always equal to the frame size.
     assert(mal_msg_bytes_length == mal_message_length);
 
     // Destroy must free the tcp frame

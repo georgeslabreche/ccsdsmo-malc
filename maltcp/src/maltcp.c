@@ -473,7 +473,8 @@ int maltcp_decode_uri(mal_decoder_t *decoder, void *cursor, mal_uri_t **result) 
 int maltcp_decode_uri_to(maltcp_header_t *maltcp_header,
     mal_decoder_t *decoder, char *bytes, unsigned int length,
     mal_uri_t **uri_to) {
-  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+  // Note: We could use virtual allocation and initialization functions from encoder
+  // rather than malbinary interface.
   malbinary_cursor_t cursor;
   malbinary_cursor_init(&cursor, bytes, length, 0);
 
