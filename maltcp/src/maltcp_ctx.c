@@ -177,7 +177,7 @@ mal_uri_t *get_uri_to(maltcp_ctx_t *self, mal_message_t *message) {
     char *port = split[2];
 
     // This not the publish URI, ex: tcp://192.168.1.46:5555
-    socket_uri = (mal_uri_t *) malloc(PTP_PROTOCOL_LENGTH + 4 + strlen(port) + 1);
+    socket_uri = (mal_uri_t *) malloc(PTP_PROTOCOL_LENGTH + 4 + strlen(hostname) + strlen(port) + 1);
     // Need to set the final '\0' before using strcat
     socket_uri[0] = '\0';
     strcat(socket_uri, PTP_PROTOCOL "://");
