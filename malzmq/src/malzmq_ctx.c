@@ -536,7 +536,8 @@ int malzmq_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
 
   clog_debug(malzmq_logger, "malzmq_ctx: mal_message_add_encoding_length_malbinary\n");
 
-  // TODO (AF): Use virtual allocation and initialization functions from encoder.
+  // Note: We could use virtual allocation and initialization functions from encoder
+  // rather than malbinary interface.
   malbinary_cursor_t cursor;
   malbinary_cursor_reset(&cursor);
 
@@ -555,7 +556,8 @@ int malzmq_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
 
   clog_debug(malzmq_logger, "malzmq_ctx: encoding_length=%d\n", malbinary_cursor_get_length(&cursor));
 
-  // TODO (AF): Replace by a virtual function
+  // Note: We could use virtual allocation and initialization functions from encoder
+  // rather than malbinary interface.
   malbinary_cursor_init(&cursor,
       (char *) malloc(malbinary_cursor_get_length(&cursor)),
       malbinary_cursor_get_length(&cursor),
@@ -622,7 +624,8 @@ int malzmq_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
     // MALZMQ always uses the 'malbinary' encoding format for the messages encoding (another format
     // may be used at the application layer for the message body).
 
-    // TODO (AF): Use virtual allocation and initialization functions from encoder.
+    // Note: We could use virtual allocation and initialization functions from encoder
+    // rather than malbinary interface.
     malbinary_cursor_t cursor;
 	  malbinary_cursor_init(&cursor, (char *) mal_msg_bytes, mal_msg_bytes_length, 0);
 
