@@ -232,7 +232,7 @@ mal_uinteger_t maltcp_decode_body_length(char *bytes, unsigned int length) {
 }
 
 // zloop_fn interface for standard socket
-int maltcp_ctx_mal_standard_socket_handle(zloop_t *loop, zmq_pollitem_t *poller, void *arg) {
+int maltcp_ctx_mal_socket_handle(zloop_t *loop, zmq_pollitem_t *poller, void *arg) {
   maltcp_ctx_t *self = (maltcp_ctx_t *) arg;
 
   mal_uoctet_t id[256];
@@ -244,7 +244,7 @@ int maltcp_ctx_mal_standard_socket_handle(zloop_t *loop, zmq_pollitem_t *poller,
 
   while (true) {
     int rc = zmq_recv(self->mal_socket, id, 256, 0);
-    clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: zmq_recv (identity) = %d bytes\n", rc);
+    clog_debug(maltcp_logger, "maltcp_ctx_mal_socket_handle: zmq_recv (identity) = %d bytes\n", rc);
     if (rc <= 0) return -1;
 
     // Create an empty ØMQ message to hold the message part
@@ -254,23 +254,23 @@ int maltcp_ctx_mal_standard_socket_handle(zloop_t *loop, zmq_pollitem_t *poller,
 
     //  Block until a message is available to be received from socket
     rc = zmq_recvmsg(self->mal_socket, &msg, 0);
-    clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: receive = %d bytes\n", rc);
+    clog_debug(maltcp_logger, "maltcp_ctx_mal_socket_handle: receive = %d bytes\n", rc);
     if (rc < 0) return -1;
 
     if (rc == 0)
       return 0;
 
-    // TODO (AF): There is an issue if the first read returns less than HEADER_LENGTH bytes !!
+    // TODO (AF): There is a potential issue if the first read returns less than HEADER_LENGTH bytes !!
     if (mal_msg_bytes_length == -1) {
       assert(rc >= HEADER_LENGTH);
 
       // First read, get the message size in the header
       mal_msg_bytes_length = maltcp_decode_body_length((char *) zmq_msg_data(&msg), offset+rc);
-      clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: should read = %d bytes\n", mal_msg_bytes_length);
+      clog_debug(maltcp_logger, "maltcp_ctx_mal_socket_handle: should read = %d bytes\n", mal_msg_bytes_length);
 
       if (rc == mal_msg_bytes_length) {
         // The message is completely received in one shot.
-        clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: whole message received, end.\n", rc);
+        clog_debug(maltcp_logger, "maltcp_ctx_mal_socket_handle: whole message received, end.\n", rc);
         zmsg = msg;
         // Returns without closing the incoming message
         break;
@@ -285,67 +285,60 @@ int maltcp_ctx_mal_standard_socket_handle(zloop_t *loop, zmq_pollitem_t *poller,
     // Copy data to the message
     memcpy(data+offset, zmq_msg_data(&msg), rc);
     offset += rc;
-    clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: %d bytes received\n", offset);
+    clog_debug(maltcp_logger, "maltcp_ctx_mal_socket_handle: %d bytes received\n", offset);
     zmq_msg_close(&msg);
 
     if (offset == mal_msg_bytes_length) {
       // The message is entirely read, return.
-      clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: whole message received, end.\n");
+      clog_debug(maltcp_logger, "maltcp_ctx_mal_socket_handle: whole message received, end.\n");
       break;
     }
   }
 
-  if (zmq_msg_size(&zmsg) > 0) {
-    clog_debug(maltcp_logger, "maltcp_ctx_mal_standard_socket_handle: receive message, size = %d\n", zmq_msg_size(&zmsg));
-    return maltcp_ctx_mal_socket_handle(loop, poller, self, &zmsg, mal_msg_bytes_length, false);
+  size_t msg_size = zmq_msg_size(&zmsg);
+  if (msg_size <= 0) {
+    clog_warning(maltcp_logger, "maltcp_ctx_mal_socket_handle: returns (size <= 0).\n");
+    return 0;
   }
 
-  return 0;
-}
+  clog_debug(maltcp_logger, "maltcp_ctx_mal_socket_handle: receive message, size = %d\n", mal_msg_bytes_length);
+  assert(mal_msg_bytes_length == msg_size);
 
-// This method handles messages received from standard or pubsub sockets.
-int maltcp_ctx_mal_socket_handle(zloop_t *loop, zmq_pollitem_t *poller,
-    maltcp_ctx_t *self, zmq_msg_t *zmsg, mal_uinteger_t msg_size, bool isPubsub) {
+  clog_debug(maltcp_logger, "maltcp_ctx: received msg, decoding...\n");
 
-  clog_debug(maltcp_logger, "maltcp_ctx: maltcp_ctx_mal_socket_handle msg_size=%d\n", msg_size);
-  if (zmsg != NULL) {
-    clog_debug(maltcp_logger, "maltcp_ctx: received msg, decoding...\n");
-
-    mal_uri_t *uri_to;
-    if (maltcp_decode_uri_to(self->maltcp_header,
-        self->decoder, (char *) zmq_msg_data(zmsg), zmq_msg_size(zmsg), &uri_to) != 0) {
-      clog_error(maltcp_logger, "maltcp_ctx_mal_socket_handle, could not decode uri_to\n");
-      return -1;
-    }
-
-    clog_debug(maltcp_logger, "maltcp_ctx: msg decoded.\n");
-
-    clog_debug(maltcp_logger, "maltcp_ctx: uri_to: %s\n", uri_to);
-
-    mal_uri_t *short_uri_to = get_short_uri(uri_to);
-    clog_debug(maltcp_logger, "maltcp_ctx: short_uri_to: %s\n", short_uri_to);
-
-    // Re-send the message to the appropriate endpoint.
-    // Normally the message will be deleted by the appropriate endpoint.
-    // What happens if no endpoint reads this message? It seems that Router socket
-    // discard messages if there are no readers.
-    //zframe_t *identity_frame = zframe_new(short_uri_to, strlen(short_uri_to));
-    zmq_msg_t identity;
-    int rc = zmq_msg_init_data (&identity, short_uri_to, strlen(short_uri_to), NULL, NULL); assert (rc == 0);
-    rc = zmq_msg_send(&identity, self->endpoints_socket, ZMQ_SNDMORE);
-    assert(rc == strlen(short_uri_to));
-    clog_debug(maltcp_logger, "maltcp_ctx: send identity (%d bytes) to endpoint %s\n", rc, short_uri_to);
-
-    size_t msg_size = zmq_msg_size(zmsg);
-    clog_debug(maltcp_logger, "maltcp_ctx: send message (%d frames) to endpoint %s\n", msg_size, short_uri_to);
-
-    // Destroy URI To
-    mal_uri_destroy(&uri_to);
-
-    //int rc = zmsg_send(&zmsg, self->endpoints_socket);
-    rc = zmq_msg_send(zmsg, self->endpoints_socket, ZMQ_DONTWAIT);
-    assert(rc == msg_size);
+  mal_uri_t *uri_to;
+  if (maltcp_decode_uri_to(self->maltcp_header,
+      self->decoder, (char *) zmq_msg_data(&zmsg), msg_size, &uri_to) != 0) {
+    clog_error(maltcp_logger, "maltcp_ctx_mal_socket_handle, could not decode uri_to\n");
+    return -1;
   }
+
+  clog_debug(maltcp_logger, "maltcp_ctx: msg decoded.\n");
+
+  clog_debug(maltcp_logger, "maltcp_ctx: uri_to: %s\n", uri_to);
+
+  mal_uri_t *short_uri_to = get_short_uri(uri_to);
+  clog_debug(maltcp_logger, "maltcp_ctx: short_uri_to: %s\n", short_uri_to);
+
+  // Re-send the message to the appropriate endpoint.
+  // Normally the message will be deleted by the appropriate endpoint.
+  // What happens if no endpoint reads this message? It seems that Router socket
+  // discard messages if there are no readers.
+  //zframe_t *identity_frame = zframe_new(short_uri_to, strlen(short_uri_to));
+  zmq_msg_t identity;
+  int rc = zmq_msg_init_data (&identity, short_uri_to, strlen(short_uri_to), NULL, NULL); assert (rc == 0);
+  rc = zmq_msg_send(&identity, self->endpoints_socket, ZMQ_SNDMORE);
+  assert(rc == strlen(short_uri_to));
+  clog_debug(maltcp_logger, "maltcp_ctx: send identity (%d bytes) to endpoint %s\n", rc, short_uri_to);
+
+  clog_debug(maltcp_logger, "maltcp_ctx: send message (%d frames) to endpoint %s\n", msg_size, short_uri_to);
+
+  // Destroy URI To
+  mal_uri_destroy(&uri_to);
+
+  //int rc = zmsg_send(&zmsg, self->endpoints_socket);
+  rc = zmq_msg_send(&zmsg, self->endpoints_socket, ZMQ_DONTWAIT);
+  assert(rc == msg_size);
 
   clog_debug(maltcp_logger, "maltcp_ctx: zmsg handled.\n");
   return 0;
@@ -407,7 +400,7 @@ maltcp_ctx_t *maltcp_ctx_new(mal_ctx_t *mal_ctx,
   // zmq_pollitem_t is a libzmq structure (not a czmq) that is
   // not kept by the poller. It is only used as a set of parameters.
   zmq_pollitem_t poller = { self->mal_socket, 0, ZMQ_POLLIN };
-  int rc = zloop_poller(zloop, &poller, maltcp_ctx_mal_standard_socket_handle, self);
+  int rc = zloop_poller(zloop, &poller, maltcp_ctx_mal_socket_handle, self);
   assert(rc == 0);
 
   mal_ctx_set_binding(
