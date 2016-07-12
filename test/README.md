@@ -9,6 +9,6 @@ This example allows to test various aspects of the MAL specification:
   - Optional field ('canBeNull=true')
   - Polymorphism of the last element of the message body.
 
-The description of the TestArea area can be found in [TestArea.xml](https://github.com/ccsdsmo/stubgenerator_c/blob/master/test/src/main/xml/TestArea.xml).
+The description of the TestArea area can be found in [TestArea.xml](https://github.com/ccsdsmo/malc/blob/master/xml/TestArea.xml).
 The code in testarea sub-directory is automatically generated from this XML description with the
 [CNES MO C Stub Generator](https://github.com/ccsdsmo/stubgenerator_c/tree/master/generator#cnes-mo-c-stub-generator).
