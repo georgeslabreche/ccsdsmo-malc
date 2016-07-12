@@ -294,6 +294,9 @@ mal_uri_t *get_ps_uri(malzmq_ctx_t *self, mal_uri_t *uri) {
   }
 }
 
+int malzmq_ctx_mal_socket_handle(zloop_t *loop, zmq_pollitem_t *poller,
+    malzmq_ctx_t *self, zmsg_t *zmsg, bool isPubsub);
+
 // zloop_fn interface for standard socket
 int malzmq_ctx_mal_standard_socket_handle(zloop_t *loop, zmq_pollitem_t *poller, void *arg) {
   malzmq_ctx_t *self = (malzmq_ctx_t *) arg;

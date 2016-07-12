@@ -114,15 +114,6 @@ int malzmq_ctx_poller_wait(
 //  Self test of this class
 void malzmq_ctx_test(bool verbose);
 
-int malzmq_ctx_mal_socket_handle(zloop_t *loop, zmq_pollitem_t *poller,
-    malzmq_ctx_t *self, zmsg_t *zmsg, bool isPubsub);
-
-int malzmq_ctx_mal_pubsub_socket_handle(zloop_t *loop, zmq_pollitem_t *poller,
-    void *arg);
-
-int malzmq_ctx_mal_standard_socket_handle(zloop_t *loop, zmq_pollitem_t *poller,
-    void *arg);
-
 #ifdef __cplusplus
 }
 #endif
