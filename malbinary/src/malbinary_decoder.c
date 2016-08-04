@@ -121,19 +121,20 @@ unsigned long malbinary_read_uvarlong(void *cursor) {
   return value | b << i;
 }
 
-short malbinary_read_varshort(void *cursor) {
-  unsigned int i = malbinary_read_uvarint(cursor);
-  return ((i >> 1) ^ -(i & 1));
-}
-
 int malbinary_read_varint(void *cursor) {
   unsigned int i = malbinary_read_uvarint(cursor);
-  return ((i >> 1) ^ -(i & 1));
+  int temp = (((i << 31) >> 31) ^ i) >> 1;
+  return temp ^ (i & (1 << 31));
+}
+
+short malbinary_read_varshort(void *cursor) {
+  return (short) malbinary_read_varint(cursor);
 }
 
 long malbinary_read_varlong(void *cursor) {
   unsigned long l = malbinary_read_uvarlong(cursor);
-  return ((l >> 1) ^ -(l & 1));
+  long temp = (((l << 63) >> 63) ^ l) >> 1;
+  return temp ^ (l & (1L << 63));
 }
 
 char *malbinary_read_str(mal_decoder_t *self, void *cursor) {
