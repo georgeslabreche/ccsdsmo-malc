@@ -8,7 +8,7 @@ Computing the encoding length
 
 The following parameters are provided by the calling code:
 
-  -	\<element>: MAL element to encode depending on its type
+  -	<_element_>: MAL element to encode depending on its type
   -	presence_flag: presence flag when the element is not of a pointer type
   -	attribute_tag: identifier of the Attribute type in case of polymorphism of Attribute
   -	short_form: identifier of the type in case of polymorphism of Element
@@ -116,7 +116,7 @@ Encoding
 
 The following parameters are provided by the calling code:
 
-  -	\<element>: MAL element to encode depending on its type
+  -	<_element_>: MAL element to encode depending on its type
   -	presence_flag: presence flag when the element is not of a pointer type
   -	attribute_tag: identifier of the Attribute type in case of polymorphism of Attribute
   -	short_form: identifier of the type in case of polymorphism of Element

@@ -119,11 +119,11 @@ int <area>_<service>_<operation>_<result stage>(
 
 Paramètres :
 
-  -	`endpoint` : le end-point qui envoie le message
-  -	`init_message` : le message qui initie l'interaction (première étape)
-  -	`provider_uri` : l'URI du provider de service
-  -	`result_message` : le message résultat du traitement de l'interaction (seconde étape et suivantes)
-  -	`is_error_message` : flag indiquant si le message renvoie une erreur
+        -	`endpoint` : le end-point qui envoie le message
+        -	`init_message` : le message qui initie l'interaction (première étape)
+        -	`provider_uri` : l'URI du provider de service
+        -	`result_message` : le message résultat du traitement de l'interaction (seconde étape et suivantes)
+        -	`is_error_message` : flag indiquant si le message renvoie une erreur
 
 Résultat : 
 
@@ -165,10 +165,10 @@ int <area>_<service>_<operation>_publish_deregister(
 
 Paramètres :
 
-  -	`endpoint` : Le end-point qui envoie le message
-  -	`message` : le message relatif à l'étape Pub/Sub
-  -	`broker_uri` : l'URI du broker
-  -	`initial_publish_register_tid` : identifiant de transaction du premier message Publish Register envoyé
+        -	`endpoint` : Le end-point qui envoie le message
+        -	`message` : le message relatif à l'étape Pub/Sub
+        -	`broker_uri` : l'URI du broker
+        -	`initial_publish_register_tid` : identifiant de transaction du premier message Publish Register envoyé
 
 Résultat : 
 
@@ -187,8 +187,8 @@ Les messages d'erreur n'ont au plus qu'un seul élément (identifié par le cham
 
 Si l'élément est le dernier du corps de message :
 
-  -	Si le type déclaré est MAL::Attribute, alors l'élément est transmis avec le type de l'union 'mal_attribute_t'.
-  -	Si le type déclaré est MAL::Element, un composite abstrait, ou une liste d'un type abstrait (y compris MAL::Attribute), alors une fonction doit être définie pour chaque type final conforme au type abstrait. Le nom du type (qftype) est ajouté au nom de la fonction après un séparateur '_' :
+        -	Si le type déclaré est MAL::Attribute, alors l'élément est transmis avec le type de l'union 'mal_attribute_t'.
+        -	Si le type déclaré est MAL::Element, un composite abstrait, ou une liste d'un type abstrait (y compris MAL::Attribute), alors une fonction doit être définie pour chaque type final conforme au type abstrait. Le nom du type (qftype) est ajouté au nom de la fonction après un séparateur '_' :
 
 ```c
 <nom de la fonction d encodage>_<qftype>(<paramètres>);
@@ -202,9 +202,9 @@ Fonction d'ajout de la taille d'encodage à une valeur initiale.
 
 Déclaration :
 
-  -	Si l'opération n'est pas Pub/Sub :
+        -	Si l'opération n'est pas Pub/Sub :
 
-  -	En cas de polymorphisme d'Attribut :
+        -	En cas de polymorphisme d'Attribut :
 
 ```c
 int <qfop>_<stage|error>_add_encoding_length[_<index>][_<qftype>](
@@ -213,8 +213,8 @@ int <qfop>_<stage|error>_add_encoding_length[_<index>][_<qftype>](
   unsigned int *encoding_length);
 ```
 
-  -	Sinon, le type de l'élément est connu (même en cas de polymorphisme) :
-  -	Si l’élément est un Attribut non pointeur, ou un énuméré :
+        -	Sinon, le type de l'élément est connu (même en cas de polymorphisme) :
+        -	Si l’élément est un Attribut non pointeur, ou un énuméré :
 
 ```c
 int <qfop>_<stage|error>_add_encoding_length[_<index>][_<qftype>](
@@ -222,7 +222,7 @@ int <qfop>_<stage|error>_add_encoding_length[_<index>][_<qftype>](
   <qftype>_t element, unsigned int *encoding_length);
 ```
 
-  -	Si l’élément est un Attribut pointeur, un Composite ou une liste :
+        -	Si l’élément est un Attribut pointeur, un Composite ou une liste :
 
 ```c
 int <qfop>_<stage|error>_add_encoding_length[_<index>][_<qftype>](
@@ -230,7 +230,7 @@ int <qfop>_<stage|error>_add_encoding_length[_<index>][_<qftype>](
   unsigned int *encoding_length);
 ```
 
-  -	Si l'opération est Pub/Sub :
+        -	Si l'opération est Pub/Sub :
 ```c
 int <qfop>_update_add_encoding_length[_<index>][_<qftype>_list](
     int encoding_format_code, void * encoder,
@@ -240,11 +240,11 @@ int <qfop>_update_add_encoding_length[_<index>][_<qftype>_list](
 
 Paramètres :
 
-  -	`encoding_format_code` : code du format d'encodage
-  -	`encoder` : configuration du module d'encodage
-  -	`presence_flag` : champ de présence, nécessaire si le type de l'élément n'est pas un pointeur
-  -	`element` : élément à encoder
-  -	`encoding_length` : valeur initiale et résultat de la fonction d'ajout
+        -	`encoding_format_code` : code du format d'encodage
+        -	`encoder` : configuration du module d'encodage
+        -	`presence_flag` : champ de présence, nécessaire si le type de l'élément n'est pas un pointeur
+        -	`element` : élément à encoder
+        -	`encoding_length` : valeur initiale et résultat de la fonction d'ajout
 
 Résultat : 
 
@@ -254,8 +254,8 @@ code d'erreur
 
 Déclaration :
 
-  -	Si l'opération n'est pas Pub/Sub :
-  -	En cas de polymorphisme d'Attribut :
+        -	Si l'opération n'est pas Pub/Sub :
+        -	En cas de polymorphisme d'Attribut :
 
 ```c
 int <qfop>_<stage|error>_encode[_<index>][_<qftype>](
@@ -264,8 +264,8 @@ int <qfop>_<stage|error>_encode[_<index>][_<qftype>](
   union mal_attribute_t element);
 ```
 
-  -	Sinon, le type de l'élément est connu (même en cas de polymorphisme) :
-  -	Si l’élément est un Attribut non pointeur ou un énuméré :
+        -	Sinon, le type de l'élément est connu (même en cas de polymorphisme) :
+        -	Si l’élément est un Attribut non pointeur ou un énuméré :
 
 ```c
 int <qfop>_<stage|error>_encode[_<index>][_<qftype>](
@@ -273,7 +273,7 @@ int <qfop>_<stage|error>_encode[_<index>][_<qftype>](
   void *encoder, bool presence_flag, <qftype>_t element);
 ```
 
-  -	Si l’élément est un Attribut pointeur, un Composite, ou une liste :
+        -	Si l’élément est un Attribut pointeur, un Composite, ou une liste :
 
 ```c
 int <qfop>_<stage|error>_encode[_<index>][_<qftype>](
@@ -281,7 +281,7 @@ int <qfop>_<stage|error>_encode[_<index>][_<qftype>](
   void *encoder, <qftype>_[list_]t *element);
 ```
 
-  -	Si l'opération est Pub/Sub :
+        -	Si l'opération est Pub/Sub :
 
 ```c
 int <qfop>_update_encode[_<index>][_<qftype>_list](
@@ -291,19 +291,19 @@ int <qfop>_update_encode[_<index>][_<qftype>_list](
 
 Paramètres :
 
-  -	`encoding_format_code` : code du format d'encodage
-  -	`cursor` : un index virtuel du fromat d'encodage
-  -	`encoder` : configuration du module d'encodage
-  -	`presence_flag` : flag de présence à encoder
-  -	`attribute_tag` : tag d'Attribut à encoder
-  -	`element` : élément à encoder
+        -	`encoding_format_code` : code du format d'encodage
+        -	`cursor` : un index virtuel du fromat d'encodage
+        -	`encoder` : configuration du module d'encodage
+        -	`presence_flag` : flag de présence à encoder
+        -	`attribute_tag` : tag d'Attribut à encoder
+        -	`element` : élément à encoder
 
 ###	Décodage d'un élément de corps de message
 
 Déclaration :
 
-  -	Si l'opération n'est pas Pub/Sub :
-  -	En cas de polymorphisme d'Attribut :
+        -	Si l'opération n'est pas Pub/Sub :
+        -	En cas de polymorphisme d'Attribut :
 
 ```c
 int <qfop>_<stage>_decode[_<index>](
@@ -312,7 +312,7 @@ int <qfop>_<stage>_decode[_<index>](
   unsigned char *attribute_tag_res, union mal_attribute_t *element_res);
 ```
 
-  -	En cas de polymorphisme d'élément et/ou pour un message d'erreur :
+        -	En cas de polymorphisme d'élément et/ou pour un message d'erreur :
 
 ```c
 int <qfop>_<stage|error>_decode[_<index>](
@@ -321,8 +321,8 @@ int <qfop>_<stage|error>_decode[_<index>](
   mal_element_holder_t *element_holder);
 ```
 
-  -	Si le type de l'élément est connu :
-  -	Si l’élément est un Attribut non pointeur ou un énuméré :
+        -	Si le type de l'élément est connu :
+        -	Si l’élément est un Attribut non pointeur ou un énuméré :
 
 ```c
 int <qfop>_<stage>_decode[_<index>](
@@ -330,7 +330,7 @@ int <qfop>_<stage>_decode[_<index>](
   void *decoder, bool *presence_flag_res, <qftype>_t *element_res);
 ```
   
-  -	Si l’élément est un Attribut pointeur, un Composite ou une liste :
+        -	Si l’élément est un Attribut pointeur, un Composite ou une liste :
 
 ```c
 int <qfop>_<stage>_decode[_<index>](
@@ -338,8 +338,8 @@ int <qfop>_<stage>_decode[_<index>](
   void *decoder, <qftype>_[list_]t **element_res);
 ```
 
-  -	Si l'opération est Pub/Sub :
-  -	En cas de polymorphisme d'élément :
+        -	Si l'opération est Pub/Sub :
+        -	En cas de polymorphisme d'élément :
 
 ```c
 int <qfop>_update_decode[_<index>](int encoding_format_code,
@@ -347,7 +347,7 @@ int <qfop>_update_decode[_<index>](int encoding_format_code,
   mal_element_holder_t *element_holder);
 ```
 
-  -	Si le type de l'update est connu :
+        -	Si le type de l'update est connu :
 
 ```c
 int <qfop>_update_decode[_<index>](int encoding_format_code,
@@ -357,13 +357,13 @@ int <qfop>_update_decode[_<index>](int encoding_format_code,
 
 Paramètres :
 
-  -	`encoding_format_code` : code du format d'encodage
-  -	`cursor` : un index virtuel du format d'encodage
-  -	`decoder` : configuration du module de décodage
-  -	`presence_flag_res` : flag de présence décodé
-  -	`attribute_tag_res` : tag d'Attribut décodé
-  -	`element_res` : élément décodé
-  -	`element_holder` : élément décodé
+        -	`encoding_format_code` : code du format d'encodage
+        -	`cursor` : un index virtuel du format d'encodage
+        -	`decoder` : configuration du module de décodage
+        -	`presence_flag_res` : flag de présence décodé
+        -	`attribute_tag_res` : tag d'Attribut décodé
+        -	`element_res` : élément décodé
+        -	`element_holder` : élément décodé
 
 ###	Allocation mémoire
 
@@ -441,7 +441,7 @@ Déclaration :
 
 Paramètres :
 
-  -	`element_count`
+        -	`element_count`
 
 ###	Getters
 
@@ -479,7 +479,7 @@ Déclaration :
 
 Paramètres :
 
-  -	`element_count`
+        -	`element_count`
 
 ###	Getters
 

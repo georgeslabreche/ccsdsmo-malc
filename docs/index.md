@@ -81,7 +81,7 @@ A MAL Handler is an interaction processor, it runs asynchronously when it is not
 Each handler has an interface that depends on its role (provider, consumer, etc.) and interaction in which it operates (send, submit, etc.). For example for a Progress interaction:
 
   -	The provider handler must provide the function: `on_progress`
-  -	The consumer handler must provide the functions: `on_ack`, `on_update` et `on_response`.
+  -	The consumer handler must provide the functions: `on_ack`, `on_update` and `on_response`.
 
 Each of these functions is called with the following parameters:
 
@@ -113,7 +113,7 @@ To ensure the transformation of the MAL URI of a service in the ZMQ URI needed t
 
 Pointer attributes
 ------------------
-Pointer attributes are MAL attributes whose representation in C is a pointer type: `MAL::Blob`, `MAL::Identifier`, `MAL::String` et `MAL::URI`.
+Pointer attributes are MAL attributes whose representation in C is a pointer type: `MAL::Blob`, `MAL::Identifier`, `MAL::String` and `MAL::URI`.
 
 For these attributes the `NULL` value (null pointer) is allowed. For other attributes, the null value is represented by an additional boolean field called "presence flag".
 
@@ -122,7 +122,7 @@ Overview of the MAL C API
 
 The MAL C API consists of several APIs:
 
-  -	**MAL attribute API** : The MAL attributes are extracted from the MAL API to avoid a circular dependency between MAL API (which depends on the encoding APIs) and encoding APIs (which depends of MAL attributes).
+  -	**MAL attribute API** : The MAL attributes are extracted from the MAL API to avoid a circular dependency bween MAL API (which depends on the encoding APIs) and encoding APIs (which depends of MAL attributes).
   -	**Encoding APIs** : Encoding APIs are specifically defined for each encoding format.
   -	**MAL API** : The MAL API allows the use of MAL level concepts.
   - **Area APIs** (generated) : The MAL API contains the Area API generated from the definition of the MAL Area.

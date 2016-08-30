@@ -600,7 +600,7 @@ Error code.
 
 ### Attente de message MAL
 
-La fonction `mal_poller_wait` allows to wait the reception of a MAL message on one of the endpoint handled by the poller.
+`mal_poller_wait` function allows to wait the reception of a MAL message on one of the endpoint handled by the poller.
 This is a blocking function, it takes a time-out parameter.
 
 Declaration:

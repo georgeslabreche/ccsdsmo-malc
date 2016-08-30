@@ -5,10 +5,10 @@ This section shows the MAL C API concepts through the programming of a very simp
 runs in a unique process.
 
 Different blocks of code are distinguished:
-  -	The code corresponding to the components of the application. In this example, two components are created.
+  - The code corresponding to the components of the application. In this example, two components are created.
   To simplify the application, each component is limited to a single role: "provider" or "consumer" service.
   A very simple test service is defined in a service area called "TestArea" (see section 14.1).
-  -	The initialization code and application launch.
+  - The initialization code and application launch.
 
 The code of components depends only on MAL C API and APIs generated from the definition of TestArea.
 
@@ -31,11 +31,11 @@ Include MAL C API definition and API service (generated code):
 
 In this example, all the parameters needed to operate the consumer are given when it was created:
 
-  - The consumer's end-point.
-  - The provider's URI (to which the consumer connects).
-  - The parameters of the header of MAL message, such as the authentication ID, etc.
-  - The identifier of the encoding format.
-  - Encoding settings (untyped to avoid dependence 'malbinary').
+	- The consumer's end-point.
+	- The provider's URI (to which the consumer connects).
+	- The parameters of the header of MAL message, such as the authentication ID, etc.
+	- The identifier of the encoding format.
+	- Encoding settings (untyped to avoid dependence 'malbinary').
 
 Declaration:
 
@@ -167,8 +167,8 @@ Calculation of the encoding size of the third element (index '2') with polymorph
 
 Creating a MAL message with the following parameters:
 
-  - MAL header fields contained in the statement of Handler.
-  - The encoding size of the MAL message body retrieved from the encoding cursor.
+	- MAL header fields contained in the statement of Handler.
+	- The encoding size of the MAL message body retrieved from the encoding cursor.
 
 ```c
 	mal_message_t *message = mal_message_new(uri_to,
@@ -181,7 +181,7 @@ Creating a MAL message with the following parameters:
 Encoding of the first element (index '0'):
 
 ```c
-	unsigned int Declaration: = mal_message_get_body_offset(message);
+	unsigned int offset = mal_message_get_body_offset(message);
 	char *bytes = mal_message_get_body(message);
 	rc = testarea_testservice_testsend_send_encode_0(
 	  consumer->encoding_format_code, &cursor,
@@ -236,9 +236,9 @@ Include MAL C API definition and API service (generated code):
 
 In this example, all the parameters needed to operate the provider are given when it was created:
 
-  - The provider's end-point.
-  - The identifier of the encoding format.
-  - Encoding settings (untyped to avoid dependence 'malbinary').
+	- The provider's end-point.
+	- The identifier of the encoding format.
+	- Encoding settings (untyped to avoid dependence 'malbinary').
 
 Declaration:
 

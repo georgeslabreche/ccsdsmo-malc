@@ -57,8 +57,8 @@ Definition of type `MAL::Duration`:
 	typedef float mal_duration_t;
 ```
 
-Character types
----------------
+String type
+-----------
 
 The `char` type is used to represent strings. If the characters are not in the ASCII format
 (MAL specifies Unicode), then a character may be represented by several bytes. In this case,

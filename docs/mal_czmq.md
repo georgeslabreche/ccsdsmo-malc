@@ -10,21 +10,21 @@ Currently a MAL message is transmit in a single ZMQ frame (zframe).
 
 The following sections describe the implementation of the MAL / CZMQ module:
 
-  -	MALZMQ header configuration.
-  -	MALZMQ context constructor.
-  -	Boot.
-  -	MAL message reception.
-  -	Implementation of virtual functions needed by the MAL API.
+	-  MALZMQ header configuration.
+	-  MALZMQ context constructor.
+	-  Boot.
+	-  MAL message reception.
+	-  Implementation of virtual functions needed by the MAL API.
 
 MALZMQ Header
 -------------
 
 A class is defined to handle the specificities of MALZMQ header format:
 
-  -	MALZMQ version number.
-  -	Mapping directory.
-  -	Presence flags for optional MALZMQ header fields.
-  -	Value of non-present fields.
+	-  MALZMQ version number.
+	-  Mapping directory.
+	-  Presence flags for optional MALZMQ header fields.
+	-  Value of non-present fields.
 
 ###	Constructor
 
@@ -39,18 +39,18 @@ malzmq_header_t *malzmq_header_new(
 
 Parameters
 
-  - `mapping_directory`: Mapping directory to use by encoding, may be null.
-  - `priority_flag`: Boolean indicating the presence of the *Priority* field in the MALZMQ header.
-  - `priority`: Value of the *Priority* field if it is not present in the MALZMQ header.
-  - `timestamp_flag`: Boolean indicating the presence of the *TimeStamp* field in the MALZMQ header.
-  - `network_zone`: Value of the *Network Zone* field if it is not present in the MALZMQ header. If
-  NULL the *Network Zone* field should be present in the MALZMQ header.
-  - `session_name`: Value of the *Session Name* field if it is not present in the MALZMQ header. If
-  NULL the *Session Name* field should be present in the MALZMQ header.
-  - `domain`: Value of the *Domain* field if it is not present in the MALZMQ header. If
-  NULL the *Domain* field should be present in the MALZMQ header.
-  - `authentication_id`: Value of the *Authentication Id* field if it is not present in the MALZMQ
-  header. If NULL the *Authentication Id* field should be present in the MALZMQ header.
+	-  `mapping_directory`: Mapping directory to use by encoding, may be null.
+	-  `priority_flag`: Boolean indicating the presence of the *Priority* field in the MALZMQ header.
+	-  `priority`: Value of the *Priority* field if it is not present in the MALZMQ header.
+	-  `timestamp_flag`: Boolean indicating the presence of the *TimeStamp* field in the MALZMQ header.
+	-  `network_zone`: Value of the *Network Zone* field if it is not present in the MALZMQ header.
+        If NULL the *Network Zone* field should be present in the MALZMQ header.
+	-  `session_name`: Value of the *Session Name* field if it is not present in the MALZMQ header.
+        If NULL the *Session Name* field should be present in the MALZMQ header.
+	-  `domain`: Value of the *Domain* field if it is not present in the MALZMQ header.
+        If NULL the *Domain* field should be present in the MALZMQ header.
+	-  `authentication_id`: Value of the *Authentication Id* field if it is not present in the MALZMQ header.
+        If NULL the *Authentication Id* field should be present in the MALZMQ header.
 
 ###	Configuration parameters
 
@@ -125,9 +125,9 @@ struct _malzmq_mapping_directory_t {
 
 Fields:
 
-  - `get_key_fn`: Gets the MDK of a string if it exists in the directory.
-  - `get_string_fn`: Gets the string corresponding to an MDK.
-  - `put_string_fn`: Adds a string in the directory and return the corresponding MDK.
+	- `get_key_fn`: Gets the MDK of a string if it exists in the directory.
+	- `get_string_fn`: Gets the string corresponding to an MDK.
+	- `put_string_fn`: Adds a string in the directory and return the corresponding MDK.
 
 Below the detailed interface of these functions.
 
@@ -137,13 +137,13 @@ typedef int malzmq_md_get_key_fn(char *string, unsigned int *key);
 
 Parameters
 
-  - `string`: String to search for a possible key correspondence. Should not be null.
-  - `key`: return value of the matching MDK for the string, if it exists.
+        - `string`: String to search for a possible key correspondence. Should not be null.
+        - `key`: return value of the matching MDK for the string, if it exists.
 
-Résult:
+Result:
 
-  - 0: execution valid, the return key can be used.
-  - <0: error code, the key parameter is undefined.
+        - 0: execution valid, the return key can be used.
+        - <0: error code, the key parameter is undefined.
 
 ```c
 typedef int malzmq_md_get_string_fn(unsigned int key, char **string);
@@ -151,14 +151,14 @@ typedef int malzmq_md_get_string_fn(unsigned int key, char **string);
 
 Parameters
 
-  - `key`: MDK to search for a possible string correspondence.
-  - `string`: return value of the matching string for the MDK, if it exists. This string is allocated and
-  should be released by free or various specific functions (mal_string_destroy, etc).
+        - `key`: MDK to search for a possible string correspondence.
+        - `string`: return value of the matching string for the MDK, if it exists.
+         This string is allocated and should be released by free or various specific functions (mal_string_destroy, etc).
 
-Résult:
+Result:
 
-  - 0: execution valid, the return string can be used.
-  - <0: error code, the string parameter is undefined.
+        - 0: execution valid, the return string can be used.
+        - <0: error code, the string parameter is undefined.
 
 ```c
 typedef int malzmq_md_put_string_fn(char *string, unsigned int *key);
@@ -166,16 +166,16 @@ typedef int malzmq_md_put_string_fn(char *string, unsigned int *key);
 
 Parameters
 
-  - `string`: string for which we want to create a matching key, should not be null. The directory must
-  not retain the string beyond this call to allow the caller to release it if necessary.
-  - `key`: return value of the matching MDK for the string. Must be strictly positive and strictly less
-  than 231. A distinctive value is created if and only if an existing MDK does not exist for this string
-  in the directory.
+        - `string`: string for which we want to create a matching key, should not be null.
+         The directory must not retain the string beyond this call to allow the caller to release it if necessary.
+        - `key`: return value of the matching MDK for the string. Must be strictly positive and strictly less
+        than 231. A distinctive value is created if and only if an existing MDK does not exist for this string
+        in the directory.
 
-Résult:
+Result:
 
-  - 0: execution valid, the return key can be used.
-  - <0: error code, the string is not registered in the directory and the key parameter is undefined.
+        - 0: execution valid, the return key can be used.
+        - <0: error code, the string is not registered in the directory and the key parameter is undefined.
 
 Note:
 
@@ -205,44 +205,46 @@ malzmq_ctx_t *malzmq_ctx_new(
 
 Parameters
 
-  - `mal_ctx`: MAL context.
-  - `mapping_uri`: Processing fonctions to transform MAL URI in ZMQ URI. If this mapping is null, the
-  default URI mapping functions are used.
-  - `hostname`: IP address used to listen incoming connections.
-  - `port`: port used to listen incoming connections.
-  - `malzmq_header`: Flags and optional fields. The configuration of the MALZMQ header is global to the
-  MALZMQ context.
-  - `encoder`: Encoding context used to encode the MAL headers.
-  - `decoder`: Decoding context used to decode the MAL headers.
-  - `verbose`: Flag allowing to enable/disable the logging traces.
+        - `mal_ctx`: MAL context.
+        - `mapping_uri`: Processing fonctions to transform MAL URI in ZMQ URI. If this mapping is null, the
+        default URI mapping functions are used.
+        - `hostname`: IP address used to listen incoming connections.
+        - `port`: port used to listen incoming connections.
+        - `malzmq_header`: Flags and optional fields. The configuration of the MALZMQ header is global to the
+        MALZMQ context.
+        - `encoder`: Encoding context used to encode the MAL headers.
+        - `decoder`: Decoding context used to decode the MAL headers.
+        - `verbose`: Flag allowing to enable/disable the logging traces.
 
 The constructor performs the following actions:
   
-  - Creating a ZMQ ROUTER socket for accepting connections initiated by other remote MALZMQ
-  contexts: `SOCKET_MAL_ROUTER`. The ZMQ URI used is built from `hostname` and `port` parameters,
-  and the URI mapping functions.
-  - Creating a ZMQ SUB socket for accepting messages published by other remote MALZMQ contexts: `SOCKET_MAL_SUB`. 
-  The ZMQ URI used is built from `hostname` and `port` parameters, and the URI mapping functions.
-  - Creating an `inproc` ZMQ ROUTER socket for communicating with the services registered in the
-  context: `SOCKET_Z_ROUTER`.
-  -	Creating a `zloop` to handle the message routing between the external MALZMQ contexts and the internal services.
+        - Creating a ZMQ ROUTER socket for accepting connections initiated by other remote MALZMQ
+        contexts: `SOCKET_MAL_ROUTER`. The ZMQ URI used is built from `hostname` and `port` parameters,
+        and the URI mapping functions.
+        - Creating a ZMQ SUB socket for accepting messages published by other remote MALZMQ contexts: 
+        `SOCKET_MAL_SUB`. The ZMQ URI used is built from `hostname` and `port` parameters, and the URI
+        mapping functions.
+        - Creating an `inproc` ZMQ ROUTER socket for communicating with the services registered in the
+        context: `SOCKET_Z_ROUTER`.
+        - Creating a `zloop` to handle the message routing between the external MALZMQ contexts
+        and the internal services.
 
 ###	URI mapping functions
 
 The mapping between MAL URI and ZMQ URI is ensured by 3 functions:
 
-  - The first function, `get_p2p_zm`, takes in parameter the MAL URI of a service and returns the ZMQ URI to bind the
-  ZMQ DEALER listening socket corresponding to the MAL context. For example: `malzmq://host:port/service`
-  to `tcp://*:port`.
-  - The second function, `get_ps_zmquri`, takes in parameter the MAL URI of a service and returns the ZMQ URI to connect
-  the ZMQ SUB listening socket corresponding to the MAL context. For example: `malzmq://host:port/service`
-  to `tcp://host:(port+1)` or `pgm://itf;mcast_addr:(port+1)`.
-  - The last function, `get_zmquri_to`, takes in parameter a MAL message to send and returns the corresponding ZMQ URI
-  to the interaction stage and MAL URI of the destination service. For example, if the MAL URI of the destination service is 
-  `malzmq://host1:port1/service`:
-    - for `MAL_INTERACTIONTYPE_INVOKE`, `MAL_IP_STAGE_INVOKE` it returns `tcp://host1:port1`.
-    - for `MAL_INTERACTIONTYPE_PUBSUB`, `MAL_IP_STAGE_PUBSUB_PUBLISH` it returns `tcp://*:(port1+1)` or
-    `epgm://itf;mcast_addr:(port+1)`.
+        - The first function, `get_p2p_zm`, takes in parameter the MAL URI of a service and returns the 
+        ZMQ URI to bind the ZMQ DEALER listening socket corresponding to the MAL context. For example:
+        `malzmq://host:port/service` to `tcp://*:port`.
+        - The second function, `get_ps_zmquri`, takes in parameter the MAL URI of a service and returns
+        the ZMQ URI to connect the ZMQ SUB listening socket corresponding to the MAL context. For example: 
+        `malzmq://host:port/service` to `tcp://host:(port+1)` or `pgm://itf;mcast_addr:(port+1)`.
+        - The last function, `get_zmquri_to`, takes in parameter a MAL message to send and returns the 
+        corresponding ZMQ URI to the interaction stage and MAL URI of the destination service. 
+        For example, if the MAL URI of the destination service is `malzmq://host1:port1/service`:
+          - for `MAL_INTERACTIONTYPE_INVOKE`, `MAL_IP_STAGE_INVOKE` it returns `tcp://host1:port1`.
+          - for `MAL_INTERACTIONTYPE_PUBSUB`, `MAL_IP_STAGE_PUBSUB_PUBLISH` it returns `tcp://*:(port1+1)`
+          or `epgm://itf;mcast_addr:(port+1)`.
 
 Functions for mapping MAL URI to ZMQ URI are given to the MALZMQ context through the malzmq_mapping_uri_t structure. If this
 parameter is null the default functions defined in the MALZMQ transport are used; these functions consider that TCPis used for
@@ -267,13 +269,15 @@ struct _malzmq_mapping_uri_t {
 The default mapping implemented in the POC for MALZMQ transport uses TCP communications for both Point-to-Point and
 Publish/Subscribe:
 
-  -	`malzmq_get_p2p_zmquri_fn`: for `malzmq://host:port/service` it returns `tcp://*:port`.
-  -	`malzmq_get_ps_zmquri_fn`: for `malzmq://host:port/service` it returns `tcp://host:port_ps` with `port_ps=port+1`.
-  -	`malzmq_getzmquri_to_fn`:
-    - If the `interaction_type` and `interaction_stage` fields of the sent message are `MAL_INTERACTIONTYPE_PUBSUB`
-    and `MAL_IP_STAGE_PUBSUB_PUBLISH`: for `malzmq://host1:port1/service` it returns `tcp://host1:port1_ps` with
-    `port1_ps=port1+1`
-    - In all other cases: for `malzmq://host1:port1/service` it returns `tcp://host1:port1`.
+        - `malzmq_get_p2p_zmquri_fn`: for `malzmq://host:port/service` it returns `tcp://*:port`.
+        - `malzmq_get_ps_zmquri_fn`: for `malzmq://host:port/service` it returns `tcp://host:port_ps`
+        with `port_ps=port+1`.
+        - `malzmq_getzmquri_to_fn`:
+           - If the `interaction_type` and `interaction_stage` fields of the sent message are
+           `MAL_INTERACTIONTYPE_PUBSUB` and `MAL_IP_STAGE_PUBSUB_PUBLISH`: for
+            `malzmq://host1:port1/service it returns `tcp://host1:port1_ps` with
+           `port1_ps=port1+1`
+           - In all other cases: for `malzmq://host1:port1/service` it returns `tcp://host1:port1`.
 
 Start-up
 --------
@@ -291,12 +295,13 @@ zloop behavior
 The zloop listens (`SOCKET_MAL_ROUTER` and `SOCKET_MAL_SUB`) to the messages sent by remote MALZMQ
 contexts. When ZMQ message is received, the following actions are performed:
 
-  -	Gets and destroy of the first frame containing the identity of the caller (currently, the ZMQ connections
-  are only used in one direction, therefore the identity of the caller is not retained).
-  -	The next frame is not extracted (zmsg_pop) from the ZMQ message, but only read (zmsg_next) enabling to send
-  this ZMQ message to the recipient endpoint.
-  -	Only the `URI To` field is decoded, this field identifies the inproc `DEALER` socket used by the recipient endpoint.
-  -	The ZMQ message is forwarded to the recipient endpoint through the inproc `SOCKET_ACTOR_ROUTER`.
+        - Gets and destroy of the first frame containing the identity of the caller (currently, the ZMQ
+        connections are only used in one direction, therefore the identity of the caller is not retained).
+        - The next frame is not extracted (zmsg_pop) from the ZMQ message, but only read (zmsg_next)
+        enabling to send this ZMQ message to the recipient endpoint.
+        - Only the `URI To` field is decoded, this field identifies the inproc `DEALER` socket used by the
+        recipient endpoint.
+        - The ZMQ message is forwarded to the recipient endpoint through the inproc `SOCKET_ACTOR_ROUTER`.
 
 Message receiving
 -----------------
@@ -306,15 +311,15 @@ connected to the ZMQ ROUTER socket of the zloop.
 
 When receiving a MAL message the following actions are performed:
 
-  -	The unique frame of the ZMQ message is extracted.
-  -	A `mal_message` structure is instanciated.
-  -	The MAL header fields are decoded using MAL Binary encoding. The optional unencoded fields are set using the
-  global MALZMQ configuration header.
-  -	The MAL message body is directly set from the ZMQ frame (`data` field of `zframe`) without copy. Consequently,
-  the ZMQ frame can only be destroyed at the time of the destruction of MAL message. The `body_owner` field of the
-  message is affected with the MAL ZMQ frame.
-  -	The built message is returned to the caller, the destruction of the MAL message is the responsibility of the
-  handler of this message.
+        - The unique frame of the ZMQ message is extracted.
+        - A `mal_message` structure is instanciated.
+        - The MAL header fields are decoded using MAL Binary encoding. The optional unencoded fields are set 
+        using the global MALZMQ configuration header.
+        - The MAL message body is directly set from the ZMQ frame (`data` field of `zframe`) without copy. 
+        Consequently, the ZMQ frame can only be destroyed at the time of the destruction of MAL message. The
+         `body_owner` field of the message is affected with the MAL ZMQ frame.
+        - The built message is returned to the caller, the destruction of the MAL message is the responsibility
+        of the handler of this message.
 
 Virtual function to build URI
 -----------------------------
@@ -329,9 +334,9 @@ The underlying transport protocol used by ZMQ is not specified in the URI. It is
 
 In some cases, the MALZMQ context could optimize communication using a more efficient transport protocol, for example:
 
-  - `ipc`: if both consumer and provider are on the same host.
-  - `inproc`: if both consumer and provider are in the same process. Be careful in this case to the starting order
-  as *inproc* does not ensure the temporal decoupling for ZMQ sockets.
+        - `ipc`: if both consumer and provider are on the same host.
+        - `inproc`: if both consumer and provider are in the same process. Be careful in this case to the 
+        starting order as *inproc* does not ensure the temporal decoupling for ZMQ sockets.
 
 This optimization is not currently implemented in the prototype.
 
@@ -342,24 +347,24 @@ A MALZMQ endpoint is created and returned as an untyped pointer `void *`.
 
 Specific MALZMQ endpoint datas are:
 
-  -	the MALZMQ context,
-  -	the corresponding MAL endpoint,
-  -	the listening inproc ZMQ DEALER socket used to receive forwarded messages from the zloop,
-  -	an hashtable containing the ZMQ sockets open to the remote MALZMQ contexts.
+        - the MALZMQ context,
+        - the corresponding MAL endpoint,
+        - the listening inproc ZMQ DEALER socket used to receive forwarded messages from the zloop,
+        - an hashtable containing the ZMQ sockets open to the remote MALZMQ contexts.
 
 During the initialization of the endpoint, the following actions are performed:
 
-  -	creating a ZMQ DEALER socket,
-  -	registering this socket identity with the endpoint URI,
-  -	connection of this DEALER socket with the ROUTER socket handled by the zloop (ZLOOP_ENDPOINTS_SOCKET_URI)
+        - creating a ZMQ DEALER socket,
+        - registering this socket identity with the endpoint URI,
+        - connection of this DEALER socket with the ROUTER socket handled by the zloop (ZLOOP_ENDPOINTS_SOCKET_URI)
 
 Virtual function to send a message
 ----------------------------------
 
 The message's MAL URI is converted into a ZMQ URI:
 
-  - MAL URI format: `malzmq://<hostname>:<port>/<id>`
-  - ZMQ URI format: `<protocole zmq>://<hostname>:<port>`
+        - MAL URI format: `malzmq://<hostname>:<port>/<id>`
+        - ZMQ URI format: `<protocole zmq>://<hostname>:<port>`
 
 A ZMQ DEALER socket connected to this URI is searched in the hashtable owned by the endpoint. If the socket is not
 found then a new one is created and registered in the table (the key is the ZMQ URI).
@@ -373,15 +378,15 @@ A MALZMQ poller is created and returned as an untyped pointer `void *`.
 
 Specific MALZMQ poller datas are:
 
-  - the MALZMQ context,
-  - the corresponding MAL poller,
-  - the ZMQ zpoller listening on sockets of endpoints,
-  - the list of endpoints associated to this poller.
+        - the MALZMQ context,
+        - the corresponding MAL poller,
+        - the ZMQ zpoller listening on sockets of endpoints,
+        - the list of endpoints associated to this poller.
 
 During the initialization of the poller, the following actions are performed:
 
-  - creation of a ZMQ zpoller,
-  - creation ofn empty list of endpoints.
+        - creation of a ZMQ zpoller,
+        - creation ofn empty list of endpoints.
 
 
 Virtual function to add an endpoint to a poller

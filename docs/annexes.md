@@ -7,12 +7,12 @@ Annexes
 This example (see https://github.com/ccsdsmo/malc/blob/master/xml/TestArea.xml) allows to test
 various aspects of the MAL specification:
 
-  -	Interaction patterns: SEND, SUBMIT, INVOKE, REQUEST, PROGRESS and PUBSUB.
-  -	Composite structure.
-  -	Element list.
-  -	Message body with multiples elements.
-  -	Optional field ('canBeNull=true')
-  -	Polymorphism of the last element of the message body.
+        - Interaction patterns: SEND, SUBMIT, INVOKE, REQUEST, PROGRESS and PUBSUB.
+        - Composite structure.
+        - Element list.
+        - Message body with multiples elements.
+        - Optional field ('canBeNull=true')
+        - Polymorphism of the last element of the message body.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
