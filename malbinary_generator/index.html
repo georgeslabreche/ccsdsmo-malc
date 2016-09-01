@@ -54,30 +54,30 @@
                 
                 
                     <li >
-                        <a href="..">Accueil</a>
+                        <a href="..">Home</a>
                     </li>
                 
                 
                 
                     <li >
-                        <a href="../tutorial/">Tutoriel</a>
+                        <a href="../tutorial/">Tutorial</a>
                     </li>
                 
                 
                 
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">APIs MAL <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">MAL APIs <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
 <li >
-    <a href="../mal_attributes/">Attributs</a>
+    <a href="../mal_attributes/">Attributes</a>
 </li>
 
                         
                             
 <li >
-    <a href="../mal_encoding/">Encodage</a>
+    <a href="../mal_encoding/">Encoding</a>
 </li>
 
                         
@@ -126,12 +126,12 @@
                 
                 
                     <li class="dropdown active">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Générateurs <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Generators <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
 <li >
-    <a href="../stub_generator/">Stubs de service</a>
+    <a href="../stub_generator/">Stubs generator</a>
 </li>
 
                         
@@ -147,7 +147,7 @@
                 
                 
                     <li >
-                        <a href="../annexes/">Annexes</a>
+                        <a href="../annexes/">Annexs</a>
                     </li>
                 
                 
@@ -183,270 +183,263 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#generation-du-code-dencodage-malbinary">Génération du code d'encodage 'malbinary'</a></li>
+        <li class="main active"><a href="#malbinary-encoding-code-generation">'malbinary' encoding code generation</a></li>
         
-            <li><a href="#calcul-de-la-taille-encodee">Calcul de la taille encodée</a></li>
+            <li><a href="#computing-the-encoding-length">Computing the encoding length</a></li>
         
-            <li><a href="#encodage">Encodage</a></li>
+            <li><a href="#encoding">Encoding</a></li>
         
-            <li><a href="#decodage">Décodage</a></li>
+            <li><a href="#decoding">Decoding</a></li>
         
     
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="generation-du-code-dencodage-malbinary">Génération du code d'encodage 'malbinary'</h1>
-<p>Ce code est partagé par les fonctions d'encodage générées par Area et par Composite (voir sections 10.1.2 et 10.2.2).</p>
-<h2 id="calcul-de-la-taille-encodee">Calcul de la taille encodée</h2>
-<p>Les paramètres suivants doivent être transmis par le code appelant :</p>
+<h1 id="malbinary-encoding-code-generation">'malbinary' encoding code generation</h1>
+<p>This code is used for both Area and Composite encoding functions (cf sections 10.1.2 and 10.2.2).</p>
+<h2 id="computing-the-encoding-length">Computing the encoding length</h2>
+<p>The following parameters are provided by the calling code:</p>
 <ul>
-<li><element> : élément MAL à encoder en fonction de son type</li>
-<li>presence_flag : champ de présence si l'élément n'est pas de type pointeur</li>
-<li>attribute_tag : identifiant du type d'Attribut en cas de polymorphisme d'Attribut</li>
-<li>malbinary_encoder : configuration de l'encodeur</li>
-<li>encoding_length : résultat du calcul</li>
+<li>&lt;<em>element</em>&gt;: MAL element to encode depending on its type</li>
+<li>presence_flag: presence flag when the element is not of a pointer type</li>
+<li>attribute_tag: identifier of the Attribute type in case of polymorphism of Attribute</li>
+<li>short_form: identifier of the type in case of polymorphism of Element</li>
+<li>encoder: configuration of the encoder, which should have been created as a malbinary encoder</li>
+<li>cursor: a virtual index in the encoding structures, holds the result of the encoding length computation</li>
 </ul>
-<h3 id="champ-optionnel">Champ optionnel</h3>
-<p>Ajout de la taille du champ de présence :</p>
-<pre><code class="c">(*encoding_length) += MALBINARY_PRESENCE_FLAG_SIZE;
+<h3 id="non-mandatory-field">Non mandatory field</h3>
+<p>Add the size of the presence flag:</p>
+<pre><code class="c">mal_encoder_add_presence_flag_encoding_length(encoder, presence_flag, cursor);
 </code></pre>
 
-<p>Si le champ est de type pointeur :</p>
+<p>If the field is of a pointer type:</p>
 <pre><code class="c">if (&lt;element&gt; != NULL) {
 </code></pre>
 
-<p>Sinon, test du champ de présence :</p>
+<p>Else test the presence flag:</p>
 <pre><code class="c">if (presence_flag) {
 </code></pre>
 
-<p>Ajout de la taille de l'élément encodé. Voir section 11.1.2.</p>
+<p>Add the size of the encoded element. Cf section 11.1.2.</p>
 <pre><code class="c">}
 </code></pre>
 
-<h3 id="champ-non-optionnel">Champ non optionnel</h3>
-<h4 id="polymorphisme">Polymorphisme</h4>
-<p>En cas de polymorphisme d'Attribut :</p>
-<pre><code class="c">(*encoding_length) += MALBINARY_ATTRIBUTE_TAG_SIZE;
+<h3 id="mandatory-field">Mandatory field</h3>
+<h4 id="polymorphism">Polymorphism</h4>
+<p>In case of polymorphisme of Attribute:</p>
+<pre><code class="c">mal_encoder_add_attribute_tag_encoding_length(encoder, attribute_tag, cursor);
 </code></pre>
 
-<p>En cas de polymorphisme d'élément :</p>
-<pre><code class="c">(*encoding_length) += MALBINARY_SHORT_FORM_SIZE;
+<p>In case of polymorphisme of Element:</p>
+<pre><code class="c">mal_encoder_add_short_form_encoding_length(encoder, short_form, cursor);
 </code></pre>
 
-<h4 id="valeur-de-lelement">Valeur de l'élément</h4>
-<p>Si le type déclaré est <code>MAL::Attribute</code> :</p>
-<pre><code class="c">rc = malbinary_encoder_add_attribute_encoding_length(malbinary_encoder,
-  &lt;attribute_tag&gt;, &lt;element&gt;, encoding_length);
+<h4 id="element-value">Element value</h4>
+<p>If the declared type is <code>MAL::Attribute</code>:</p>
+<pre><code class="c">rc = mal_encoder_add_attribute_encoding_length(encoder,
+  attribute_tag, &lt;element&gt;, cursor);
 </code></pre>
 
-<p>Si le type de l'élément est un Attribut :</p>
-<pre><code class="c">rc = malbinary_encoder_add_&lt;attribute&gt;_encoding_length(malbinary_encoder,
-  &lt;element&gt;, encoding_length);
+<p>If the element type is an Attribute:</p>
+<pre><code class="c">rc = mal_encoder_add_&lt;attribute&gt;_encoding_length(encoder, &lt;element&gt;, cursor);
 </code></pre>
 
-<p>Si l'élément est de type Composite :</p>
+<p>If the element type is a Composite:</p>
 <pre><code class="c">rc = &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_add_encoding_length_malbinary(
-  &lt;element&gt;, malbinary_encoder, encoding_length);
+  &lt;element&gt;, encoder, cursor);
 </code></pre>
 
-<p>Si l'élément est de type liste:</p>
+<p>If the element type is a list:</p>
 <pre><code class="c">rc = &lt;area&gt;_[&lt;service&gt;_]&lt;type&gt;_list_add_encoding_length_malbinary(
-  &lt;element&gt;, malbinary_encoder, encoding_length);
+  &lt;element&gt;, encoder, cursor);
 </code></pre>
 
-<p>Si l'élément est de type Enumeration :</p>
+<p>If the element type is an Enumeration:</p>
 <ul>
-<li>Si la taille de l'énumération est inférieure à 2^8 :</li>
+<li>If the enumeration size is lower than 2^8:</li>
 </ul>
-<pre><code class="c">(*encoding_length) += MALBINARY_SMALL_ENUM_SIZE;
-</code></pre>
-
-<ul>
-<li>Si la taille de l'énumération est inférieure à 2^16 :</li>
-</ul>
-<pre><code class="c">(*encoding_length) += MALBINARY_MEDIUM_ENUM_SIZE;
+<pre><code class="c">    rc = mal_encoder_add_small_enum_encoding_length(encoder, &lt;element&gt;, cursor);
 </code></pre>
 
 <ul>
-<li>Si la taille de l'énumération est inférieure à 2^32 :</li>
+<li>If the enumeration size is lower than 2^16:</li>
 </ul>
-<pre><code class="c">(*encoding_length) += MALBINARY_LARGE_ENUM_SIZE;
+<pre><code class="c">    rc = mal_encoder_add_medium_enum_encoding_length(encoder, &lt;element&gt;, cursor);
 </code></pre>
 
-<p>Test du code d'erreur :</p>
+<ul>
+<li>If the enumeration size is lower than 2^32:</li>
+</ul>
+<pre><code class="c">    rc = mal_encoder_add_large_enum_encoding_length(encoder, &lt;element&gt;, cursor);
+</code></pre>
+
+<p>Test the error code:</p>
 <pre><code class="c">if (rc &lt; 0) return rc;
 </code></pre>
 
-<h2 id="encodage">Encodage</h2>
-<p>Les paramètres suivants doivent être transmis par le code appelant :</p>
+<h2 id="encoding">Encoding</h2>
+<p>The following parameters are provided by the calling code:</p>
 <ul>
-<li><code>&lt;element&gt;</code> : élément MAL à encoder en fonction de son type</li>
-<li><code>presence_flag</code> : champ de présence si l'élément n'est pas de type pointeur</li>
-<li><code>attribute_tag</code> : identifiant du type d'Attribut en cas de polymorphisme d'Attribut</li>
-<li><code>malbinary_encoder</code> : configuration de l'encodeur MALBinary</li>
-<li><code>bytes</code> : tableau d'octets où les éléments MAL sont encodés</li>
-<li><code>offset</code> : index de début de l'encodage</li>
+<li>&lt;<em>element</em>&gt;: MAL element to encode depending on its type</li>
+<li>presence_flag: presence flag when the element is not of a pointer type</li>
+<li>attribute_tag: identifier of the Attribute type in case of polymorphism of Attribute</li>
+<li>short_form: identifier of the type in case of polymorphism of Element</li>
+<li>encoder: configuration of the encoder, which should have been created as a malbinary encoder</li>
+<li>cursor: a virtual index in the encoding structures, holds the result of the encoding length computation</li>
 </ul>
-<h3 id="champ-optionnel_1">Champ optionnel</h3>
-<p>Encodage du champ de présence :</p>
-<pre><code class="c">rc = malbinary_encoder_encode_presence_flag(malbinary_encoder,
-  bytes, offset, &lt;presence_flag&gt;);
+<h3 id="non-mandatory-field_1">Non mandatory field</h3>
+<p>Encoding the presence flag:</p>
+<pre><code class="c">rc = mal_encoder_encode_presence_flag(encoder, cursor, &lt;presence_flag&gt;);
 if (rc &lt; 0) return rc;
 </code></pre>
 
-<p>Test du champ de présence :</p>
+<p>Test the presence flag:</p>
 <pre><code class="c">if (&lt;presence_flag&gt;) {
 </code></pre>
 
-<p>Encodage de l'élément. Voir section 11.2.2.</p>
+<p>Encoding the element. Cf section 11.2.2.</p>
 <pre><code class="c">}
 </code></pre>
 
-<h3 id="champ-non-optionnel_1">Champ non optionnel</h3>
-<h4 id="polymorphisme_1">Polymorphisme</h4>
-<p>En cas de polymorphisme d'Attribut, encodage du tag d'attribut (voir section 5.2.2 du livre MAL/SPP) :</p>
-<pre><code class="c">rc = malbinary_encoder_encode_attribute_tag(malbinary_encoder,
-  bytes, offset, &lt;attribute_tag&gt;);
+<h3 id="mandatory-field_1">Mandatory field</h3>
+<h4 id="polymorphism_1">Polymorphism</h4>
+<p>In case of polymorphism of Attribute, encoding the attribute tag (cf section 5.2.2 of the MAL/SPP book):</p>
+<pre><code class="c">rc = mal_encoder_encode_attribute_tag(encoder, cursor, &lt;attribute_tag&gt;);
 </code></pre>
 
-<p>En cas de polymorphisme d'élément :</p>
-<pre><code class="c">rc = malbinary_encoder_encode_short_form(malbinary_encoder,
-  bytes, offset, &lt;AREA&gt;_[&lt;SERVICE&gt;_]&lt;TYPE&gt;_SHORT_FORM);
+<p>In case of polymorphism of Element:</p>
+<pre><code class="c">rc = mal_encoder_encode_short_form(encoder,
+  cursor, &lt;AREA&gt;_[&lt;SERVICE&gt;_]&lt;TYPE&gt;_SHORT_FORM);
 </code></pre>
 
-<p>Test du code d'erreur :</p>
+<p>Test the error code:</p>
 <pre><code class="c">if (rc &lt; 0) return rc;
 </code></pre>
 
-<h4 id="valeur-de-lelement_1">Valeur de l'élément</h4>
-<p>Si le type déclaré est <code>MAL::Attribute</code> :</p>
-<pre><code class="c">rc = malbinary_encoder_encode_attribute(malbinary_encoder,
-  bytes, offset, &lt;attribute_tag&gt;, &lt;element&gt;);
+<h4 id="element-value_1">Element value</h4>
+<p>If the declared type is <code>MAL::Attribute</code>:</p>
+<pre><code class="c">rc = mal_encoder_encode_attribute(encoder,
+  cursor, &lt;attribute_tag&gt;, &lt;element&gt;);
 </code></pre>
 
-<p>Si le type de l'élément est un Attribut :</p>
-<pre><code class="c">rc = malbinary_encoder_encode_&lt;attribute&gt;(malbinary_encoder,
-  bytes, offset, &lt;element&gt;);
+<p>If the element type is an Attribute:</p>
+<pre><code class="c">rc = mal_encoder_encode_&lt;attribute&gt;(encoder,
+  cursor, &lt;element&gt;);
 </code></pre>
 
-<p>Si l'élément est de type Composite:</p>
+<p>If the element type is a Composite:</p>
 <pre><code class="c">rc = &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_encode_malbinary(
-  &lt;element&gt;, malbinary_encoder, bytes, offset);
+  &lt;element&gt;, encoder, cursor);
 </code></pre>
 
-<p>Si l'élément est de type liste:</p>
+<p>If the element type is a list:</p>
 <pre><code class="c">rc = &lt;area&gt;_[&lt;service&gt;_]&lt;type&gt;_list_encode_malbinary(
-  &lt;element&gt;, malbinary_encoder, encoding_length);
+  &lt;element&gt;, encoder, cursor);
 </code></pre>
 
-<p>Si l'élément est de type Enumeration :</p>
+<p>If the element type is an Enumeration:</p>
 <ul>
-<li>Si la taille de l'énumération est inférieure à 2^8 :</li>
+<li>If the enumeration size is lower than 2^8:</li>
 </ul>
-<pre><code class="c">rc = malbinary_encoder_encode_small_enum(malbinary_encoder, bytes,
-  offset, &lt;element&gt;);
-</code></pre>
-
-<ul>
-<li>Si la taille de l'énumération est inférieure à 2^16 :</li>
-</ul>
-<pre><code class="c">rc = malbinary_encoder_encode_medium_enum(malbinary_encoder, bytes,
-  offset, &lt;element&gt;);
+<pre><code class="c">    rc = mal_encoder_encode_small_enum(encoder, cursor, &lt;element&gt;);
 </code></pre>
 
 <ul>
-<li>Si la taille de l'énumération est inférieure à 2^32 :</li>
+<li>If the enumeration size is lower than 2^16:</li>
 </ul>
-<pre><code class="c">rc = malbinary_encoder_encode_large_enum(malbinary_encoder, bytes,
-  offset, &lt;element&gt;);
+<pre><code class="c">    rc = mal_encoder_encode_medium_enum(encoder, cursor, &lt;element&gt;);
 </code></pre>
 
-<p>Test du code d'erreur :</p>
+<ul>
+<li>If the enumeration size is lower than 2^32:</li>
+</ul>
+<pre><code class="c">    rc = mal_encoder_encode_large_enum(encoder, cursor, &lt;element&gt;);
+</code></pre>
+
+<p>Test the error code:</p>
 <pre><code class="c">if (rc &lt; 0) return rc;
 </code></pre>
 
-<h2 id="decodage">Décodage</h2>
-<p>Les paramètres suivants doivent être transmis par le code appelant :</p>
+<h2 id="decoding">Decoding</h2>
+<p>The following parameters are provided by the calling code:</p>
 <ul>
-<li><code>presence_flag</code> : champ de présence décodé</li>
-<li><code>malbinary_decoder</code> : configuration de l'encodeur MALBinary</li>
-<li><code>bytes</code> : tableau d'octets où les éléments MAL sont encodés</li>
-<li><code>offset</code> : index de début du décodage</li>
+<li>presence_flag: presence flag when the element is not of a pointer type</li>
+<li>decoder: configuration of the decoder, which should have been created as a malbinary decoder</li>
+<li>cursor: a virtual index in the encoding structures</li>
 </ul>
-<h3 id="champ-optionnel_2">Champ optionnel</h3>
-<p>Décodage du champ de présence :</p>
-<pre><code class="c">rc = malbinary_decoder_decode_presence_flag(malbinary_decoder,
-  bytes, offset, &amp;presence_flag);
+<h3 id="non-mandatory-field_2">Non mandatory field</h3>
+<p>Decoding the presence flag:</p>
+<pre><code class="c">rc = mal_decoder_decode_presence_flag(decoder, cursor, &amp;presence_flag);
 if (rc &lt; 0) return rc;
 if (presence_flag) {
 </code></pre>
 
-<p>Décodage de l'élément. Voir section 11.3.2.</p>
+<p>Decoding the element. Cf section 11.3.2.</p>
 <pre><code class="c">}
 </code></pre>
 
-<p>Si le champ est de type pointeur :</p>
+<p>If the field is of a pointer type:</p>
 <pre><code class="c">else {
   &lt;element&gt; = NULL;
-
 }
 </code></pre>
 
-<h3 id="champ-non-optionnel_2">Champ non optionnel</h3>
-<h4 id="polymorphisme-dattribut">Polymorphisme d'Attribut</h4>
-<p>En cas de polymorphisme d'Attribut, décodage du tag d'Attribut :</p>
+<h3 id="mandatory-field_2">Mandatory field</h3>
+<h4 id="polymorphism-of-attribute">Polymorphism of Attribute</h4>
+<p>In case of polymorphism of Attribute, decoding the Attribute tag:</p>
 <pre><code class="c">&lt;unsigned char attribute_tag;&gt;
 </code></pre>
 
-<pre><code class="c">rc = malbinary_decoder_decode_attribute_tag(malbinary_decoder,
-  bytes, offset, &amp;&lt;attribute_tag&gt;);
+<pre><code class="c">rc = mal_decoder_decode_attribute_tag(decoder,
+  cursor, &amp;&lt;attribute_tag&gt;);
 </code></pre>
 
-<p>Test du code d'erreur :</p>
+<p>Test the error code:</p>
 <pre><code class="c">if (rc &lt; 0) return rc;
 </code></pre>
 
-<p>Décodage de l'attribut :</p>
-<pre><code class="c">rc = malbinary_decoder_decode_attribute(malbinary_decoder,
-    bytes, offset, attribute_tag , &amp;&lt;element&gt;);
+<p>Decoding the attribute:</p>
+<pre><code class="c">rc = mal_decoder_decode_attribute(decoder,
+    cursor, attribute_tag , &amp;&lt;element&gt;);
 </code></pre>
 
-<h4 id="polymorphisme-delement">Polymorphisme d'élément</h4>
-<p>En cas de polymorphisme d'élément, décodage du <code>short form</code> :</p>
-<pre><code class="c">rc = malbinary_decoder_decode_short_form(malbinary_decoder,
-  bytes, offset, &amp;element_holder-&gt;short_form);
+<h4 id="polymorphism-of-element">Polymorphism of Element</h4>
+<p>In case of polymorphism of Element, decoding the <code>short form</code>:</p>
+<pre><code class="c">rc = mal_decoder_decode_short_form(decoder,
+  cursor, &amp;element_holder-&gt;short_form);
 </code></pre>
 
-<p>Test du code d'erreur :</p>
+<p>Test the error code:</p>
 <pre><code class="c">if (rc &lt; 0) return rc;
 </code></pre>
 
-<p>Pour chaque valeur de 'short_form' qui correspond à un type conforme au type abstrait :</p>
+<p>For each possible value of 'short_form' corresponding to a concrete type conforming to the abstract type:</p>
 <pre><code class="c">if (element_holder-&gt;short_form == &lt;AREA&gt;_[&lt;SERVICE&gt;_]&lt;TYPE&gt;_SHORT_FORM) {
 </code></pre>
 
-<p>Décodage d'un élément du type spécifié. Voir section 11.3.2.3. L'élément est décodé directement dans la structure :</p>
+<p>Decoding an element of the specified type. Cf section 11.3.2.3.
+The element is decoded directly in the structure:</p>
 <ul>
-<li>Si le type de l'élément est un Attribut :</li>
+<li>If the element type is an Attribute:</li>
 </ul>
-<pre><code class="c">      &amp;element_holder-&gt;value.&lt;attribute&gt;_value
+<pre><code class="c">    &amp;element_holder-&gt;value.&lt;attribute&gt;_value
 </code></pre>
 
 <ul>
-<li>Si l'élément est de type Composite :</li>
+<li>If the element type is a Composite:</li>
 </ul>
 <pre><code class="c">      &amp;element_holder-&gt;value.composite_value
 </code></pre>
 
 <ul>
-<li>Si l'élément est de type liste :</li>
+<li>If the element type is a list:</li>
 </ul>
 <pre><code class="c">      &amp;element_holder-&gt;value.list_value
 </code></pre>
 
 <ul>
-<li>Si l'élément est de type Enumeration :</li>
+<li>If the element type is an Enumeration:</li>
 </ul>
 <pre><code class="c">      &amp;element_holder-&gt;value.enumerated_value
 </code></pre>
@@ -454,56 +447,56 @@ if (presence_flag) {
 <pre><code class="c">}[ else ]
 </code></pre>
 
-<h4 id="valeur-de-lelement_2">Valeur de l'élément</h4>
-<p>Si le type de l'élément est un Attribut :</p>
-<pre><code class="c">rc = malbinary_decoder_decode_&lt;attribute&gt;(malbinary_decoder,
-  bytes, offset, &amp;&lt;element&gt;);
+<h4 id="element-value_2">Element value</h4>
+<p>If the element type is an Attribute:</p>
+<pre><code class="c">rc = mal_decoder_decode_&lt;attribute&gt;(decoder,
+  cursor, &amp;&lt;element&gt;);
 </code></pre>
 
-<p>Si l'élément est de type Composite :</p>
+<p>If the element type is a Composite:</p>
 <pre><code class="c">&lt;element&gt; = &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_new();
 if (&lt;element&gt; == NULL) return -1;
 rc = &lt;area&gt;_[&lt;service&gt;_]&lt;composite&gt;_decode_malbinary(
-  &lt;element&gt;, malbinary_decoder, bytes, offset);
+  &lt;element&gt;, decoder, cursor);
 </code></pre>
 
-<p>Si l'élément est de type liste :</p>
+<p>If the element type is a list:</p>
 <pre><code class="c">&lt;element&gt; = &lt;area&gt;_[&lt;service&gt;_]&lt;type&gt;_list_new(0);
 if (&lt;element&gt; == NULL) return -1;
 rc = &lt;area&gt;_[&lt;service&gt;_]&lt;type&gt;_list_decode_malbinary(
-  &lt;element&gt;, malbinary_decoder, bytes, offset);
+  &lt;element&gt;, decoder, cursor);
 </code></pre>
 
-<p>Si l'élément est de type Enumeration :</p>
+<p>If the element type is an Enumeration :</p>
 <pre><code class="c">int enumerated_value;
 </code></pre>
 
 <ul>
-<li>Si la taille de l'énumération est inférieure ou égale à 2^8 :</li>
+<li>If the enumeration size is lower than 2^8:</li>
 </ul>
-<pre><code class="c">rc = malbinary_decoder_decode_small_enum(malbinary_decoder,
-  bytes, offset, &amp;enumerated_value);
+<pre><code class="c">    rc = mal_decoder_decode_small_enum(decoder,
+  cursor, &amp;enumerated_value);
 </code></pre>
 
 <ul>
-<li>Si la taille de l'énumération est inférieure ou égale à 2^16 :</li>
+<li>If the enumeration size is lower than 2^16:</li>
 </ul>
-<pre><code class="c">rc = malbinary_decoder_decode_medium_enum(malbinary_decoder,
-  bytes, offset, &amp;enumerated_value);
+<pre><code class="c">    rc = mal_decoder_decode_medium_enum(decoder,
+  cursor, &amp;enumerated_value);
 </code></pre>
 
 <ul>
-<li>Si la taille de l'énumération est inférieure ou égale à 2^32 :</li>
+<li>If the enumeration size is lower than 2^32:</li>
 </ul>
-<pre><code class="c">rc = malbinary_decoder_decode_large_enum(malbinary_decoder,
-  bytes, offset, &amp;enumerated_value);
+<pre><code class="c">    rc = mal_decoder_decode_large_enum(decoder,
+  cursor, &amp;enumerated_value);
 </code></pre>
 
-<p>Affectation de l'élément décodé :</p>
+<p>Setting the decoded value:</p>
 <pre><code class="c">&lt;element&gt; = (&lt;area&gt;_[&lt;service&gt;_]&lt;enum&gt;_t) enumerated_value;
 </code></pre>
 
-<p>Test du code d'erreur :</p>
+<p>Test the error code:</p>
 <pre><code class="c">if (rc &lt; 0) return rc;
 </code></pre></div>
             

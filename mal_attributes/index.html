@@ -9,7 +9,7 @@
         
         <link rel="shortcut icon" href="../img/favicon.ico">
 
-	<title>Attributs - MAL C API</title>
+	<title>Attributes - MAL C API</title>
 
         <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../css/font-awesome-4.5.0.css" rel="stylesheet">
@@ -54,30 +54,30 @@
                 
                 
                     <li >
-                        <a href="..">Accueil</a>
+                        <a href="..">Home</a>
                     </li>
                 
                 
                 
                     <li >
-                        <a href="../tutorial/">Tutoriel</a>
+                        <a href="../tutorial/">Tutorial</a>
                     </li>
                 
                 
                 
                     <li class="dropdown active">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">APIs MAL <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">MAL APIs <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
 <li class="active">
-    <a href="./">Attributs</a>
+    <a href="./">Attributes</a>
 </li>
 
                         
                             
 <li >
-    <a href="../mal_encoding/">Encodage</a>
+    <a href="../mal_encoding/">Encoding</a>
 </li>
 
                         
@@ -126,12 +126,12 @@
                 
                 
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Générateurs <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Generators <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
 <li >
-    <a href="../stub_generator/">Stubs de service</a>
+    <a href="../stub_generator/">Stubs generator</a>
 </li>
 
                         
@@ -147,7 +147,7 @@
                 
                 
                     <li >
-                        <a href="../annexes/">Annexes</a>
+                        <a href="../annexes/">Annexs</a>
                     </li>
                 
                 
@@ -183,40 +183,40 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#api-dattributs-mal">API d'Attributs MAL</a></li>
+        <li class="main active"><a href="#mal-attribute-api">MAL Attribute API</a></li>
         
-            <li><a href="#type-booleen">Type booléen</a></li>
+            <li><a href="#boolean-type">Boolean type</a></li>
         
-            <li><a href="#types-numeriques-entiers">Types numériques entiers</a></li>
+            <li><a href="#integer-types">Integer types</a></li>
         
-            <li><a href="#types-numeriques-flotants">Types numériques flotants</a></li>
+            <li><a href="#floating-point-types">Floating point types</a></li>
         
             <li><a href="#dates">Dates</a></li>
         
-            <li><a href="#duree">Durée</a></li>
+            <li><a href="#duration">Duration</a></li>
         
-            <li><a href="#types-chaine-de-caracteres">Types chaîne de caractères</a></li>
+            <li><a href="#string-type">String type</a></li>
         
             <li><a href="#blob">Blob</a></li>
         
-            <li><a href="#polymorphisme-dattribut">Polymorphisme d'Attribut</a></li>
+            <li><a href="#mal-attribute-polymorphism">MAL Attribute polymorphism</a></li>
         
-            <li><a href="#short-forms-dattribut">Short forms d'Attribut</a></li>
+            <li><a href="#attribute-short-forms">Attribute short forms</a></li>
         
     
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="api-dattributs-mal">API d'Attributs MAL</h1>
-<p>L'API d'Attributs MAL définit les types C utilisés pour représenter les Attributs MAL.</p>
-<h2 id="type-booleen">Type booléen</h2>
-<p>Définition du type <code>MAL::Boolean</code> :</p>
+<h1 id="mal-attribute-api">MAL Attribute API</h1>
+<p>The MAL Attribute API defines the <em>C</em> types used to represent the MAL attributes.</p>
+<h2 id="boolean-type">Boolean type</h2>
+<p>Definition of type <code>MAL::Boolean</code>:</p>
 <pre><code class="c">    typedef bool mal_boolean_t;
 </code></pre>
 
-<h2 id="types-numeriques-entiers">Types numériques entiers</h2>
-<p>Définition des types <code>MAL::Octet</code>, <code>MAL::UOctet</code>, <code>MAL::Short</code>, <code>MAL::UShort</code>, <code>MAL::Integer</code>, <code>MAL::UInteger</code>, <code>MAL::Long</code>, <code>MAL::ULong</code> :</p>
+<h2 id="integer-types">Integer types</h2>
+<p>Definition of types <code>MAL::Octet</code>, <code>MAL::UOctet</code>, <code>MAL::Short</code>, <code>MAL::UShort</code>, <code>MAL::Integer</code>, <code>MAL::UInteger</code>, <code>MAL::Long</code>, <code>MAL::ULong</code>:</p>
 <pre><code class="c">    typedef char mal_octet_t;
     typedef unsigned char mal_uoctet_t;
     typedef short mal_short_t;
@@ -227,82 +227,85 @@
     typedef unsigned long mal_ulong_t;
 </code></pre>
 
-<h2 id="types-numeriques-flotants">Types numériques flotants</h2>
-<p>Définition des types <code>MAL::Float</code>, <code>MAL::Double</code>.</p>
+<h2 id="floating-point-types">Floating point types</h2>
+<p>Definition of types <code>MAL::Float</code>, <code>MAL::Double</code>.</p>
 <pre><code class="c">    typedef float mal_float_t;
     typedef double mal_double_t;
 </code></pre>
 
 <h2 id="dates">Dates</h2>
-<p>Définition des types <code>MAL::Time</code>, <code>MAL::FineTime</code> :</p>
+<p>Definition of types <code>MAL::Time</code>, <code>MAL::FineTime</code>:</p>
 <pre><code class="c">    typedef unsigned long mal_time_t;
     typedef unsigned long mal_finetime_t;
 </code></pre>
 
-<h2 id="duree">Durée</h2>
-<p>Définition du type <code>MAL::Duration</code> :</p>
+<h2 id="duration">Duration</h2>
+<p>Definition of type <code>MAL::Duration</code>:</p>
 <pre><code class="c">    typedef float mal_duration_t;
 </code></pre>
 
-<h2 id="types-chaine-de-caracteres">Types chaîne de caractères</h2>
-<p>Le type <code>char</code> est utilisé pour représenter les chaînes de caractères. Si les caractères n'appartiennent pas au format ASCII (MAL spécifie le format Unicode), alors un même caractère peut être représenté par plusieurs octets . Dans ce cas, les fonctions C traitant les chaînes ASCII ne sont plus applicables.</p>
-<p>Définition des types <code>MAL::String</code>, <code>MAL::Identifier</code>, <code>MAL::URI</code> :</p>
+<h2 id="string-type">String type</h2>
+<p>The <code>char</code> type is used to represent strings. If the characters are not in the ASCII format
+(MAL specifies Unicode), then a character may be represented by several bytes. In this case,
+the <em>C</em> functions dealing ASCII strings are no longer usable.</p>
+<p>Definition of types <code>MAL::String</code>, <code>MAL::Identifier</code>, <code>MAL::URI</code>:</p>
 <pre><code class="c">    typedef char mal_string_t;
     typedef char mal_identifier_t;
     typedef char mal_uri_t;
 </code></pre>
 
-<h3 id="constructeur">Constructeur</h3>
-<p>Alloue dynamiquement une nouvelle chaîne de caractères à partir d'une chaîne existante. Cette fonction doit être appelée quand une chaîne MAL est construite à partir d'une chaîne définie statiquement.</p>
+<h3 id="constructor">Constructor</h3>
+<p>Dynamically allocates a new string from an existing string. 
+This function should be called when a MAL string is built from a statically defined chain.</p>
 <pre><code class="c">    mal_&lt;attribute&gt;_t *mal_&lt;attribute&gt;_new(char *char_content);
 </code></pre>
 
-<h3 id="nombre-de-caracteres-ascii">Nombre de caractères (ASCII)</h3>
-<p>Retourne le nombre de caractères (encodés sur 1 octet) dans la chaîne, avant le caractère nul final (<code>\0</code>).</p>
+<h3 id="string-length-ascii">String length (ASCII)</h3>
+<p>Returns the number of characters (encoded on 1 byte) in the string before the final null character (<code>\0</code>).</p>
 <pre><code class="c">    size_t mal_&lt;attribute&gt;_get_char_count(mal_&lt;attribute&gt;_t *self)
 </code></pre>
 
-<h3 id="copie">Copie</h3>
-<p>Lorsqu'une même chaîne de caractères doit être affectée à deux champs distincts d'une même structure MAL ou de deux structures MAL distinctes (composite, liste), alors il est nécessaire de dupliquer la chaîne MAL. Il ne faut pas affecter la même chaîne MAL aux deux champs.</p>
+<h3 id="string-copy">String copy</h3>
+<p>When the same string must be used in two different fields of the same MAL structure or in two different MAL structures (composite, list), then it is necessary to duplicate the MAL string. Do never assign the same MAL string to different fields.</p>
 <pre><code class="c">    mal_&lt;attribute&gt;_t *attribute2 = mal_&lt;attribute&gt;_new(attribute1);
 </code></pre>
 
 <h3 id="destructeur">Destructeur</h3>
-<p>Détruit la chaîne de caractères.</p>
+<p>Deletes the string.</p>
 <pre><code class="c">    mal_&lt;attribute&gt;_destroy(mal_&lt;attribute&gt;_t **self_p);
 </code></pre>
 
 <h2 id="blob">Blob</h2>
-<p>Une classe est définie pour le type Blob afin de conserver la taille du tableau d'octets (non accessible en C).</p>
-<h3 id="constructeur_1">Constructeur</h3>
-<p>Déclaration :</p>
+<p>A class is defined for the type Blob in order to keep the size of the corresponding byte array (not accessible in C).</p>
+<h3 id="constructeur">Constructeur</h3>
+<p>Declaration:</p>
 <pre><code class="c">    mal_blob_t *mal_blob_new(unsigned int length);
 </code></pre>
 
-<p>Paramètres :</p>
+<p>Parameter:</p>
 <ul>
-<li><code>length</code> : nombre d'octets dans le Blob</li>
+<li><code>length</code>: Number of bytes in the Blob.</li>
 </ul>
 <h3 id="getters">Getters</h3>
-<p>Des fonctions sont définies pour accéder aux champs de Blob :</p>
+<p>Two functions are defined to access the fields of Blob:</p>
 <pre><code class="c">    char *mal_blob_get_content(mal_blob_t *self);
     unsigned int mal_blob_get_length(mal_blob_t *self);
 </code></pre>
 
 <h3 id="destructeur_1">Destructeur</h3>
-<p>Détruit le Blob et son contenu.</p>
+<p>Deletes the Blob and its content.</p>
 <pre><code class="c">    void mal_blob_destroy(mal_blob_t **self_p);
 </code></pre>
 
-<h2 id="polymorphisme-dattribut">Polymorphisme d'Attribut</h2>
-<p>Pour gérer le cas du polymorphisme d'Attribut MAL, on définit une classe avec les éléments suivants :</p>
+<h2 id="mal-attribute-polymorphism">MAL Attribute polymorphism</h2>
+<p>To handle the case of MAL Attribute polymorphism, a class is defined with the following elements:</p>
 <ul>
-<li>des tags qui permettent d'identifier le type concret de l'attribut,</li>
-<li>un type C union qui permet de manipuler la valeur de l'attribut typée en fonction du tag associé,</li>
-<li>un destructeur.</li>
+<li>tags that identify the real type of the attribute,</li>
+<li>a <em>C</em> union allowing the manipulation of the value of the attribute according to the associated tag,</li>
+<li>a destructor.</li>
 </ul>
-<h3 id="union-des-attributs">Union des Attributs</h3>
-<p>Une union <code>mal_attribute_t</code> est définie pour permettre le polymorphisme d'Attribut.</p>
+<h3 id="attribute-union">Attribute union</h3>
+<p>A <em>C</em> union <code>mal_attribute_t</code> is defined to allow the MAL attribute polymorphism.</p>
 <pre><code class="c">    union mal_attribute_t {
       mal_blob_t *blob_value;
       mal_boolean_t boolean_value;
@@ -325,8 +328,8 @@
     };
 </code></pre>
 
-<h3 id="tags-dattribut">Tags d'Attribut</h3>
-<p>Ces identifiants sont transmis en cas de polymorphisme d'Attribut.</p>
+<h3 id="attribute-tags">Attribute tags</h3>
+<p>These identifiers are transmitted in case of <em>MAL Attribute</em> polymorphism.</p>
 <pre><code class="c">    #define MAL_BLOB_ATTRIBUTE_TAG 0
     #define MAL_BOOLEAN_ATTRIBUTE_TAG 1
     #define MAL_DURATION_ATTRIBUTE_TAG 2
@@ -347,14 +350,15 @@
     #define MAL_URI_ATTRIBUTE_TAG 17
 </code></pre>
 
-<h3 id="destructeur_2">Destructeur</h3>
-<p>Détruit le contenu de l'union. Ne détruit pas l'union elle-même qui n'est pas une structure allouée.</p>
+<h3 id="destructor">Destructor</h3>
+<p>Deletes the union content.
+Do not destroy the union itself which is not an allocated structure.</p>
 <pre><code class="c">    void mal_attribute_destroy(union mal_attribute_t *self_p,
         unsigned char attribute_tag);
 </code></pre>
 
-<h2 id="short-forms-dattribut">Short forms d'Attribut</h2>
-<p>Ces identifiants sont transmis en cas de polymorphisme d'élément MAL.</p>
+<h2 id="attribute-short-forms">Attribute short forms</h2>
+<p>These identifiers are transmitted in case of <em>MAL Element</em> polymorphism.</p>
 <pre><code class="c">    #define MAL_BLOB_SHORT_FORM 0x1000001000001L
     #define MAL_BOOLEAN_SHORT_FORM 0x1000001000002L
     #define MAL_DURATION_SHORT_FORM 0x1000001000003L

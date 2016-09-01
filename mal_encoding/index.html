@@ -9,7 +9,7 @@
         
         <link rel="shortcut icon" href="../img/favicon.ico">
 
-	<title>Encodage - MAL C API</title>
+	<title>Encoding - MAL C API</title>
 
         <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../css/font-awesome-4.5.0.css" rel="stylesheet">
@@ -54,30 +54,30 @@
                 
                 
                     <li >
-                        <a href="..">Accueil</a>
+                        <a href="..">Home</a>
                     </li>
                 
                 
                 
                     <li >
-                        <a href="../tutorial/">Tutoriel</a>
+                        <a href="../tutorial/">Tutorial</a>
                     </li>
                 
                 
                 
                     <li class="dropdown active">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">APIs MAL <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">MAL APIs <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
 <li >
-    <a href="../mal_attributes/">Attributs</a>
+    <a href="../mal_attributes/">Attributes</a>
 </li>
 
                         
                             
 <li class="active">
-    <a href="./">Encodage</a>
+    <a href="./">Encoding</a>
 </li>
 
                         
@@ -126,12 +126,12 @@
                 
                 
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Générateurs <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Generators <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
 <li >
-    <a href="../stub_generator/">Stubs de service</a>
+    <a href="../stub_generator/">Stubs generator</a>
 </li>
 
                         
@@ -147,7 +147,7 @@
                 
                 
                     <li >
-                        <a href="../annexes/">Annexes</a>
+                        <a href="../annexes/">Annexs</a>
                     </li>
                 
                 
@@ -183,170 +183,174 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#apis-dencodage">APIs d'encodage</a></li>
+        <li class="main active"><a href="#encoding-apis">encoding APIs</a></li>
         
-            <li><a href="#definitions">Définitions</a></li>
+            <li><a href="#definitions">Definitions</a></li>
         
-            <li><a href="#donnees-a-encoder">Données à encoder</a></li>
+            <li><a href="#data-to-encode">Data to encode</a></li>
         
-            <li><a href="#encodeur">Encodeur</a></li>
+            <li><a href="#encoder">Encoder</a></li>
         
-            <li><a href="#decodeur">Décodeur</a></li>
+            <li><a href="#decoder">Decoder</a></li>
         
-            <li><a href="#format-malbinary">Format malbinary</a></li>
+            <li><a href="#format-malbinary-and-malsplitbinary">Format malbinary and malsplitbinary</a></li>
         
     
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="apis-dencodage">APIs d'encodage</h1>
-<p>Les APIs d'encodage sont définies de manière spécifique à un format d'encodage. Aucune fonction virtuelle n'est imposée par l'API C. Seuls des patterns de fonction sont proposés. Ces patterns sont le plus générique possible mais ils ne sont pas forcément applicables à tous les formats d'encodage. D'autres patterns de fonction peuvent être définis selon les besoins.</p>
-<p>Les fonctions d'encodage générées pour chaque structure de donnée appellent directement les fonctions spécifiques d'encodage. Donc le générateur de stub doit connaître les fonctions spécifiques d'encodage offertes par chaque module d'encodage.</p>
-<p>Le code applicatif ne dépend pas des APIs spécifiques d'encodage, sauf dans le cas où l'application a besoin d'encoder ou de décoder des données de manière explicite.</p>
-<p>Le nom donné en C au format d'encodage défini dans le livre MAL/SPP est : malbinary.</p>
-<p>Ce nom est une chaîne de caractères utilisée pour le nommage des APIs.</p>
-<h2 id="definitions">Définitions</h2>
+<h1 id="encoding-apis">encoding APIs</h1>
+<p>Based on our experience of the MalBinary and MalSplitBinary formats, we propose a generic encoding API for all encoding formats.
+If it is not suitable to a particular encoding format, it is still possible to define format specific functions. For that reason the generated encoding functions may use code specific to the encoding format.</p>
+<p>The user code does not depend on specific encoding APIs, except when the application needs to encode or decode data explicitely.</p>
+<p>The encoding functions generated for each data structure may call either the generic encoding functions or possible format specific functions. The stub generator knows the specificities of each format. It may call the format specific functions, or produce format specific code.</p>
+<p>The C name for the encoding format defined in the MAL/SPP book is: <code>malbinary</code>.
+The C name for the encoding format defined in the MAL/TCP book is: <code>malsplitbinary</code>.
+Those names are strings used in the naming of the APIs.</p>
+<h2 id="definitions">Definitions</h2>
 <pre><code class="c">    &lt;format&gt;.h
 </code></pre>
 
-<p>Un code identifie de manière unique le format d'encodage doit être défini.</p>
+<p>A code is defined to uniquely identify the encoding format.</p>
 <pre><code class="c">    #define &lt;FORMAT&gt;_FORMAT_CODE &lt;unique number&gt;
 </code></pre>
 
-<h2 id="donnees-a-encoder">Données à encoder</h2>
-<p>Les données à encoder sont :</p>
+<h2 id="data-to-encode">Data to encode</h2>
+<p>The data to encode are:</p>
 <ul>
-<li>les attributs MAL (dont les types C sont définis en section 5)</li>
-<li>le type d'union <code>mal_attribute_t</code></li>
-<li>des données spécifiques à certains format ; par exemple : le flag de présence d'un champ, la taille de liste, la valeur d'un énuméré.</li>
+<li>MAL attributes (whose C types are defined in section 5)</li>
+<li>union type <code>mal_attribute_t</code></li>
+<li>format specific data; for example : the presence flag for a nullable field, the size of a list, the value of an enumerated value.</li>
 </ul>
-<p>Il n'y a pas de fonction d'encodage d'énumérations car seul le code généré (stubs) a la connaissance de la taille des énumérés qui détermine le format d'encodage (dans le cas du format <code>malbinary</code>).</p>
-<p>Il n'y a pas non plus de fonction d'encodage de liste car l'encodage des éléments de la liste est spécifique à leur type. Donc le code d'encodage d'une liste doit être généré dans les stubs.</p>
-<p>L'encodage/décodage d'un code d'erreur est réalisé avec les fonctions d'encodage du type <code>MAL Uinteger</code>.</p>
-<p>Pour chaque type de donnée à encoder, trois fonctions sont définies :</p>
+<p>Encoding and decoding an error code is performed with the encoding functions for the <code>MAL Uinteger</code> type.</p>
+<p>For each data type to encode, three functions are defined:</p>
 <ul>
-<li>une fonction permettant de calculer la taille requise par l'encodage de la donnée ; cette fonction prend en paramètre une taille initiale (la taille d'encodage en cours de calcul) et ajoute la taille de la donnée ;</li>
-<li>une fonction d'encodage de la donnée ;</li>
-<li>une fonction de décodage de la donnée.</li>
+<li>a function to get the size required to encode the data; it accepts the current state of the computed size as input parameter, adds the size of the data, and return the updated size value; the generic API allows for complex size computation, such as the one defined in the split binary encoding;</li>
+<li>a function to encode the data in a preallocated buffer;</li>
+<li>a function to decode the data.</li>
 </ul>
-<h2 id="encodeur">Encodeur</h2>
-<pre><code class="c">    &lt;format&gt;_encoder.h
+<h2 id="encoder">Encoder</h2>
+<pre><code class="c">    mal_encoder.h
 </code></pre>
 
-<h3 id="calcul-de-la-taille-dencodage">Calcul de la taille d'encodage</h3>
-<p>Fonction d'ajout de la taille d'encodage à une valeur initiale.</p>
-<p>Déclaration :</p>
+<h3 id="computing-the-encoding-length">Computing the encoding length</h3>
+<p>The function adds the encoding length to an initial value given as a parameter.
+The length parameter is generalized as a cursor to manage on various encoding formats.
+The generic mal_encoder_<em> functions are mapped to specific \<format>_encoder_</em> functions declared in the \<format>_encoder.h file.</p>
+<p>Prototype:</p>
 <ul>
-<li>Si la donnée n'est pas de type pointeur (Attributs non pointeurs ou données spécifiques) :</li>
+<li>If the data type is not a pointer (non pointer Attributes or specific data):</li>
 </ul>
-<pre><code class="c">    int &lt;format&gt;_encoder_add_&lt;data&gt;_encoding_length(
-     &lt;format&gt;_encoder_t *self, mal_&lt;data type&gt;_t to_encode,
-     unsigned int *encoding_length);
-</code></pre>
-
-<ul>
-<li>Si la donnée est de type pointeur (Attributs pointeurs ou données spécifiques) :</li>
-</ul>
-<pre><code class="c">    int &lt;format&gt;_encoder_add_&lt;data&gt;_encoding_length(
-     &lt;format&gt;_encoder_t *self, mal_&lt;data type&gt;_t *to_encode,
-     unsigned int *encoding_length);
+<pre><code class="c">    int mal_encoder_add_&lt;data&gt;_encoding_length(
+      mal_encoder_t *self, mal_&lt;data type&gt;_t to_encode, void *cursor);
 </code></pre>
 
 <ul>
-<li>Pour le type MAL::Attribute (polymorphisme d'Attribut) :</li>
+<li>If the data type is a pointer (pointer Attributes or specific data):</li>
 </ul>
-<pre><code class="c">    int &lt;format&gt;_encoder_add_attribute_encoding_length(
-     &lt;format&gt;_encoder_t *self, unsigned char attribute_tag,
-      union mal_attribute_t to_encode, unsigned int *encoding_length);
-</code></pre>
-
-<p>Paramètres :</p>
-<ul>
-<li><code>self</code> : le contexte d'encodage</li>
-<li><code>attribute_tag</code> : l'identifiant du type d'Attribut (en cas de polymorphisme d'Attribut)</li>
-<li><code>to_encode</code> : la donnée à encoder</li>
-<li><code>encoding_length</code> : valeur initiale et résultat de la fonction d'ajout</li>
-</ul>
-<p>Résultat : </p>
-<p>Code d'erreur</p>
-<h3 id="encodage">Encodage</h3>
-<p>Déclaration :</p>
-<ul>
-<li>Si la donnée n'est pas de type pointeur (Attributs non pointeurs ou données spécifiques) :</li>
-</ul>
-<pre><code class="c">    int &lt;format&gt;_encoder_encode_&lt;data&gt;(&lt;format&gt;_encoder_t *self,
-      char *bytes, int *offset, mal_&lt;data type&gt;_t to_encode);
+<pre><code class="c">    int mal_encoder_add_&lt;data&gt;_encoding_length(
+      mal_encoder_t *self, mal_&lt;data type&gt;_t *to_encode, void *cursor);
 </code></pre>
 
 <ul>
-<li>Si la donnée est de type pointeur (Attributs pointeurs ou données spécifiques) :</li>
+<li>For the type <code>MAL::Attribute</code> (polymorphism of Attribute):</li>
 </ul>
-<pre><code class="c">    int &lt;format&gt;_encoder_encode_&lt;data&gt;(&lt;format&gt;_encoder_t *self,
-      char *bytes, int *offset, mal_&lt;data type&gt;_t *to_encode);
+<pre><code class="c">    int mal_encoder_add_attribute_encoding_length(
+      &lt;format&gt;_encoder_t *self, unsigned char attribute_tag,
+      union mal_attribute_t to_encode, void *cursor);
+</code></pre>
+
+<p>Parameters:</p>
+<ul>
+<li><code>self</code> : the encoding context</li>
+<li><code>attribute_tag</code> : the identifier of the Attribute type (with polymorphism of Attribute)</li>
+<li><code>to_encode</code> : the data to encode</li>
+<li><code>cursor</code> : initial and updated value of the encoding length</li>
+</ul>
+<p>Result: </p>
+<p>Error code</p>
+<h3 id="encoding">Encoding</h3>
+<p>The function encodes the data in a buffer and at an index defined by the generic cursor parameter.
+The generic mal_encoder_<em> functions are mapped to specific \<format>_encoder_</em> functions declared in the \<format>_encoder.h file.
+The specific functions cast the generic cursor into a \<format>_cursor_t pointer.</p>
+<p>Prototype:</p>
+<ul>
+<li>If the data type is not a pointer (non pointer Attributes or specific data):</li>
+</ul>
+<pre><code class="c">    int mal_encoder_encode_&lt;data&gt;(mal_encoder_t *self,
+      void *cursor, mal_&lt;data type&gt;_t to_encode);
 </code></pre>
 
 <ul>
-<li>Pour le type <code>MAL::Attribute</code> (polymorphisme d'Attribut) :</li>
+<li>If the data type is a pointer (pointer Attributes or specific data):</li>
 </ul>
-<pre><code class="c">    int &lt;format&gt;_encoder_encode_attribute(
-      &lt;format&gt;_encoder_t *self, char *bytes, int *offset,
+<pre><code class="c">    int mal_encoder_encode_&lt;data&gt;(mal_encoder_t *self,
+      void *cursor, mal_&lt;data type&gt;_t *to_encode);
+</code></pre>
+
+<ul>
+<li>For the type <code>MAL::Attribute</code> (polymorphism of Attribute):</li>
+</ul>
+<pre><code class="c">    int mal_encoder_encode_attribute(
+      mal_encoder_t *self, void *cursor,
       unsigned char attribute_tag, mal_attribute_t to_encode);
 </code></pre>
 
-<p>Paramètres :</p>
+<p>Parameters:</p>
 <ul>
-<li><code>self</code> : le contexte d'encodage</li>
-<li><code>bytes</code> : le tableau d'octets où doit être encodée la donnée</li>
-<li><code>offset</code> : l'index à partir duquel la donnée doit être encodée, augmenté en résultat du nombre d'octets encodés</li>
-<li><code>attribute_tag</code> : l'identifiant du type d'Attribut (en cas de polymorphisme d'Attribut)</li>
-<li><code>to_encode</code> : la donnée à encoder</li>
+<li><code>self</code> : the encoding context</li>
+<li><code>cursor</code> : a virtual index in the encoding structures</li>
+<li><code>attribute_tag</code> : the identifier of the Attribute type (with polymorphism of Attribute)</li>
+<li><code>to_encode</code> : the data to encode</li>
 </ul>
-<p>Résultat : </p>
-<p>Code d'erreur</p>
-<h2 id="decodeur">Décodeur</h2>
-<pre><code class="c">    &lt;format&gt;_decoder.h
+<p>Result: </p>
+<p>Error code</p>
+<h2 id="decoder">Decoder</h2>
+<pre><code class="c">    mal_decoder.h
 </code></pre>
 
-<p>Pour chaque type de donnée à décoder, une fonction de décodage est définie.</p>
-<p>Déclaration :</p>
+<p>A decoding function is defined for each type to decode
+The generic mal_decoder_<em> functions are mapped to specific \<format>_decoder_</em> functions declared in the \<format>_decoder.h file.</p>
+<p>Prototype:</p>
 <ul>
-<li>Si la donnée n'est pas de type pointeur (Attributs non pointeurs ou données spécifiques) :</li>
+<li>If the data type is not a pointer (non pointer Attributes or specific data):</li>
 </ul>
-<pre><code class="c">    int &lt;format&gt;_decoder_decode_&lt;data&gt;(&lt;format&gt;_decoder_t *self,
-      char *bytes, int *offset, mal_&lt;data type&gt;_t *result);
-</code></pre>
-
-<ul>
-<li>Si la donnée est de type pointeur (Attributs pointeurs ou données spécifiques) :</li>
-</ul>
-<pre><code class="c">    int &lt;format&gt;_decoder_decode_&lt;data&gt;(&lt;format&gt;_decoder_t *self,
-      char *bytes, int *offset, mal_&lt;data type&gt;_t **result);
+<pre><code class="c">    int mal_decoder_decode_&lt;data&gt;(mal_decoder_t *self,
+      void *cursor, mal_&lt;data type&gt;_t *result);
 </code></pre>
 
 <ul>
-<li>Pour le type <code>MAL::Attribute</code> (polymorphisme d'Attribut) :</li>
+<li>If the data type is a pointer (pointer Attributes or specific data):</li>
 </ul>
-<pre><code class="c">    int &lt;format&gt;_decoder_decode_attribute(
-      &lt;format&gt;_decoder_t *self, char *bytes, int *offset,
+<pre><code class="c">    int mal_decoder_decode_&lt;data&gt;(mal_decoder_t *self,
+      void *cursor, mal_&lt;data type&gt;_t **result);
+</code></pre>
+
+<ul>
+<li>For the type <code>MAL::Attribute</code> (polymorphism of Attribute):</li>
+</ul>
+<pre><code class="c">    int mal_decoder_decode_attribute(
+      mal_decoder_t *self, void *cursor,
       unsigned char attribute_tag, mal_attribute_t *result);
 </code></pre>
 
-<p>Paramètres :</p>
+<p>Parameters:</p>
 <ul>
-<li><code>self</code> : le contexte de décodage</li>
-<li><code>bytes</code> : le tableau d'octets qui contient la donnée encodée</li>
-<li><code>offset</code> : l'index à partir duquel la donnée doit être décodée, augmenté en résultat du nombre d'octets décodés</li>
-<li><code>result</code> : la donnée décodée</li>
+<li><code>self</code> : the encoding context</li>
+<li><code>cursor</code> : a virtual index in the encoding structures</li>
+<li><code>attribute_tag</code> : the identifier of the Attribute type (with polymorphism of Attribute)</li>
+<li><code>result</code> : the decoded data</li>
 </ul>
-<p>Résultat : </p>
-<p>Code d'erreur</p>
-<h2 id="format-malbinary">Format <strong>malbinary</strong></h2>
-<h3 id="donnees-specifiques">Données spécifiques</h3>
+<p>Result: </p>
+<p>Error code</p>
+<h2 id="format-malbinary-and-malsplitbinary">Format <strong>malbinary</strong> and <strong>malsplitbinary</strong></h2>
+<p>Both formats require similar specific data. They have been declared in the generic encoding API.</p>
+<h3 id="specific-data">Specific data</h3>
 <table>
 <thead>
 <tr>
-<th>Donnée</th>
+<th>Data</th>
 <th>Type</th>
 <th>Description</th>
 </tr>
@@ -355,49 +359,40 @@
 <tr>
 <td><code>presence_flag</code></td>
 <td><code>bool</code></td>
-<td>Champ de présence d'un élément pouvant être nul. <code>TRUE</code> si le champ est présent (valeur non nulle), <code>FALSE</code> si le champ est absent (valeur nulle).</td>
+<td>Field used for a Nullable element. <code>TRUE</code> when the field is defined (non null value), <code>FALSE</code> when it is not (null value).</td>
 </tr>
 <tr>
 <td><code>list_size</code></td>
 <td><code>unsigned int</code></td>
-<td>Champ donnant la taille d'une liste MAL</td>
+<td>Field defining the size of a MAL list</td>
 </tr>
 <tr>
 <td><code>small_enum</code></td>
 <td><code>int</code></td>
-<td>Champ donnant la valeur d'un élément d'une petite énumération (taille inférieure à 2^8)</td>
+<td>Field used for an enumerated value of a small enumeration type (size lower than 2^8)</td>
 </tr>
 <tr>
 <td><code>medium_enum</code></td>
 <td><code>int</code></td>
-<td>Champ donnant la valeur d'un élément d'une  moyenne énumération (taille inférieure à 2^16)</td>
+<td>Field used for an enumerated value of a medium enumeration type (size lower than 2^16)</td>
 </tr>
 <tr>
 <td><code>large_enum</code></td>
 <td><code>int</code></td>
-<td>Champ donnant la valeur d'un élément d'une grande énumération (taille inférieure à 2^32)</td>
+<td>Field used for an enumerated value of a large enumeration type (size lower than 2^32)</td>
 </tr>
 <tr>
 <td><code>short_form</code></td>
 <td><code>long</code></td>
-<td>Identifiant de type constitué des numéros d'Area, de Service, de version d'Area et de type. Défini en section 4.1.2 du livre MAL. Cet identifiant est encodé en cas de polymorphisme d'élément.</td>
+<td>Type identifier defined in section 4.1.2 of the MAL book. It is used in case of general polymorphism.</td>
 </tr>
 <tr>
 <td><code>attribute_tag</code></td>
 <td><code>unsigned char</code></td>
-<td>Identifiant d'attribut : <code>short form</code> de l'attribut moins 1 (voir section 5.2.2 du livre MAL/SPP)</td>
+<td>Attribute type identifier: <code>short form</code> of the Attribute minus 1 (cf section 5.2.2 of the MAL/SPP book)</td>
 </tr>
 </tbody>
-</table>
-<h3 id="constantes">Constantes</h3>
-<p>Ces constantes donnent la taille d'encodage de certaines données : <code>presence_flag</code>, <code>attribute_tag</code>, <code>short_form</code>, <code>small_enum</code>, <code>medium_enum</code>, <code>large_enum</code>.</p>
-<pre><code class="c">    #define MALBINARY_PRESENCE_FLAG_SIZE 1
-    #define MALBINARY_ATTRIBUTE_TAG_SIZE 1
-    #define MALBINARY_SHORT_FORM_SIZE 8
-    #define MALBINARY_SMALL_ENUM_SIZE 1
-    #define MALBINARY_MEDIUM_ENUM_SIZE 2
-    #define MALBINARY_LARGE_ENUM_SIZE 4
-</code></pre></div>
+</table></div>
             
         </div>
 

@@ -9,7 +9,7 @@
         
         <link rel="shortcut icon" href="../img/favicon.ico">
 
-	<title>Annexes - MAL C API</title>
+	<title>Annexs - MAL C API</title>
 
         <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../css/font-awesome-4.5.0.css" rel="stylesheet">
@@ -54,30 +54,30 @@
                 
                 
                     <li >
-                        <a href="..">Accueil</a>
+                        <a href="..">Home</a>
                     </li>
                 
                 
                 
                     <li >
-                        <a href="../tutorial/">Tutoriel</a>
+                        <a href="../tutorial/">Tutorial</a>
                     </li>
                 
                 
                 
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">APIs MAL <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">MAL APIs <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
 <li >
-    <a href="../mal_attributes/">Attributs</a>
+    <a href="../mal_attributes/">Attributes</a>
 </li>
 
                         
                             
 <li >
-    <a href="../mal_encoding/">Encodage</a>
+    <a href="../mal_encoding/">Encoding</a>
 </li>
 
                         
@@ -126,12 +126,12 @@
                 
                 
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Générateurs <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Generators <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
 <li >
-    <a href="../stub_generator/">Stubs de service</a>
+    <a href="../stub_generator/">Stubs generator</a>
 </li>
 
                         
@@ -147,7 +147,7 @@
                 
                 
                     <li class="active">
-                        <a href="./">Annexes</a>
+                        <a href="./">Annexs</a>
                     </li>
                 
                 
@@ -185,13 +185,13 @@
     
         <li class="main active"><a href="#annexes">Annexes</a></li>
         
-            <li><a href="#exemple-darea-testarea">Exemple d'Area « TestArea »</a></li>
+            <li><a href="#testarea-area-example">"TestArea" area example</a></li>
         
-            <li><a href="#risques-de-collision">Risques de collision</a></li>
+            <li><a href="#names-collision">Names collision</a></li>
         
-            <li><a href="#format-dencodage-du-header-malzmq">Format d'encodage du header MALZMQ</a></li>
+            <li><a href="#encoding-format-of-the-malzmq-header">Encoding format of the MALZMQ header</a></li>
         
-            <li><a href="#schema-de-description-des-classes">Schéma de description des « classes »</a></li>
+            <li><a href="#classes-description-diagram">Classes description diagram</a></li>
         
     
     </ul>
@@ -199,16 +199,16 @@
                 <div class="col-md-9" role="main">
 
 <h1 id="annexes">Annexes</h1>
-<h2 id="exemple-darea-testarea">Exemple d'Area « TestArea »</h2>
-<p>Cet exemple permet de tester les aspects suivants du livre MAL :</p>
-<ul>
-<li>pattern d'interaction SEND</li>
-<li>structure Composite</li>
-<li>liste d'éléments</li>
-<li>corps de message avec de multiples éléments</li>
-<li>champ optionnel ('canBeNull=true')</li>
-<li>polymorphisme du dernier élément de corps de message</li>
-</ul>
+<h2 id="testarea-area-example">"TestArea" area example</h2>
+<p>This example (see https://github.com/ccsdsmo/malc/blob/master/xml/TestArea.xml) allows to test
+various aspects of the MAL specification:</p>
+<pre><code>    - Interaction patterns: SEND, SUBMIT, INVOKE, REQUEST, PROGRESS and PUBSUB.
+    - Composite structure.
+    - Element list.
+    - Message body with multiples elements.
+    - Optional field ('canBeNull=true')
+    - Polymorphism of the last element of the message body.
+</code></pre>
 <pre><code class="xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;mal:specification xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
                    xmlns:mal=&quot;http://www.ccsds.org/schema/ServiceSchema&quot;&gt;
@@ -274,17 +274,19 @@
 &lt;/mal:specification&gt;
 </code></pre>
 
-<h2 id="risques-de-collision">Risques de collision</h2>
-<p>Cette annexe liste des risques de collision de noms qui pourraient survenir lors de la génération de code. Des solutions sont proposées. Elles ne sont pour l'instant pas appliquée à la génération de code.</p>
-<h3 id="champ-dans-un-composite">Champ dans un composite</h3>
-<p>Ajout du suffixe <code>_f</code> au nom du champ de valeur pour éviter une collision possible avec le champ de présence, par exemple pour deux champs MAL nommés <code>toto</code> et <code>toto_is_present</code>.</p>
+<h2 id="names-collision">Names collision</h2>
+<p>This annex lists the different name collisions that could occur during the code generation.
+Solutions are proposed. They are currently not applied to the code generation.</p>
+<h3 id="composite-fields">Composite fields</h3>
+<p>Add a <code>_f</code> suffix to the name of the field to avoid a possible collusion with the presence field
+if it exists. For example, two MAL fields named <code>toto</code> and <code>toto_is_present</code>.</p>
 <pre><code class="c">bool &lt;field&gt;_is_present;
 unsigned int &lt;field&gt;_attribute_tag;
 &lt;field type&gt; &lt;field&gt;_f;
 </code></pre>
 
-<h2 id="format-dencodage-du-header-malzmq">Format d'encodage du header MALZMQ</h2>
-<p>Pour simplifier le format d'encodage du header MAL, les champs <code>URI From</code> et <code>URI To</code> sont encodés systématiquement et entièrement. </p>
+<h2 id="encoding-format-of-the-malzmq-header">Encoding format of the MALZMQ header</h2>
+<p>To simplify the encoding format of the MAL header, the <code>From URI</code> and <code>To URI</code> fields are encoded systematically and completely.</p>
 <table>
 <thead>
 <tr>
@@ -387,10 +389,10 @@ unsigned int &lt;field&gt;_attribute_tag;
 </tr>
 </tbody>
 </table>
-<h2 id="schema-de-description-des-classes">Schéma de description des « classes »</h2>
-<p>Le schéma ci-dessous décrit les différentes classes de l'implantation et leurs relations, les classes sont séparées en deux espaces MAL et transport MAL/CZMQ. La plupart des ces relations sont unitaires, seule la classe malzmq_poller_data_t contient une liste de référence vers la classe <code>malzmq_endpoint_data_t</code>.</p>
+<h2 id="classes-description-diagram">Classes description diagram</h2>
+<p>The diagram below shows the different implementation classes and their relationships. Classes are separated in two spaces: MAL/C and MAL/ZMQ transport. Most of these relationships are unitary, only <code>malzmq_poller_data_t</code> class contains a reference list to the <code>malzmq_endpoint_data_t</code> class.</p>
 <p><img alt="Class Diagram" src="../img/class_diagram.png" /></p>
-<p><em>Figure 1 - Description des "classes" du MAL</em></p></div>
+<p>*Figure 1 - MAL classes diagram</p></div>
             
         </div>
 

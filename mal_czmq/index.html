@@ -54,30 +54,30 @@
                 
                 
                     <li >
-                        <a href="..">Accueil</a>
+                        <a href="..">Home</a>
                     </li>
                 
                 
                 
                     <li >
-                        <a href="../tutorial/">Tutoriel</a>
+                        <a href="../tutorial/">Tutorial</a>
                     </li>
                 
                 
                 
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">APIs MAL <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">MAL APIs <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
 <li >
-    <a href="../mal_attributes/">Attributs</a>
+    <a href="../mal_attributes/">Attributes</a>
 </li>
 
                         
                             
 <li >
-    <a href="../mal_encoding/">Encodage</a>
+    <a href="../mal_encoding/">Encoding</a>
 </li>
 
                         
@@ -126,12 +126,12 @@
                 
                 
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Générateurs <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Generators <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
 <li >
-    <a href="../stub_generator/">Stubs de service</a>
+    <a href="../stub_generator/">Stubs generator</a>
 </li>
 
                         
@@ -147,7 +147,7 @@
                 
                 
                     <li >
-                        <a href="../annexes/">Annexes</a>
+                        <a href="../annexes/">Annexs</a>
                     </li>
                 
                 
@@ -183,60 +183,59 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#transport-malczmq">Transport MAL/CZMQ</a></li>
+        <li class="main active"><a href="#malczmq-transport">MAL/CZMQ Transport</a></li>
         
-            <li><a href="#header-malzmq">Header MALZMQ</a></li>
+            <li><a href="#malzmq-header">MALZMQ Header</a></li>
         
-            <li><a href="#constructeur-du-contexte-malzmq">Constructeur du contexte MALZMQ</a></li>
+            <li><a href="#malzmq-context-constructor">MALZMQ context constructor</a></li>
         
-            <li><a href="#demarrage">Démarrage</a></li>
+            <li><a href="#start-up">Start-up</a></li>
         
-            <li><a href="#comportement-de-la-zloop">Comportement de la zloop</a></li>
+            <li><a href="#zloop-behavior">zloop behavior</a></li>
         
-            <li><a href="#reception-dun-message-par-un-end-point-malzmq">Réception d'un message par un end-point MALZMQ</a></li>
+            <li><a href="#message-receiving">Message receiving</a></li>
         
-            <li><a href="#fonction-virtuelle-de-creation-duri">Fonction virtuelle de création d'URI</a></li>
+            <li><a href="#virtual-function-to-build-uri">Virtual function to build URI</a></li>
         
-            <li><a href="#fonction-virtuelle-de-creation-de-end-point">Fonction virtuelle de création de end-point</a></li>
+            <li><a href="#virtual-function-to-create-an-endpoint">Virtual function to create an endpoint</a></li>
         
-            <li><a href="#fonction-virtuelle-denvoi-de-message">Fonction virtuelle d'envoi de message</a></li>
+            <li><a href="#virtual-function-to-send-a-message">Virtual function to send a message</a></li>
         
-            <li><a href="#fonction-virtuelle-de-creation-de-poller">Fonction virtuelle de création de poller</a></li>
+            <li><a href="#virtual-function-to-create-a-poller">Virtual function to create a poller</a></li>
         
-            <li><a href="#fonction-virtuelle-dajout-dun-end-point">Fonction virtuelle d'ajout d'un end-point</a></li>
+            <li><a href="#virtual-function-to-add-an-endpoint-to-a-poller">Virtual function to add an endpoint to a poller</a></li>
         
-            <li><a href="#fonction-virtuelle-de-suppression-dun-end-point">Fonction virtuelle de suppression d'un end-point</a></li>
+            <li><a href="#virtual-function-to-remove-an-endpoint-to-a-poller">Virtual function to remove an endpoint to a poller</a></li>
         
-            <li><a href="#fonction-virtuelle-dattente-de-message-sur-un-poller">Fonction virtuelle d'attente de message sur un poller</a></li>
+            <li><a href="#virtual-function-to-wait-a-message-on-a-poller">Virtual function to wait a message on a poller</a></li>
         
-            <li><a href="#fonction-virtuelle-de-destruction-de-message">Fonction virtuelle de destruction de message</a></li>
+            <li><a href="#virtual-function-to-delete-a-message">Virtual function to delete a message</a></li>
         
     
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="transport-malczmq">Transport MAL/CZMQ</h1>
-<p>Cette section décrit l'implémentation du transport <code>malzmq</code> sur l'API CZMQ. Il ne s'agit donc pas d'une description en terme de protocole (comme doit le faire le livre CCSDS MALZMQ) mais en terme d'API.</p>
-<p>Le format d'encodage du header MAL est donné en annexe ###La même description doit être donnée par le livre MALZMQ.</p>
-<p>Un message MAL est transporté dans une unique trame ZMQ (zframe).</p>
-<p>Les sections suivantes décrivent l'implémentation du module MAL/CZMQ :</p>
-<ul>
-<li>Configuration du header MALZMQ</li>
-<li>Constructeur d'un contexte MALZMQ</li>
-<li>Démarrage</li>
-<li>Réception d'un message MAL</li>
-<li>Implémentation des fonctions virtuelles imposées par l'API MAL</li>
-</ul>
-<h2 id="header-malzmq">Header MALZMQ</h2>
-<p>Une classe est définie pour gérer les spécificités du format de header MALZMQ (voir annexe 14.3) :</p>
-<ul>
-<li>Numéro de version du mapping MALZMQ.</li>
-<li>Catalogue de mapping.</li>
-<li>Flags de présence des champs de header MALZMQ optionnels.</li>
-<li>Valeur des champs non présents.</li>
-</ul>
-<h3 id="constructeur">Constructeur</h3>
+<h1 id="malczmq-transport">MAL/CZMQ Transport</h1>
+<p>This section describes the implementation of MAL binding to ZMTP transport on CZMQ API.
+It is not a description as protocol terms (see the <em>Mission Operations - MAL binding to ZMTP</em> CCSDS book) but as API.</p>
+<p>The encoding format of the MAL header is given in the <em>Mission Operations - MAL binding to ZMTP</em> CCSDS book.</p>
+<p>Currently a MAL message is transmit in a single ZMQ frame (zframe).</p>
+<p>The following sections describe the implementation of the MAL / CZMQ module:</p>
+<pre><code>-  MALZMQ header configuration.
+-  MALZMQ context constructor.
+-  Boot.
+-  MAL message reception.
+-  Implementation of virtual functions needed by the MAL API.
+</code></pre>
+<h2 id="malzmq-header">MALZMQ Header</h2>
+<p>A class is defined to handle the specificities of MALZMQ header format:</p>
+<pre><code>-  MALZMQ version number.
+-  Mapping directory.
+-  Presence flags for optional MALZMQ header fields.
+-  Value of non-present fields.
+</code></pre>
+<h3 id="constructor">Constructor</h3>
 <pre><code class="c">malzmq_header_t *malzmq_header_new(
   malzmq_mapping_directory_t *mapping_directory,
   bool priority_flag, mal_uinteger_t priority,
@@ -245,36 +244,63 @@
   mal_blob_t *authentication_id);
 </code></pre>
 
-<p>Paramètres :</p>
-<ul>
-<li><code>mapping_directory</code> : catalogue de mapping à utiliser pour l'encodage (cf ###), peut être NULL.</li>
-<li><code>priority_flag</code> : flag de présence du champ Priority dans le header MALZMQ.</li>
-<li><code>priority</code> : valeur du champ Priority s'il n'est pas présent dans le header MALZMQ.</li>
-<li><code>timestamp_flag</code> : flag de présence du champ Timestamp dans le header MALZMQ.</li>
-<li><code>network_zone</code> : valeur du champ Network Zone s'il n'est pas présent dans le header MALZMQ. Si NULL alors le champ Network Zone est présent dans le header MALZMQ.</li>
-<li><code>session_name</code> : idem pour le champ Session Name.</li>
-<li><code>domain</code> : idem pour le champ Domain.</li>
-<li><code>authentication_id</code> : idem pour le champ Authentication Id.</li>
-</ul>
-<h3 id="parametres-de-configuration">Paramètres de configuration</h3>
-<p>Certains champs du header MAL peuvent être toujours identiques pour une application. Les transférer lors de chaque appel serait redondant, et on peut donc optimiser les performances en les omettant du header MALZMQ. Ces champs sont les suivants : <code>PRIORITY</code>, <code>NETWORK_ZONE</code>, <code>SESSION_NAME</code>, <code>DOMAIN</code>, <code>AUTHENTICATION_ID</code>. La présence de ces champs dans le header MALZMQ, ainsi que leur éventuelle valeur globale, est définie dans le constructeur du header MALZMQ.</p>
-<p>Un autre champ du header MAL, <code>TIMESTAMP</code>, peut également être omis du header MALZMQ. Cette éventuelle omission est également définie dans le constructeur du header MALZMQ. Il n'y a pas de valeur de remplacement définie pour ce champ.</p>
-<p>Il va de soit que ces différents paramètres de configuration doivent être fournis de manière identique à toutes les entités communiquantes de l'application.</p>
-<h3 id="catalogue-de-mapping">Catalogue de mapping</h3>
-<p>Le header du message MAL contient de nombreux champs dont la taille peut être importante : des URIs, des chaînes de caractère, etc. Afin d'optimiser les performances les messages échangés entre les instances de MAL/CZMQ transportent des champs encodés dans des types scalaires de taille moindre.</p>
-<p>Afin de maintenir la compatibilité avec le MAL les champs des messages MAL/CZMQ ainsi encodés sont systématiquement transformés en leur équivalent MAL lors de leur accès par l'utilisateur de l'API MAL. Pour ce faire la correspondance des informations doit être maintenue tant coté consumer, que coté provider via un catalogue.</p>
-<p>L'objet de cette section est de décrire l'API d'accès à ce catalogue et son usage.</p>
-<h4 id="principes">Principes</h4>
-<p>Le catalogue de mapping conserve une correspondance entre des chaînes de caractères et des valeurs numériques. La valeur numérique est appelée <code>MDK</code> pour Mapping Directory Key.</p>
-<p>Le catalogue permet de retrouver le MDK d'une chaîne côté encodage, et de retrouver la chaîne d'un MDK côté décodage.</p>
-<p>Il n'est pas de la responsabilité du MAL/CZMQ de s'assurer de la cohérence du catalogue de chaque côté de l'interaction. Cette responsabilité revient à l'application. Le moyen le plus simple d'y parvenir est d'offrir un catalogue statique, fixé une fois pour toute à l'installation de l'application au niveau de tous les participants. Toutefois rien n'interdit à une application d'offrir une implantation plus dynamique du catalogue.</p>
-<h4 id="encodage">Encodage</h4>
-<p>L'encodage d'une chaîne sous sa forme MDK est optionnelle, afin de gérer le cas où il n'existe pas de MDK dans le catalogue correspondant à la chaîne à encoder. C'est pour cela que le mapping décrit en 14.3 fait référence à un type <code>Optional MDK</code>.</p>
-<p>Le principe de l'encodage <code>Optional MDK</code> est dérivé de l'encodage MAL binary d'une chaîne de caractères. Cet encodage consiste normalement en l'encodage de la longueur de la chaîne, typée UInteger, suivi de l'encodage des caractères eux-mêmes. L'encodage <code>Optional MDK</code> transforme ce champ longueur de 32 bits en une valeur de type Integer, pour en exploiter séparément le signe et la valeur absolue. Le signe décrit la nature du champ représenté par la valeur absolue, à savoir un MDK si le signe est négatif, ou une longueur si le signe est positif. Dans le second cas les caractères de la chaîne sont encodés à la suite comme dans l'encodage MAL binary.</p>
-<p>Une chaîne encodée sous sa forme MDK ne nécessite donc que 4 octets, représentant la valeur négative du MDK. Si elle n'est pas encodée sous sa forme MDK, une chaîne est conforme à son encodage MAL binary.</p>
-<p>Le cas particulier d'une valeur nulle pour l'Integer initial correspond à l'encodage MAL binary, à savoir la chaîne vide. En conséquence un MDK doit être strictement positif.</p>
+<p>Parameters</p>
+<pre><code>-  `mapping_directory`: Mapping directory to use by encoding, may be null.
+-  `priority_flag`: Boolean indicating the presence of the *Priority* field in the MALZMQ header.
+-  `priority`: Value of the *Priority* field if it is not present in the MALZMQ header.
+-  `timestamp_flag`: Boolean indicating the presence of the *TimeStamp* field in the MALZMQ header.
+-  `network_zone`: Value of the *Network Zone* field if it is not present in the MALZMQ header.
+    If NULL the *Network Zone* field should be present in the MALZMQ header.
+-  `session_name`: Value of the *Session Name* field if it is not present in the MALZMQ header.
+    If NULL the *Session Name* field should be present in the MALZMQ header.
+-  `domain`: Value of the *Domain* field if it is not present in the MALZMQ header.
+    If NULL the *Domain* field should be present in the MALZMQ header.
+-  `authentication_id`: Value of the *Authentication Id* field if it is not present in the MALZMQ header.
+    If NULL the *Authentication Id* field should be present in the MALZMQ header.
+</code></pre>
+<h3 id="configuration-parameters">Configuration parameters</h3>
+<p>Some MAL header fields can be always identical for a given application.
+Transmit their values with each call would be redundant, and thus we can optimize performance by
+omitting them in the MALZMQ header. These fields are: <code>PRIORITY</code>, <code>NETWORK_ZONE</code>, <code>SESSION_NAME</code>,
+<code>DOMAIN</code>, <code>AUTHENTICATION_ID</code>. The presence of these fields in the header MALZMQ and their potential
+overall value is defined in the MALZMQ header constructor.</p>
+<p>Another field of the MAL header, <code>TIMESTAMP</code>, can also be omitted in the header MALZMQ. This possible
+omission is also defined in the MALZMQ header constructor. There is no replacement value defined for this
+field.</p>
+<p>It goes without saying that these configuration parameters must be provided in an identical manner to all
+entities of the application.</p>
+<h3 id="mapping-directory">Mapping directory</h3>
+<p>The MAL message header contains several fields whose size can be important: URIs, strings, etc.
+To optimize the performance messages exchanged between instances of MAL/CZMQ can contain fields encoded
+in smaller scalar types.</p>
+<p>To maintain compatibility with the MAL, these encoded fields are systematically converted into their MAL
+equivalent when accessed by the user of the MAL API. To allow this transformation, informations must be
+maintained in a directory on both sides (consumer and provider).</p>
+<p>The purpose of this section is to describe the corresponding API and its use.</p>
+<h4 id="principles">Principles</h4>
+<p>The mapping directiry maintains a mapping between strings and numeric values. The numerical value is called
+<code>MDK</code> for <em>Mapping Key Directory</em>.</p>
+<p>The directory allows to find the MDK corresponding to a given string during encoding, and to find the string
+corresponding to a  MDK during decoding.</p>
+<p>It is not under the responsibility of the MAL/CZMQ to provide a consistent directory to each side of the
+interaction. This responsibility relies to the application. The simplest way to achieve this is to provide
+a static catalog to all components during the installation of the the application. However, nothing prevents
+an application to provide a more dynamic implementation of the directory.</p>
+<h4 id="encoding">Encoding</h4>
+<p>The encoding of a string under his MDK form is optional, to handle the case where there is no MDK in the
+directory for the string to be encoded. This is why the mapping described in 14.3 refers to a type <code>Optional MDK</code>.</p>
+<p>The principle of <code>Optional MDK</code> encoding is derived from the String <code>MAL Binary</code> encoding. This encoding
+consists normally in the encoding of the string length (typed <code>UInteger</code>), followed by the encoding of the characters
+themselves. The <code>Optional MDK</code> encoding converts the 32 bit length field in an Integer value to separately exploit
+the sign and the absolute value. The sign describes the nature of the field represented by the absolute value,
+a <em>MDK</em> if the sign is negative, or length if the sign is positive. In the second case the characters are encoded after
+the length field as in <code>MAL Binary</code> encoding.</p>
+<p>An encoded string in its MDK form therefore requires only 4 bytes, representing the negative value of the MDK.
+If it is not encoded in its MDK form a chain complies with its <code>MAL Binary</code> encoding form.</p>
+<p>The special case of a zero value for the initial Integer corresponds to the <code>MAL Binary</code> encoding of an empty
+string. Consequently an MDK must be strictly positive.</p>
 <h4 id="api">API</h4>
-<p>Le catalogue de mapping, typé <code>malzmq_mapping_directory_t</code>, est fourni comme une table de fonctions.</p>
+<p>The directory mapping, typed <code>malzmq_mapping_directory_t</code>, is provided as a functions table.</p>
 <pre><code class="c">typedef struct _malzmq_mapping_directory_t malzmq_mapping_directory_t;
 struct _malzmq_mapping_directory_t {
   malzmq_md_get_key_fn *get_key_fn;
@@ -283,59 +309,59 @@ struct _malzmq_mapping_directory_t {
 };
 </code></pre>
 
-<p>Champs :</p>
-<ul>
-<li><code>get_key_fn</code> : renvoie le MDK d'une chaîne s'il existe dans le catalogue</li>
-<li><code>get_string_fn</code> : renvoie la chaîne correspondant à un MDK</li>
-<li><code>put_string_fn</code> : ajoute une chaîne au catalogue et renvoie le MDK correspondant.</li>
-</ul>
-<p>Pour l'instant seules les deux premières fonctions sont utilisées par le MAL/CZMQ.</p>
-<p>Voici le détail d'interface de chacune de ces fonctions.</p>
+<p>Fields:</p>
+<pre><code>- `get_key_fn`: Gets the MDK of a string if it exists in the directory.
+- `get_string_fn`: Gets the string corresponding to an MDK.
+- `put_string_fn`: Adds a string in the directory and return the corresponding MDK.
+</code></pre>
+<p>Below the detailed interface of these functions.</p>
 <pre><code class="c">typedef int malzmq_md_get_key_fn(char *string, unsigned int *key);
 </code></pre>
 
-<p>Paramètres :</p>
-<ul>
-<li><code>string</code> : chaîne pour laquelle on recherche une éventuelle clef de correspondance. Ne doit pas être nulle.</li>
-<li><code>key</code> : valeur de retour du MDK correspondant à string, s'il existe.</li>
-</ul>
-<p>Résultat :</p>
-<ul>
-<li>0 : exécution valide, valeur de retour key exploitable.</li>
-<li>&lt;0 : code d'erreur, valeur de retour key indéterminée.</li>
-</ul>
+<p>Parameters</p>
+<pre><code>    - `string`: String to search for a possible key correspondence. Should not be null.
+    - `key`: return value of the matching MDK for the string, if it exists.
+</code></pre>
+<p>Result:</p>
+<pre><code>    - 0: execution valid, the return key can be used.
+    - &lt;0: error code, the key parameter is undefined.
+</code></pre>
 <pre><code class="c">typedef int malzmq_md_get_string_fn(unsigned int key, char **string);
 </code></pre>
 
-<p>Paramètres :</p>
-<ul>
-<li><code>key</code> : MDK pour lequel on recherche une chaîne associée.</li>
-<li><code>string</code> : valeur de retour de la chaîne correspondant à key, si elle existe. Cette chaîne a été allouée et doit être libérée par free ou par les diverses fonctions spécifiques (mal_string_destroy, etc).</li>
-</ul>
-<p>Résultat :</p>
-<ul>
-<li>0 : exécution valide, valeur de retour string exploitable.</li>
-<li>&lt;0 : code d'erreur, valeur de retour string indéterminée.</li>
-</ul>
+<p>Parameters</p>
+<pre><code>    - `key`: MDK to search for a possible string correspondence.
+    - `string`: return value of the matching string for the MDK, if it exists.
+     This string is allocated and should be released by free or various specific functions (mal_string_destroy, etc).
+</code></pre>
+<p>Result:</p>
+<pre><code>    - 0: execution valid, the return string can be used.
+    - &lt;0: error code, the string parameter is undefined.
+</code></pre>
 <pre><code class="c">typedef int malzmq_md_put_string_fn(char *string, unsigned int *key);
 </code></pre>
 
-<p>Paramètres :</p>
-<ul>
-<li><code>string</code> : chaîne pour laquelle on souhaite créer une clef de correspondance. Ne doit pas être nulle. Le catalogue ne doit pas conserver la chaîne telle quelle au delà de cet appel, afin de permettre à l'appelant de la libérer au besoin.</li>
-<li><code>key</code> : valeur de retour du MDK correspondant à string. Doit être strictement positive et strictement inférieure à 231. Cette valeur distinctive est créée si et seulement si il n'existait pas auparavant une autre valeur correspondante dans le catalogue.</li>
-</ul>
-<p>Résultat :</p>
-<ul>
-<li>0 : exécution valide, valeur de retour key exploitable.</li>
-<li>&lt;0 : code d'erreur, chaîne non enregistrée dans le catalogue et valeur de retour key indéterminée.</li>
-</ul>
-<p>Note :</p>
-<p>les fonctions du catalogue ne travaillent que sur des chaînes (char*), car les différents types cibles <code>mal_string_t</code>, <code>mal_uri_t</code> et <code>mal_identifier_t</code>, ne sont eux-mêmes que des <code>char*</code>. Si ce n'était pas le cas, il faudrait que le catalogue fournisse des fonctions distinctes pour chacun de ces types.</p>
+<p>Parameters</p>
+<pre><code>    - `string`: string for which we want to create a matching key, should not be null.
+     The directory must not retain the string beyond this call to allow the caller to release it if necessary.
+    - `key`: return value of the matching MDK for the string. Must be strictly positive and strictly less
+    than 231. A distinctive value is created if and only if an existing MDK does not exist for this string
+    in the directory.
+</code></pre>
+<p>Result:</p>
+<pre><code>    - 0: execution valid, the return key can be used.
+    - &lt;0: error code, the string is not registered in the directory and the key parameter is undefined.
+</code></pre>
+<p>Note:</p>
+<p>The directory functions only work on strings (char *), because the different target types <code>mal_string_t</code>,
+<code>mal_uri_t</code> and <code>mal_identifier_t</code>, are themselves defined as <code>char*</code>. Otherwise, the catalog should 
+provide distinct functions for each of these types.</p>
 <h4 id="usage">Usage</h4>
-<p>Le catalogue n'est pour l'instant utilisé que pour les champs du header suivants : <em>URI from</em>, <em>URI to</em>, <em>Network Zone</em>, <em>Session Name</em>, <em>Domain</em>.</p>
-<p>L'utilisation du catalogue pour des champs choisis du body est envisageable, mais casserait la conformité actuelle de l'encodage du body au format MAL binary.</p>
-<h2 id="constructeur-du-contexte-malzmq">Constructeur du contexte MALZMQ</h2>
+<p>The directory is currently used only for the following header fields: <em>URI from</em>, <em>URI to</em>, <em>Network Zone</em>,
+<em>Session Name</em> and <em>Domain</em>.</p>
+<p>Using explicitly the directory for selected fields of the body is also possible, but it would break the current
+compliance to the MAL binary encoding format of the body.</p>
+<h2 id="malzmq-context-constructor">MALZMQ context constructor</h2>
 <pre><code class="c">malzmq_ctx_t *malzmq_ctx_new(
   mal_ctx_t *mal_ctx,
   malzmq_mapping_uri_t *mapping_uri,
@@ -344,36 +370,48 @@ struct _malzmq_mapping_directory_t {
   bool verbose);
 </code></pre>
 
-<p>Paramètres :</p>
-<ul>
-<li><code>mal_ctx</code> : le contexte MAL.</li>
-<li><code>mapping_uri</code> : fonctions de transformation de l'URI MAL d'un service en URI ZMQ. Ce mapping peut-être NULL, dans ce cas les fonctions de transformation d'URI par défaut de l'implantation sont utilisées (voir section ###).</li>
-<li><code>hostname</code> : addresse IP utilisée pour accepter les connexions entrantes.</li>
-<li><code>port</code> : port utilisé pour accepter les connexions entrantes.</li>
-<li><code>malzmq_header</code> : flags et champs optionnels. La configuration du header MALZMQ est globale au contexte MALZMQ.</li>
-<li><code>encoder</code> : contexte d'encodage utilisé pour encoder les headers MAL.</li>
-<li><code>decoder</code> : contexte de décodage utilisé pour décoder les headers MAL.</li>
-<li><code>verbose</code> : flag d'activation des traces.</li>
-</ul>
-<p>Le constructeur effectue les actions suivantes :</p>
-<ul>
-<li>Création d'une socket ZMQ de type ROUTER permettant d'accepter les connexions ouvertes par d'autres contextes MALZMQ distants : <code>SOCKET_MAL_ROUTER</code>. L'URI ZMQ utilisée par le bind est déterminée à partir des paramètres <code>hostname</code> et <code>port</code> et des fonctions de transformation d'URI passées en paramètre.</li>
-<li>Création d'une socket ZMQ de type SUB permettant la réception des messages diffusés par les autres contextes MALZMQ : <code>SOCKET_MAL_SUB</code>. L'URI ZMQ utilisée par le bind est déterminée à partir des paramètres <code>hostname</code> et <code>port</code> et des fonctions de transformation d'URI passées en paramètre.</li>
-<li>Création d'une socket ZMQ de protocole <code>inproc</code> et de type ROUTER permettant de communiquer avec les acteurs MALZMQ du contexte :  <code>SOCKET_Z_ROUTER</code>.</li>
-<li>Une <code>zloop</code> est créée pour gérer les deux sockets <code>ROUTER</code>.</li>
-</ul>
-<h3 id="fonctions-de-transformation-duri">Fonctions de transformation d'URI</h3>
-<p>La transformation des URI MAL en URI ZMQ est assurée par 3 fonctions :</p>
-<ul>
-<li>La première get_p2p_zmquri prend en paramètre l'URI MAL d'un service et retourne l'URI ZMQ de bind du socket DEALER d'écoute du contexte MAL correspondant. Par exemple : <code>malzmq://host:port/service → tcp://*:port</code></li>
-<li>La seconde get_ps_zmquri prend en paramètre l'URI MAL d'un service et retourne l'URI ZMQ sur laquelle connecter le socket SUB d'écoute du contexte MAL correspondant. Par exemple : <code>malzmq://host:port/service → tcp://host:(port+1) ou pgm://itf;mcast_addr:(port+1)</code></li>
-<li>La dernière <code>get_zmquri_to</code> prend en paramètre un message MAL à émettre et retourne l'URI ZMQ correspondante en fonction de l'étape de l'interaction et de l'URI MAL du destinataire. Si l'URI du destinataire est <code>malzmq://host1:port1/service</code> :
-◦   MAL_INTERACTIONTYPE_INVOKE, MAL_IP_STAGE_INVOKE
-▪   tcp://host1:port1
-◦   MAL_INTERACTIONTYPE_PUBSUB, MAL_IP_STAGE_PUBSUB_PUBLISH
-▪   tcp://*:(port1+1) ou epgm://itf;mcast_addr:(port+1)</li>
-</ul>
-<p>Les fonctions permettant la transformation des URI MAL en URI ZMQ sont passées au contexte MALZMQ au travers d'une structure malzmq_mapping_uri_t. Si ce paramètre est nul les fonctions définies par défaut dans le transport MALZMQ sont utilisées ; ces fonctions considèrent que le transport utilisé est TCP pour toutes les interactions et que le port utilisé pour le Publish / Subscribe est le port du service incrémenté de 1 (cf section ###).</p>
+<p>Parameters</p>
+<pre><code>    - `mal_ctx`: MAL context.
+    - `mapping_uri`: Processing fonctions to transform MAL URI in ZMQ URI. If this mapping is null, the
+    default URI mapping functions are used.
+    - `hostname`: IP address used to listen incoming connections.
+    - `port`: port used to listen incoming connections.
+    - `malzmq_header`: Flags and optional fields. The configuration of the MALZMQ header is global to the
+    MALZMQ context.
+    - `encoder`: Encoding context used to encode the MAL headers.
+    - `decoder`: Decoding context used to decode the MAL headers.
+    - `verbose`: Flag allowing to enable/disable the logging traces.
+</code></pre>
+<p>The constructor performs the following actions:</p>
+<pre><code>    - Creating a ZMQ ROUTER socket for accepting connections initiated by other remote MALZMQ
+    contexts: `SOCKET_MAL_ROUTER`. The ZMQ URI used is built from `hostname` and `port` parameters,
+    and the URI mapping functions.
+    - Creating a ZMQ SUB socket for accepting messages published by other remote MALZMQ contexts: 
+    `SOCKET_MAL_SUB`. The ZMQ URI used is built from `hostname` and `port` parameters, and the URI
+    mapping functions.
+    - Creating an `inproc` ZMQ ROUTER socket for communicating with the services registered in the
+    context: `SOCKET_Z_ROUTER`.
+    - Creating a `zloop` to handle the message routing between the external MALZMQ contexts
+    and the internal services.
+</code></pre>
+<h3 id="uri-mapping-functions">URI mapping functions</h3>
+<p>The mapping between MAL URI and ZMQ URI is ensured by 3 functions:</p>
+<pre><code>    - The first function, `get_p2p_zm`, takes in parameter the MAL URI of a service and returns the 
+    ZMQ URI to bind the ZMQ DEALER listening socket corresponding to the MAL context. For example:
+    `malzmq://host:port/service` to `tcp://*:port`.
+    - The second function, `get_ps_zmquri`, takes in parameter the MAL URI of a service and returns
+    the ZMQ URI to connect the ZMQ SUB listening socket corresponding to the MAL context. For example: 
+    `malzmq://host:port/service` to `tcp://host:(port+1)` or `pgm://itf;mcast_addr:(port+1)`.
+    - The last function, `get_zmquri_to`, takes in parameter a MAL message to send and returns the 
+    corresponding ZMQ URI to the interaction stage and MAL URI of the destination service. 
+    For example, if the MAL URI of the destination service is `malzmq://host1:port1/service`:
+      - for `MAL_INTERACTIONTYPE_INVOKE`, `MAL_IP_STAGE_INVOKE` it returns `tcp://host1:port1`.
+      - for `MAL_INTERACTIONTYPE_PUBSUB`, `MAL_IP_STAGE_PUBSUB_PUBLISH` it returns `tcp://*:(port1+1)`
+      or `epgm://itf;mcast_addr:(port+1)`.
+</code></pre>
+<p>Functions for mapping MAL URI to ZMQ URI are given to the MALZMQ context through the malzmq_mapping_uri_t structure. If this
+parameter is null the default functions defined in the MALZMQ transport are used; these functions consider that TCPis used for
+all interactions and the port used for Publish/Subscribe interaction is the service port +1.</p>
 <pre><code class="c">typedef mal_uri_t *malzmq_get_p2p_zmquri_fn(mal_uri_t *maluri);
 typedef mal_uri_t *malzmq_get_ps_zmquri_fn(mal_uri_t *maluri);
 typedef mal_uri_t *malzmq_getzmquri_to_fn(mal_message_t *message);
@@ -387,102 +425,109 @@ struct _malzmq_mapping_uri_t {
 };
 </code></pre>
 
-<h3 id="mapping-par-defaut">Mapping par défaut</h3>
-<p>Le mapping par défaut du transport MAL/CZMQ implanté dans le POC utilise le protocole TCP tant pour les communications Point-to-Point que Publish/Subscribe :</p>
-<ul>
-<li>malzmq_get_p2p_zmquri_fn
-◦   malzmq://host:port/service → tcp://*:port</li>
-<li>typedef int malzmq_get_ps_zmquri_fn
-◦   malzmq://host:port/service → tcp://host:port_ps, où port_ps=port+1</li>
-<li>typedef int malzmq_getzmquri_to_fn
-◦   Si les champs interaction_type et interaction_stage du message passé en paramètre sont MAL_INTERACTIONTYPE_PUBSUB et MAL_IP_STAGE_PUBSUB_PUBLISH :
-▪   malzmq://host1:port1/service → tcp://host1:port1_ps, où port1_ps=port1+1
-◦   Dans tous les autres cas :
-▪   malzmq://host1:port1/service → tcp://host1:port1</li>
-</ul>
-<h2 id="demarrage">Démarrage</h2>
-<p>La fonction suivante permet de démarrer le contexte MALZMQ. Cette fonction démarre la zloop et bloque tant que la zloop ne s'est pas terminée.</p>
+<h3 id="default-mapping">Default mapping</h3>
+<p>The default mapping implemented in the POC for MALZMQ transport uses TCP communications for both Point-to-Point and
+Publish/Subscribe:</p>
+<pre><code>    - `malzmq_get_p2p_zmquri_fn`: for `malzmq://host:port/service` it returns `tcp://*:port`.
+    - `malzmq_get_ps_zmquri_fn`: for `malzmq://host:port/service` it returns `tcp://host:port_ps`
+    with `port_ps=port+1`.
+    - `malzmq_getzmquri_to_fn`:
+       - If the `interaction_type` and `interaction_stage` fields of the sent message are
+       `MAL_INTERACTIONTYPE_PUBSUB` and `MAL_IP_STAGE_PUBSUB_PUBLISH`: for
+        `malzmq://host1:port1/service it returns `tcp://host1:port1_ps` with
+       `port1_ps=port1+1`
+       - In all other cases: for `malzmq://host1:port1/service` it returns `tcp://host1:port1`.
+</code></pre>
+<h2 id="start-up">Start-up</h2>
+<p>The following function will start the MALZMQ context. This function starts the zloop and blocks as the
+zloop did not complete.</p>
 <pre><code class="c">int malzmq_ctx_start(malzmq_ctx_t *self);
 </code></pre>
 
-<h2 id="comportement-de-la-zloop">Comportement de la zloop</h2>
-<p>La zloop est en écoute (<code>SOCKET_MAL_ROUTER</code> et <code>SOCKET_MAL_SUB</code>) des messages émis par les acteurs MALZMQ distants. Lorsqu'un message ZMQ est reçu, les actions suivantes sont effectuées :</p>
-<ul>
-<li>Extraction et destruction de la première trame contenant l'identité de l'appelant. En effet, actuellement, les connexions ZMQ sont utilisées seulement à sens unique, en conséquence l'identité de l'appelant n'est pas conservée.</li>
-<li>La trame suivante n'est pas extraite (<code>zmsg_pop</code>) du message ZMQ mais seulement lue (<code>zmsg_next</code>) afin de permettre la réutilisation du message ZMQ pour l'envoyer à l'acteur destinataire.</li>
-<li>Seul le champ <code>URI To</code> est décodé. Ce champ donne l'identité de la socket <code>DEALER</code> utilisée par l'acteur destinataire.</li>
-<li>Le message ZMQ reçu est renvoyé à l'acteur destinataire au travers de <code>SOCKET_ACTOR_ROUTER</code>.</li>
-</ul>
-<h2 id="reception-dun-message-par-un-end-point-malzmq">Réception d'un message par un end-point MALZMQ</h2>
-<p>Lors de la demande de réception d'un message par un end-point MAL, le transport MALZMQ se met en écoute sur le socket connecté au socket router de la zloop.</p>
-<p>A la réception d'un message MAL :</p>
-<ul>
-<li>La première et unique trame du message ZMQ est extraite.</li>
-<li>Une structure <code>mal_message</code> est instanciée.</li>
-<li>Les champs du header MAL sont décodés. Les champs optionnels non encodés du header MAL sont affectés à partir de la configuration du header MALZMQ qui est globale au contexte MALZMQ.</li>
-<li>Le corps du message est directement affecté à partir de la trame ZMQ (<code>data</code> de <code>zframe</code>) sans copie. En conséquence, la trame ZMQ ne peut être détruite qu'au moment de la destruction du message MAL (voir section 12.13). Le champ <code>body_owner</code> du message MAL est affecté avec la trame ZMQ.</li>
-<li>Le message MAL est retourné à l'appelant, la destruction du message MAL est à la responsabilité du traitant de ce message.</li>
-</ul>
-<h2 id="fonction-virtuelle-de-creation-duri">Fonction virtuelle de création d'URI</h2>
-<p>Le format d'URI est le suivant :</p>
+<h2 id="zloop-behavior">zloop behavior</h2>
+<p>The zloop listens (<code>SOCKET_MAL_ROUTER</code> and <code>SOCKET_MAL_SUB</code>) to the messages sent by remote MALZMQ
+contexts. When ZMQ message is received, the following actions are performed:</p>
+<pre><code>    - Gets and destroy of the first frame containing the identity of the caller (currently, the ZMQ
+    connections are only used in one direction, therefore the identity of the caller is not retained).
+    - The next frame is not extracted (zmsg_pop) from the ZMQ message, but only read (zmsg_next)
+    enabling to send this ZMQ message to the recipient endpoint.
+    - Only the `URI To` field is decoded, this field identifies the inproc `DEALER` socket used by the
+    recipient endpoint.
+    - The ZMQ message is forwarded to the recipient endpoint through the inproc `SOCKET_ACTOR_ROUTER`.
+</code></pre>
+<h2 id="message-receiving">Message receiving</h2>
+<p>When a MAL endpoint asks for receiving a message, the MALZMQ transport listens on the corrsponding ZMQ DEALER socket
+connected to the ZMQ ROUTER socket of the zloop.</p>
+<p>When receiving a MAL message the following actions are performed:</p>
+<pre><code>    - The unique frame of the ZMQ message is extracted.
+    - A `mal_message` structure is instanciated.
+    - The MAL header fields are decoded using MAL Binary encoding. The optional unencoded fields are set 
+    using the global MALZMQ configuration header.
+    - The MAL message body is directly set from the ZMQ frame (`data` field of `zframe`) without copy. 
+    Consequently, the ZMQ frame can only be destroyed at the time of the destruction of MAL message. The
+     `body_owner` field of the message is affected with the MAL ZMQ frame.
+    - The built message is returned to the caller, the destruction of the MAL message is the responsibility
+    of the handler of this message.
+</code></pre>
+<h2 id="virtual-function-to-build-uri">Virtual function to build URI</h2>
+<p>The URI format is:</p>
 <pre><code class="c">malzmq://&lt;hostname&gt;:&lt;port&gt;/&lt;id&gt;
 </code></pre>
 
-<p>Le protocole de transport utilisé par ZMQ n'est pas spécifié dans l'URI. Il est spécifié à la création du contexte MALZMQ.</p>
-<p>Dans certains cas, le contexte MALZMQ pourrait optimiser la communication en utilisant un protocole de transport plus efficace, par exemple :</p>
-<ul>
-<li><code>ipc</code> : si le consumer et le provider sont sur la même machine (même 'hostname')</li>
-<li><code>inproc</code> : si le consumer et le provider sont dans le même processus (attention dans ce cas à l'ordre de démarrage car 'inproc' n'assure pas le découplage temporel des sockets ZMQ)</li>
-</ul>
-<p>Cette optimisation n'est pour l'instant pas implémentée.</p>
-<h2 id="fonction-virtuelle-de-creation-de-end-point">Fonction virtuelle de création de end-point</h2>
-<p>Un end-point MALZMQ est créé et retourné comme résultat (en pointeur non typé <code>void *</code>).</p>
-<p>Les données spécifiques au end-point MALZMQ sont :</p>
-<ul>
-<li>le contexte MALZMQ,</li>
-<li>le end-point MAL passé en paramètre de la fonction,</li>
-<li>la socket de réception des messages MAL routés par la zloop,</li>
-<li>une table de hash contenant les sockets ZMQ ouvertes vers des contextes MALZMQ distants.</li>
-</ul>
-<p>Lors de l'initialisation du end-point, les actions suivantes sont effectuées :</p>
-<ul>
-<li>création d'une socket ZMQ de type DEALER</li>
-<li>affectation de l'identité de cette socket avec l'URI du end-point</li>
-<li>connexion de cette socket avec la socket router gérée par la zloop </li>
-</ul>
-<p>(ZLOOP_ENDPOINTS_SOCKET_URI)</p>
-<h2 id="fonction-virtuelle-denvoi-de-message">Fonction virtuelle d'envoi de message</h2>
-<p>L'URI MAL destinataire du message est transformée en URI ZMQ :</p>
-<ul>
-<li>Format d'URI MAL : <code>malzmq://&lt;hostname&gt;:&lt;port&gt;/&lt;id&gt;</code></li>
-<li>Format d'URI ZMQ : <code>&lt;protocole zmq&gt;://&lt;hostname&gt;:&lt;port&gt;</code></li>
-</ul>
-<p>Une socket de type DEALER connectée à cette URI est recherchée dans une table de hash appartenant à l'acteur (structure <code>malzmq_actor_data</code>). Si la socket n'est pas trouvée alors elle est créée et enregistrée dans la table (la clé étant l'URI ZMQ).</p>
-<p>Le message MAL est encodé et transmis dans une unique trame ZMQ.</p>
-<h2 id="fonction-virtuelle-de-creation-de-poller">Fonction virtuelle de création de poller</h2>
-<p>Un poller MALZMQ est créé et retourné comme résultat (en pointeur non typé <code>void *</code>).</p>
-<p>Les données spécifiques au poller MALZMQ sont :</p>
-<ul>
-<li>le contexte MALZMQ,</li>
-<li>le poller MAL passé en paramètre de la fonction,</li>
-<li>le zpoller permettant l'attente sur les sockets des end-points..</li>
-<li>la liste des end-points liés à ce poller</li>
-</ul>
-<p>Lors de l'initialisation du poller, les actions suivantes sont effectuées :</p>
-<ul>
-<li>création d'un zpoller </li>
-<li>création d'une liste vide de end-points</li>
-</ul>
-<h2 id="fonction-virtuelle-dajout-dun-end-point">Fonction virtuelle d'ajout d'un end-point</h2>
-<p>Cette fonction ajoute le end-point passé en paramètre au poller. Le end-point est ajouté à la liste du poller, le socket correspondant est ajouté au zpoller du poller.</p>
-<h2 id="fonction-virtuelle-de-suppression-dun-end-point">Fonction virtuelle de suppression d'un end-point</h2>
-<p>Cette fonction supprime le  end-point passé en paramètre du poller. Le end-point est supprimé de la liste du poller, le socket correspondant est supprimé du zpoller du poller.</p>
-<h2 id="fonction-virtuelle-dattente-de-message-sur-un-poller">Fonction virtuelle d'attente de message sur un poller</h2>
-<p>Cette fonction se met en attente de réception d'un message sur le zpoller associé.</p>
-<p>Si un message arrive avant l'expiration du timeout le end-point correspondant est recherché dans la liste des end-points et est retourné dans le paramètre correspondant. Si aucun end-point enregistré ne correspond une erreur est retournée.</p>
-<h2 id="fonction-virtuelle-de-destruction-de-message">Fonction virtuelle de destruction de message</h2>
-<p>Cette fonction vérifie si le champ <code>body_owner</code> du message MAL est affecté.</p>
-<p>Si c'est le cas, alors cela signifie que le message MAL a été créé (décodé) à partir d'une trame ZMQ (<code>zframe</code>) qui doit donc être détruite (<code>zframe_destroy</code>).</p></div>
+<p>The underlying transport protocol used by ZMQ is not specified in the URI. It is specified in the creation of MALZMQ context.</p>
+<p>In some cases, the MALZMQ context could optimize communication using a more efficient transport protocol, for example:</p>
+<pre><code>    - `ipc`: if both consumer and provider are on the same host.
+    - `inproc`: if both consumer and provider are in the same process. Be careful in this case to the 
+    starting order as *inproc* does not ensure the temporal decoupling for ZMQ sockets.
+</code></pre>
+<p>This optimization is not currently implemented in the prototype.</p>
+<h2 id="virtual-function-to-create-an-endpoint">Virtual function to create an endpoint</h2>
+<p>A MALZMQ endpoint is created and returned as an untyped pointer <code>void *</code>.</p>
+<p>Specific MALZMQ endpoint datas are:</p>
+<pre><code>    - the MALZMQ context,
+    - the corresponding MAL endpoint,
+    - the listening inproc ZMQ DEALER socket used to receive forwarded messages from the zloop,
+    - an hashtable containing the ZMQ sockets open to the remote MALZMQ contexts.
+</code></pre>
+<p>During the initialization of the endpoint, the following actions are performed:</p>
+<pre><code>    - creating a ZMQ DEALER socket,
+    - registering this socket identity with the endpoint URI,
+    - connection of this DEALER socket with the ROUTER socket handled by the zloop (ZLOOP_ENDPOINTS_SOCKET_URI)
+</code></pre>
+<h2 id="virtual-function-to-send-a-message">Virtual function to send a message</h2>
+<p>The message's MAL URI is converted into a ZMQ URI:</p>
+<pre><code>    - MAL URI format: `malzmq://&lt;hostname&gt;:&lt;port&gt;/&lt;id&gt;`
+    - ZMQ URI format: `&lt;protocole zmq&gt;://&lt;hostname&gt;:&lt;port&gt;`
+</code></pre>
+<p>A ZMQ DEALER socket connected to this URI is searched in the hashtable owned by the endpoint. If the socket is not
+found then a new one is created and registered in the table (the key is the ZMQ URI).</p>
+<p>The MAL message is encoded and transmitted in a single frame ZMQ.</p>
+<h2 id="virtual-function-to-create-a-poller">Virtual function to create a poller</h2>
+<p>A MALZMQ poller is created and returned as an untyped pointer <code>void *</code>.</p>
+<p>Specific MALZMQ poller datas are:</p>
+<pre><code>    - the MALZMQ context,
+    - the corresponding MAL poller,
+    - the ZMQ zpoller listening on sockets of endpoints,
+    - the list of endpoints associated to this poller.
+</code></pre>
+<p>During the initialization of the poller, the following actions are performed:</p>
+<pre><code>    - creation of a ZMQ zpoller,
+    - creation ofn empty list of endpoints.
+</code></pre>
+<h2 id="virtual-function-to-add-an-endpoint-to-a-poller">Virtual function to add an endpoint to a poller</h2>
+<p>This function adds to the poller the endpoint in parameter. The end-point is added to the list of
+endpoints, the corresponding socket is added to the zpoller.</p>
+<h2 id="virtual-function-to-remove-an-endpoint-to-a-poller">Virtual function to remove an endpoint to a poller</h2>
+<p>This function removes from the poller the endpoint in parameter. The end-point is removed from the
+list of poller, the corresponding socket is removed from the zpoller.</p>
+<h2 id="virtual-function-to-wait-a-message-on-a-poller">Virtual function to wait a message on a poller</h2>
+<p>This function waits to receive a message on the associated zpoller.</p>
+<p>If a message arrives before the timeout expiration the corresponding endpoint is searched in the
+list of endpoints and is returned in the corresponding parameter. If there is no matching endpoint
+registered an error is returned.</p>
+<h2 id="virtual-function-to-delete-a-message">Virtual function to delete a message</h2>
+<p>This function checks if the <code>body_owner</code> message field MAL is set. In this case, it means that the
+MAL message was created (decoded) from a ZMQ frame (<code>zframe</code>) and must be destroyed (<code>zframe_destroy</code>).</p></div>
             
         </div>
 

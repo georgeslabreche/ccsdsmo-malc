@@ -54,30 +54,30 @@
                 
                 
                     <li class="active">
-                        <a href=".">Accueil</a>
+                        <a href=".">Home</a>
                     </li>
                 
                 
                 
                     <li >
-                        <a href="tutorial/">Tutoriel</a>
+                        <a href="tutorial/">Tutorial</a>
                     </li>
                 
                 
                 
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">APIs MAL <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">MAL APIs <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
 <li >
-    <a href="mal_attributes/">Attributs</a>
+    <a href="mal_attributes/">Attributes</a>
 </li>
 
                         
                             
 <li >
-    <a href="mal_encoding/">Encodage</a>
+    <a href="mal_encoding/">Encoding</a>
 </li>
 
                         
@@ -126,12 +126,12 @@
                 
                 
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Générateurs <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Generators <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
 <li >
-    <a href="stub_generator/">Stubs de service</a>
+    <a href="stub_generator/">Stubs generator</a>
 </li>
 
                         
@@ -147,7 +147,7 @@
                 
                 
                     <li >
-                        <a href="annexes/">Annexes</a>
+                        <a href="annexes/">Annexs</a>
                     </li>
                 
                 
@@ -183,14 +183,14 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#api-mal-en-c-et-transport-malczmq">API MAL en C et transport MAL/CZMQ</a></li>
+        <li class="main active"><a href="#mal-c-api-and-malczmq-transport">MAL C API and MAL/CZMQ transport</a></li>
         
     
         <li class="main "><a href="#introduction">Introduction</a></li>
         
-            <li><a href="#polymorphisme-delement-mal">Polymorphisme d'élément MAL</a></li>
+            <li><a href="#polymorphism-of-mal-element">Polymorphism of MAL element</a></li>
         
-            <li><a href="#polymorphisme-dattribut-mal">Polymorphisme d'Attribut MAL</a></li>
+            <li><a href="#polymorphism-of-mal-attribute">Polymorphism of MAL Attribute</a></li>
         
     
         <li class="main "><a href="#concepts">Concepts</a></li>
@@ -199,129 +199,127 @@
         
             <li><a href="#poller">Poller</a></li>
         
-            <li><a href="#handler-et-routage">Handler et Routage</a></li>
+            <li><a href="#handler-and-routing">Handler and routing</a></li>
         
             <li><a href="#mal-broker">MAL Broker</a></li>
         
-            <li><a href="#transformation-duri">Transformation d'URI</a></li>
+            <li><a href="#uri-transformation">URI Transformation</a></li>
         
-            <li><a href="#attributs-pointeurs">Attributs pointeurs</a></li>
+            <li><a href="#pointer-attributes">Pointer attributes</a></li>
         
     
-        <li class="main "><a href="#vue-densemble-de-lapi-c">Vue d'ensemble de l'API C</a></li>
+        <li class="main "><a href="#overview-of-the-mal-c-api">Overview of the MAL C API</a></li>
         
     
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="api-mal-en-c-et-transport-malczmq">API MAL en C et transport MAL/CZMQ</h1>
+<h1 id="mal-c-api-and-malczmq-transport">MAL C API and MAL/CZMQ transport</h1>
 <h1 id="introduction">Introduction</h1>
-<p>L'API C représente tous les concepts MAL, en particulier les patterns d'interaction, le format de message MAL et le modèle de données.
-L'objectif principal de l'API C est d'offrir une version simplifiée des fonctions de l'API MAL en Java. La complexité inhérente au standard MAL doit être conservée. Cependant, plusieurs aspects complexes de l'API MAL en Java peuvent être simplifiés ou abandonnés, soit parce qu'ils ne sont pas indispensables, soit parce qu'ils sont liés à des choix de conception différents (par exemple l'approche orientée appel de procédure, RPC), soit parce qu'ils peuvent être améliorés (par exemple la liaison forte entre transport et encodage).</p>
-<p>Les éléments de complexité suivants sont inhérents au standard MAL. Ils doivent être conservés :</p>
+<p>This C API represents all MAL concepts, especially the interaction patterns, the MAL message format and the data model. The main goal of this API is to offer a simplified version of the Java MAL API functions. The inherent complexity of MAL standard must be maintained. However, more complex aspects of the Java MAL API can be simplified or abandoned, either because they are not essential, either because they are related to different designs choice (eg Remote Procedure Call oriented approach), or because they can be improved (eg the high dependence between transport and encoding).</p>
+<p>The following elements of complexity are inherent to the MAL standard, they must be kept:</p>
 <ul>
-<li>Séparation des fonctions de transport, d'encodage et de contrôle d'accès : multiples APIs et fonctions abstraites</li>
-<li>Patterns d'interaction complexes : <em>Invoke</em>, <em>Progress</em>, <em>Publish-Subscribe</em></li>
-<li>Polymorphisme d'élément MAL, limité au dernier élément d'un corps de message</li>
-<li>Polymorphisme d'Attribut MAL</li>
-<li>Héritage de structure</li>
+<li>Separation of transport functions, encoding and access control: multiple APIs and abstract functions</li>
+<li>Complex interaction patterns: <em>Invoke</em>, <em>Progress</em>, <em>Publish-Subscribe</em></li>
+<li>Polymorphism of MAL component, limited to the last element of a message body</li>
+<li>Polymorphism of MAL attribute</li>
+<li>Inheritance of structure</li>
 </ul>
-<h2 id="polymorphisme-delement-mal">Polymorphisme d'élément MAL</h2>
-<p>Le livre MAL autorise l'utilisation du polymorphisme d'élément à condition qu'il ne soit appliqué qu'au dernier élément d'un corps de message. Ce dernier élément peut être déclaré avec les types suivants :</p>
+<h2 id="polymorphism-of-mal-element">Polymorphism of MAL element</h2>
+<p>The MAL specification allows the use of polymorphism for MAL <code>Element</code> if it is applied at the last item of a message body. It can be used with the following types:</p>
 <ul>
 <li><code>MAL::Element</code></li>
-<li>un type <code>Composite</code> abstrait</li>
-<li>une liste d'éléments de type <code>MAL::Element</code></li>
-<li>une liste d'éléments de type <code>Composite</code> abstrait</li>
-<li>une liste d'éléments de type <code>MAL::Attribute</code></li>
+<li>an abstract <code>Composite</code></li>
+<li>a list of <code>MAL::Element</code> items</li>
+<li>a list of abstract <code>Composite</code> items</li>
+<li>a list of <code>MAL::Attribute</code> items</li>
 </ul>
-<p>Les types listés ci-dessus sont réservés au polymorphisme du dernier élément d'un corps de message. Ils ne peuvent pas être utilisés pour un champ de Composite.</p>
-<p>Les listes d'éléments de type abstrait (<code>Composite</code>, <code>MAL::Element</code> ou <code>MAL::Attribute</code>) ne peuvent pas être instanciées : il n'y a pas de structure de liste pouvant contenir des éléments de type abstrait (et donc des éléments de plusieurs types conformes à ce type abstrait). Par exemple :</p>
+<p>The types listed above are reserved for polymorphism of the last item of a message body. They can not be used for a composite field.</p>
+<p>The lists of abstract type items (<code>Composite</code>, <code>MAL::Element</code> or <code>MAL::Attribute</code>) can not be instantiated: there is no structure of list that may contain items of abstract type (and thus items of several types conform to this abstract type). For example :</p>
 <ul>
-<li><code>List&lt;MAL::Element&gt;</code>, <code>List&lt;MAL::Attribute&gt;</code> ne peuvent pas être instanciées</li>
-<li><code>List&lt;MAL::UpdateHeader&gt;</code>, <code>List&lt;MAL::Boolean&gt;</code> peuvent être instanciées</li>
+<li><code>List&lt;MAL::Element&gt;</code>, <code>List&lt;MAL::Attribute&gt;</code> cannot be instantiated</li>
+<li><code>List&lt;MAL::UpdateHeader&gt;</code>, <code>List&lt;MAL::Boolean&gt;</code> can be instantiated</li>
 </ul>
-<p>En conséquence, une structure liste contient nécessairement des éléments de même type et de type non abstrait.</p>
-<h2 id="polymorphisme-dattribut-mal">Polymorphisme d'Attribut MAL</h2>
-<p>Le livre MAL autorise l'utilisation du polymorphisme d'attribut pour le dernier élément d'un corps de message et pour les champs de Composite.
-Le polymorphisme d'Attribut consiste à déclarer un élément ou un champ avec le type MAL::Attribute.</p>
+<p>Accordingly, a list structure only contain elements of the same type and none of abstract type.</p>
+<h2 id="polymorphism-of-mal-attribute">Polymorphism of MAL Attribute</h2>
+<p>The MAL specification allows the use of polymorphism for MAL <code>Attribute</code> it it is applied to the last item of a message body and for <code>Composite</code> field.
+The <code>Attribute</code> polymorphism consist to declare an element or field with the type <code>MAL::Attribute</code>.</p>
 <h1 id="concepts">Concepts</h1>
-<p>La plupart des concepts de l'API MAL en C sont imposés par la spécification MAL : message MAL, champs de header, types de données. Cependant, la spécification MAL ne définit pas certains concepts qui sont propres à l'implémentation de la spécification. Cette section présente uniquement ces concepts.</p>
+<p>Most concepts of MAL C API are imposed by the MAL specification: MAL message, header fields, data types. However, the MAL specification does not define some concepts that are specific to the implementation of this specification. This section presents only those concepts.</p>
 <h2 id="end-point">End-Point</h2>
-<p>Le end-point MAL est l'entité qui permet d'émettre et de recevoir des messages MAL. Chaque end-point est associé à une unique URI de service MAL, l'API MAL permet la création et la suppression dynamique de end-point.</p>
-<p>Seul le end-point qui a reçu le message initiant une interaction peut répondre à cette interaction.</p>
-<p>Un end-point possède les caractéristiques suivantes :</p>
+<p>The MAL End-Point is the entity that allows to send and receive MAL messages. Each end-point is related to a single URI of MAL service, the MAL C API enables the dynamic creation and removal of end-points.</p>
+<p>Only the end-point which received the message initiating an interaction can answer to this interaction.</p>
+<p>An end-point has the following features:</p>
 <ul>
-<li>Il ne peut utiliser qu'un unique transport (binding) pour recevoir et envoyer des messages MAL.</li>
-<li>Il peut utiliser plusieurs formats d'encodage du corps de message MAL.</li>
-<li>Il est identifié de manière unique par une URI MAL relative au contexte MAL et dont le format dépend du transport utilisé.</li>
-<li>Il doit être exécuté de manière mono-threadée.</li>
-<li>Il gère un compteur de <code>Transaction Id</code> (champ du header MAL).</li>
+<li>It can only use a unique transport (binding) to receive and send MAL messages.</li>
+<li>It can use multiple encoding formats for the MAL message body.</li>
+<li>It is uniquely identified by a MAL URI relative to the MAL context, the URI format depends on the transport used.</li>
+<li>It must be run in single-threaded way.</li>
+<li>It manages a <code>Transaction Id</code> counter (MAL header field).</li>
 </ul>
 <h2 id="poller">Poller</h2>
-<p>Le poller MAL est une entité qui permet d'attendre l'arrivée d'un message sur de multiples end-points. L'API MAL permet la création et la suppression dynamique de pollers, l'ajout et la suppression de end-point au poller.</p>
-<p>Un poller possède les caractéristiques suivantes :</p>
+<p>The MAL Poller is an entity that allows to await the arrival of a message across multiple end-points. The MAL C API enables the dynamic creation and deletion of pollers, adding and removing end-point to the poller.</p>
+<p>A Poller has the following features:</p>
 <ul>
-<li>L'ensemble des end-points d'un poller doivent dépendre d'un même contexte MAL et donc d'un unique transport (binding).</li>
-<li>Il doit être exécuté de manière mono-threadée.</li>
+<li>All the end-points of a poller must depend on a single MAL context and thus a single transport (binding).</li>
+<li>It must be run in single-threaded way.</li>
 </ul>
-<p>L'usage du poller MAL n'est pas obligatoire, il est utile dans différents cas :</p>
+<p>The use of MAL Poller is not mandatory, it is useful in different cases:</p>
 <ul>
-<li>Gestion de multiples end-points au travers d'un flot d'exécution unique,</li>
-<li>Réception non bloquante de messages.</li>
+<li>management of multiple end-points through a single execution flow,</li>
+<li>non-blocking message reception.</li>
 </ul>
-<h2 id="handler-et-routage">Handler et Routage</h2>
-<p>Ces concepts sont offerts afin de faciliter la distribution des messages MAL reçus aux fonctions de traitement, leur utilisation est optionnelle.</p>
-<p>Un Handler est un traitant d'interaction MAL, il s'exécute de manière asynchrone quand il est notifié de l'arrivée d'un message MAL et envoie en retour zéro, un ou plusieurs messages MAL, soit pour initier de nouvelles interactions (rôle du consumer), soit pour répondre à l'interaction en cours (rôle du provider).</p>
-<p>Chaque handler possède une interface dépendant de son rôle (provider, consumer, etc.) et de l'interaction dans laquelle il intervient (send, submit, etc.). Par exemple pour une interaction Progress :</p>
+<h2 id="handler-and-routing">Handler and routing</h2>
+<p>These concepts are provided in order to facilitate the distribution of MAL messages received for processing functions, their use is optional.</p>
+<p>A MAL Handler is an interaction processor, it runs asynchronously when it is notified of an incoming MAL message, and in return it sends zero, one or more MAL messages, either to initiate new interactions (consumer role) or to reply to the current interaction (provider role).</p>
+<p>Each handler has an interface that depends on its role (provider, consumer, etc.) and interaction in which it operates (send, submit, etc.). For example for a Progress interaction:</p>
 <ul>
-<li>Le handler du provider doit offrir la fonction : <code>on_progress</code></li>
-<li>Le handler du consumer doit offrir les fonctions : <code>on_ack</code>, <code>on_update</code> et <code>on_response</code>.</li>
+<li>The provider handler must provide the function: <code>on_progress</code></li>
+<li>The consumer handler must provide the functions: <code>on_ack</code>, <code>on_update</code> and <code>on_response</code>.</li>
 </ul>
-<p>Chacune de ces fonctions est appelée avec les paramètres suivants :</p>
+<p>Each of these functions is called with the following parameters:</p>
 <ul>
-<li>un pointeur sur l'état du router (cf 7.6),</li>
-<li>un pointeur sur le contexte MAL (cf 7.2),</li>
-<li>un pointeur sur le end-point MAL (cf 7.4),</li>
-<li>et un pointeur sur le message MAL (cf 7.3).</li>
+<li>a pointer to the Router state (cf 7.6),</li>
+<li>a pointer to the MAL Context (cf 7.2),</li>
+<li>a pointer to the MAL End-Point (cf 7.4),</li>
+<li>and a pointer to the MAL message (cf 7.3).</li>
 </ul>
-<p>L'API MAL offre une classe helper (mal_routing) qui simplifie la gestion des Handlers d'un end-point donné, cette classe mal_routing permet d'enregistrer les handlers correspondants aux différentes interactions attendues, puis lors de la réception d'un message par le end-point d'activer le handler correspondant pour qu'il traite le message.</p>
-<p>Les routeurs possèdent un état partagé par l'ensemble des handlers qu'ils gèrent.</p>
+<p>The MAL C API provides a helper class (mal-routing) that simplifies the management of handlers for a particular end-point. This class allows to register the handlers corresponding to expected interactions, and then upon receipt of a message by the end-point to activate the corresponding handler to process the message.</p>
+<p>The routers have a state shared by all the handlers they manage.</p>
 <h2 id="mal-broker">MAL Broker</h2>
-<p>Dans notre implantation du transport ZMQ le Publish/Subscribe est partiellement supporté par le transport ZMQ au travers des sockets PUB/SUB de ZMQ. Afin de respecter la sémantique du pattern Publish/Subscribe du MAL il est cependant nécessaire d'implanter un composant Broker gérant les souscriptions et le filtrage des messages.</p>
-<p>Afin de respecter le mode de fonctionnement de ZMQ ce composant Broker sera localisé coté Consumer. Actuellement il est implanté sous la forme d'un Handler (section 2.3) particulier que l'utilisateur de l'API peut modifier.</p>
-<h2 id="transformation-duri">Transformation d'URI</h2>
-<p>ZMQ peut utiliser de multiples protocoles sous-jacents pour communiquer. Par exemple des communications point-à-point peuvent passer par TCP entre des processus de machines différentes, des IPC entre processus de la même machine ou des mécanismes internes dans un même processus. De même, le Publish/Subscribe peut être mis en œuvre au travers de TCP, PGM ou EPGM.</p>
-<p>Le transport MALZMQ utilise différents flots de communication selon les interactions, dans notre prototype chaque contexte MAL écoute sur 2 sockets différents :</p>
+<p>In our implementation of MAC/CZMQ transport the Publish/Subscribe is partially supported by the MAC/CZMQ transport through the ZMQ PUB/SUB sockets. In order to respect the semantics of MAL Publish/Subscribe pattern it is however necessary to implement a Broker component to manage subscriptions and message filtering.</p>
+<p>To comply with the functioning of ZMQ, this broker component will be located Consumer side. Currently it operates as a special Handler (section 2.3) that the user can change or replace.</p>
+<h2 id="uri-transformation">URI Transformation</h2>
+<p>ZMQ can use multiple underlying protocols to communicate. For example point-to-point communications may pass through TCP between different machines process, IPC between processes on the same machine or internal mechanisms within the same process. Similarly, the Publish/Subscribe pattern can be implemented through TCP, PGM or EPGM.</p>
+<p>MAL/ZMQ transport uses various communication streams according interactions, in our prototype each MAL context is listening on 2 different sockets:</p>
 <ul>
-<li>Un socket <code>DEALER</code> pour les communications point-à-point</li>
-<li>Un socket <code>SUB</code> pour les communications multicast.</li>
+<li>A <code>DEALER</code> socket for point-to-point communications,</li>
+<li>A <code>SUB</code> socket for multicats communications.</li>
 </ul>
-<p>Afin d'assurer la transformation de l'URI MAL d'un service en URI ZMQ nécessaire à la réalisation d'une interaction et afin d'offrir à l'utilisateur une grande liberté de configuration nous avons choisi d'externaliser cette transformation au travers d'upcalls (section 12.2.1).</p>
-<h2 id="attributs-pointeurs">Attributs pointeurs</h2>
-<p>Les attributs pointeurs sont les attributs MAL dont la représentation en C est un type pointeur : <code>MAL::Blob</code>, <code>MAL::Identifier</code>, <code>MAL::String</code> et <code>MAL::URI</code>.</p>
-<p>Pour ces attributs, la valeur <code>NULL</code> (pointeur nul) est autorisée.</p>
-<p>Pour les autres attributs (non pointeurs), la valeur nulle est représentée par un champ additionnel (de type booléen) appelé « flag de présence ».</p>
-<h1 id="vue-densemble-de-lapi-c">Vue d'ensemble de l'API C</h1>
-<p>L'API C est constituée de plusieurs APIs :</p>
+<p>To ensure the transformation of the MAL URI of a service in the ZMQ URI needed to achieve an interaction we have chosen to outsource this transformation through upcalls (section 12.2.1). This provides a greater freedom of configuration to the user.</p>
+<h2 id="pointer-attributes">Pointer attributes</h2>
+<p>Pointer attributes are MAL attributes whose representation in C is a pointer type: <code>MAL::Blob</code>, <code>MAL::Identifier</code>, <code>MAL::String</code> and <code>MAL::URI</code>.</p>
+<p>For these attributes the <code>NULL</code> value (null pointer) is allowed. For other attributes, the null value is represented by an additional boolean field called "presence flag".</p>
+<h1 id="overview-of-the-mal-c-api">Overview of the MAL C API</h1>
+<p>The MAL C API consists of several APIs:</p>
 <ul>
-<li><strong>API d'attribut MAL</strong> : Les attributs MAL sont extraits de l'API MAL afin d'éviter une double-dépendance entre l'API MAL (qui dépend des APIs d'encodage) et les APIs d'encodage (qui dépendent des attributs MAL).</li>
-<li><strong>APIs d'encodage</strong> : Les APIs d'encodage sont définies de manière spécifique à un format d'encodage.</li>
-<li><strong>API MAL</strong> : L'API MAL permet l'utilisation des concepts de niveau MAL.</li>
-<li><strong>APIs d'Area</strong> (générées) : L'API MAL contient l'API d'Area générée à partir de la définition de l'Area MAL.</li>
-<li><strong>APIs de transport</strong> : qui gère le mapping des concepts MAL sur les concepts sous-jacents du transport choisi.</li>
-<li><strong>API d'extraction de paramètres de configuration</strong>.</li>
+<li><strong>MAL attribute API</strong> : The MAL attributes are extracted from the MAL API to avoid a circular dependency bween MAL API (which depends on the encoding APIs) and encoding APIs (which depends of MAL attributes).</li>
+<li><strong>Encoding APIs</strong> : Encoding APIs are specifically defined for each encoding format.</li>
+<li><strong>MAL API</strong> : The MAL API allows the use of MAL level concepts.</li>
+<li><strong>Area APIs</strong> (generated) : The MAL API contains the Area API generated from the definition of the MAL Area.</li>
+<li><strong>Transport APIs</strong> : which manages the mapping of MAL concepts to the underlying concepts of transport chosen.</li>
+<li><strong>Extraction API for configuration paramters</strong>.</li>
 </ul>
-<p>La plupart des concepts sont représentés chacun par une classe conforme au modèle Class de zproject :</p>
+<p>Most concepts are each represented by a class that conforms to the zproject Class model:</p>
 <ul>
-<li>une structure opaque (seul le type est visible, pas le contenu) déclarée dans le header principal de l'API (<code>&lt;api&gt;.h</code>)</li>
-<li>un fichier « include » : <code>&lt;nom de classe&gt;.h</code></li>
-<li>un fichier « source » : <code>&lt;nom de classe&gt;.c</code></li>
+<li>an opaque structure (only the type is visible and not the content) declared in the main header file of the API (<code>&lt;api&gt;.h</code>)</li>
+<li>an include file: <code>&lt;classname&gt;.h</code></li>
+<li>a source file: <code>&lt;classname&gt;.c</code></li>
 </ul>
-<p>Les noms de classe sont en caractères minuscules, avec séparateur '_', et sont préfixés du nom de l'API. Par exemple, le concept de end-point, défini dans l'API MAL, est représenté par une classe nommée : <code>mal_endpoint</code>.</p>
-<p>Les noms des classes représentant des types de données sont préfixés des noms de leur Area et leur Service (si existant). Par exemple le type MAL::Blob (défini dans l'area MAL, sans Service intermédiaire) est nommé : <code>mal_blob</code>.</p>
-<p>Les autres conventions sont propres au modèle <em>CLASS</em>.</p></div>
+<p>Class names are lowercase, with '_' separator, and prefixed by the API name. For example, the concept of end-point, defined in the API MAL, is represented by a class named: <code>mal_endpoint</code>.</p>
+<p>The names of the classes representing data types are prefixed by the names of their Area and their service (if available). For example, the type <code>MAL::Blob</code> (defined in the area MAL without intermediate Service) is named: <code>mal_blob</code>.</p>
+<p>Other conventions are conform to the zproject <em>Class</em> model.</p></div>
             
         </div>
 
@@ -368,5 +366,5 @@ Le polymorphisme d'Attribut consiste à déclarer un élément ou un champ avec 
 
 <!--
 MkDocs version : 0.15.3
-Build Date UTC : 2016-03-14 15:54:33.252048
+Build Date UTC : 2016-09-01 09:13:37.958488
 -->

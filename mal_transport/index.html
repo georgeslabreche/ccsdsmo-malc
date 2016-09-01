@@ -54,30 +54,30 @@
                 
                 
                     <li >
-                        <a href="..">Accueil</a>
+                        <a href="..">Home</a>
                     </li>
                 
                 
                 
                     <li >
-                        <a href="../tutorial/">Tutoriel</a>
+                        <a href="../tutorial/">Tutorial</a>
                     </li>
                 
                 
                 
                     <li class="dropdown active">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">APIs MAL <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">MAL APIs <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
 <li >
-    <a href="../mal_attributes/">Attributs</a>
+    <a href="../mal_attributes/">Attributes</a>
 </li>
 
                         
                             
 <li >
-    <a href="../mal_encoding/">Encodage</a>
+    <a href="../mal_encoding/">Encoding</a>
 </li>
 
                         
@@ -126,12 +126,12 @@
                 
                 
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Générateurs <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Generators <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                         
                             
 <li >
-    <a href="../stub_generator/">Stubs de service</a>
+    <a href="../stub_generator/">Stubs generator</a>
 </li>
 
                         
@@ -147,7 +147,7 @@
                 
                 
                     <li >
-                        <a href="../annexes/">Annexes</a>
+                        <a href="../annexes/">Annexs</a>
                     </li>
                 
                 
@@ -183,116 +183,137 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#apis-de-transport">APIs de transport</a></li>
+        <li class="main active"><a href="#transport-api">Transport API</a></li>
         
-            <li><a href="#contexte-de-binding">Contexte de Binding</a></li>
+            <li><a href="#binding-context">Binding Context</a></li>
         
     
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="apis-de-transport">APIs de transport</h1>
-<p>Les APIs de transport sont définies de manière spécifique à un « binding », par exemple MALZMQ.</p>
-<p>Plusieurs fonctions virtuelles sont imposées par la couche MAL, par exemple la fonction d'envoi de message (section 7.1.8). Ainsi, le code applicatif peut envoyer un message sans dépendre de l'API spécifique du transport utilisé.</p>
-<p>Le code des services (consumer, provider) ne dépend pas de l'API de transport. Il utilise seulement l'API MAL.
-Le nom donné en C au transport (binding) MALZMQ est : <code>malzmq</code>
-Ce nom est une chaîne de caractères utilisée pour le nommage des APIs.</p>
-<h2 id="contexte-de-binding">Contexte de Binding</h2>
+<h1 id="transport-api">Transport API</h1>
+<p>Transport APIs are defined in the context of a specific binding, for example MALZMQ.
+These APIs are not directly used by the final user of the MAL API, these APIs are used by
+the MAL/C itself to perform all actions related to the tranport. </p>
+<p>Several virtual functions are defined by the MAL layer, such as the message sending function (section 7.1.8).
+Thus, the application code can send messages without dependence to specific transport API.</p>
+<p>The code of the various services (consumer, provider) does not depend on the transport API. It only uses the MAL API.
+The binding identifier corresponding to the MALZMQ transport is <code>malzmq</code>. This identifier is a string used for naming APIs.</p>
+<h2 id="binding-context">Binding Context</h2>
 <pre><code class="c">&lt;binding&gt;_ctx.h
 </code></pre>
 
-<h3 id="constructeur">Constructeur</h3>
-<p>Déclaration :</p>
+<h3 id="constructor">Constructor</h3>
+<p>Declaration:</p>
 <pre><code class="c">&lt;binding&gt;_ctx_t *&lt;binding&gt;_ctx_new(mal_ctx_t *mal_ctx);
 </code></pre>
 
-<p>Paramètre :</p>
+<p>Parameters:</p>
 <ul>
-<li><code>mal_ctx</code> : le context MAL utilisant le transport créé</li>
+<li><code>mal_ctx</code>: MAL context using the created transport.</li>
 </ul>
-<p>Résultat :</p>
-<p>le transport créé</p>
-<h3 id="creation-dune-uri">Création d'une URI</h3>
-<p>Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour créer une URI  (voir 7.1.1).</p>
-<p>Déclaration :</p>
+<p>Result:</p>
+<ul>
+<li>pointer to the created transport.</li>
+</ul>
+<h3 id="uri-creation">URI creation</h3>
+<p>This function must conform to the virtual function defined by the MAL API to create a URI (see 7.1.1).</p>
+<p>Declaration:</p>
 <pre><code class="c">mal_uri_t *&lt;binding&gt;_ctx_create_uri(void *self, char *id);
 </code></pre>
 
-<p>Paramètre :</p>
+<p>Parameters:</p>
 <ul>
-<li><code>self</code> : la référence du module de transport</li>
-<li><code>id</code> : identifiant unique dans le contexte MALZMQ</li>
+<li><code>self</code>: pointer to the transport component.</li>
+<li><code>id</code>: unique identifier in the transport context.</li>
 </ul>
-<p>Résultat :</p>
-<p>l'URI créée</p>
-<h3 id="creation-de-end-point">Création de end-point</h3>
-<p>Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour créer un end-point  (voir 7.1.2).</p>
-<p>Déclaration :</p>
+<p>Result:</p>
+<ul>
+<li>the created URI</li>
+</ul>
+<h3 id="end-point-creation">End-point creation</h3>
+<p>This function must conform to the virtual function defined by the MAL API to create an end-point (see 7.1.2).</p>
+<p>Declaration:</p>
 <pre><code class="c">void *&lt;binding&gt;_ctx_create_endpoint(
   void *self,
   mal_endpoint_t *endpoint);
 </code></pre>
 
-<p>Paramètres :</p>
+<p>Parameters:</p>
 <ul>
-<li><code>self</code> : la référence du module de transport</li>
-<li><code>mal_endpoint</code> : end-point MAL correspondant au end-point physique du transport</li>
+<li><code>self</code>: pointer to the transport component.</li>
+<li><code>mal_endpoint</code>: MAL end-point corresponding to the physical transport end-point.</li>
 </ul>
-<p>Retour :</p>
-<p>La référence du end-point créé par le transport</p>
-<h3 id="envoi-de-message-mal">Envoi de message MAL</h3>
-<p>Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour envoyer un message MAL (voir 7.1.8).</p>
-<p>Déclaration :</p>
+<p>Result:</p>
+<ul>
+<li>a pointer to the created end-point.</li>
+</ul>
+<h3 id="mal-message-sending">MAL message sending</h3>
+<p>This function must conform to the virtual function defined by the MAL API to send a MAL message (see 7.1.8).</p>
+<p>Declaration:</p>
 <pre><code class="c">int &lt;binding&gt;_ctx_send_message(void *self,
   mal_endpoint_t *mal_endpoint, mal_message_t *message);
 </code></pre>
 
-<p>Paramètres :</p>
+<p>Parameters:</p>
 <ul>
-<li><code>self</code> : la référence du module de transport</li>
-<li><code>mal_endpoint</code> : le end-point qui envoie le message</li>
-<li><code>message</code> : message MAL à envoyer</li>
+<li><code>self</code>: pointer to the transport component.</li>
+<li><code>mal_endpoint</code>: MAL end-point sending the message.</li>
+<li><code>message</code>: MAL message to send.</li>
 </ul>
-<p>Résultat :</p>
-<p>Code d'erreur</p>
-<h3 id="destruction-de-message-mal">Destruction de message MAL</h3>
-<p>Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour détruire un message MAL (voir 7.1.10).</p>
-<p>Déclaration :</p>
+<p>Result:</p>
+<ul>
+<li>an error code.</li>
+</ul>
+<h3 id="mal-message-deletion">MAL message deletion</h3>
+<p>This function must conform to the virtual function defined by the MAL API to delete a MAL message (see 7.1.10).</p>
+<p>Declaration:</p>
 <pre><code class="c">int &lt;binding&gt;_ctx_destroy_message(void *self, mal_message_t *message);
 </code></pre>
 
-<p>Paramètres :</p>
+<p>Parameters:</p>
 <ul>
-<li><code>self</code> : la référence du module de transport</li>
-<li><code>message</code> : message MAL à détruire</li>
+<li><code>self</code>: pointer to the transport component.</li>
+<li><code>message</code>: MAL message to delete.</li>
 </ul>
-<p>Résultat :</p>
-<p>Code d'erreur</p>
-<h3 id="destruction-de-end-point">Destruction de end-point</h3>
-<p>Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour détruire un end-point (voir 7.1.3).</p>
-<p>Déclaration :</p>
+<p>Result:</p>
+<ul>
+<li>an error code.</li>
+</ul>
+<h3 id="end-point-deletion">End-point deletion</h3>
+<p>This function must conform to the virtual function defined by the MAL API to delete an end-point (see 7.1.3).</p>
+<p>Declaration:</p>
 <pre><code class="c">void &lt;binding&gt;_ctx_destroy_endpoint(void *self, void **endpoint_p);
 </code></pre>
 
-<h3 id="creation-de-poller">Création de poller</h3>
-<p>Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour créer un end-point  (voir 7.1.4).</p>
-<p>Déclaration :</p>
+<p>Parameters:</p>
+<ul>
+<li><code>self</code>: pointer to the transport component.</li>
+<li><code>mal_endpoint</code>: handle to the MAL end-point to delete.</li>
+</ul>
+<p>Result:</p>
+<ul>
+<li>an error code.</li>
+</ul>
+<h3 id="poller-creation">Poller creation</h3>
+<p>This function must conform to the virtual function defined by the MAL API to create a MAL poller (see 7.1.4).</p>
+<p>Declaration:</p>
 <pre><code class="c">void *&lt;binding&gt;_ctx_create_poller(
   void *self,
   mal_poller_t *poller);
 </code></pre>
 
-<p>Paramètres :</p>
+<p>Parameters:</p>
 <ul>
-<li><code>self</code> : la référence du module de transport</li>
-<li><code>mal_poller</code> : poller MAL correspondant au poller physique du transport</li>
+<li><code>self</code>: pointer to the transport component.</li>
+<li><code>mal_poller</code>: MAL poller corresponding to the physical transport poller.</li>
 </ul>
-<p>Retour :</p>
-<p>La référence du poller créé par le transport</p>
-<h3 id="ajout-suppression-de-end-point-au-poller">Ajout / Suppression de end-point au poller</h3>
-<p>Ces fonctions doivent être conformes aux fonctions virtuelles définies par l'API MAL pour ajouter ou supprimer un end-point du poller (voir 7.1.5).</p>
-<p>Déclaration :</p>
+<p>Result:</p>
+<p>-- pointer to the created poller.</p>
+<h3 id="end-point-adding-removing-to-the-poller">End-point adding / removing to the poller</h3>
+<p>Theses functions must conform to the virtual functions defined by the MAL API to add and remove an end-point to a poller (see 7.1.5).</p>
+<p>Declaration:</p>
 <pre><code class="c">int malzmq_ctx_poller_add_endpoint(
     void *self,
     mal_poller_t *mal_poller,
@@ -304,17 +325,19 @@ int malzmq_ctx_poller_del_endpoint(
     mal_endpoint_t *mal_endpoint);
 </code></pre>
 
-<p>Paramètres :</p>
+<p>Parameters:</p>
 <ul>
-<li><code>self</code> : la référence du module de transport</li>
-<li><code>mal_poller</code> : poller MAL correspondant au poller physique du transport</li>
-<li><code>mal_endpoint</code> : end-point MAL à ajouter ou supprimer du poller</li>
+<li><code>self</code>: pointer to the transport component.</li>
+<li><code>mal_poller</code>: MAL poller corresponding to the physical transport poller.</li>
+<li><code>mal_endpoint</code>: MAL end-point to add / remove to the specified poller.</li>
 </ul>
-<p>Retour : </p>
-<p>Code d'erreur</p>
-<h3 id="attente-de-message-sur-le-poller">Attente de message sur le poller</h3>
-<p>Ces fonctions doivent être conformes aux fonctions virtuelles définies par l'API MAL pour attendre la réception d'un message sur un des end-points du poller (voir 7.1.6).</p>
-<p>Déclaration :</p>
+<p>Result:</p>
+<ul>
+<li>an error code.</li>
+</ul>
+<h3 id="message-waiting-trough-the-poller">Message waiting trough the poller</h3>
+<p>This function must conform to the virtual function defined by the MAL API allowing to wait a MAL message through a poller's end-point (see 7.1.6).</p>
+<p>Declaration:</p>
 <pre><code class="c">int malzmq_ctx_poller_wait(
     void *self,
     mal_poller_t *mal_poller,
@@ -322,23 +345,26 @@ int malzmq_ctx_poller_del_endpoint(
     int timeout);
 </code></pre>
 
-<p>Paramètres :</p>
+<p>Parameters:</p>
 <ul>
-<li><code>self</code> : la référence du module de transport</li>
-<li><code>mal_poller</code> : poller MAL correspondant au poller physique du transport</li>
-<li><code>mal_endpoint</code> : le end-point sur lequel un message est en attente de réception</li>
-<li><code>timeout</code> : le temps d'attente maximum, éventuellement infini (-1)</li>
+<li><code>self</code> : pointer to the transport component.</li>
+<li><code>mal_poller</code> : MAL poller corresponding to the physical transport poller.</li>
+<li><code>mal_endpoint</code> : MAL end-point that expect a message.</li>
+<li><code>timeout</code> : the maximum waiting time, possibly unlimited (-1)</li>
 </ul>
-<p>Retour : </p>
-<p>Code d'erreur</p>
-<h3 id="destruction-du-poller">Destruction du poller</h3>
-<p>Cette fonction doit être conforme à la fonction virtuelle définie par l'API MAL pour détruire un poller (voir 7.1.7).</p>
-<p>Déclaration :</p>
+<p>Result:</p>
+<ul>
+<li>an error code.</li>
+</ul>
+<h3 id="poller-deletion">Poller deletion</h3>
+<p>This function must conform to the virtual function defined by the MAL API to delete a poller (see 7.1.7).</p>
+<p>Declaration:</p>
 <pre><code class="c">void &lt;binding&gt;_ctx_destroy_poller(void *self, void **poller_p);
 </code></pre>
 
-<h3 id="destructeur">Destructeur</h3>
-<p>Détruit le contexte MALZMQ.</p>
+<h3 id="destructor">Destructor</h3>
+<p>Delete the transport context.</p>
+<p>Declaration:</p>
 <pre><code class="c">void &lt;binding&gt;_ctx_destroy(&lt;binding&gt;_ctx_t **self_p);
 </code></pre></div>
             
