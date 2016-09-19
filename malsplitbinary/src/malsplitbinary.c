@@ -109,7 +109,7 @@ void  malsplitbinary_encoder_cursor_init(void *cursor,
   ((malsplitbinary_cursor_t *) cursor)->bitfield_idx = 0;
   ((malsplitbinary_cursor_t *) cursor)->most_significant = ((malsplitbinary_cursor_t *) cursor)->bitfield_length;
 
-  malsplitbinary_cursor_print((malsplitbinary_cursor_t *) cursor);
+  //malsplitbinary_cursor_print((malsplitbinary_cursor_t *) cursor);
 }
 
 void  malsplitbinary_decoder_cursor_init(void *cursor,
@@ -135,7 +135,8 @@ void  malsplitbinary_decoder_cursor_init(void *cursor,
   ((malsplitbinary_cursor_t *) cursor)->bitfield_idx = 0;
   //((malsplitbinary_cursor_t *) cursor)->most_significant = most_significant;
   ((malsplitbinary_cursor_t *) cursor)->most_significant = 0;
-  malsplitbinary_cursor_print((malsplitbinary_cursor_t *) cursor);
+
+  //malsplitbinary_cursor_print((malsplitbinary_cursor_t *) cursor);
 }
 
 void malsplitbinary_cursor_assert(void *cursor) {
