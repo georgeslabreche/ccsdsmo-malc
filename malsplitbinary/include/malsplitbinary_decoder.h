@@ -33,8 +33,6 @@ extern "C" {
 
 #include "malbinary.h"
 
-mal_decoder_t *malsplitbinary_decoder_new();
-
 void malsplitbinary_init_decode_functions(mal_decoder_t *self);
 
 mal_decoder_t *malsplitbinary_decoder_new();
