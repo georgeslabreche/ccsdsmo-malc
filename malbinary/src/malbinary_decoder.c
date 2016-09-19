@@ -85,6 +85,18 @@ long malbinary_read64(void *cursor) {
   return res;
 }
 
+unsigned int malbinary_read_u8int(void *cursor) {
+  unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
+  unsigned int value = 0;
+  int i;
+  int b;
+  for (i = 0; ((b = ((malbinary_cursor_t *) cursor)->body_ptr[index++]) & 0x80) != 0; i += 7) {
+    value |= (b & 0x7f) << i;
+  }
+  ((malbinary_cursor_t *) cursor)->body_offset = index;
+  return value | b << i;
+}
+
 unsigned short malbinary_read_uvarshort(void *cursor) {
   unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
   unsigned int value = 0;
@@ -123,8 +135,12 @@ unsigned long malbinary_read_uvarlong(void *cursor) {
 
 int malbinary_read_varint(void *cursor) {
   unsigned int i = malbinary_read_uvarint(cursor);
-  int temp = (((i << 31) >> 31) ^ i) >> 1;
-  return temp ^ (i & (1 << 31));
+  int s = 0L;
+  if ((i&0x1) != 0)
+    s = 0xFFFFFFFF;
+  int temp = i >> 1;;
+  temp = temp ^ s;
+  return temp;
 }
 
 short malbinary_read_varshort(void *cursor) {
@@ -133,16 +149,29 @@ short malbinary_read_varshort(void *cursor) {
 
 long malbinary_read_varlong(void *cursor) {
   unsigned long l = malbinary_read_uvarlong(cursor);
-  long temp = (((l << 63) >> 63) ^ l) >> 1;
-  return temp ^ (l & (1L << 63));
+  long s = 0L;
+  if ((l&0x1) != 0)
+    s = 0xFFFFFFFFFFFFFFFFL;
+  long temp = l >> 1;;
+
+  temp = temp ^ s;
+  return temp;
 }
 
 char *malbinary_read_str(mal_decoder_t *self, void *cursor) {
-  unsigned int length;
+  int length;
   if (self->varint_supported)
-    length = malbinary_read_uvarint(cursor);
+    length = malbinary_read_varint(cursor);
   else
     length = malbinary_read32(cursor);
+
+  if (length < 0) {
+    char *array = (char *) malloc(1);
+    if (array == NULL)
+      return NULL;
+    array[0] = '\0';
+    return array;
+  }
 
   char *array = (char *) malloc(length + 1);
   if (array == NULL)
@@ -152,7 +181,6 @@ char *malbinary_read_str(mal_decoder_t *self, void *cursor) {
   array[length] = '\0';
 
   ((malbinary_cursor_t *) cursor)->body_offset += length;
-
   return array;
 }
 
@@ -212,7 +240,7 @@ int malbinary_decoder_decode_short_form(mal_decoder_t *self, void *cursor, long 
 int malbinary_decoder_decode_list_size(mal_decoder_t *self, void *cursor, unsigned int *result) {
   int rc = 0;
   if (self->varint_supported)
-    (*result) = malbinary_read_uvarint(cursor);
+    (*result) = malbinary_read_varint(cursor);
   else
     (*result) = malbinary_read32(cursor);
   return rc;
@@ -227,7 +255,7 @@ int malbinary_decoder_decode_small_enum(mal_decoder_t *self, void *cursor, int *
 int malbinary_decoder_decode_medium_enum(mal_decoder_t *self, void *cursor, int *result) {
   int rc = 0;
   if (self->varint_supported)
-    (*result) = malbinary_read_uvarshort(cursor);
+    (*result) = malbinary_read_varshort(cursor);
   else
     (*result) = malbinary_read16(cursor);
   return rc;
@@ -236,7 +264,7 @@ int malbinary_decoder_decode_medium_enum(mal_decoder_t *self, void *cursor, int 
 int malbinary_decoder_decode_large_enum(mal_decoder_t *self, void *cursor, int *result) {
   int rc = 0;
   if (self->varint_supported)
-    (*result) = malbinary_read_uvarint(cursor);
+    (*result) = malbinary_read_varint(cursor);
   else
     (*result) = malbinary_read32(cursor);
   return rc;
@@ -250,15 +278,22 @@ int malbinary_decoder_decode_uri(mal_decoder_t *self, void *cursor, mal_uri_t **
 
 int malbinary_decoder_decode_blob(mal_decoder_t *self, void *cursor, mal_blob_t **result) {
   int rc = 0;
-  unsigned int length;
+  int length;
   if (self->varint_supported)
-    length = malbinary_read_uvarint(cursor);
+    length = malbinary_read_varint(cursor);
   else
     length = malbinary_read32(cursor);
-  mal_blob_t *blob = mal_blob_new(length);
-  char *blob_content = mal_blob_get_content(blob);
-  malbinary_read_array(blob_content, length, cursor);
-  (*result) = blob;
+
+  if (length < 0) {
+    (*result) = NULL;
+  } else if (length == 0) {
+    (*result) = mal_blob_new(0);
+  } else {
+    mal_blob_t *blob = mal_blob_new(length);
+    char *blob_content = mal_blob_get_content(blob);
+    malbinary_read_array(blob_content, length, cursor);
+    (*result) = blob;
+  }
   return rc;
 }
 
@@ -288,7 +323,7 @@ int malbinary_decoder_decode_identifier(mal_decoder_t *self, void *cursor, mal_i
 
 int malbinary_decoder_decode_uoctet(mal_decoder_t *self, void *cursor, mal_uoctet_t *result) {
   int rc = 0;
-  (*result) = malbinary_read(cursor);
+  (*result) = (mal_uoctet_t) malbinary_read_u8int(cursor);
   return rc;
 }
 
