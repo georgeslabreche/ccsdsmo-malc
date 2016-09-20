@@ -89,6 +89,18 @@ void malbinary_write_u8int(unsigned int value, void *cursor)
   ((malbinary_cursor_t *) cursor)->body_offset = index;
 }
 
+int malbinary_u8int_encoding_length(unsigned int value) {
+  if (value == 0) return 1;
+  int ret = 0;
+  for (int i = 0; i < 32; i += 7) {
+    if ((value >> i) == 0) {
+      break;
+    }
+    ret++;
+  }
+  return ret;
+}
+
 int malbinary_var_ushort_encoding_length(unsigned short value) {
   if (value == 0) return 1;
   int ret = 0;
@@ -334,7 +346,7 @@ int malbinary_encoder_add_time_encoding_length(mal_encoder_t *self,
 int malbinary_encoder_add_uoctet_encoding_length(mal_encoder_t *self,
     mal_uoctet_t to_encode, void *cursor) {
   int rc = 0;
-  ((malbinary_cursor_t *) cursor)->body_length += 1;
+  ((malbinary_cursor_t *) cursor)->body_length += malbinary_u8int_encoding_length(to_encode);
   return rc;
 }
 
