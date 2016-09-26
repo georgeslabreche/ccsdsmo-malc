@@ -51,7 +51,7 @@ int malbinary_var_uinteger_encoding_length(unsigned int value) {
 void malbinary_write_uvarinteger(unsigned int value, char *bytes)
 {
   unsigned int index = 0;
-  while ((value & -128) != 0L)
+  while ((value & -128) != 0)
   {
     bytes[index++] = (char) ((value & 127) | 128);
     value >>= 7;
