@@ -102,7 +102,6 @@ void submit_app_test(bool verbose) {
     // level (MAL message body encoding)
     ctx = maltcp_ctx_new(
         mal_ctx,
-        NULL,                 // Use default transformation of MAL URI to ZMQ URI
         "localhost", "6666",
         maltcp_header,
         true);
