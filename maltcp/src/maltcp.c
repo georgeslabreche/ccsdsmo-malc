@@ -25,14 +25,14 @@
 /* */
 #include "maltcp.h"
 
-clog_logger_t maltcp_logger = CLOG_WARN_LEVEL;
+clog_logger_t maltcp_logger = CLOG_DEBUG_LEVEL;
 
 void maltcp_set_log_level(int level) {
   maltcp_logger = level;
 }
 
 typedef enum {
-  MAL_SDUTYPE_SEND,
+  MAL_SDUTYPE_SEND=0,
   MAL_SDUTYPE_SUBMIT,
   MAL_SDUTYPE_SUBMIT_ACK,
   MAL_SDUTYPE_REQUEST,
@@ -56,13 +56,12 @@ typedef enum {
   MAL_SDUTYPE_PUBSUB_PUBLISH_DEREGISTER_ACK,
 } mal_sdutype_t;
 
-static int convert_to_sdu_type(mal_interactiontype_t type, mal_uoctet_t stage,
-    mal_boolean_t isError) {
+static int convert_to_sdu_type(mal_interactiontype_t type, mal_uoctet_t stage) {
   switch (type) {
   case MAL_INTERACTIONTYPE_SEND:
     return MAL_SDUTYPE_SEND;
   case MAL_INTERACTIONTYPE_SUBMIT:
-    if (stage == MAL_IP_STAGE_SEND) {
+    if (stage == MAL_IP_STAGE_SUBMIT) {
       return MAL_SDUTYPE_SUBMIT;
     } else {
       return MAL_SDUTYPE_SUBMIT_ACK;
@@ -369,9 +368,9 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
 
   int sdu_type = convert_to_sdu_type(
       mal_message_get_interaction_type(message),
-      mal_message_get_interaction_stage(message),
-      mal_message_is_error_message(message));
-  if (sdu_type == -1) {
+      mal_message_get_interaction_stage(message));
+
+  if ((sdu_type & 0xFFFFFFE0) != 0) {
     clog_error(maltcp_logger, MALZMQ_BAD_SDU_TYPE_MSG);
     return MALZMQ_BAD_SDU_TYPE;
   }
@@ -399,21 +398,24 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
   bool domain_flag = maltcp_header_get_domain_flag(maltcp_header);
   bool authentication_id_flag = maltcp_header_get_authentication_id_flag(maltcp_header);
 
-  ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++] = (char) (source_flag << 7) | (destination_flag << 6)
-              | (priority_flag << 5) | (timestamp_flag << 4)
-              | (network_zone_flag << 3) | (session_name_flag << 2) | (domain_flag << 1)
-              | (authentication_id_flag << 0);
+  ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++] =
+      (char) (source_flag << 7) | (destination_flag << 6) |
+             (priority_flag << 5) |
+             (timestamp_flag << 4) |
+             (network_zone_flag << 3) |
+             (session_name_flag << 2) |
+             (domain_flag << 1) |
+             (authentication_id_flag << 0);
 
-  // encoding id, set to 0
-  malbinary_encoder_encode_octet(encoder, cursor, 0);
+  malbinary_encoder_encode_uoctet(encoder, cursor, mal_message_get_encoding_id((message)));
 
-  // body length (message length) encoded to the end of this function
+  // TODO (AF): According to the SADT RID this field contains the message length.
+  // The length is encoded to the end of this function
   malbinary_cursor_t cursor_bl;
   malbinary_cursor_copy((malbinary_cursor_t *) cursor, &cursor_bl);
   ((malbinary_cursor_t *) cursor)->body_offset += 4;
 
-  // always encode 'URI From' and 'URI To'
-  // this ordering is not consistent with the blue book proposal
+  // Always encode 'URI From' and 'URI To'
   maltcp_encode_uri(mal_message_get_uri_from(message), encoder, cursor);
   maltcp_encode_uri(mal_message_get_uri_to(message), encoder, cursor);
 
@@ -428,23 +430,19 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
   }
 
   if (network_zone_flag > 0) {
-    maltcp_encode_identifier(mal_message_get_network_zone(message),
-        encoder, cursor);
+    maltcp_encode_identifier(mal_message_get_network_zone(message), encoder, cursor);
   }
 
   if (session_name_flag > 0) {
-    maltcp_encode_identifier(mal_message_get_session_name(message),
-        encoder, cursor);
+    maltcp_encode_identifier(mal_message_get_session_name(message), encoder, cursor);
   }
 
   if (domain_flag > 0) {
-    maltcp_encode_identifier_list(mal_message_get_domain(message),
-       encoder, cursor);
+    maltcp_encode_identifier_list(mal_message_get_domain(message), encoder, cursor);
   }
 
   if (authentication_id_flag > 0) {
-    malbinary_encoder_encode_blob(encoder, cursor,
-        mal_message_get_authentication_id(message));
+    malbinary_encoder_encode_blob(encoder, cursor, mal_message_get_authentication_id(message));
   }
 
   // Copy the body in the frame.
@@ -459,7 +457,8 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
   memcpy(bytes + index, body + body_offset, body_length);
   ((malbinary_cursor_t *) cursor)->body_offset += body_length;
 
-  // Encode the body length (message length)
+  // TODO (AF): According to the SADT RID this field contains the message length.
+  // Encode the body length (message length).
   malbinary_write32(((malbinary_cursor_t *) cursor)->body_offset, &cursor_bl);
   printf("--- message_length = %u\n" , malbinary_cursor_get_offset((malbinary_cursor_t *) cursor));//NTA tmp
 
@@ -470,9 +469,10 @@ int maltcp_decode_uri(mal_decoder_t *decoder, void *cursor, mal_uri_t **result) 
   return malbinary_decoder_decode_string(decoder, cursor, result);
 }
 
-int maltcp_decode_uri_to(maltcp_header_t *maltcp_header,
+int maltcp_decode_uris(maltcp_header_t *maltcp_header,
     mal_decoder_t *decoder, char *bytes, unsigned int length,
-    mal_uri_t **uri_to) {
+    mal_uri_t **uri_to,
+    mal_uri_t **uri_from) {
   // Note: We could use virtual allocation and initialization functions from encoder
   // rather than malbinary interface.
   malbinary_cursor_t cursor;
@@ -489,16 +489,25 @@ int maltcp_decode_uri_to(maltcp_header_t *maltcp_header,
   // +1 bytes: flags
   // +1 bytes: encoding id
   // +4 bytes: body length
-  cursor.body_offset += 1 + 2 * 3 + 1 + 1 + 8 + 1 + 1 + 4;
 
-  // Note: this ordering is not consistent with the blue book proposal
+  // Verify if 'URI To' and 'URI From' fields are present.
+  char b = cursor.body_ptr[cursor.body_offset +17];
+  bool source_flag = (b >> 7) & 0x01;
+  bool destination_flag = (b >> 6) & 0x01;
 
-  // Go beyond the 'URI From'
-  mal_uinteger_t urifrom_length;
-  malbinary_decoder_decode_uinteger(decoder, &cursor, &urifrom_length);
-  cursor.body_offset += urifrom_length;
+  cursor.body_offset += FIXED_HEADER_LENGTH;
 
-  return maltcp_decode_uri(decoder, &cursor, uri_to);
+  if (source_flag) {
+    int rc = maltcp_decode_uri(decoder, &cursor, uri_from);
+    if (rc < 0) return rc;
+  }
+
+  if (destination_flag) {
+    int rc = maltcp_decode_uri(decoder, &cursor, uri_to);
+    if (rc < 0) return rc;
+  }
+
+  return 0;
 }
 
 int maltcp_decode_identifier(mal_decoder_t *decoder, void *cursor,
@@ -537,7 +546,7 @@ int maltcp_decode_identifier_list(mal_decoder_t *decoder, void *cursor,
 
 int maltcp_decode_message(maltcp_header_t *maltcp_header,
     mal_message_t *message, mal_decoder_t *decoder, void *cursor,
-    mal_uoctet_t *encoding_id, mal_uinteger_t *mal_message_length) {
+    mal_uinteger_t *mal_message_length) {
   char b = ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++];
 
   unsigned char version = (b >> 5) & 0x07;
@@ -596,8 +605,9 @@ int maltcp_decode_message(maltcp_header_t *maltcp_header,
   bool authentication_id_flag = b & 0x01;
 
   //encoding id
-  malbinary_decoder_decode_uoctet(decoder, cursor, encoding_id);
-  //TODO: mal_message_set_encoding_id(message, encoding_id);
+  mal_uoctet_t encoding_id;
+  malbinary_decoder_decode_uoctet(decoder, cursor, &encoding_id);
+  mal_message_set_encoding_id(message, encoding_id);
 
   //mal_message_length
   (*mal_message_length) = malbinary_read32(cursor);
