@@ -95,12 +95,11 @@ void invoke_app_test(bool verbose) {
     // All the MAL header fields are passed
     maltcp_header_t *maltcp_header = maltcp_header_new(true, 0, true, NULL, NULL, NULL, NULL);
 
-    // This test uses the same encoding configuration at the MAL/ZMQ transport
-    // level (MAL header encoding) and at the application
+    // This test uses the same encoding configuration at the MAL/ZMQ
+    // transport level (MAL header encoding) and at the application
     // level (MAL message body encoding)
     ctx = maltcp_ctx_new(
         mal_ctx,
-        NULL,                 // Use default transformation of MAL URI to ZMQ URI
         "localhost", "6666",
         maltcp_header,
         true);
