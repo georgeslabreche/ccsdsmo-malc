@@ -26,7 +26,10 @@
 #include "request_app.h"
 
 bool split = false;
-bool tcp = false;
+bool tcp = true;
+
+mal_actor_t *provider_actor = NULL;
+mal_actor_t *consumer_actor = NULL;
 
 //  --------------------------------------------------------------------------
 // test also the mapping directory in this test
@@ -89,8 +92,7 @@ int request_app_create_provider(
 
   request_app_myprovider_t *provider = request_app_myprovider_new(encoder, decoder);
 
-//  mal_actor_t *provider_actor =
-  mal_actor_new(
+  provider_actor = mal_actor_new(
       mal_ctx,
       provider_uri, provider,
       request_app_myprovider_initialize, request_app_myprovider_finalize);
@@ -123,8 +125,7 @@ int request_app_create_consumer(
   mal_uri_t *consumer_uri = mal_ctx_create_uri(mal_ctx, "request_app/myconsumer");
   printf("request_app: consumer URI: %s\n", consumer_uri);
 
-//  mal_actor_t *consumer_actor =
-  mal_actor_new(
+ consumer_actor = mal_actor_new(
       mal_ctx,
       consumer_uri, consumer,
       request_app_myconsumer_initialize, request_app_myconsumer_finalize);

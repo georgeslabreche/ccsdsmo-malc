@@ -55,6 +55,9 @@ void request_app_test(bool verbose);
 #include "request_app_myconsumer.h"
 #include "request_app_myprovider.h"
 
+extern mal_actor_t *provider_actor;
+extern mal_actor_t *consumer_actor;
+
 #ifdef __cplusplus
 }
 #endif
