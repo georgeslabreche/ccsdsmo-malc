@@ -179,7 +179,7 @@ int pubsub_app_mypublisher_initialize(void *self, mal_actor_t *mal_actor) {
 
 int pubsub_app_mypublisher_deregister(void *self) {
   int rc = 0;
-  mal_endpoint_t *mal_endpoint = mal_actor_get_mal_endpoint(provider_actor);
+  mal_endpoint_t *mal_endpoint = mal_actor_get_mal_endpoint(publisher_actor);
   pubsub_app_mypublisher_t *publisher = (pubsub_app_mypublisher_t *) self;
   mal_uri_t *broker_uri = publisher->broker_uri;
 
@@ -232,7 +232,7 @@ int pubsub_app_mypublisher_deregister(void *self) {
 
 int pubsub_app_mypublisher_publish(void *self) {
   int rc = 0;
-  mal_endpoint_t *mal_endpoint = mal_actor_get_mal_endpoint(provider_actor);
+  mal_endpoint_t *mal_endpoint = mal_actor_get_mal_endpoint(publisher_actor);
   pubsub_app_mypublisher_t *publisher = (pubsub_app_mypublisher_t *) self;
   mal_uri_t *broker_uri = publisher->broker_uri;
 
@@ -308,7 +308,7 @@ int pubsub_app_mypublisher_publish(void *self) {
   long initial_publish_register_tid = mal_message_get_transaction_id(publish_message);
 
   //Publish
-  rc = testarea_testservice_testmonitor_publish(mal_actor_get_mal_endpoint(provider_actor),
+  rc = testarea_testservice_testmonitor_publish(mal_actor_get_mal_endpoint(publisher_actor),
       publish_message, broker_uri, initial_publish_register_tid);
   if (rc < 0)
     return rc;
@@ -355,7 +355,7 @@ int pubsub_app_mypublisher_on_publish_deregister_ack(void *self, mal_ctx_t *mal_
 
   printf("\n\n-------------------- PUBLISH_DEREGISTER_ACK -----------------\n\n");//NTA tmp
 
-  rc = mal_actor_send_command(provider_actor, "$TERM");
+  rc = mal_actor_send_command(publisher_actor, "$TERM");
   if (rc < 0)
     return rc;
   rc = mal_actor_send_command(broker_actor, "$TERM");

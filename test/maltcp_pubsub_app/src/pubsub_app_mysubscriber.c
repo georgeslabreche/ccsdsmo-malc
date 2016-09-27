@@ -193,9 +193,16 @@ int pubsub_app_mysubscriber_testderegister_ack(void *self, mal_ctx_t *mal_ctx,
   int rc = 0;
   printf("\n\n-------------------- DEREGISTER_ACK -----------------\n\n");//NTA tmp
 
-  mal_actor_send_command(consumer_actor, "$TERM");
-  //mal_actor_send_command(broker_actor, "$TERM");
+  // Wait for actor's completion
   zclock_sleep(1000);
+
+  mal_actor_send_command(publisher_actor, "$TERM");
+  mal_actor_send_command(broker_actor, "$TERM");
+  mal_actor_send_command(subscriber_actor, "$TERM");
+
+  // Wait for actor's completion
+  zclock_sleep(1000);
+
   mal_ctx_stop(mal_ctx);
 
   return rc;
@@ -238,7 +245,7 @@ int pubsub_app_mysubscriber_testderegister(void *self) {
     mal_encoder_cursor_destroy(subscriber->encoder, deregister_cursor);
 
     printf("=== deregister send... broker_uri: %s\n", subscriber->broker_uri);
-    rc = testarea_testservice_testmonitor_deregister(mal_actor_get_mal_endpoint(consumer_actor),
+    rc = testarea_testservice_testmonitor_deregister(mal_actor_get_mal_endpoint(subscriber_actor),
         deregister_message, subscriber->broker_uri);
     if (rc < 0)
       return rc;
