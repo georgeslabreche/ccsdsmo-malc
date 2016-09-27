@@ -31,7 +31,7 @@ mal_actor_t *broker_actor = NULL;
 
 //  --------------------------------------------------------------------------
 //  Selftest
-int pubsub_app_create_provider(
+int pubsub_app_create_publisher(
     bool verbose,
     mal_ctx_t *mal_ctx,
     mal_uri_t *provider_uri,
@@ -64,7 +64,7 @@ int pubsub_app_create_provider(
   return rc;
 }
 
-int pubsub_app_create_consumer(
+int pubsub_app_create_subscriber(
     bool verbose,
     mal_ctx_t *mal_ctx,
     mal_uri_t *consumer_uri,
@@ -165,8 +165,8 @@ void pubsub_app_test(bool verbose) {
   printf("pubsub_app: broker URI: %s\n", broker_uri);
 
   pubsub_app_create_broker(verbose, mal_ctx, consumer_uri, provider_uri, broker_uri, encoder, decoder);
-  pubsub_app_create_provider(verbose, mal_ctx, provider_uri, broker_uri, encoder, decoder);
-  pubsub_app_create_consumer(verbose, mal_ctx, consumer_uri, broker_uri, encoder, decoder);
+  pubsub_app_create_publisher(verbose, mal_ctx, provider_uri, broker_uri, encoder, decoder);
+  pubsub_app_create_subscriber(verbose, mal_ctx, consumer_uri, broker_uri, encoder, decoder);
 
   //  @end
   printf("OK\n");
