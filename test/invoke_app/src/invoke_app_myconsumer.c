@@ -230,6 +230,14 @@ int invoke_app_myconsumer_testarea_testservice_testinvoke_response(
 
   printf("Consumer done.\n");
 
+  mal_actor_send_command(provider_actor, "$TERM");
+  mal_actor_send_command(consumer_actor, "$TERM");
+
+  // Wait for actor's completion
+  zclock_sleep(1000);
+
+  mal_ctx_stop(mal_ctx);
+
 	return 0;
 }
 

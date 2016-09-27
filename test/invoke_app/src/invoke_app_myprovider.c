@@ -33,8 +33,7 @@ struct _invoke_app_myprovider_t {
 
 invoke_app_myprovider_t *invoke_app_myprovider_new(
     mal_encoder_t *encoder, mal_decoder_t *decoder) {
-  invoke_app_myprovider_t *self = (invoke_app_myprovider_t *) malloc(
-      sizeof(invoke_app_myprovider_t));
+  invoke_app_myprovider_t *self = (invoke_app_myprovider_t *) malloc(sizeof(invoke_app_myprovider_t));
   if (!self)
     return NULL;
 
@@ -188,8 +187,6 @@ int invoke_app_myprovider_testarea_testservice_testinvoke(
   mal_message_destroy(&result_message, mal_ctx);
 
   printf("Provider done.\n");
-
-  mal_ctx_stop(mal_ctx);
 
   return rc;
 }
