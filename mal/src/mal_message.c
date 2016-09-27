@@ -31,6 +31,7 @@ struct _mal_message_t {
   mal_uri_t *uri_from;
   mal_blob_t *authentication_id;
   mal_uri_t *uri_to;
+  mal_uoctet_t encoding_id;
   mal_time_t timestamp;
   mal_qoslevel_t qoslevel;
   mal_uinteger_t priority;
@@ -141,6 +142,15 @@ void mal_message_destroy(mal_message_t **self_p, mal_ctx_t *mal_ctx) {
 
     *self_p = NULL;
   }
+}
+
+mal_uoctet_t mal_message_get_encoding_id(mal_message_t *self) {
+  return self->encoding_id;
+}
+
+void mal_message_set_encoding_id(mal_message_t *self,
+    mal_uoctet_t encoding_id) {
+  self->encoding_id = encoding_id;
 }
 
 mal_ushort_t mal_message_get_service_area(mal_message_t *self) {

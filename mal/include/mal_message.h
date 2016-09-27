@@ -43,6 +43,11 @@ mal_message_t *mal_message_new(mal_blob_t *authentication_id,
 
 void mal_message_destroy(mal_message_t **self_p, mal_ctx_t *mal_ctx);
 
+mal_uoctet_t mal_message_get_encoding_id(mal_message_t *self);
+
+void mal_message_set_encoding_id(mal_message_t *self,
+    mal_uoctet_t encoding_id);
+
 mal_ushort_t mal_message_get_service_area(mal_message_t *self);
 
 void mal_message_set_service_area(mal_message_t *self,
