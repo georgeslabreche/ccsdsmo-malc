@@ -29,7 +29,7 @@ zactor_t *provider_actor = NULL;
 zactor_t *consumer_actor = NULL;
 
 bool split = true;
-bool tcp = false;
+bool tcp = true;
 
 //  --------------------------------------------------------------------------
 //  Selftest
@@ -103,7 +103,6 @@ void simple_app_test(bool verbose) {
     // level (MAL message body encoding)
     maltcp_ctx_new(
         mal_ctx,
-        NULL,                 // Use default transformation of MAL URI to ZMQ URI
         "localhost", "6666",
         maltcp_header,
         true);
