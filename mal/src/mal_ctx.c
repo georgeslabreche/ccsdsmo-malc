@@ -184,6 +184,7 @@ int mal_ctx_destroy_message(mal_ctx_t *self, mal_message_t *message) {
 int mal_ctx_start(mal_ctx_t *self) {
   return self->mal_binding_ctx_start(self->mal_binding_ctx);
 }
+
 int mal_ctx_stop(mal_ctx_t *self) {
   return self->mal_binding_ctx_stop(self->mal_binding_ctx);
 }
