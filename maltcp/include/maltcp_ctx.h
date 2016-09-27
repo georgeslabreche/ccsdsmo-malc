@@ -32,30 +32,11 @@
 extern "C" {
 #endif
 
-#define PROTOCOL_TCP "tcp"
-#define PROTOCOL_EPGM "epgm"
-#define PROTOCOL_PGM "pgm"
-
-#define SUB_NAME "MAL"
-
-typedef mal_uri_t *maltcp_get_p2p_zmquri_fn(mal_uri_t *maluri);
-typedef mal_uri_t *maltcp_get_ps_zmquri_fn(mal_uri_t *maluri);
-typedef mal_uri_t *maltcp_getzmquri_to_fn(mal_message_t *message);
-
-typedef struct _maltcp_mapping_uri_t maltcp_mapping_uri_t;
-
-struct _maltcp_mapping_uri_t {
-  maltcp_get_p2p_zmquri_fn *get_p2p_zmquri_fn;
-  maltcp_get_ps_zmquri_fn *get_ps_zmquri_fn;
-  maltcp_getzmquri_to_fn *getzmquri_to_fn;
-};
-
 mal_encoder_t *maltcp_get_encoder(maltcp_ctx_t *self);
 mal_decoder_t *maltcp_get_decoder(maltcp_ctx_t *self);
 
 maltcp_ctx_t *maltcp_ctx_new(
     mal_ctx_t *mal_ctx,
-    maltcp_mapping_uri_t *mapping_uri,
     char *hostname, char *port,
     maltcp_header_t *maltcp_header,
     bool verbose);
