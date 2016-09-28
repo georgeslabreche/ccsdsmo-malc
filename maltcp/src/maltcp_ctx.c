@@ -238,7 +238,30 @@ mal_uinteger_t maltcp_decode_body_length(char *bytes, unsigned int length) {
 int maltcp_ctx_socket_receive(zloop_t *loop, zmq_pollitem_t *poller, void *arg) {
   maltcp_ctx_t *self = (maltcp_ctx_t *) arg;
 
-  clog_debug(maltcp_logger, "maltcp_ctx: TCP server socket receive -> %d, %d.\n", poller->events, poller->revents);
+  struct sockaddr src_addr;
+  socklen_t addr_size = sizeof(struct sockaddr_in);
+  if (getpeername(poller->fd, (struct sockaddr *)&src_addr, &addr_size) != 0) {
+    clog_error(maltcp_logger, "maltcp_ctx_socket_receive: getpeername failed\n");
+    return -1;
+  }
+
+  char src_ipstr[INET6_ADDRSTRLEN];
+  int src_port;
+
+  if (src_addr.sa_family == AF_INET) {
+      struct sockaddr_in *s = (struct sockaddr_in *)&src_addr;
+      src_port = ntohs(s->sin_port);
+      inet_ntop(AF_INET, &s->sin_addr, src_ipstr, sizeof src_ipstr);
+  } else { // AF_INET6
+      struct sockaddr_in6 *s = (struct sockaddr_in6 *)&src_addr;
+      src_port = ntohs(s->sin6_port);
+      inet_ntop(AF_INET6, &s->sin6_addr, src_ipstr, sizeof src_ipstr);
+  }
+  // TODO (AF): use only one allocation.
+  mal_uri_t peer_uri[strlen(src_ipstr) + 10 + 10 + 1];
+  sprintf((char*) peer_uri, "%s://%s:%d", MALTCP_PROTOCOL, src_ipstr, src_port);
+
+  clog_debug(maltcp_logger, "maltcp_ctx: TCP server socket receive from URI: %s\n", peer_uri);
 
   char header[FIXED_HEADER_LENGTH];
   int nb = 0;
@@ -327,7 +350,7 @@ int maltcp_ctx_socket_receive(zloop_t *loop, zmq_pollitem_t *poller, void *arg) 
   return 0;
 }
 
-int maltcp_ctx_socket_create(int port, int backlog) {
+int maltcp_ctx_server_socket_create(int port, int backlog) {
   clog_debug(maltcp_logger, "maltcp_ctx: creates TCP server socket.\n");
 
   int listen_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -389,7 +412,7 @@ int maltcp_ctx_socket_accept(zloop_t *zloop, zmq_pollitem_t *poller, void *arg) 
   // TODO (AF): use only one allocation.
   mal_uri_t mal_uri[strlen(src_ipstr) + 10 + 10 + 1];
   sprintf((char*) mal_uri, "%s://%s:%d", MALTCP_PROTOCOL, src_ipstr, src_port);
-  clog_debug(maltcp_logger, "Source URI: %s\n", mal_uri);
+  clog_debug(maltcp_logger, "maltcp_ctx_socket_accept: Source URI: %s\n", mal_uri);
 
   zmq_pollitem_t poller2 = { NULL, new_socket, ZMQ_POLLIN };
   int rc = zloop_poller(zloop, &poller2, maltcp_ctx_socket_receive, self);
@@ -431,7 +454,7 @@ maltcp_ctx_t *maltcp_ctx_new(mal_ctx_t *mal_ctx,
   self->cnx_table = zhash_new();
 
   // Creates the TCP listening socket
-  int listen = maltcp_ctx_socket_create(atoi(port), BACKLOG);
+  int listen = maltcp_ctx_server_socket_create(atoi(port), BACKLOG);
   assert(listen >= 0);
   self->mal_socket = listen;
   if (verbose)
@@ -486,6 +509,9 @@ int maltcp_ctx_destroy(void **self_p) {
   if (*self_p) {
     maltcp_ctx_t *self = (maltcp_ctx_t *) *self_p;
     free(self->maltcp_header);
+    // TODO (AF): Free all structures in hash-table, close socket and destroy mutex.
+    // see maltcp_ctx_socket_destroy
+    zhash_destroy(&self->cnx_table);
     free(self);
     *self_p = NULL;
   }
@@ -505,6 +531,7 @@ char *gethostfromuri(char *uri) {
   strncpy(host, uri +URIOFFSET, len);
   host[len] = '\0';
 
+  // TODO (AF): To remove
   clog_debug(maltcp_logger, "gethostfromuri(%s) -> %s ** %s **\n", uri, ptr1, host);
 
   return host;
@@ -524,6 +551,7 @@ int getportfromuri(char *uri) {
   strncpy(port, ptr1+1, len);
   port[len] = '\0';
 
+  // TODO (AF): To remove
   clog_debug(maltcp_logger, "getportfromuri(%s) -> %s %s  ** %s **\n", uri, ptr1, ptr2, port);
 
   return atoi(port);
@@ -531,7 +559,19 @@ int getportfromuri(char *uri) {
 
 typedef struct maltcp_ctx_connection {
   int socket;
+  pthread_mutex_t lock;
 } maltcp_ctx_connection_t;
+
+int maltcp_ctx_socket_send(maltcp_ctx_connection_t *cnx, malbinary_cursor_t *cursor) {
+  // TODO (AF): Lock TCP connection.
+  // pthread_mutex_lock(&cnx_ptr->lock);
+  clog_debug(maltcp_logger, "maltcp_ctx_socket_send: send message, size=%d\n", malbinary_cursor_get_length(cursor));
+  int rc = send(cnx->socket, cursor->body_ptr, malbinary_cursor_get_length(cursor), 0);
+  clog_debug(maltcp_logger, "maltcp_ctx: message sent.\n");
+  // TODO (AF): Unock TCP connection.
+  // pthread_mutex_unlock(&cnx_ptr->lock);
+  return rc;
+}
 
 int maltcp_ctx_socket_connect(maltcp_ctx_t *self, mal_uri_t *socket_uri) {
   maltcp_ctx_connection_t *cnx_ptr = (maltcp_ctx_connection_t *) zhash_lookup(self->cnx_table, socket_uri);
@@ -568,6 +608,11 @@ int maltcp_ctx_socket_connect(maltcp_ctx_t *self, mal_uri_t *socket_uri) {
     clog_debug(maltcp_logger, "maltcp_ctx: connect to %s\n", socket_uri);
 
     cnx_ptr = (maltcp_ctx_connection_t*) malloc(sizeof(maltcp_ctx_connection_t));
+    // TODO (AF): Initialize the mutex
+    if (pthread_mutex_init(&cnx_ptr->lock, NULL) != 0) {
+      clog_error(maltcp_logger, "Failed to initialize mutex.");
+      return -1;
+    }
     cnx_ptr->socket = client_socket;
 
     // TODO (AF):
@@ -578,6 +623,14 @@ int maltcp_ctx_socket_connect(maltcp_ctx_t *self, mal_uri_t *socket_uri) {
   return cnx_ptr->socket;
 }
 
+void maltcp_ctx_socket_destroy(maltcp_ctx_connection_t *cnx_ptr) {
+  if (close(cnx_ptr->socket) != 0) {
+    clog_error(maltcp_logger, "maltcp_ctx_socket_destroy: Failed to close socket.\n");
+  }
+  if (pthread_mutex_destroy(&cnx_ptr->lock) != 0) {
+    clog_error(maltcp_logger, "maltcp_ctx_socket_destroy: Failed to destroy mutex.\n");
+  }
+}
 // Must be compliant with MAL virtual function: void *self
 int maltcp_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint, mal_message_t *mal_message) {
   maltcp_ctx_t *maltcp_ctx = (maltcp_ctx_t *) self;
@@ -677,12 +730,9 @@ int maltcp_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
 
   clog_debug(maltcp_logger, "maltcp_ctx: message is encoded: %d bytes\n", malbinary_cursor_get_offset(&cursor));
 
-  //zframe_t *frame = zframe_new(bytes, encoding_length);
-  clog_debug(maltcp_logger, "maltcp_ctx: send zmq message\n");
-
   // send the message
+  clog_debug(maltcp_logger, "maltcp_ctx: send tcp message\n");
   send(client_socket, cursor.body_ptr, malbinary_cursor_get_length(&cursor), 0);
-
   clog_debug(maltcp_logger, "maltcp_ctx: message sent.\n");
 
   return rc;
