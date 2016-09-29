@@ -313,13 +313,12 @@ typedef void mal_decoder_initialize_functions_fn(
  */
 mal_decoder_initialize_functions_fn mal_decoder_initialize_functions;
 
-// TODO (AF): This structure should be private to the MAL:
+// NOTE: This structure should be private to the MAL:
 //  -1- The encoding module initializes it through the mal_decoder_initialize_fn.
 //  -2- The users (consumer, provider, stubs) uses it through the mal_decoder functions.
 
 struct _mal_decoder_t {
   int encoding_format_code;
-  // TODO: varint limited to the last parameter in the MAL body
   bool varint_supported;
   clog_logger_t logger;
 
