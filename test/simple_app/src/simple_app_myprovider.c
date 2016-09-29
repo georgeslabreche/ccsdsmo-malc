@@ -77,7 +77,7 @@ void simple_app_myprovider_run(zsock_t *pipe, void *args) {
   printf("simple_app_myprovider_run\n");
 
   mal_message_t *message = NULL;
-  rc = mal_endpoint_recv_message(self->endpoint, &message);
+  rc = mal_endpoint_recv_message(endpoint, &message);
   printf("simple_app_myprovider_run, receive message: %d\n", rc);
   if (rc != 0) return;
 
@@ -86,6 +86,14 @@ void simple_app_myprovider_run(zsock_t *pipe, void *args) {
     if (rc != 0)
       mal_message_destroy(&message, mal_endpoint_get_mal_ctx(self->endpoint));
   }
+
+  mal_poller_destroy(&self->poller);
+  mal_endpoint_destroy(&self->endpoint);
+  mal_routing_destroy(&router);
+
+  printf("simple_app_myprovider_run, end.\n");
+
+  zactor_destroy(&provider_actor);
 
   return;
 }

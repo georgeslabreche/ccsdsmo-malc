@@ -218,6 +218,12 @@ void simple_app_myconsumer_run(zsock_t *pipe, void *self) {
   testarea_testservice_testcomposite_destroy(&testcomposite);
   mal_string_list_destroy(&string_list);
   testarea_testservice_testfinalcompositea_destroy(&testfinalcompositea);
+
+  mal_endpoint_destroy(&consumer->endpoint);
+
+  zactor_destroy(&consumer_actor);
+
+  printf("simple_app_myconsumer, end.\n");
 }
 
 void simple_app_myconsumer_test(bool verbose) {
