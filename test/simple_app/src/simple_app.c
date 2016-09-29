@@ -103,7 +103,7 @@ void simple_app_test(bool verbose) {
     // level (MAL message body encoding)
     maltcp_ctx_new(
         mal_ctx,
-        "localhost", "6666",
+        "127.0.0.1", "6666",
         maltcp_header,
         true);
   } else {
