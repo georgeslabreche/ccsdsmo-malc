@@ -360,9 +360,7 @@ int malbinary_decoder_decode_attribute_tag(mal_decoder_t *self, void *cursor, un
 }
 
 int malbinary_decoder_decode_duration(mal_decoder_t *self, void *cursor, mal_duration_t *result) {
-  int rc = 0;
-  //TODO: malbinary_decoder_decode_duration
-  return rc;
+  return malbinary_decoder_decode_float(self, cursor, result);
 }
 
 float intBitsToFloat(int x) {
@@ -424,9 +422,7 @@ int malbinary_decoder_decode_ulong(mal_decoder_t *self, void *cursor, mal_ulong_
 }
 
 int malbinary_decoder_decode_finetime(mal_decoder_t *self, void *cursor, mal_finetime_t *result) {
-  int rc = 0;
-  //TODO: malbinary_decoder_decode_finetime
-  return rc;
+  return malbinary_decoder_decode_ulong(self, cursor, result);
 }
 
 int malbinary_decoder_decode_attribute(mal_decoder_t *decoder, void *cursor,

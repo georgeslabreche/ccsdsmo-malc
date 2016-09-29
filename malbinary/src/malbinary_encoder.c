@@ -532,9 +532,7 @@ int malbinary_encoder_encode_attribute_tag(mal_encoder_t *self, void *cursor, un
 
 int malbinary_encoder_add_duration_encoding_length(mal_encoder_t *self,
     mal_duration_t to_encode, void *cursor) {
-  int rc = 0;
-  //TODO: malbinary_encoder_add_duration_encoding_length
-  return rc;
+  return malbinary_encoder_add_float_encoding_length(self, (mal_float_t) to_encode, cursor);
 }
 
 int floatToIntBits(float x) {
@@ -600,15 +598,11 @@ int malbinary_encoder_add_ulong_encoding_length(mal_encoder_t *self,
 
 int malbinary_encoder_add_finetime_encoding_length(mal_encoder_t *self,
     mal_finetime_t to_encode, void *cursor) {
-  int rc = 0;
-  //TODO: malbinary_encoder_add_finetime_encoding_length
-  return rc;
+  return malbinary_encoder_add_ulong_encoding_length(self, (mal_ulong_t) to_encode, cursor);
 }
 
 int malbinary_encoder_encode_duration(mal_encoder_t *self, void *cursor, mal_duration_t to_encode) {
-  int rc = 0;
-  //TODO: malbinary_encoder_encode_duration
-  return rc;
+ return  malbinary_encoder_encode_float(self, cursor, (mal_float_t) to_encode);
 }
 
 int malbinary_encoder_encode_float(mal_encoder_t *self, void *cursor, mal_float_t to_encode) {
@@ -656,9 +650,7 @@ int malbinary_encoder_encode_ulong(mal_encoder_t *self, void *cursor, mal_ulong_
 }
 
 int malbinary_encoder_encode_finetime(mal_encoder_t *self, void *cursor, mal_finetime_t to_encode) {
-  int rc = 0;
-  //TODO: malbinary_encoder_encode_finetime
-  return rc;
+  return malbinary_encoder_encode_ulong(self, cursor, (mal_ulong_t) to_encode);
 }
 
 int malbinary_encoder_add_attribute_tag_encoding_length(mal_encoder_t *encoder,
