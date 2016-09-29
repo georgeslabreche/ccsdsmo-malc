@@ -60,7 +60,6 @@ mal_decoder_t *malzmq_get_decoder(malzmq_ctx_t *self) {
 typedef struct {
   malzmq_ctx_t *malzmq_ctx;
   mal_endpoint_t *mal_endpoint;
-
   void *socket;
   zhash_t *remote_socket_table; // client sockets connected to remote mal contexts, key = uri
 } malzmq_endpoint_data_t;

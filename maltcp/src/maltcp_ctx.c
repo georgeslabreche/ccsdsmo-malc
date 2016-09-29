@@ -60,6 +60,7 @@ typedef struct {
   maltcp_ctx_t *maltcp_ctx;
   mal_endpoint_t *mal_endpoint;
   void *socket;
+  void *padding; // unused but defined in malzmq context
 } maltcp_endpoint_data_t;
 
 //  --------------------------------------------------------------------------

@@ -48,9 +48,8 @@ static void mal_actor_run(zsock_t *pipe, void *args);
 typedef struct {
   void *malzmq_ctx;
   mal_endpoint_t *mal_endpoint;
-
   void *socket;
-  void *remote_socket_table;
+  void *padding;
 } actor_endpoint_data_t;
 
 mal_endpoint_t *mal_actor_endpoint_create(
@@ -59,7 +58,7 @@ mal_endpoint_t *mal_actor_endpoint_create(
   actor_endpoint_data_t *actor_endpoint_data = (actor_endpoint_data_t *) malloc(sizeof(actor_endpoint_data_t));
   actor_endpoint_data->malzmq_ctx = mal_ctx_get_binding(mal_ctx);
   actor_endpoint_data->socket = pipe;
-  actor_endpoint_data->remote_socket_table = NULL;
+  actor_endpoint_data->padding = NULL;
 
   mal_endpoint_t *actor_endpoint = mal_endpoint_actor(mal_ctx, actor_endpoint_data);
 
@@ -265,7 +264,9 @@ static void mal_actor_run(zsock_t *pipe, void *args) {
   mal_routing_destroy(&actor_data->router);
   mal_endpoint_destroy(&actor_data->actor_endpoint);
 
-//  zactor_destroy((zactor_t **) &actor_data->actor);
+	// Try to self-destroy in order to better clean ZMQ resources.
+  clog_debug(mal_logger, "mal_actor_run: end.\n");
+  zactor_destroy((zactor_t **) &actor_data->actor);
 }
 
 void mal_actor_test(bool verbose) {
