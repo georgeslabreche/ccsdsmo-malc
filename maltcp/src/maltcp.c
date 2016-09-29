@@ -500,11 +500,15 @@ int maltcp_decode_uris(maltcp_header_t *maltcp_header,
   if (source_flag) {
     int rc = maltcp_decode_uri(decoder, &cursor, uri_from);
     if (rc < 0) return rc;
+  } else {
+    *uri_from = NULL;
   }
 
   if (destination_flag) {
     int rc = maltcp_decode_uri(decoder, &cursor, uri_to);
     if (rc < 0) return rc;
+  } else {
+    *uri_to = NULL;
   }
 
   return 0;
