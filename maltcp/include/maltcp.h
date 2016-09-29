@@ -81,6 +81,7 @@ mal_tcp_message_t *maltcp_new_mal_tcp_message();
 mal_tcp_message_t *maltcp_get_mal_tcp_message(maltcp_header_t *mal_header, mal_message_t *message);
 
 static const char MALTCP_PROTOCOL[] = "maltcp";
+static const char MALTCP_URI[] = "maltcp://";
 
 static const int FIXED_HEADER_LENGTH = 23;
 
