@@ -443,7 +443,7 @@ int malsplitbinary_encoder_encode_attribute(mal_encoder_t *malsplitbinary_encode
   return rc;
 }
 
-// TODO (AF): The malsplitbinary encoding functions should be private and only used through
+// NOTE: The malsplitbinary encoding functions should be private and only used through
 // the mal_encoder_t structure.
 
 void malsplitbinary_init_encode_functions(mal_encoder_t *self) {

@@ -247,7 +247,7 @@ int malsplitbinary_decoder_decode_attribute(mal_decoder_t *malsplitbinary_decode
   return rc;
 }
 
-// TODO (AF): The malsplitbinary decoding functions should be private and only used through
+// NOTE: The malsplitbinary decoding functions should be private and only used through
 // the mal_decoder_t structure.
 
 void malsplitbinary_init_decode_functions(mal_decoder_t *self) {

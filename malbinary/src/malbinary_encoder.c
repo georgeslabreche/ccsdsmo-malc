@@ -797,7 +797,7 @@ int malbinary_encoder_encode_attribute(mal_encoder_t *encoder, void *cursor, uns
   return rc;
 }
 
-// TODO (AF): The malbinary encoding functions should be private and only used through
+// NOTE: The malbinary encoding functions should be private and only used through
 // the mal_encoder_t structure.
 
 void malbinary_init_encode_functions(mal_encoder_t *self) {

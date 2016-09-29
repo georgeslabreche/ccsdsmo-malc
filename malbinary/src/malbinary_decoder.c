@@ -494,7 +494,7 @@ int malbinary_decoder_decode_attribute(mal_decoder_t *decoder, void *cursor,
   return rc;
 }
 
-// TODO (AF): The malbinary decoding functions should be private and only used through
+// NOTE: The malbinary decoding functions should be private and only used through
 // the mal_decoder_t structure.
 
 void malbinary_init_decode_functions(mal_decoder_t *self) {
