@@ -1,5 +1,5 @@
-MAL/CZMQ Transport
-==================
+MAL/ZMQ Transport
+=================
 
 This section describes the implementation of MAL binding to ZMTP transport on CZMQ API.
 It is not a description as protocol terms (see the *Mission Operations - MAL binding to ZMTP* CCSDS book) but as API.
