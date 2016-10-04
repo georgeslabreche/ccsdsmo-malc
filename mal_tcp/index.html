@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+	<title>MAL/TCP - MAL C API</title>
+
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.5.0.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">MAL C API</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="..">Home</a>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../tutorial/">Tutorial</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">MAL APIs <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../mal_attributes/">Attributes</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../mal_encoding/">Encoding</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../mal_api/">MAL</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../mal_transport/">Transport</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../area/">Area</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../mal_actor/">Actor</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Transports <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../mal_czmq/">MAL/ZMQ</a>
+</li>
+
+                        
+                            
+<li class="active">
+    <a href="./">MAL/TCP</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Generators <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../stub_generator/">Stubs generator</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../malbinary_generator/">MalBinary</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li >
+                        <a href="../annexes/">Annexs</a>
+                    </li>
+                
+                
+                </ul>
+            
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                    <li >
+                        <a rel="next" href="../mal_czmq/">
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../stub_generator/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#maltcp-transport">MAL/TCP Transport</a></li>
+        
+            <li><a href="#maltcp-header">MALTCP Header</a></li>
+        
+            <li><a href="#maltcp-context-constructor">MALTCP context constructor</a></li>
+        
+            <li><a href="#start-up">Start-up</a></li>
+        
+            <li><a href="#zloop-behavior">zloop behavior</a></li>
+        
+            <li><a href="#message-receiving-end-point">Message receiving (End-Point)</a></li>
+        
+            <li><a href="#virtual-function-to-build-uri">Virtual function to build URI</a></li>
+        
+            <li><a href="#virtual-function-to-create-an-endpoint">Virtual function to create an endpoint</a></li>
+        
+            <li><a href="#virtual-function-to-send-a-message">Virtual function to send a message</a></li>
+        
+            <li><a href="#virtual-function-to-create-a-poller">Virtual function to create a poller</a></li>
+        
+            <li><a href="#virtual-function-to-add-an-endpoint-to-a-poller">Virtual function to add an endpoint to a poller</a></li>
+        
+            <li><a href="#virtual-function-to-remove-an-endpoint-to-a-poller">Virtual function to remove an endpoint to a poller</a></li>
+        
+            <li><a href="#virtual-function-to-wait-a-message-on-a-poller">Virtual function to wait a message on a poller</a></li>
+        
+            <li><a href="#virtual-function-to-delete-a-message">Virtual function to delete a message</a></li>
+        
+    
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="maltcp-transport">MAL/TCP Transport</h1>
+<p>This section describes the implementation of MAL binding to ZMTP transport on CZMQ API.
+It is not a description as protocol terms (see the <em>Mission Operations - MAL binding to TCP/IP and Split-Binary enncoding</em>
+CCSDS book) but as API.</p>
+<p>The encoding format of the MAL header is given in the <em>Mission Operations - MAL binding to TCP/IP and Split-Binary enncoding</em>
+CCSDS book.</p>
+<p>A MAL message is transmit in a continous flow of bytes on a TCP connection.</p>
+<p>The following sections describe the implementation of the MAL/TCP module:</p>
+<pre><code>-  MALTCP header configuration.
+-  MALTCP context constructor.
+-  Boot.
+-  MAL message reception.
+-  Implementation of virtual functions needed by the MAL API.
+</code></pre>
+<h2 id="maltcp-header">MALTCP Header</h2>
+<p>A class is defined to handle the specificities of MALTCP header format:</p>
+<pre><code>-  MALTCP version number.
+-  Presence flags for optional MALTCP header fields.
+-  Value of non-present fields.
+</code></pre>
+<h3 id="constructor">Constructor</h3>
+<pre><code class="c">maltcp_header_t *maltcp_header_new(
+  bool priority_flag, mal_uinteger_t priority,
+  bool timestamp_flag, mal_identifier_t *network_zone,
+  mal_identifier_t *session_name, mal_identifier_list_t *domain,
+  mal_blob_t *authentication_id);
+</code></pre>
+
+<p>Parameters</p>
+<pre><code>-  `priority_flag`: Boolean indicating the presence of the *Priority* field in the MALTCP header.
+-  `priority`: Value of the *Priority* field if it is not present in the MALTCP header.
+-  `timestamp_flag`: Boolean indicating the presence of the *TimeStamp* field in the MALTCP header.
+-  `network_zone`: Value of the *Network Zone* field if it is not present in the MALTCP header.
+    If NULL the *Network Zone* field should be present in the MALTCP header.
+-  `session_name`: Value of the *Session Name* field if it is not present in the MALTCP header.
+    If NULL the *Session Name* field should be present in the MALTCP header.
+-  `domain`: Value of the *Domain* field if it is not present in the MALTCP header.
+    If NULL the *Domain* field should be present in the MALTCP header.
+-  `authentication_id`: Value of the *Authentication Id* field if it is not present in the MALTCP header.
+    If NULL the *Authentication Id* field should be present in the MALTCP header.
+</code></pre>
+<h3 id="configuration-parameters">Configuration parameters</h3>
+<p>Some MAL header fields can be always identical for a given application.
+Transmit their values with each call would be redundant, and thus we can optimize performance by
+omitting them in the MALTCP header. These fields are: <code>PRIORITY</code>, <code>NETWORK_ZONE</code>, <code>SESSION_NAME</code>,
+<code>DOMAIN</code>, <code>AUTHENTICATION_ID</code>. The presence of these fields in the header MALTCP and their potential
+overall value is defined in the MALTCP header constructor.</p>
+<p>Another field of the MAL header, <code>TIMESTAMP</code>, can also be omitted in the header MALTCP. This possible
+omission is also defined in the MALTCP header constructor. There is no replacement value defined for this
+field.</p>
+<p>It goes without saying that these configuration parameters must be provided in an identical manner to all
+entities of the application.</p>
+<h2 id="maltcp-context-constructor">MALTCP context constructor</h2>
+<pre><code class="c">maltcp_ctx_t *maltcp_ctx_new(
+  mal_ctx_t *mal_ctx,
+  char *hostname, char *port,
+  maltcp_header_t *maltcp_header,
+  bool verbose);
+</code></pre>
+
+<p>Parameters</p>
+<pre><code>    - `mal_ctx`: MAL context.
+    - `hostname`: IP address used to listen incoming connections.
+    - `port`: port used to listen incoming connections.
+    - `maltcp_header`: Flags and optional fields. The configuration of the MALTCP header is global to the
+    MALTCP context.
+    - `verbose`: Flag allowing to enable/disable the logging traces.
+</code></pre>
+<p>The constructor performs the following actions:</p>
+<pre><code>    - Creating a TCP listen socket for accepting connections initiated by other remote MALTCP
+    contexts. The listen socket is bound to an address corresponding to `hostname` and `port`
+    parameters.
+    - Creating an `inproc` ZMQ ROUTER socket for communicating with the services registered in the
+    context: `SOCKET_Z_ROUTER`.
+    - Creating a `zloop` to handle the message routing between the external MALTCP contexts
+    and the internal services.
+</code></pre>
+<h2 id="start-up">Start-up</h2>
+<p>The following function will start the MALTCP context. This function starts the zloop and blocks as the
+zloop did not complete.</p>
+<pre><code class="c">int maltcp_ctx_start(maltcp_ctx_t *self);
+</code></pre>
+
+<h2 id="zloop-behavior">zloop behavior</h2>
+<p>The zloop listens for TCP connections and messages from remote MALTCP contexts.
+When a TCP connection is initiated, the following actions are performed (see maltcp_ctx_socket_accept handler):</p>
+<pre><code>    - The connection is accepted and the resulting socket is added to the poller list
+    of the zloop.
+</code></pre>
+<p>When a message is received, the following actions are performed (see maltcp_ctx_socket_receive):</p>
+<pre><code>    - Get the hostname and port information from the TCP/IP layer.
+    - Read the fixed length part of the header (23 bytes, up to the length field).
+    - Fully read the message.
+    - Extract the destination URI and forward the message to the recipient endpoint. The peer URI is
+    also sent in order to complete the from URI if necessary.
+    - The message is forwarded to the recipient endpoint through the inproc `SOCKET_ACTOR_ROUTER`.
+</code></pre>
+<h2 id="message-receiving-end-point">Message receiving (End-Point)</h2>
+<p>When a MAL endpoint asks for receiving a message, the MALTCP transport listens on the corrsponding ZMQ DEALER socket
+connected to the ZMQ ROUTER socket of the zloop (see maltcp_ctx_recv_message handler).</p>
+<p>When receiving a MAL message the following actions are performed:</p>
+<pre><code>    - The first frame of the ZMQ message is extracted, it contains the peer URI of the MAL message.
+    - The second frame of the ZMQ message is extracted, it contains the MAL message.
+    - A `mal_message` structure is instanciated.
+    - The MAL header fields are decoded using MAL Binary encoding.
+    - The MAL message body is directly set from the ZMQ frame (`data` field of `zframe`) without copy. 
+    Consequently, the ZMQ frame can only be destroyed at the time of the destruction of MAL message. The
+     `body_owner` field of the message is affected with the MAL ZMQ frame.
+    - The built message is returned to the caller, the destruction of the MAL message is the responsibility
+    of the handler of this message.
+</code></pre>
+<h2 id="virtual-function-to-build-uri">Virtual function to build URI</h2>
+<p>The URI format is:</p>
+<pre><code class="c">maltcp://&lt;hostname&gt;:&lt;port&gt;/&lt;id&gt;
+</code></pre>
+
+<h2 id="virtual-function-to-create-an-endpoint">Virtual function to create an endpoint</h2>
+<p>A MALTCP endpoint is created and returned as an untyped pointer <code>void *</code>.</p>
+<p>Specific MALTCP endpoint datas are:</p>
+<pre><code>    - the MALTCP context,
+    - the corresponding MAL endpoint,
+    - the listening inproc ZMQ DEALER socket used to receive forwarded messages from the zloop.
+</code></pre>
+<p>During the initialization of the endpoint, the following actions are performed:</p>
+<pre><code>    - creating a ZMQ DEALER socket,
+    - registering this socket identity with the endpoint URI,
+    - connection of this DEALER socket with the ROUTER socket handled by the zloop (ZLOOP_ENDPOINTS_SOCKET_URI)
+</code></pre>
+<h2 id="virtual-function-to-send-a-message">Virtual function to send a message</h2>
+<p>A TCP/IP socket connected to the destination URI is searched in the hashtable owned by the MALTCP context. If the socket is not
+found then a new one is created and registered in the table (the key is the destination base URI).</p>
+<p>The MAL message is encoded and transmitted on the corresponding TCP connection.</p>
+<h2 id="virtual-function-to-create-a-poller">Virtual function to create a poller</h2>
+<p>A MALTCP poller is created and returned as an untyped pointer <code>void *</code>.</p>
+<p>Specific MALTCP poller datas are:</p>
+<pre><code>    - the MALTCP context,
+    - the corresponding MAL poller,
+    - the ZMQ zpoller listening on sockets of endpoints,
+    - the list of endpoints associated to this poller.
+</code></pre>
+<p>During the initialization of the poller, the following actions are performed:</p>
+<pre><code>    - creation of a ZMQ zpoller,
+    - creation ofn empty list of endpoints.
+</code></pre>
+<h2 id="virtual-function-to-add-an-endpoint-to-a-poller">Virtual function to add an endpoint to a poller</h2>
+<p>This function adds to the poller the endpoint in parameter. The end-point is added to the list of
+endpoints, the corresponding socket is added to the zpoller.</p>
+<h2 id="virtual-function-to-remove-an-endpoint-to-a-poller">Virtual function to remove an endpoint to a poller</h2>
+<p>This function removes from the poller the endpoint in parameter. The end-point is removed from the
+list of poller, the corresponding socket is removed from the zpoller.</p>
+<h2 id="virtual-function-to-wait-a-message-on-a-poller">Virtual function to wait a message on a poller</h2>
+<p>This function waits to receive a message on the associated zpoller.</p>
+<p>If a message arrives before the timeout expiration the corresponding endpoint is searched in the
+list of endpoints and is returned in the corresponding parameter. If there is no matching endpoint
+registered an error is returned.</p>
+<h2 id="virtual-function-to-delete-a-message">Virtual function to delete a message</h2>
+<p>This function checks if the <code>body_owner</code> message field MAL is set. In this case, it means that the
+MAL message was created (decoded) from a ZMQ frame (<code>zframe</code>) and must be destroyed (<code>zframe_destroy</code>).</p></div>
+            
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script>
+        <script>var base_url = '..';</script>
+        <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+        <script src="../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>

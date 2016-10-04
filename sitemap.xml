@@ -65,6 +65,12 @@
      <changefreq>daily</changefreq>
     </url>
         
+    <url>
+     <loc>None/mal_tcp/</loc>
+     <lastmod>2016-10-04</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+        
     
 
     
