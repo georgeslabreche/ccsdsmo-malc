@@ -16,20 +16,21 @@ The lifetime of an interaction exceeds the reaction of the actor.
 Only the actor who received the message initiating an interaction can answer to this interaction.
 
 An actor has the following features:
--	It corresponds to a single a single endpoint, therefore:
-    - It can only use a single transport (binding) to receive and send MAL messages.
-    - It can use multiple encoding formats for the MAL message body.
-    - It is uniquely identified by a MAL URI relative to the MAL context, the format of this URI depends on the transport used.
-    - It handles a counter of `Transaction Id` (field of MAL header)
--	It owns a state.
--	Its life cycle has three states:
-      - When created the `initialize` function is called before the launch of processing loop that handles incoming message.
-      - When receiving a message the processing loop calls the `handle` function to search the handler corresponding to the received message and then activate it.
-      - When stopped the `finalize` function is called before the actor destruction.
--	The `initialize` and `finalize` functions are customizable by the user.
--	It runs in single-threaded way.
--	Its state can be changed only through the handlers reactions.
--	Its state can not be transmitted to another actor.
+
+  -	It corresponds to a single a single endpoint, therefore:
+    -	It can only use a single transport (binding) to receive and send MAL messages.
+    -	It can use multiple encoding formats for the MAL message body.
+    -	It is uniquely identified by a MAL URI relative to the MAL context, the format of this URI depends on the transport used.
+    -	It handles a counter of `Transaction Id` (field of MAL header)
+  -	It owns a state.
+  -	Its life cycle has three states:
+    -	When created the `initialize` function is called before the launch of processing loop that handles incoming message.
+    -	When receiving a message the processing loop calls the `handle` function to search the handler corresponding to the received message and then activate it.
+    -	When stopped the `finalize` function is called before the actor destruction.
+  -	The `initialize` and `finalize` functions are customizable by the user.
+  -	It runs in single-threaded way.
+  -	Its state can be changed only through the handlers reactions.
+  -	Its state can not be transmitted to another actor.
 
 If a multithreaded execution mode is needed, for example to perform a costly CPU processing, then the handler must delegate the execution of this task to different actors. The processing is then performed in parallel, and the associated load is shared between all these actors.
 

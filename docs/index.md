@@ -140,5 +140,3 @@ Class names are lowercase, with '\_' separator, and prefixed by the API name. Fo
 The names of the classes representing data types are prefixed by the names of their Area and their service (if available). For example, the type `MAL::Blob` (defined in the area MAL without intermediate Service) is named: `mal_blob`.
 
 Other conventions are conform to the zproject *Class* model.
-
-
