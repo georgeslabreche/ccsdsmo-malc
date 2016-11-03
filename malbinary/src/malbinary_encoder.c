@@ -460,10 +460,7 @@ int malbinary_encoder_encode_blob(mal_encoder_t *self, void *cursor, mal_blob_t 
 
 int malbinary_encoder_encode_time(mal_encoder_t *self, void *cursor, mal_time_t to_encode) {
   int rc = 0;
-  if (self->varint_supported)
-    malbinary_write_uvarlong(to_encode, cursor);
-  else
-    malbinary_write64(to_encode, cursor);
+  malbinary_write64(to_encode, cursor);
   return rc;
 }
 
@@ -598,7 +595,9 @@ int malbinary_encoder_add_ulong_encoding_length(mal_encoder_t *self,
 
 int malbinary_encoder_add_finetime_encoding_length(mal_encoder_t *self,
     mal_finetime_t to_encode, void *cursor) {
-  return malbinary_encoder_add_ulong_encoding_length(self, (mal_ulong_t) to_encode, cursor);
+  int rc = 0;
+  ((malbinary_cursor_t *) cursor)->body_length += 8;
+  return rc;
 }
 
 int malbinary_encoder_encode_duration(mal_encoder_t *self, void *cursor, mal_duration_t to_encode) {
@@ -650,7 +649,9 @@ int malbinary_encoder_encode_ulong(mal_encoder_t *self, void *cursor, mal_ulong_
 }
 
 int malbinary_encoder_encode_finetime(mal_encoder_t *self, void *cursor, mal_finetime_t to_encode) {
-  return malbinary_encoder_encode_ulong(self, cursor, (mal_ulong_t) to_encode);
+  int rc = 0;
+   malbinary_write64(to_encode, cursor);
+   return rc;
 }
 
 int malbinary_encoder_add_attribute_tag_encoding_length(mal_encoder_t *encoder,

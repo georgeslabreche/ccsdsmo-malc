@@ -293,10 +293,7 @@ int malbinary_decoder_decode_blob(mal_decoder_t *self, void *cursor, mal_blob_t 
 
 int malbinary_decoder_decode_time(mal_decoder_t *self, void *cursor, mal_time_t *result) {
   int rc = 0;
-  if (self->varint_supported)
-    (*result) = malbinary_read_uvarlong(cursor);
-  else
-    (*result) = malbinary_read64(cursor);
+  (*result) = malbinary_read64(cursor);
   return rc;
 }
 
@@ -422,7 +419,9 @@ int malbinary_decoder_decode_ulong(mal_decoder_t *self, void *cursor, mal_ulong_
 }
 
 int malbinary_decoder_decode_finetime(mal_decoder_t *self, void *cursor, mal_finetime_t *result) {
-  return malbinary_decoder_decode_ulong(self, cursor, result);
+  int rc = 0;
+  (*result) = malbinary_read64(cursor);
+  return rc;
 }
 
 int malbinary_decoder_decode_attribute(mal_decoder_t *decoder, void *cursor,
