@@ -34,6 +34,7 @@ struct _maltcp_ctx_t {
   zctx_t *zmq_ctx;
   char *hostname;
   char *port;
+  char *root_uri;
   int mal_socket;         // TCP server socket listening to remote mal contexts
   zhash_t *cnx_table;     // TCP client sockets connected to remote mal contexts, key = short URI
   void *endpoints_socket; // inproc connected to endpoints
@@ -42,6 +43,69 @@ struct _maltcp_ctx_t {
   mal_encoder_t *encoder;
   mal_decoder_t *decoder;
 };
+
+// BEGIN -- URI manipulation functions
+
+// Returns a newly allocated string containing the base URI of the full URI specified
+// in parameter: "maltcp://ipaddress:port/service" -> "maltcp://ipaddress:port"
+char *get_base_uri(char *full_uri) {
+  int len = strlen(full_uri);
+  char *ptr = strchr(full_uri +sizeof MALTCP_URI, '/');
+  if (ptr != NULL)
+    len = ptr-full_uri;
+  char *base_uri = (char*) malloc(len+1);
+  strncpy(base_uri, full_uri, len);
+  base_uri[len] = '\0';
+
+  return base_uri;
+}
+
+// Returns a pointer to the substring that specify the requested service in the URI
+// specified in parameter: "maltcp://ipaddress:port/service" -> "service"
+char *get_service_from_uri(char *full_uri) {
+  if (strncmp(MALTCP_URI, full_uri, sizeof MALTCP_URI -1) == 0) {
+    char *ptr = strchr(full_uri +sizeof MALTCP_URI, '/');
+    return ptr+1;
+  } else {
+    return full_uri;
+  }
+}
+
+// Returns a newly allocated string containing the IP address from the URI specified
+// in parameter: "maltcp://ipaddress:port/service" -> "ipaddress"
+char *get_host_from_uri(char *uri) {
+  char* ptr1 = strchr(uri +sizeof MALTCP_URI -1, ':');
+  if (ptr1 == NULL)
+    return NULL;
+
+  size_t len = (size_t) (ptr1 - uri -sizeof MALTCP_URI +1);
+  clog_debug(maltcp_logger, "get_host_from_uri: %s %d\n", ptr1, len);
+  char* host = (char*) malloc(len +1);
+  strncpy(host, uri +sizeof MALTCP_URI -1, len);
+  host[len] = '\0';
+
+  return host;
+}
+
+// Returns the port number from the URI specified in parameter:
+// "maltcp://ipaddress:port/service" -> port
+int get_port_from_uri(char *uri) {
+  char port[10];
+  char* ptr1 = strchr(uri +sizeof MALTCP_URI -1, ':');
+  if (ptr1 == NULL)
+    return -1;
+  char* ptr2 = strchr(ptr1+1, '/');
+  if (ptr2 == NULL)
+    ptr2 = ptr1 + strlen(ptr1);
+
+  size_t len = (size_t) (ptr2 - ptr1 -1);
+  strncpy(port, ptr1+1, len);
+  port[len] = '\0';
+
+  return atoi(port);
+}
+
+// END -- URI manipulation functions
 
 mal_encoder_t *maltcp_get_encoder(maltcp_ctx_t *self) {
   return self->encoder;
@@ -141,42 +205,30 @@ char **get_protocol_host_port(mal_uri_t *uri) {
   return split;
 }
 
-// TODO (AF): Replace by get_service_from_uri.
-mal_uri_t *get_short_uri(mal_uri_t *uri) {
-  // Get the "/<consumer id>" part
-  size_t uri_length = strlen(uri);
-  int slashCounter = 0;
-  int short_uri_length = 0;
-  for (int i = 0; i < uri_length; i++) {
-    if (uri[i] == '/') {
-      slashCounter++;
-      if (slashCounter == 3) {
-        short_uri_length = i;
-        break;
-      }
-    }
-  }
-  return uri+short_uri_length+1;
-}
+// TODO (AF): To Remove ! No longer needed as replaced by get_service_from_uri.
+//mal_uri_t *get_short_uri(mal_uri_t *uri) {
+//  // Get the "/<consumer id>" part
+//  size_t uri_length = strlen(uri);
+//  int slashCounter = 0;
+//  int short_uri_length = 0;
+//  for (int i = 0; i < uri_length; i++) {
+//    if (uri[i] == '/') {
+//      slashCounter++;
+//      if (slashCounter == 3) {
+//        short_uri_length = i;
+//        break;
+//      }
+//    }
+//  }
+//  return uri+short_uri_length+1;
+//}
 
-mal_uinteger_t maltcp_decode_body_length(char *bytes, unsigned int length) {
+mal_uinteger_t maltcp_decode_variable_length(char *bytes, unsigned int length) {
   // Note: We could use virtual allocation and initialization functions from encoder
   // rather than malbinary interface.
   malbinary_cursor_t cursor;
 
-  // 'URI To' offset
-  // +1 byte: version + sdu type
-  // +2 bytes: service area
-  // +2 bytes: service
-  // +2 bytes: operation
-  // +1 bytes: area version
-  // +1 bytes: is error message + qos level + session
-  // +8 bytes: transaction id
-  // +1 bytes: flags
-  // +1 bytes: encoding id
-  // +4 bytes: body length
-
-  malbinary_cursor_init(&cursor, bytes, length, 1 + 2 * 3 + 1 + 1 + 8 + 1 + 1);
+  malbinary_cursor_init(&cursor, bytes, length, VARIABLE_LENGTH_OFFSET);
   return malbinary_read32(&cursor);
 }
 
@@ -304,7 +356,7 @@ int maltcp_ctx_socket_receive(zloop_t *loop, zmq_pollitem_t *poller, void *arg) 
   }
 
   // First read, get the message size in the header
-  int msg_size = maltcp_decode_body_length(header, nb);
+  int msg_size = maltcp_decode_variable_length(header, nb) + FIXED_HEADER_LENGTH;
   clog_debug(maltcp_logger, "maltcp_ctx_socket_receive: should read = %d bytes\n", msg_size);
 
   // Allocate the message and copy header
@@ -337,9 +389,6 @@ int maltcp_ctx_socket_receive(zloop_t *loop, zmq_pollitem_t *poller, void *arg) 
   }
   clog_debug(maltcp_logger, "maltcp_ctx_socket_receive: uri_to=%s uri_from=%s\n", uri_to, uri_from);
 
-  // TODO (AF): (uri_to == NULL) or (uri_from == NULL)
-  assert((uri_from != NULL) && (uri_to != NULL));
-
   if ((uri_from != NULL) && (strncmp(uri_from, MALTCP_URI, sizeof MALTCP_URI -1) == 0)) {
     // The complete URI is registered in the message header, use it.
     int len = strlen(uri_from);
@@ -364,8 +413,10 @@ int maltcp_ctx_socket_receive(zloop_t *loop, zmq_pollitem_t *poller, void *arg) 
   // What happens if no endpoint reads this message? It seems that Router socket
   // discard messages if there are no readers.
 
-  // TODO (AF): Replace by get_service_from_uri
-  mal_uri_t *short_uri_to = get_short_uri(uri_to);
+  assert(uri_to != NULL);
+
+  // Get the service part of URI needed to route the message.
+  mal_uri_t *short_uri_to = get_service_from_uri(uri_to);
   int rc = zmq_send(self->endpoints_socket, short_uri_to, strlen(short_uri_to), ZMQ_SNDMORE);
   assert(rc == strlen(short_uri_to));
   clog_debug(maltcp_logger, "maltcp_ctx_socket_receive: send identity (%d bytes) to endpoint %s\n", rc, short_uri_to);
@@ -496,11 +547,9 @@ maltcp_ctx_t *maltcp_ctx_new(mal_ctx_t *mal_ctx,
   self->encoder = malbinary_encoder_new(false);
   self->decoder = malbinary_decoder_new(false);
 
-  if (verbose) {
-    mal_uri_t mal_uri[strlen(hostname) + strlen(port) + 10 + 1];
-    sprintf((char*) mal_uri, "%s://%s:%s", MALTCP_PROTOCOL, hostname, port);
-    clog_debug(maltcp_logger, "maltcp_ctx_new: mal_uri=: %s\n", mal_uri);
-  }
+  self->root_uri = (char *) malloc(strlen(hostname) + strlen(port) + 10 + 1);
+  sprintf((char*) self->root_uri, "%s://%s:%s", MALTCP_PROTOCOL, hostname, port);
+  clog_debug(maltcp_logger, "maltcp_ctx_new: root_uri=%s\n", self->root_uri);
 
   zctx_t *zmq_ctx = zctx_new();
   self->zmq_ctx = zmq_ctx;
@@ -599,65 +648,6 @@ int maltcp_ctx_destroy(void **self_p) {
     *self_p = NULL;
   }
   return 0;
-}
-
-// Returns a newly allocated string containing the base URI of the full URI specified
-// in parameter: "maltcp://ipaddress:port/service" -> "maltcp://ipaddress:port"
-char *get_base_uri(char *full_uri) {
-  int len = strlen(full_uri);
-  char *ptr = strchr(full_uri +sizeof MALTCP_URI, '/');
-  if (ptr != NULL)
-    len = ptr-full_uri;
-  char *base_uri = (char*) malloc(len+1);
-  strncpy(base_uri, full_uri, len);
-  base_uri[len] = '\0';
-
-  return base_uri;
-}
-
-// Returns a pointer to the substring that specify the requested service in the URI
-// specified in parameter: "maltcp://ipaddress:port/service" -> "service"
-char *get_service_from_uri(char *full_uri) {
-  if (strncmp(MALTCP_URI, full_uri, sizeof MALTCP_URI -1) == 0) {
-    char *ptr = strchr(full_uri +sizeof MALTCP_URI, '/');
-    return ptr+1;
-  } else {
-    return full_uri;
-  }
-}
-
-// Returns a newly allocated string containing the IP address from the URI specified
-// in parameter: "maltcp://ipaddress:port/service" -> "ipaddress"
-char *get_host_from_uri(char *uri) {
-  char* ptr1 = strchr(uri +sizeof MALTCP_URI -1, ':');
-  if (ptr1 == NULL)
-    return NULL;
-
-  size_t len = (size_t) (ptr1 - uri -sizeof MALTCP_URI +1);
-  clog_debug(maltcp_logger, "get_host_from_uri: %s %d\n", ptr1, len);
-  char* host = (char*) malloc(len +1);
-  strncpy(host, uri +sizeof MALTCP_URI -1, len);
-  host[len] = '\0';
-
-  return host;
-}
-
-// Returns the port number from the URI specified in parameter:
-// "maltcp://ipaddress:port/service" -> port
-int get_port_from_uri(char *uri) {
-  char port[10];
-  char* ptr1 = strchr(uri +sizeof MALTCP_URI -1, ':');
-  if (ptr1 == NULL)
-    return -1;
-  char* ptr2 = strchr(ptr1+1, '/');
-  if (ptr2 == NULL)
-    ptr2 = ptr1 + strlen(ptr1);
-
-  size_t len = (size_t) (ptr2 - ptr1 -1);
-  strncpy(port, ptr1+1, len);
-  port[len] = '\0';
-
-  return atoi(port);
 }
 
 int maltcp_ctx_socket_send(maltcp_ctx_connection_t *cnx, malbinary_cursor_t *cursor) {
@@ -850,16 +840,16 @@ int maltcp_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
     malbinary_cursor_t cursor;
     malbinary_cursor_init(&cursor, (char *) mal_msg_bytes, mal_msg_bytes_length, 0);
 
-    mal_uinteger_t mal_message_length;
+    mal_uinteger_t variable_length;
 
     // 'maltcp' encoding format of the MAL header
     if (maltcp_decode_message(maltcp_ctx->maltcp_header, *message,
-        maltcp_ctx->decoder, &cursor, &mal_message_length) != 0) {
+        maltcp_ctx->decoder, &cursor, &variable_length) != 0) {
       clog_error(maltcp_logger, "maltcp_ctx_recv_message, cannot decode message\n");
       return -1;
     }
     // Note: Currently the message length is always equal to the frame size.
-    assert(mal_msg_bytes_length == mal_message_length);
+    assert(mal_msg_bytes_length == (variable_length + FIXED_HEADER_LENGTH));
 
     // If the From URI field is not completely filled, we have to complete it with
     // the information from TCP/IP protocol.
@@ -882,6 +872,7 @@ int maltcp_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
     }
 
     // If the To URI field is not completely filled, we have to complete it.
+    // TODO (AF): The To URI should never be completely filled!!
     mal_uri_t *uri_to = mal_message_get_uri_to(*message);
     if ((uri_to == NULL) || (strncmp(uri_to, MALTCP_URI, sizeof MALTCP_URI -1) != 0)) {
       mal_message_set_uri_to(*message, mal_endpoint_get_uri(endpoint_data->mal_endpoint));
@@ -900,7 +891,7 @@ int maltcp_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
     if (endpoint_data->mal_endpoint) {
       bool message_delivered = false;
       mal_uri_t *endpoint_uri = mal_endpoint_get_uri(endpoint_data->mal_endpoint);
-      if (strcmp(get_short_uri(endpoint_uri), get_short_uri(uri_to)) == 0)
+      if (strcmp(get_service_from_uri(endpoint_uri), get_service_from_uri(uri_to)) == 0)
         message_delivered = true;
 
       clog_debug(maltcp_logger, "maltcp_ctx_recv_message: message_delivered=%d\n", message_delivered);
@@ -1002,7 +993,7 @@ void *maltcp_ctx_create_endpoint(void *maltcp_ctx, mal_endpoint_t *mal_endpoint)
     clog_debug(maltcp_logger, "maltcp_ctx_create_endpoint: initialize endpoint\n");
 
     // Initialize the endpoint
-    mal_uri_t *handler_uri = get_short_uri(mal_endpoint_get_uri(endpoint_data->mal_endpoint));
+    mal_uri_t *handler_uri = get_service_from_uri(mal_endpoint_get_uri(endpoint_data->mal_endpoint));
 
     clog_debug(maltcp_logger, "maltcp_ctx_create_endpoint: initialize endpoint -> %s\n", handler_uri);
 
