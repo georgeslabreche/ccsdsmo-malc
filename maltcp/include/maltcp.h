@@ -83,6 +83,24 @@ mal_tcp_message_t *maltcp_get_mal_tcp_message(maltcp_header_t *mal_header, mal_m
 static const char MALTCP_PROTOCOL[] = "maltcp";
 static const char MALTCP_URI[] = "maltcp://";
 
+// 'Variable length' offset
+// +1 byte: version + sdu type
+// +2 bytes: service area
+// +2 bytes: service
+// +2 bytes: operation
+// +1 bytes: area version
+// +1 bytes: is error message + qos level + session
+// +8 bytes: transaction id
+// +1 bytes: flags
+// +1 bytes: encoding id
+
+static const int VARIABLE_LENGTH_OFFSET = 19;
+
+// Fixed header length
+// 'Variable length' offset (see above)
+// +4 bytes: variable length
+// TODO (AF): error: initializer element is not constant ??
+// static const int FIXED_HEADER_LENGTH = VARIABLE_LENGTH_OFFSET +4;
 static const int FIXED_HEADER_LENGTH = 23;
 
 //  Public API classes
