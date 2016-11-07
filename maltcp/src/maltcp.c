@@ -589,10 +589,10 @@ int maltcp_decode_message(maltcp_header_t *maltcp_header,
   bool is_error_message = (b >> 7) & 0x01;
   mal_message_set_is_error_message(message, is_error_message);
 
-  int qoslevel = (b >> 5) & 0x03;
+  int qoslevel = (b >> 4) & 0x07;
   mal_message_set_qoslevel(message, (mal_qoslevel_t) qoslevel);
 
-  int session = (b >> 3) & 0x03;
+  int session = (b >> 0) & 0xF;
   mal_message_set_session(message, (mal_sessiontype_t) session);
 
   long transaction_id = malbinary_read64(cursor);
