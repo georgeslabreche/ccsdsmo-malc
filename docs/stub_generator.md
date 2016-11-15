@@ -1,13 +1,21 @@
 Stubs code generation
 =====================
 
-Generated code is produced for a dedicated mission which uses a set of service Areas.
+Generated code is produced for a dedicated mission which uses a set of service Areas. All areas must be generated at the same time, in a single run of the generator.
 
 The C statement 'calloc' (initializes allocated bytes with 0) is used to allocate the structures and pointers arrays. It guarantees that the destructor will not free memory through false pointers when the initialization has not completed properly.
 
+Zproject
+--------
+A single Zproject is created for the generation run. It is called 'generated_areas'.
+
+### Include file (.h)
+
+The created file `generated_areas.h` includes the main `<area>.h` files for all the generated areas.
+
 Area
 ----
-A new project of type 'zproject' is created for each Area. Il is named as the area name in lower case: `<area>`
+A new 'zproject' class is created for each Area. It is named as the area name in lower case: `<area>`
 
 ### Include file (.h)
 
