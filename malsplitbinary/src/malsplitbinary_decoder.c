@@ -133,8 +133,7 @@ int malsplitbinary_decoder_decode_ushort(mal_decoder_t *self,
 int malsplitbinary_decoder_decode_boolean(mal_decoder_t *self,
     void *cursor, mal_boolean_t *result) {
   int rc = 0;
-  if (((malsplitbinary_cursor_t *) cursor)->bitfield_length == 0 ||
-      ((malsplitbinary_cursor_t *) cursor)->bitfield_length < ((malsplitbinary_cursor_t *) cursor)->bitfield_idx) {
+  if (((malsplitbinary_cursor_t *) cursor)->bitfield_length <= ((malsplitbinary_cursor_t *) cursor)->bitfield_idx) {
     (*result) = false;
     return rc;
   }
