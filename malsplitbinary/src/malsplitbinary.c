@@ -117,7 +117,7 @@ void  malsplitbinary_decoder_cursor_init(void *cursor,
     unsigned int length, //message length
     unsigned int offset) { //message_offset
 
-  unsigned int bf_nb_bytes = malbinary_read_uvarinteger(bytes);
+  unsigned int bf_nb_bytes = malbinary_read_uvarinteger(bytes+offset);
   //printf("-- malsplitbinary_decoder_cursor_init read bf_nb_bytes = %d\n", bf_nb_bytes);//NTA tmp
   ((malsplitbinary_cursor_t *) cursor)->bitfield_length = bf_nb_bytes * 8;// max bitfield length
 
@@ -133,8 +133,6 @@ void  malsplitbinary_decoder_cursor_init(void *cursor,
   malbinary_cursor_init(&((malsplitbinary_cursor_t *) cursor)->malbinary_cursor, bytes, body_length, body_offset);
 
   ((malsplitbinary_cursor_t *) cursor)->bitfield_idx = 0;
-  //((malsplitbinary_cursor_t *) cursor)->most_significant = most_significant;
-  ((malsplitbinary_cursor_t *) cursor)->most_significant = 0;
 
   //malsplitbinary_cursor_print((malsplitbinary_cursor_t *) cursor);
 }

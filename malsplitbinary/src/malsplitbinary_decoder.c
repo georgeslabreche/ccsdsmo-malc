@@ -133,11 +133,14 @@ int malsplitbinary_decoder_decode_ushort(mal_decoder_t *self,
 int malsplitbinary_decoder_decode_boolean(mal_decoder_t *self,
     void *cursor, mal_boolean_t *result) {
   int rc = 0;
+  if (((malsplitbinary_cursor_t *) cursor)->bitfield_length == 0 ||
+      ((malsplitbinary_cursor_t *) cursor)->bitfield_length < ((malsplitbinary_cursor_t *) cursor)->bitfield_idx) {
+    (*result) = false;
+    return rc;
+  }
   char *bitfield = malsplitbinary_cursor_get_bitfield_ptr((malsplitbinary_cursor_t *) cursor);
   unsigned int v = bitfield[(((malsplitbinary_cursor_t *) cursor)->bitfield_idx) >> 3];
   (*result) = (v >> ((malsplitbinary_cursor_t *) cursor)->bitfield_idx % 8) & 1;
-  if (*result == 1)
-    ((malsplitbinary_cursor_t *) cursor)->most_significant = ((malsplitbinary_cursor_t *) cursor)->bitfield_idx;
   ((malsplitbinary_cursor_t *) cursor)->bitfield_idx++;
   return rc;
 }
