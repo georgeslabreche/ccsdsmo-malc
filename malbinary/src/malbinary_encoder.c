@@ -212,13 +212,8 @@ int malbinary_encoder_add_string_encoding_length(mal_encoder_t *self, mal_string
   return rc;
 }
 
-int malbinary_encoder_add_presence_flag_encoding_length(mal_encoder_t *self, unsigned int length, void *cursor) {
-  int rc = 0;
-  if (length > 1)
-    ((malbinary_cursor_t *) cursor)->body_length += length;
-  else
-    ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_PRESENCE_FLAG_SIZE;
-  return rc;
+int malbinary_encoder_add_presence_flag_encoding_length(mal_encoder_t *self, mal_boolean_t to_encode, void *cursor) {
+  return malbinary_encoder_add_boolean_encoding_length(self, to_encode, cursor);
 }
 
 int malbinary_encoder_add_short_form_encoding_length(mal_encoder_t *self, long to_encode, void *cursor) {

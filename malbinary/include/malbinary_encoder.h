@@ -42,7 +42,7 @@ int malbinary_encoder_add_string_encoding_length(mal_encoder_t *self,
     mal_string_t *to_encode, void *cursor);
 
 int malbinary_encoder_add_presence_flag_encoding_length(
-    mal_encoder_t *self, unsigned int length, void *cursor);
+    mal_encoder_t *self, mal_boolean_t to_encode, void *cursor);
 
 int malbinary_encoder_add_short_form_encoding_length(mal_encoder_t *self,
     long to_encode, void *cursor);
