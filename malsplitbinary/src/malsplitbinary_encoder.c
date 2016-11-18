@@ -53,13 +53,8 @@ int malsplitbinary_encoder_add_string_encoding_length(mal_encoder_t *self,
 }
 
 int malsplitbinary_encoder_add_presence_flag_encoding_length(
-    mal_encoder_t *self, unsigned int length, void *cursor) {
-  int rc = 0;
-  if (length > 1)
-    ((malsplitbinary_cursor_t *) cursor)->bitfield_length += length;
-  else
-    ((malsplitbinary_cursor_t *) cursor)->bitfield_length += MALSPLITBINARY_PRESENCE_FLAG_SIZE;
-  return rc;
+    mal_encoder_t *self, mal_boolean_t to_encode, void *cursor) {
+  return malsplitbinary_encoder_add_boolean_encoding_length(self, to_encode, cursor);
 }
 
 int malsplitbinary_encoder_add_short_form_encoding_length(mal_encoder_t *self,
@@ -130,7 +125,11 @@ int malsplitbinary_encoder_add_ushort_encoding_length(mal_encoder_t *self,
 int malsplitbinary_encoder_add_boolean_encoding_length(mal_encoder_t *self,
     mal_boolean_t to_encode, void *cursor) {
   int rc = 0;
-  ((malsplitbinary_cursor_t *) cursor)->bitfield_length +=  MALSPLITBINARY_PRESENCE_FLAG_SIZE;
+  //use bitfield_length as a counter, the bitfield_length is set on cursor init.
+  if (to_encode) {
+    ((malsplitbinary_cursor_t *) cursor)->most_significant = ((malsplitbinary_cursor_t *) cursor)->bitfield_length;
+  }
+  ((malsplitbinary_cursor_t *) cursor)->bitfield_length++;
   return rc;
 }
 
@@ -223,12 +222,11 @@ int malsplitbinary_encoder_encode_boolean(mal_encoder_t *self,
     void *cursor, mal_boolean_t to_encode) {
   int rc = 0;
   char *bitfield = malsplitbinary_cursor_get_bitfield_ptr((malsplitbinary_cursor_t *) cursor);
-  //printf("---- bitfield_idx = %d\n", ((malsplitbinary_cursor_t *) cursor)->bitfield_idx);//NTA tmp
-  if (to_encode)
-    ((malsplitbinary_cursor_t *) cursor)->most_significant = ((malsplitbinary_cursor_t *) cursor)->bitfield_idx;
+  //printf("--encoding_length bitfield_idx = %d\n", ((malsplitbinary_cursor_t *) cursor)->bitfield_idx);//NTA tmp
 
-  bitfield[(((malsplitbinary_cursor_t *) cursor)->bitfield_idx) >> 3] |=
-      to_encode << ((((malsplitbinary_cursor_t *) cursor)->bitfield_idx) & 7);
+  if (to_encode)
+    bitfield[(((malsplitbinary_cursor_t *) cursor)->bitfield_idx) >> 3] |=
+        to_encode << ((((malsplitbinary_cursor_t *) cursor)->bitfield_idx) & 7);
 
   ((malsplitbinary_cursor_t *) cursor)->bitfield_idx++;
   return rc;
@@ -593,6 +591,23 @@ void malsplitbinary_init_encode_functions(mal_encoder_t *self) {
       mal_ushort_list_encode_malbinary);
 }
 
+/*
+char *i2bin(int num, int pad)//NTA tmp
+{
+ char *str = (char *) malloc(sizeof(char) * (pad+1));
+  if (str) {
+   str[pad]='\0';
+   while (--pad>=0) {
+    str[pad] = num & 1 ? '1' : '0';
+    num >>= 1;
+   }
+  } else {
+   return "";
+  }
+ return str;
+}
+*/
+
 void malsplitbinary_encoder_test(bool verbose) {
   printf(" * malsplitbinary_encoder: ");
   if (verbose)
@@ -600,6 +615,61 @@ void malsplitbinary_encoder_test(bool verbose) {
 
 //  @selftest
 // ...
+
+  /*
+  mal_encoder_t *encoder = malsplitbinary_encoder_new();
+  void *cursor = mal_encoder_new_cursor(encoder);
+
+  int NB_BOOL = 3;
+  for (int i = 0; i < NB_BOOL; i++)
+    malsplitbinary_encoder_add_boolean_encoding_length(encoder, false, cursor);
+  malsplitbinary_encoder_add_boolean_encoding_length(encoder, true, cursor);
+
+  printf("\n=== get_length = %d\n", malsplitbinary_cursor_get_length((malsplitbinary_cursor_t *)cursor));
+
+  mal_blob_t *authentication_id = mal_blob_new(0);
+  mal_qoslevel_t qoslevel = MAL_QOSLEVEL_ASSURED;
+  mal_uinteger_t priority = 4;
+  mal_identifier_list_t *domain = mal_identifier_list_new(0);
+  mal_identifier_t *network_zone = mal_identifier_new("Network Zone");
+  mal_sessiontype_t session = MAL_SESSIONTYPE_LIVE;
+  mal_identifier_t *session_name = mal_identifier_new("LIVE");
+  mal_message_t *message = mal_message_new(
+      authentication_id,
+      qoslevel,
+      priority,
+      domain,
+      network_zone,
+      session,
+      session_name,
+      malsplitbinary_cursor_get_length((malsplitbinary_cursor_t *)cursor));
+
+  printf("mal_message_get_body = %p, byte[0]=%d, len = %d\n", (void*)mal_message_get_body(message),
+      mal_message_get_body(message)[0], mal_message_get_body_length(message));
+
+  mal_encoder_cursor_init(
+      encoder, cursor,
+      mal_message_get_body(message),
+      mal_message_get_body_length(message),
+      mal_message_get_body_offset(message));
+
+  printf("--- mal_encoder_cursor_init done\n");
+
+  for (int i = 0; i < NB_BOOL; i++)
+    malsplitbinary_encoder_encode_boolean(encoder, cursor, false);
+  malsplitbinary_encoder_encode_boolean(encoder, cursor, true);
+
+  printf("--- encode boolean done\n");
+
+  char *by = mal_message_get_body(message);
+  int len = mal_encoder_cursor_get_length(encoder, cursor);
+  printf("bytes[%d] = ", len);
+  for (int i = 0; i < len; i++)
+    printf(" %d (%s),", by[i], i2bin(by[i],8));
+  printf("\n");
+
+  malsplitbinary_cursor_print((malsplitbinary_cursor_t *)cursor);
+  */
 //  @end
   printf("OK\n");
 }

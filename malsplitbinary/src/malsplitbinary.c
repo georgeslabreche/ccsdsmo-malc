@@ -60,9 +60,6 @@ void malbinary_write_uvarinteger(unsigned int value, char *bytes)
 }
 
 unsigned int malsplitbinary_cursor_get_bitfield_nb_bytes(unsigned int most_significant) {
-  if (most_significant%8 == 0)
-    return most_significant/8;
-  else
     return most_significant/8+1;
 }
 
@@ -90,7 +87,8 @@ void  malsplitbinary_encoder_cursor_init(void *cursor,
     unsigned int length, //message length
     unsigned int offset) { //message_offset
 
-  unsigned int bf_nb_bytes = malsplitbinary_cursor_get_bitfield_nb_bytes(((malsplitbinary_cursor_t *) cursor)->bitfield_length);
+  ((malsplitbinary_cursor_t *) cursor)->bitfield_length = ((malsplitbinary_cursor_t *) cursor)->most_significant;
+  unsigned int bf_nb_bytes = malsplitbinary_cursor_get_bitfield_nb_bytes(((malsplitbinary_cursor_t *) cursor)->most_significant);
   // set most_significant bytes length
   malbinary_write_uvarinteger(bf_nb_bytes, bytes+offset);
   //printf("--- bf_nb_bytes = %d\n", bf_nb_bytes);//NTA tmp
@@ -107,7 +105,6 @@ void  malsplitbinary_encoder_cursor_init(void *cursor,
   malbinary_cursor_init(&((malsplitbinary_cursor_t *) cursor)->malbinary_cursor, bytes, body_length, body_offset);
 
   ((malsplitbinary_cursor_t *) cursor)->bitfield_idx = 0;
-  ((malsplitbinary_cursor_t *) cursor)->most_significant = ((malsplitbinary_cursor_t *) cursor)->bitfield_length;
 
   //malsplitbinary_cursor_print((malsplitbinary_cursor_t *) cursor);
 }
@@ -161,7 +158,7 @@ unsigned int malsplitbinary_cursor_get_most_significant(malsplitbinary_cursor_t 
 }
 
 unsigned int malsplitbinary_cursor_get_bitfield_length(malsplitbinary_cursor_t *cursor) {
-  unsigned int bf_nb_bytes = malsplitbinary_cursor_get_bitfield_nb_bytes(cursor->bitfield_length);
+  unsigned int bf_nb_bytes = malsplitbinary_cursor_get_bitfield_nb_bytes(cursor->most_significant);
   return malbinary_var_uinteger_encoding_length(bf_nb_bytes) + bf_nb_bytes;
 }
 
