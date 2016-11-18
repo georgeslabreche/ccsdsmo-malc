@@ -1592,6 +1592,99 @@ int testarea_testservice_testinvokealltypes_invoke_response_decode_0(void * curs
   return rc;
 }
 
+// generated code for operation testarea_testservice_testcrossref
+
+int testarea_testservice_testcrossref_send(mal_endpoint_t * endpoint, mal_message_t * init_message, mal_uri_t * provider_uri)
+{
+  int rc = 0;
+  mal_message_init(init_message, TESTAREA_AREA_NUMBER, TESTAREA_AREA_VERSION, TESTAREA_TESTSERVICE_SERVICE_NUMBER, TESTAREA_TESTSERVICE_TESTCROSSREF_OPERATION_NUMBER, MAL_INTERACTIONTYPE_SEND, MAL_IP_STAGE_SEND);
+  rc = mal_endpoint_init_operation(endpoint, init_message, provider_uri, true);
+  return rc;
+}
+
+int testarea_testservice_testcrossref_send_add_encoding_length_0(mal_encoder_t * encoder, com_archive_archivedetails_t * element, void * cursor)
+{
+  int rc = 0;
+  switch (encoder->encoding_format_code)
+  {
+    case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
+    {
+      rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
+      if (rc < 0)
+        return rc;
+      if ((element != NULL))
+      {
+        rc = com_archive_archivedetails_add_encoding_length_malbinary(element, encoder, cursor);
+        if (rc < 0)
+          return rc;
+      }
+      break;
+    }
+    default:
+    rc = -1;
+  }
+  return rc;
+}
+
+int testarea_testservice_testcrossref_send_encode_0(void * cursor, mal_encoder_t * encoder, com_archive_archivedetails_t * element)
+{
+  int rc = 0;
+  switch (encoder->encoding_format_code)
+  {
+    case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
+    {
+      bool presence_flag = (element != NULL);
+      rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
+      if (rc < 0)
+        return rc;
+      if (presence_flag)
+      {
+        rc = com_archive_archivedetails_encode_malbinary(element, encoder, cursor);
+        if (rc < 0)
+          return rc;
+      }
+      break;
+    }
+    default:
+    rc = -1;
+  }
+  return rc;
+}
+
+int testarea_testservice_testcrossref_send_decode_0(void * cursor, mal_decoder_t * decoder, com_archive_archivedetails_t ** element_res)
+{
+  int rc = 0;
+  switch (decoder->encoding_format_code)
+  {
+    case MALBINARY_FORMAT_CODE:
+    case MALSPLITBINARY_FORMAT_CODE:
+    {
+      bool presence_flag;
+      rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+      if (rc < 0)
+        return rc;
+      if (presence_flag)
+      {
+        *element_res = com_archive_archivedetails_new();
+        if (*element_res == NULL) return -1;
+        rc = com_archive_archivedetails_decode_malbinary(*element_res, decoder, cursor);
+        if (rc < 0)
+          return rc;
+      }
+      else
+      {
+        *element_res = NULL;
+      }
+      break;
+    }
+    default:
+    rc = -1;
+  }
+  return rc;
+}
+
 int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor, mal_element_holder_t * element_holder)
 {
   int enumerated_value = 0;
@@ -1599,7 +1692,230 @@ int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor
   rc = mal_decoder_decode_short_form(decoder, cursor, &element_holder->short_form);
   if (rc < 0)
     return rc;
-  if (element_holder->short_form == MAL_BLOB_SHORT_FORM)
+  if (element_holder->short_form == COM_ACTIVITYTRACKING_ACTIVITYACCEPTANCE_SHORT_FORM)
+  {
+    element_holder->value.composite_value = com_activitytracking_activityacceptance_new();
+    if (element_holder->value.composite_value == NULL) return -1;
+    rc = com_activitytracking_activityacceptance_decode_malbinary((com_activitytracking_activityacceptance_t *)element_holder->value.composite_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_ACTIVITYTRACKING_ACTIVITYACCEPTANCE_LIST_SHORT_FORM)
+  {
+    element_holder->value.list_value = com_activitytracking_activityacceptance_list_new(0);
+    if (element_holder->value.list_value == NULL) return -1;
+    rc = com_activitytracking_activityacceptance_list_decode_malbinary((com_activitytracking_activityacceptance_list_t *)element_holder->value.list_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_ACTIVITYTRACKING_ACTIVITYEXECUTION_SHORT_FORM)
+  {
+    element_holder->value.composite_value = com_activitytracking_activityexecution_new();
+    if (element_holder->value.composite_value == NULL) return -1;
+    rc = com_activitytracking_activityexecution_decode_malbinary((com_activitytracking_activityexecution_t *)element_holder->value.composite_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_ACTIVITYTRACKING_ACTIVITYEXECUTION_LIST_SHORT_FORM)
+  {
+    element_holder->value.list_value = com_activitytracking_activityexecution_list_new(0);
+    if (element_holder->value.list_value == NULL) return -1;
+    rc = com_activitytracking_activityexecution_list_decode_malbinary((com_activitytracking_activityexecution_list_t *)element_holder->value.list_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_ACTIVITYTRACKING_ACTIVITYTRANSFER_SHORT_FORM)
+  {
+    element_holder->value.composite_value = com_activitytracking_activitytransfer_new();
+    if (element_holder->value.composite_value == NULL) return -1;
+    rc = com_activitytracking_activitytransfer_decode_malbinary((com_activitytracking_activitytransfer_t *)element_holder->value.composite_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_ACTIVITYTRACKING_ACTIVITYTRANSFER_LIST_SHORT_FORM)
+  {
+    element_holder->value.list_value = com_activitytracking_activitytransfer_list_new(0);
+    if (element_holder->value.list_value == NULL) return -1;
+    rc = com_activitytracking_activitytransfer_list_decode_malbinary((com_activitytracking_activitytransfer_list_t *)element_holder->value.list_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_ACTIVITYTRACKING_OPERATIONACTIVITY_SHORT_FORM)
+  {
+    element_holder->value.composite_value = com_activitytracking_operationactivity_new();
+    if (element_holder->value.composite_value == NULL) return -1;
+    rc = com_activitytracking_operationactivity_decode_malbinary((com_activitytracking_operationactivity_t *)element_holder->value.composite_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_ACTIVITYTRACKING_OPERATIONACTIVITY_LIST_SHORT_FORM)
+  {
+    element_holder->value.list_value = com_activitytracking_operationactivity_list_new(0);
+    if (element_holder->value.list_value == NULL) return -1;
+    rc = com_activitytracking_operationactivity_list_decode_malbinary((com_activitytracking_operationactivity_list_t *)element_holder->value.list_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_ARCHIVE_ARCHIVEDETAILS_SHORT_FORM)
+  {
+    element_holder->value.composite_value = com_archive_archivedetails_new();
+    if (element_holder->value.composite_value == NULL) return -1;
+    rc = com_archive_archivedetails_decode_malbinary((com_archive_archivedetails_t *)element_holder->value.composite_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_ARCHIVE_ARCHIVEDETAILS_LIST_SHORT_FORM)
+  {
+    element_holder->value.list_value = com_archive_archivedetails_list_new(0);
+    if (element_holder->value.list_value == NULL) return -1;
+    rc = com_archive_archivedetails_list_decode_malbinary((com_archive_archivedetails_list_t *)element_holder->value.list_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_ARCHIVE_ARCHIVEQUERY_SHORT_FORM)
+  {
+    element_holder->value.composite_value = com_archive_archivequery_new();
+    if (element_holder->value.composite_value == NULL) return -1;
+    rc = com_archive_archivequery_decode_malbinary((com_archive_archivequery_t *)element_holder->value.composite_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_ARCHIVE_ARCHIVEQUERY_LIST_SHORT_FORM)
+  {
+    element_holder->value.list_value = com_archive_archivequery_list_new(0);
+    if (element_holder->value.list_value == NULL) return -1;
+    rc = com_archive_archivequery_list_decode_malbinary((com_archive_archivequery_list_t *)element_holder->value.list_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_ARCHIVE_COMPOSITEFILTER_SHORT_FORM)
+  {
+    element_holder->value.composite_value = com_archive_compositefilter_new();
+    if (element_holder->value.composite_value == NULL) return -1;
+    rc = com_archive_compositefilter_decode_malbinary((com_archive_compositefilter_t *)element_holder->value.composite_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_ARCHIVE_COMPOSITEFILTER_LIST_SHORT_FORM)
+  {
+    element_holder->value.list_value = com_archive_compositefilter_list_new(0);
+    if (element_holder->value.list_value == NULL) return -1;
+    rc = com_archive_compositefilter_list_decode_malbinary((com_archive_compositefilter_list_t *)element_holder->value.list_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_ARCHIVE_COMPOSITEFILTERSET_SHORT_FORM)
+  {
+    element_holder->value.composite_value = com_archive_compositefilterset_new();
+    if (element_holder->value.composite_value == NULL) return -1;
+    rc = com_archive_compositefilterset_decode_malbinary((com_archive_compositefilterset_t *)element_holder->value.composite_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_ARCHIVE_COMPOSITEFILTERSET_LIST_SHORT_FORM)
+  {
+    element_holder->value.list_value = com_archive_compositefilterset_list_new(0);
+    if (element_holder->value.list_value == NULL) return -1;
+    rc = com_archive_compositefilterset_list_decode_malbinary((com_archive_compositefilterset_list_t *)element_holder->value.list_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_ARCHIVE_EXPRESSIONOPERATOR_SHORT_FORM)
+  {
+    rc = mal_decoder_decode_small_enum(decoder, cursor, &enumerated_value);
+    if (rc < 0)
+      return rc;
+    element_holder->value.enumerated_value = (com_archive_expressionoperator_t) enumerated_value;
+  }
+  else if (element_holder->short_form == COM_ARCHIVE_EXPRESSIONOPERATOR_LIST_SHORT_FORM)
+  {
+    element_holder->value.list_value = com_archive_expressionoperator_list_new(0);
+    if (element_holder->value.list_value == NULL) return -1;
+    rc = com_archive_expressionoperator_list_decode_malbinary((com_archive_expressionoperator_list_t *)element_holder->value.list_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_INSTANCEBOOLEANPAIR_SHORT_FORM)
+  {
+    element_holder->value.composite_value = com_instancebooleanpair_new();
+    if (element_holder->value.composite_value == NULL) return -1;
+    rc = com_instancebooleanpair_decode_malbinary((com_instancebooleanpair_t *)element_holder->value.composite_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_INSTANCEBOOLEANPAIR_LIST_SHORT_FORM)
+  {
+    element_holder->value.list_value = com_instancebooleanpair_list_new(0);
+    if (element_holder->value.list_value == NULL) return -1;
+    rc = com_instancebooleanpair_list_decode_malbinary((com_instancebooleanpair_list_t *)element_holder->value.list_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_OBJECTDETAILS_SHORT_FORM)
+  {
+    element_holder->value.composite_value = com_objectdetails_new();
+    if (element_holder->value.composite_value == NULL) return -1;
+    rc = com_objectdetails_decode_malbinary((com_objectdetails_t *)element_holder->value.composite_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_OBJECTDETAILS_LIST_SHORT_FORM)
+  {
+    element_holder->value.list_value = com_objectdetails_list_new(0);
+    if (element_holder->value.list_value == NULL) return -1;
+    rc = com_objectdetails_list_decode_malbinary((com_objectdetails_list_t *)element_holder->value.list_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_OBJECTID_SHORT_FORM)
+  {
+    element_holder->value.composite_value = com_objectid_new();
+    if (element_holder->value.composite_value == NULL) return -1;
+    rc = com_objectid_decode_malbinary((com_objectid_t *)element_holder->value.composite_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_OBJECTID_LIST_SHORT_FORM)
+  {
+    element_holder->value.list_value = com_objectid_list_new(0);
+    if (element_holder->value.list_value == NULL) return -1;
+    rc = com_objectid_list_decode_malbinary((com_objectid_list_t *)element_holder->value.list_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_OBJECTKEY_SHORT_FORM)
+  {
+    element_holder->value.composite_value = com_objectkey_new();
+    if (element_holder->value.composite_value == NULL) return -1;
+    rc = com_objectkey_decode_malbinary((com_objectkey_t *)element_holder->value.composite_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_OBJECTKEY_LIST_SHORT_FORM)
+  {
+    element_holder->value.list_value = com_objectkey_list_new(0);
+    if (element_holder->value.list_value == NULL) return -1;
+    rc = com_objectkey_list_decode_malbinary((com_objectkey_list_t *)element_holder->value.list_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_OBJECTTYPE_SHORT_FORM)
+  {
+    element_holder->value.composite_value = com_objecttype_new();
+    if (element_holder->value.composite_value == NULL) return -1;
+    rc = com_objecttype_decode_malbinary((com_objecttype_t *)element_holder->value.composite_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == COM_OBJECTTYPE_LIST_SHORT_FORM)
+  {
+    element_holder->value.list_value = com_objecttype_list_new(0);
+    if (element_holder->value.list_value == NULL) return -1;
+    rc = com_objecttype_list_decode_malbinary((com_objecttype_list_t *)element_holder->value.list_value, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  else if (element_holder->short_form == MAL_BLOB_SHORT_FORM)
   {
     rc = mal_decoder_decode_blob(decoder, cursor, &element_holder->value.blob_value);
     if (rc < 0)

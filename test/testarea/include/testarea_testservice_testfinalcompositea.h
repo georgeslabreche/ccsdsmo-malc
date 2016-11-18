@@ -32,9 +32,9 @@ extern "C" {
 
 // fields accessors for composite testarea_testservice_testfinalcompositea
 mal_integer_t testarea_testservice_testfinalcompositea_get_intfield(testarea_testservice_testfinalcompositea_t * self);
-void testarea_testservice_testfinalcompositea_set_intfield(testarea_testservice_testfinalcompositea_t * self, mal_integer_t intfield);
+void testarea_testservice_testfinalcompositea_set_intfield(testarea_testservice_testfinalcompositea_t * self, mal_integer_t f_intfield);
 mal_integer_t testarea_testservice_testfinalcompositea_get_intfield2(testarea_testservice_testfinalcompositea_t * self);
-void testarea_testservice_testfinalcompositea_set_intfield2(testarea_testservice_testfinalcompositea_t * self, mal_integer_t intfield2);
+void testarea_testservice_testfinalcompositea_set_intfield2(testarea_testservice_testfinalcompositea_t * self, mal_integer_t f_intfield2);
 
 // default constructor
 testarea_testservice_testfinalcompositea_t * testarea_testservice_testfinalcompositea_new(void);

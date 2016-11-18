@@ -29,12 +29,10 @@
 extern "C" {
 #endif // __cplusplus
 
-
-// include required areas definitions
 #include "mal.h"
-#include "testarea.h"
 #include "malbinary.h"
 #include "malsplitbinary.h"
+
 int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor, mal_element_holder_t * element_holder);
 
 // standard area identifiers
@@ -107,6 +105,19 @@ typedef struct _testarea_testservice_testfinalcompositeb_list_t testarea_testser
 
 // short form for list of composite type TestArea:TestService:TestFinalCompositeB
 #define TESTAREA_TESTSERVICE_TESTFINALCOMPOSITEB_LIST_SHORT_FORM 0xc8000101fffffbL
+
+// include required areas definitions
+#include "com.h"
+
+// generated code for composite TestArea:TestService:TestComposite
+
+// generated code for composite TestArea:TestService:TestFullComposite
+
+// generated code for composite TestArea:TestService:TestUpdate
+
+// generated code for composite TestArea:TestService:TestFinalCompositeA
+
+// generated code for composite TestArea:TestService:TestFinalCompositeB
 
 // generated code for operation testarea_testservice_testsend
 #define TESTAREA_TESTSERVICE_TESTSEND_OPERATION_NUMBER 1
@@ -198,6 +209,13 @@ int testarea_testservice_testinvokealltypes_invoke_response(mal_endpoint_t * end
 int testarea_testservice_testinvokealltypes_invoke_response_add_encoding_length_0(mal_encoder_t * encoder, testarea_testservice_testfullcomposite_t * element, void * cursor);
 int testarea_testservice_testinvokealltypes_invoke_response_encode_0(void * cursor, mal_encoder_t * encoder, testarea_testservice_testfullcomposite_t * element);
 int testarea_testservice_testinvokealltypes_invoke_response_decode_0(void * cursor, mal_decoder_t * decoder, testarea_testservice_testfullcomposite_t ** element_res);
+
+// generated code for operation testarea_testservice_testcrossref
+#define TESTAREA_TESTSERVICE_TESTCROSSREF_OPERATION_NUMBER 8
+int testarea_testservice_testcrossref_send(mal_endpoint_t * endpoint, mal_message_t * init_message, mal_uri_t * provider_uri);
+int testarea_testservice_testcrossref_send_add_encoding_length_0(mal_encoder_t * encoder, com_archive_archivedetails_t * element, void * cursor);
+int testarea_testservice_testcrossref_send_encode_0(void * cursor, mal_encoder_t * encoder, com_archive_archivedetails_t * element);
+int testarea_testservice_testcrossref_send_decode_0(void * cursor, mal_decoder_t * decoder, com_archive_archivedetails_t ** element_res);
 
 // test function
 void testarea_test(bool verbose);

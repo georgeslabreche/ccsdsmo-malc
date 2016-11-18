@@ -27,26 +27,26 @@
 
 // structure definition for composite testarea_testservice_testfinalcompositeb
 struct _testarea_testservice_testfinalcompositeb_t {
-  mal_integer_t intfield;
-  mal_string_t * stringfield;
+  mal_integer_t f_intfield;
+  mal_string_t * f_stringfield;
 };
 
 // fields accessors for composite testarea_testservice_testfinalcompositeb
 mal_integer_t testarea_testservice_testfinalcompositeb_get_intfield(testarea_testservice_testfinalcompositeb_t * self)
 {
-  return self->intfield;
+  return self->f_intfield;
 }
-void testarea_testservice_testfinalcompositeb_set_intfield(testarea_testservice_testfinalcompositeb_t * self, mal_integer_t intfield)
+void testarea_testservice_testfinalcompositeb_set_intfield(testarea_testservice_testfinalcompositeb_t * self, mal_integer_t f_intfield)
 {
-  self->intfield = intfield;
+  self->f_intfield = f_intfield;
 }
 mal_string_t * testarea_testservice_testfinalcompositeb_get_stringfield(testarea_testservice_testfinalcompositeb_t * self)
 {
-  return self->stringfield;
+  return self->f_stringfield;
 }
-void testarea_testservice_testfinalcompositeb_set_stringfield(testarea_testservice_testfinalcompositeb_t * self, mal_string_t * stringfield)
+void testarea_testservice_testfinalcompositeb_set_stringfield(testarea_testservice_testfinalcompositeb_t * self, mal_string_t * f_stringfield)
 {
-  self->stringfield = stringfield;
+  self->f_stringfield = f_stringfield;
 }
 
 // default constructor
@@ -62,10 +62,10 @@ testarea_testservice_testfinalcompositeb_t * testarea_testservice_testfinalcompo
 int testarea_testservice_testfinalcompositeb_add_encoding_length_malbinary(testarea_testservice_testfinalcompositeb_t * self, mal_encoder_t * encoder, void * cursor)
 {
   int rc = 0;
-  rc = mal_encoder_add_integer_encoding_length(encoder, self->intfield, cursor);
+  rc = mal_encoder_add_integer_encoding_length(encoder, self->f_intfield, cursor);
   if (rc < 0)
     return rc;
-  rc = mal_encoder_add_string_encoding_length(encoder, self->stringfield, cursor);
+  rc = mal_encoder_add_string_encoding_length(encoder, self->f_stringfield, cursor);
   if (rc < 0)
     return rc;
   return rc;
@@ -73,10 +73,10 @@ int testarea_testservice_testfinalcompositeb_add_encoding_length_malbinary(testa
 int testarea_testservice_testfinalcompositeb_encode_malbinary(testarea_testservice_testfinalcompositeb_t * self, mal_encoder_t * encoder, void * cursor)
 {
   int rc = 0;
-  rc = mal_encoder_encode_integer(encoder, cursor, self->intfield);
+  rc = mal_encoder_encode_integer(encoder, cursor, self->f_intfield);
   if (rc < 0)
     return rc;
-  rc = mal_encoder_encode_string(encoder, cursor, self->stringfield);
+  rc = mal_encoder_encode_string(encoder, cursor, self->f_stringfield);
   if (rc < 0)
     return rc;
   return rc;
@@ -84,10 +84,10 @@ int testarea_testservice_testfinalcompositeb_encode_malbinary(testarea_testservi
 int testarea_testservice_testfinalcompositeb_decode_malbinary(testarea_testservice_testfinalcompositeb_t * self, mal_decoder_t * decoder, void * cursor)
 {
   int rc = 0;
-  rc = mal_decoder_decode_integer(decoder, cursor, &self->intfield);
+  rc = mal_decoder_decode_integer(decoder, cursor, &self->f_intfield);
   if (rc < 0)
     return rc;
-  rc = mal_decoder_decode_string(decoder, cursor, &self->stringfield);
+  rc = mal_decoder_decode_string(decoder, cursor, &self->f_stringfield);
   if (rc < 0)
     return rc;
   return rc;
@@ -96,9 +96,9 @@ int testarea_testservice_testfinalcompositeb_decode_malbinary(testarea_testservi
 // destructor
 void testarea_testservice_testfinalcompositeb_destroy(testarea_testservice_testfinalcompositeb_t ** self_p)
 {
-  if ((*self_p)->stringfield != NULL)
+  if ((*self_p)->f_stringfield != NULL)
   {
-    mal_string_destroy(& (*self_p)->stringfield);
+    mal_string_destroy(& (*self_p)->f_stringfield);
   }
   free(*self_p);
   (*self_p) = NULL;

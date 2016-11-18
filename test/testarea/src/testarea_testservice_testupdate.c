@@ -27,17 +27,17 @@
 
 // structure definition for composite testarea_testservice_testupdate
 struct _testarea_testservice_testupdate_t {
-  mal_string_t * stringfield;
+  mal_string_t * f_stringfield;
 };
 
 // fields accessors for composite testarea_testservice_testupdate
 mal_string_t * testarea_testservice_testupdate_get_stringfield(testarea_testservice_testupdate_t * self)
 {
-  return self->stringfield;
+  return self->f_stringfield;
 }
-void testarea_testservice_testupdate_set_stringfield(testarea_testservice_testupdate_t * self, mal_string_t * stringfield)
+void testarea_testservice_testupdate_set_stringfield(testarea_testservice_testupdate_t * self, mal_string_t * f_stringfield)
 {
-  self->stringfield = stringfield;
+  self->f_stringfield = f_stringfield;
 }
 
 // default constructor
@@ -53,12 +53,12 @@ testarea_testservice_testupdate_t * testarea_testservice_testupdate_new(void)
 int testarea_testservice_testupdate_add_encoding_length_malbinary(testarea_testservice_testupdate_t * self, mal_encoder_t * encoder, void * cursor)
 {
   int rc = 0;
-  rc = mal_encoder_add_presence_flag_encoding_length(encoder, (self->stringfield != NULL), cursor);
+  rc = mal_encoder_add_presence_flag_encoding_length(encoder, (self->f_stringfield != NULL), cursor);
   if (rc < 0)
     return rc;
-  if ((self->stringfield != NULL))
+  if ((self->f_stringfield != NULL))
   {
-    rc = mal_encoder_add_string_encoding_length(encoder, self->stringfield, cursor);
+    rc = mal_encoder_add_string_encoding_length(encoder, self->f_stringfield, cursor);
     if (rc < 0)
       return rc;
   }
@@ -68,13 +68,13 @@ int testarea_testservice_testupdate_encode_malbinary(testarea_testservice_testup
 {
   int rc = 0;
   bool presence_flag;
-  presence_flag = (self->stringfield != NULL);
+  presence_flag = (self->f_stringfield != NULL);
   rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
   if (rc < 0)
     return rc;
   if (presence_flag)
   {
-    rc = mal_encoder_encode_string(encoder, cursor, self->stringfield);
+    rc = mal_encoder_encode_string(encoder, cursor, self->f_stringfield);
     if (rc < 0)
       return rc;
   }
@@ -89,13 +89,13 @@ int testarea_testservice_testupdate_decode_malbinary(testarea_testservice_testup
     return rc;
   if (presence_flag)
   {
-    rc = mal_decoder_decode_string(decoder, cursor, &self->stringfield);
+    rc = mal_decoder_decode_string(decoder, cursor, &self->f_stringfield);
     if (rc < 0)
       return rc;
   }
   else
   {
-    self->stringfield = NULL;
+    self->f_stringfield = NULL;
   }
   return rc;
 }
@@ -103,9 +103,9 @@ int testarea_testservice_testupdate_decode_malbinary(testarea_testservice_testup
 // destructor
 void testarea_testservice_testupdate_destroy(testarea_testservice_testupdate_t ** self_p)
 {
-  if ((*self_p)->stringfield != NULL)
+  if ((*self_p)->f_stringfield != NULL)
   {
-    mal_string_destroy(& (*self_p)->stringfield);
+    mal_string_destroy(& (*self_p)->f_stringfield);
   }
   free(*self_p);
   (*self_p) = NULL;
