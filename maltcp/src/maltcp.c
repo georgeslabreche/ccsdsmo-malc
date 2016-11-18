@@ -268,6 +268,9 @@ int maltcp_add_message_encoding_length(maltcp_header_t *maltcp_header,
 
   ((malbinary_cursor_t *) cursor)->body_length += FIXED_HEADER_LENGTH;
 
+  // decode the var. mut.
+  encoder->varint_supported = true;
+
   // always encode 'URI From' and 'URI To'
   rc = maltcp_add_uri_encoding_length(mal_message_get_uri_from(message), encoder, cursor);
   if (rc < 0) return rc;
@@ -319,6 +322,9 @@ int maltcp_add_message_encoding_length(maltcp_header_t *maltcp_header,
         mal_message_get_authentication_id(message), cursor);
     if (rc < 0) return rc;
   }
+
+  // decode the var. mut.
+  encoder->varint_supported = false;
 
   ((malbinary_cursor_t *) cursor)->body_length += mal_message_get_body_length(message);
 
@@ -410,6 +416,9 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
   malbinary_cursor_copy((malbinary_cursor_t *) cursor, &cursor_bl);
   ((malbinary_cursor_t *) cursor)->body_offset += 4;
 
+  // decode the var. mut.
+  ((mal_encoder_t *) encoder)->varint_supported = true;
+
   // Always encode 'URI From'
   maltcp_encode_uri(mal_message_get_uri_from(message), encoder, cursor);
   // Only encode the end part of the URI if it exist.
@@ -440,6 +449,9 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
   if (authentication_id_flag > 0) {
     malbinary_encoder_encode_blob(encoder, cursor, mal_message_get_authentication_id(message));
   }
+
+  // decode the var. mut.
+  ((mal_encoder_t *) encoder)->varint_supported = false;
 
   // Copy the body in the frame.
   char *body = mal_message_get_body(message);
@@ -494,14 +506,20 @@ int maltcp_decode_uris(maltcp_header_t *maltcp_header,
   cursor.body_offset += FIXED_HEADER_LENGTH;
 
   if (source_flag) {
+    // decode the var. mut.
+    decoder->varint_supported = true;
     int rc = maltcp_decode_uri(decoder, &cursor, uri_from);
+    decoder->varint_supported = false;
     if (rc < 0) return rc;
   } else {
     *uri_from = NULL;
   }
 
   if (destination_flag) {
+    // decode the var. mut.
+    decoder->varint_supported = true;
     int rc = maltcp_decode_uri(decoder, &cursor, uri_to);
+    decoder->varint_supported = false;
     if (rc < 0) return rc;
   } else {
     *uri_to = NULL;
@@ -612,6 +630,9 @@ int maltcp_decode_message(maltcp_header_t *maltcp_header,
   //mal_message_length
   (*variable_length) = malbinary_read32(cursor);
 
+  // decode the var. mut.
+  ((mal_decoder_t *) decoder)->varint_supported = true;
+
   mal_uri_t *uri_from;
   if (source_flag) {
     maltcp_decode_uri(decoder, cursor, &uri_from);
@@ -679,6 +700,9 @@ int maltcp_decode_message(maltcp_header_t *maltcp_header,
     mal_message_set_free_authentication_id(message, false);
   }
   mal_message_set_authentication_id(message, authentication_id);
+
+  // end decode the var. mut.
+  ((mal_decoder_t *) decoder)->varint_supported = false;
 
   unsigned int body_offset = ((malbinary_cursor_t *) cursor)->body_offset;
   unsigned int body_length = ((malbinary_cursor_t *) cursor)->body_length - body_offset;
