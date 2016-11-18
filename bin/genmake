@@ -19,8 +19,8 @@ echo "##### -- MAL_HOME = $MAL_HOME"
 echo "##### -- MAL_LOCAL = $MAL_LOCAL"
 
 export CFLAGS=-"I$MAL_LOCAL/include -Wno-error=format-security"
-export LDFLAGS=-L$MAL_LOCAL/lib
-export LD_LIBRARY_PATH=/usr/local/lib:$MAL_LOCAL/lib
+export LDFLAGS="-L$MAL_LOCAL/lib -L$MAL_LOCAL/lib64"
+export LD_LIBRARY_PATH=/usr/local/lib:$MAL_LOCAL/lib:$MAL_LOCAL/lib64
 
 echo "##### -- CFLAGS = $CFLAGS"
 echo "##### -- LDFLAGS = $LDFLAGS"
