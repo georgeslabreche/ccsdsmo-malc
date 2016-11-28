@@ -296,6 +296,9 @@ mal_uri_t *get_ps_uri(malzmq_ctx_t *self, mal_uri_t *uri) {
 int malzmq_ctx_mal_socket_handle(zloop_t *loop, zmq_pollitem_t *poller,
     malzmq_ctx_t *self, zmsg_t *zmsg, bool isPubsub);
 
+// TODO (AF): The 2 functions below should be merged in a unique one (malzmq_ctx_mal_socket_handle, see above)
+// using the poller parameter to determine which socket to read the message.
+
 // zloop_fn interface for standard socket
 int malzmq_ctx_mal_standard_socket_handle(zloop_t *loop, zmq_pollitem_t *poller, void *arg) {
   malzmq_ctx_t *self = (malzmq_ctx_t *) arg;
@@ -455,7 +458,7 @@ malzmq_ctx_t *malzmq_ctx_new(mal_ctx_t *mal_ctx,
       malzmq_ctx_create_endpoint, malzmq_ctx_destroy_endpoint,
       malzmq_ctx_create_poller, malzmq_ctx_destroy_poller,
       malzmq_ctx_poller_add_endpoint, malzmq_ctx_poller_del_endpoint,
-      malzmq_ctx_send_message, malzmq_ctx_recv_message, malzmq_ctx_endpoint_init_operation,
+      malzmq_ctx_send_message, malzmq_ctx_recv_message,
       malzmq_ctx_poller_wait,
       malzmq_ctx_destroy_message,
       malzmq_ctx_start,
@@ -486,10 +489,25 @@ int malzmq_ctx_destroy(void **self_p) {
   return 0;
 }
 
+int trap_publish_register(mal_endpoint_t *mal_endpoint, mal_message_t *init_message, mal_uoctet_t stage);
+
 // Must be compliant with MAL virtual function: void *self
 int malzmq_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
     mal_message_t *mal_message) {
   malzmq_ctx_t *malzmq_ctx = (malzmq_ctx_t *) self;
+
+  if ((mal_message_get_interaction_type(mal_message) == MAL_INTERACTIONTYPE_PUBSUB) &&
+      malzmq_header_is_internal_broker(malzmq_ctx->malzmq_header)) {
+    // Note: Currently catch the PUBLISH_(DE)REGISTER message in order to automatically send
+    // the corresponding ack. This code corresponds to the current ZMQ implementation of the
+    // Pub/Sub interaction.
+    mal_uoctet_t stage = mal_message_get_interaction_stage(mal_message);
+    if (stage == MAL_IP_STAGE_PUBSUB_PUBLISH_REGISTER) {
+      return trap_publish_register(mal_endpoint, mal_message, MAL_IP_STAGE_PUBSUB_PUBLISH_REGISTER_ACK);
+    } else if(stage == MAL_IP_STAGE_PUBSUB_PUBLISH_DEREGISTER) {
+      return trap_publish_register(mal_endpoint, mal_message, MAL_IP_STAGE_PUBSUB_PUBLISH_DEREGISTER_ACK);
+    }
+  }
 
   if (clog_is_loggable(malzmq_logger, CLOG_INFO_LEVEL)) {
     clog_info(malzmq_logger, "malzmq_ctx_send_message()\n");
@@ -706,30 +724,6 @@ int trap_publish_register(mal_endpoint_t *mal_endpoint, mal_message_t *init_mess
 
   return mal_ctx_send_message(mal_endpoint_get_mal_ctx(mal_endpoint), mal_endpoint, result_message);
 }
-
-int malzmq_ctx_endpoint_init_operation(mal_endpoint_t *mal_endpoint,
-    mal_message_t *message, mal_uri_t *uri_to, bool set_tid) {
-
-  mal_message_set_uri_to(message, uri_to);
-  mal_message_set_uri_from(message,  mal_endpoint_get_uri(mal_endpoint));
-  mal_message_set_free_uri_from(message, false);
-  if (set_tid) {
-    mal_message_set_transaction_id(message, mal_endpoint_get_next_transaction_id_counter(mal_endpoint));
-  }
-
-  // Note: Currently catch the PUBLISH_(DE)REGISTER message in order to automatically send
-  // the corresponding ack. This code corresponds to the current ZMQ implementation of the
-  // Pub/Sub interaction.
-  mal_uoctet_t stage = mal_message_get_interaction_stage(message);
-  if (stage == MAL_IP_STAGE_PUBSUB_PUBLISH_REGISTER) {
-    return trap_publish_register(mal_endpoint, message, MAL_IP_STAGE_PUBSUB_PUBLISH_REGISTER_ACK);
-  } else if(stage == MAL_IP_STAGE_PUBSUB_PUBLISH_DEREGISTER) {
-    return trap_publish_register(mal_endpoint, message, MAL_IP_STAGE_PUBSUB_PUBLISH_DEREGISTER_ACK);
-  }
-
-  return mal_ctx_send_message(mal_endpoint_get_mal_ctx(mal_endpoint), mal_endpoint, message);
-}
-
 
 // Must be compliant with MAL virtual function.
 int malzmq_ctx_destroy_message(void *self, mal_message_t *mal_message) {
