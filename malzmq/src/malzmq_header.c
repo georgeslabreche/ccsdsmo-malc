@@ -30,6 +30,7 @@
 struct _malzmq_header_t {
   unsigned char version;
   malzmq_mapping_directory_t *mapping_directory;
+  bool internal_broker;
   bool priority_flag;
   mal_uinteger_t priority;
   bool timestamp_flag;
@@ -53,6 +54,8 @@ malzmq_header_t *malzmq_header_new(malzmq_mapping_directory_t *mapping_directory
     return NULL;
 
   self->version = MALZMQ_PROTOCOL_VERSION;
+
+  self->internal_broker = true;
 
   self->mapping_directory = mapping_directory;
 
@@ -98,6 +101,15 @@ unsigned char malzmq_header_get_version(malzmq_header_t *self) {
 
 void malzmq_header_set_version(malzmq_header_t *self, unsigned char version) {
   self->version = version;
+}
+
+
+bool malzmq_header_is_internal_broker(malzmq_header_t *self) {
+  return self->internal_broker;
+}
+
+void malzmq_header_enable_internal_broker(malzmq_header_t *self, bool internal_broker) {
+  self->internal_broker = internal_broker;
 }
 
 malzmq_mapping_directory_t *malzmq_header_get_mapping_directory(malzmq_header_t *self) {

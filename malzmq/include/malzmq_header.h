@@ -54,6 +54,10 @@ malzmq_mapping_directory_t *malzmq_header_get_mapping_directory(malzmq_header_t 
 void malzmq_header_set_mapping_directory(malzmq_header_t *self,
 	malzmq_mapping_directory_t *mapping_directory);
 
+bool malzmq_header_is_internal_broker(malzmq_header_t *self);
+
+void malzmq_header_enable_internal_broker(malzmq_header_t *self, bool internal_broker);
+
 bool malzmq_header_get_priority_flag(malzmq_header_t *self);
 
 void malzmq_header_set_priority_flag(malzmq_header_t *self, bool priority_flag);
