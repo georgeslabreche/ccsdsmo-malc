@@ -47,6 +47,8 @@
     <use project = "malattributes" />
     <use project = "mal" />
     <use project = "malbinary" />
+    <use project = "malsplitbinary" />
+    <use project = "malzmq" />
     <use project = "maltcp" />
     <use project = "testarea" />
     <use project = "malactor" />

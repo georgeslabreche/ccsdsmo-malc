@@ -31,6 +31,8 @@ extern "C" {
 
 #include "mal.h"
 #include "malbinary.h"
+#include "malsplitbinary.h"
+#include "malzmq.h"
 #include "maltcp.h"
 #include "testarea.h"
 #include "malactor.h"

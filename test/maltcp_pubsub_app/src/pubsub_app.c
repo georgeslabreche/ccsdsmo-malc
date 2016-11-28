@@ -25,6 +25,9 @@
 /* */
 #include "pubsub_app.h"
 
+bool split = false;
+bool tcp = true;
+
 mal_actor_t *publisher_actor = NULL;
 mal_actor_t *subscriber_actor = NULL;
 mal_actor_t *broker_actor = NULL;
@@ -137,22 +140,48 @@ void pubsub_app_test(bool verbose) {
 
   //  @selftest
   mal_ctx_t *mal_ctx = mal_ctx_new();
+  void *ctx;
 
-  mal_encoder_t *encoder = malbinary_encoder_new(false);
-  mal_decoder_t *decoder = malbinary_decoder_new(false);
+  if (tcp) {
+    // All the MAL header fields are passed
+    maltcp_header_t *maltcp_header = maltcp_header_new(true, 0, true, NULL, NULL, NULL, NULL);
 
-  // All the MAL header fields are passed
-  maltcp_header_t *maltcp_header = maltcp_header_new(true, 0, true, NULL, NULL, NULL, NULL);
+    // This test uses the same encoding configuration at the MAL/ZMQ
+    // transport level (MAL header encoding) and at the application
+    // level (MAL message body encoding)
+    ctx = maltcp_ctx_new(
+        mal_ctx,
+        "127.0.0.1", "6666",
+        maltcp_header,
+        true);
 
-  // This test uses the same encoding configuration at the MAL/ZMQ transport
-  // level (MAL header encoding) and at the application
-  // level (MAL message body encoding)
-  maltcp_ctx_new(
-      mal_ctx,
-      "127.0.0.1", "6666",
-      maltcp_header,
-      true);
-  maltcp_set_log_level(CLOG_DEBUG_LEVEL);
+    // Change the logging level of maltcp transport
+    maltcp_set_log_level(CLOG_DEBUG_LEVEL);
+    // Change the logging level of encoding
+    mal_encoder_set_log_level(maltcp_get_encoder((maltcp_ctx_t *) ctx), CLOG_WARN_LEVEL);
+    mal_decoder_set_log_level(maltcp_get_decoder((maltcp_ctx_t *) ctx), CLOG_WARN_LEVEL);
+  } else {
+    // All the MAL header fields are passed
+    malzmq_header_t *malzmq_header = malzmq_header_new(NULL, true, 0, true, NULL, NULL, NULL, NULL);
+    malzmq_header_enable_internal_broker(malzmq_header, false);
+
+    // This test uses the same encoding configuration at the MAL/ZMQ transport
+    // level (MAL header encoding) and at the application
+    // level (MAL message body encoding)
+    ctx = malzmq_ctx_new(
+        mal_ctx,
+        NULL,                 // Use default transformation of MAL URI to ZMQ URI
+        "localhost", "6666",
+        malzmq_header,
+        true);
+
+    // Change the logging level of maltcp transport
+    malzmq_set_log_level(CLOG_DEBUG_LEVEL);
+    // Change the logging level of encoding
+    mal_encoder_set_log_level(malzmq_get_encoder((malzmq_ctx_t *) ctx), CLOG_WARN_LEVEL);
+    mal_decoder_set_log_level(malzmq_get_decoder((malzmq_ctx_t *) ctx), CLOG_WARN_LEVEL);
+  }
+
 
   mal_uri_t *provider_uri = mal_ctx_create_uri(mal_ctx, "pubsub_app/myprovider");
   printf("pubsub_app: provider URI: %s\n", provider_uri);
@@ -162,6 +191,16 @@ void pubsub_app_test(bool verbose) {
 
   mal_uri_t *broker_uri = mal_ctx_create_uri(mal_ctx, "pubsub_app/broker");
   printf("pubsub_app: broker URI: %s\n", broker_uri);
+
+  mal_encoder_t *encoder;
+  mal_decoder_t *decoder;
+  if (split) {
+    encoder = malsplitbinary_encoder_new();
+    decoder = malsplitbinary_decoder_new();
+  } else {
+    encoder = malbinary_encoder_new(false);
+    decoder = malbinary_decoder_new(false);
+  }
 
   pubsub_app_create_broker(verbose, mal_ctx, consumer_uri, provider_uri, broker_uri, encoder, decoder);
   pubsub_app_create_publisher(verbose, mal_ctx, provider_uri, broker_uri, encoder, decoder);
