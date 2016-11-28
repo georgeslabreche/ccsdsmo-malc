@@ -138,11 +138,10 @@ void malsplitbinary_cursor_assert(void *cursor) {
   printf("-- malsplitbinary_cursor_assert: body_offset %d <= %d length\n",
       (((malsplitbinary_cursor_t *) cursor)->malbinary_cursor.body_offset + malsplitbinary_cursor_get_bitfield_length((malsplitbinary_cursor_t *) cursor)),
       malsplitbinary_cursor_get_length(cursor));//NTA tmp
-  printf("-- malsplitbinary_cursor_assert: bitfield_idx %d <= %d bitfield_length\n",
+  printf("-- malsplitbinary_cursor_assert: bitfield_idx %d, %d bitfield_length\n",
       ((malsplitbinary_cursor_t *) cursor)->bitfield_idx,
       ((malsplitbinary_cursor_t *) cursor)->bitfield_length);//NTA tmp
   assert(((malsplitbinary_cursor_t *) cursor)->malbinary_cursor.body_offset + malsplitbinary_cursor_get_bitfield_length((malsplitbinary_cursor_t *) cursor) <= malsplitbinary_cursor_get_length(cursor));
-  assert(((malsplitbinary_cursor_t *) cursor)->bitfield_idx <= ((malsplitbinary_cursor_t *) cursor)->bitfield_length);
 }
 
 char *malsplitbinary_cursor_get_bitfield_ptr(malsplitbinary_cursor_t *cursor) {
