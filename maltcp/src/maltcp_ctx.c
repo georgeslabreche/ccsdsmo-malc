@@ -587,7 +587,7 @@ maltcp_ctx_t *maltcp_ctx_new(mal_ctx_t *mal_ctx,
       maltcp_ctx_create_endpoint, maltcp_ctx_destroy_endpoint,
       maltcp_ctx_create_poller, maltcp_ctx_destroy_poller,
       maltcp_ctx_poller_add_endpoint, maltcp_ctx_poller_del_endpoint,
-      maltcp_ctx_send_message, maltcp_ctx_recv_message, maltcp_ctx_endpoint_init_operation,
+      maltcp_ctx_send_message, maltcp_ctx_recv_message,
       maltcp_ctx_poller_wait,
       maltcp_ctx_destroy_message,
       maltcp_ctx_start,
@@ -907,19 +907,6 @@ int maltcp_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
   }
 
   return rc;
-}
-
-int maltcp_ctx_endpoint_init_operation(mal_endpoint_t *mal_endpoint,
-    mal_message_t *message, mal_uri_t *uri_to, bool set_tid) {
-
-  mal_message_set_uri_to(message, uri_to);
-  mal_message_set_uri_from(message,  mal_endpoint_get_uri(mal_endpoint));
-  mal_message_set_free_uri_from(message, false);
-  if (set_tid) {
-    mal_message_set_transaction_id(message, mal_endpoint_get_next_transaction_id_counter(mal_endpoint));
-  }
-
-  return mal_ctx_send_message(mal_endpoint_get_mal_ctx(mal_endpoint), mal_endpoint, message);
 }
 
 // Must be compliant with MAL virtual function.
