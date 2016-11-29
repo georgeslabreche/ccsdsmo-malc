@@ -222,7 +222,8 @@ int malsplitbinary_encoder_encode_boolean(mal_encoder_t *self,
     void *cursor, mal_boolean_t to_encode) {
   int rc = 0;
   char *bitfield = malsplitbinary_cursor_get_bitfield_ptr((malsplitbinary_cursor_t *) cursor);
-  //printf("--encoding_length bitfield_idx = %d\n", ((malsplitbinary_cursor_t *) cursor)->bitfield_idx);//NTA tmp
+  // NOTE: Only used for debug
+//  printf("--encoding_length bitfield_idx = %d\n", ((malsplitbinary_cursor_t *) cursor)->bitfield_idx);
 
   if (to_encode)
     bitfield[(((malsplitbinary_cursor_t *) cursor)->bitfield_idx) >> 3] |=
@@ -591,22 +592,21 @@ void malsplitbinary_init_encode_functions(mal_encoder_t *self) {
       mal_ushort_list_encode_malbinary);
 }
 
-/*
-char *i2bin(int num, int pad)//NTA tmp
-{
- char *str = (char *) malloc(sizeof(char) * (pad+1));
-  if (str) {
-   str[pad]='\0';
-   while (--pad>=0) {
-    str[pad] = num & 1 ? '1' : '0';
-    num >>= 1;
-   }
-  } else {
-   return "";
-  }
- return str;
-}
-*/
+// NOTE: Only used for debug
+//char *i2bin(int num, int pad) {
+// char *str = (char *) malloc(sizeof(char) * (pad+1));
+//  if (str) {
+//   str[pad]='\0';
+//   while (--pad>=0) {
+//    str[pad] = num & 1 ? '1' : '0';
+//    num >>= 1;
+//   }
+//  } else {
+//   return "";
+//  }
+// return str;
+//}
+
 
 void malsplitbinary_encoder_test(bool verbose) {
   printf(" * malsplitbinary_encoder: ");
