@@ -130,6 +130,10 @@ void mal_actor_destroy(mal_ctx_t *mal_ctx, mal_actor_t **self_p) {
   }
 }
 
+void *mal_actor_get_state(mal_actor_t *self) {
+  return mal_routing_get_state(self->router);
+}
+
 mal_ctx_t *mal_actor_get_mal_ctx(mal_actor_t *self) {
   return mal_endpoint_get_mal_ctx(self->endpoint);
 }

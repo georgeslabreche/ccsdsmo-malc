@@ -50,6 +50,7 @@ mal_uri_t *mal_actor_get_uri(mal_actor_t *self);
 mal_ctx_t *mal_actor_get_mal_ctx(mal_actor_t *self);
 mal_endpoint_t *mal_actor_get_mal_endpoint(mal_actor_t *self);
 mal_routing_t *mal_actor_get_router(mal_actor_t *self);
+void *mal_actor_get_state(mal_actor_t *self);
 
 int mal_actor_send_command(mal_actor_t *to, char *cmd);
 
