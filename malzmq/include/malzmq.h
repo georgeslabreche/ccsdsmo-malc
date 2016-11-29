@@ -72,6 +72,33 @@ int malzmq_decode_uri_to(malzmq_header_t *malzmq_header,
 
 void malzmq_test(bool verbose);
 
+// BEGIN -- URI manipulation functions:
+
+static const char MALZMTP_PROTOCOL[] = "malzmtp";  // unused
+static const char MALZMTP_URI[] = "malzmtp://";
+
+// Default value for Point-to-Point protocol, should be tcp.
+#define PTP_PROTOCOL         "tcp"
+#define PTP_PROTOCOL_LENGTH  3
+
+// Default value for Publish/Subscribe protocol, should be tcp, epgm or pgm
+#define PUBSUB_PROTOCOL         "tcp"
+#define PUBSUB_PROTOCOL_LENGTH  3
+
+// Returns a newly allocated string containing the IP address from the URI specified
+// in parameter: "maltcp://ipaddress:port/service" -> "ipaddress"
+extern char *malzmq_get_host_from_uri(char *uri);
+
+// Returns the port number from the URI specified in parameter:
+// "maltcp://ipaddress:port/service" -> port
+extern int malzmq_get_port_from_uri(char *uri);
+
+// Returns a pointer to the substring that specify the requested service in the URI
+// specified in parameter: "maltcp://ipaddress:port/service" -> "service"
+extern char *malzmq_get_service_from_uri(char *full_uri);
+
+// END -- URI manipulation functions
+
 //  Public API classes
 #include "malzmq_ctx.h"
 #include "malzmq_header.h"

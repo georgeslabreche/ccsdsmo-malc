@@ -747,6 +747,59 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
   return 0;
 }
 
+// BEGIN -- URI manipulation functions:
+// - malzmtp://192.168.0.1:2534/Service
+// - malzmtp://[2001:0db8:85a3:0000:0000:8a2e:0370:7334]:972/Service
+
+// Returns a newly allocated string containing the IP address from the URI specified
+// in parameter: "maltcp://ipaddress:port/service" -> "ipaddress"
+char *malzmq_get_host_from_uri(char *uri) {
+  // TODO (AF): IPv6
+  char* ptr1 = strchr(uri +sizeof MALZMTP_URI -1, ':');
+  if (ptr1 == NULL)
+    return NULL;
+
+  size_t len = (size_t) (ptr1 - uri -sizeof MALZMTP_URI +1);
+  char* host = (char*) malloc(len +1);
+  strncpy(host, uri +sizeof MALZMTP_URI -1, len);
+  host[len] = '\0';
+  clog_debug(malzmq_logger, "get_host_from_uri(%s) /%d -> %s\n", uri, len, host);
+
+  return host;
+}
+
+// Returns the port number from the URI specified in parameter:
+// "maltcp://ipaddress:port/service" -> port
+int malzmq_get_port_from_uri(char *uri) {
+  // TODO (AF): IPv6
+  char port[10];
+  char* ptr1 = strchr(uri +sizeof MALZMTP_URI -1, ':');
+  if (ptr1 == NULL)
+    return -1;
+  char* ptr2 = strchr(ptr1+1, '/');
+  if (ptr2 == NULL)
+    ptr2 = ptr1 + strlen(ptr1);
+
+  size_t len = (size_t) (ptr2 - ptr1 -1);
+  strncpy(port, ptr1+1, len);
+  port[len] = '\0';
+
+  return atoi(port);
+}
+
+// Returns a pointer to the substring that specify the requested service in the URI
+// specified in parameter: "maltcp://ipaddress:port/service" -> "service"
+char *malzmq_get_service_from_uri(char *full_uri) {
+  if (strncmp(MALZMTP_URI, full_uri, sizeof MALZMTP_URI -1) == 0) {
+    char *ptr = strchr(full_uri +sizeof MALZMTP_URI, '/');
+    return ptr+1;
+  } else {
+    return full_uri;
+  }
+}
+
+// END -- URI manipulation functions
+
 //  --------------------------------------------------------------------------
 //  Selftest
 
