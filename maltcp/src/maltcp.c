@@ -205,22 +205,6 @@ static mal_uoctet_t convert_to_interaction_stage(int sduType) {
   }
 }
 
-/*
- static char *uri_seek_id(mal_uri_t *uri) {
- size_t uri_length = strlen(uri);
- int slashCounter = 0;
- for (int i = 0; i < uri_length; i++) {
- if (uri[i] == '/') {
- slashCounter++;
- if (slashCounter == 3) {
- return uri + i + 1;
- }
- }
- }
- // No id found
- return "";
- }*/
-
 // internal functions, should not be visible from outside this module
 int maltcp_add_string_encoding_length(mal_string_t *to_encode, mal_encoder_t *encoder,
     void *cursor) {
@@ -256,9 +240,6 @@ int maltcp_add_identifier_list_encoding_length(mal_identifier_list_t *to_encode,
   return rc;
 }
 
-// TODO (AF): Currently defined in maltcp_ctx.c
-extern char *get_service_from_uri(char *full_uri);
-
 int maltcp_add_message_encoding_length(maltcp_header_t *maltcp_header,
     mal_message_t *message, mal_encoder_t *encoder,
     void *cursor) {
@@ -274,7 +255,7 @@ int maltcp_add_message_encoding_length(maltcp_header_t *maltcp_header,
   // always encode 'URI From' and 'URI To'
   rc = maltcp_add_uri_encoding_length(mal_message_get_uri_from(message), encoder, cursor);
   if (rc < 0) return rc;
-  char *uri_to = get_service_from_uri(mal_message_get_uri_to(message));
+  char *uri_to = maltcp_get_service_from_uri(mal_message_get_uri_to(message));
   if (strlen(uri_to) > 0)
     rc = maltcp_add_uri_encoding_length(uri_to, encoder, cursor);
   if (rc < 0) return rc;
@@ -389,7 +370,7 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
 
   bool source_flag = true;
 
-  char *uri_to = get_service_from_uri(mal_message_get_uri_to(message));
+  char *uri_to = maltcp_get_service_from_uri(mal_message_get_uri_to(message));
   bool destination_flag = (strlen(uri_to) > 0);
 
   bool priority_flag = maltcp_header_get_priority_flag(maltcp_header);
@@ -410,8 +391,7 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
 
   malbinary_encoder_encode_uoctet(encoder, cursor, mal_message_get_encoding_id((message)));
 
-  // TODO (AF): According to the SADT RID this field contains the variable length of the PDU.
-  // The length is encoded to the end of this function
+  // This field will be fixed later with the variable length of the message.
   malbinary_cursor_t cursor_bl;
   malbinary_cursor_copy((malbinary_cursor_t *) cursor, &cursor_bl);
   ((malbinary_cursor_t *) cursor)->body_offset += 4;
@@ -464,8 +444,7 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
   memcpy(bytes + index, body + body_offset, body_length);
   ((malbinary_cursor_t *) cursor)->body_offset += body_length;
 
-  // TODO (AF): According to the SADT RID this field contains the variable length of the PDU.
-  // Encode the body length (message length).
+  // According to the specification this field contains the variable length of the PDU.
   int msg_len = malbinary_cursor_get_offset((malbinary_cursor_t *) cursor);
   malbinary_write32(msg_len - FIXED_HEADER_LENGTH, &cursor_bl);
   printf("--- message_length = %u\n" , msg_len);//NTA tmp
@@ -718,6 +697,73 @@ int maltcp_decode_message(maltcp_header_t *maltcp_header,
 
   return 0;
 }
+
+// BEGIN -- URI manipulation functions maltcp:
+// - maltcp://192.168.0.1:2534/Service
+// - maltcp://[2001:0db8:85a3:0000:0000:8a2e:0370:7334]:972/Service’
+
+// Returns a newly allocated string containing the base URI of the full URI specified
+// in parameter: "maltcp://ipaddress:port/service" -> "maltcp://ipaddress:port"
+char *maltcp_get_base_uri(char *full_uri) {
+  int len = strlen(full_uri);
+  char *ptr = strchr(full_uri +sizeof MALTCP_URI, '/');
+  if (ptr != NULL)
+    len = ptr-full_uri;
+  char *base_uri = (char*) malloc(len+1);
+  strncpy(base_uri, full_uri, len);
+  base_uri[len] = '\0';
+
+  return base_uri;
+}
+
+// Returns a pointer to the substring that specify the requested service in the URI
+// specified in parameter: "maltcp://ipaddress:port/service" -> "service"
+char *maltcp_get_service_from_uri(char *full_uri) {
+  if (strncmp(MALTCP_URI, full_uri, sizeof MALTCP_URI -1) == 0) {
+    char *ptr = strchr(full_uri +sizeof MALTCP_URI, '/');
+    return ptr+1;
+  } else {
+    return full_uri;
+  }
+}
+
+// Returns a newly allocated string containing the IP address from the URI specified
+// in parameter: "maltcp://ipaddress:port/service" -> "ipaddress"
+char *maltcp_get_host_from_uri(char *uri) {
+  // TODO (AF): IPv6
+  char* ptr1 = strchr(uri +sizeof MALTCP_URI -1, ':');
+  if (ptr1 == NULL)
+    return NULL;
+
+  size_t len = (size_t) (ptr1 - uri -sizeof MALTCP_URI +1);
+  clog_debug(maltcp_logger, "get_host_from_uri: %s %d\n", ptr1, len);
+  char* host = (char*) malloc(len +1);
+  strncpy(host, uri +sizeof MALTCP_URI -1, len);
+  host[len] = '\0';
+
+  return host;
+}
+
+// Returns the port number from the URI specified in parameter:
+// "maltcp://ipaddress:port/service" -> port
+int maltcp_get_port_from_uri(char *uri) {
+  // TODO (AF): IPv6
+  char port[10];
+  char* ptr1 = strchr(uri +sizeof MALTCP_URI -1, ':');
+  if (ptr1 == NULL)
+    return -1;
+  char* ptr2 = strchr(ptr1+1, '/');
+  if (ptr2 == NULL)
+    ptr2 = ptr1 + strlen(ptr1);
+
+  size_t len = (size_t) (ptr2 - ptr1 -1);
+  strncpy(port, ptr1+1, len);
+  port[len] = '\0';
+
+  return atoi(port);
+}
+
+// END -- URI manipulation functions
 
 //  --------------------------------------------------------------------------
 //  Selftest

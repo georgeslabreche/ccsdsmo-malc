@@ -80,8 +80,28 @@ void maltcp_test(bool verbose);
 mal_tcp_message_t *maltcp_new_mal_tcp_message();
 mal_tcp_message_t *maltcp_get_mal_tcp_message(maltcp_header_t *mal_header, mal_message_t *message);
 
-static const char MALTCP_PROTOCOL[] = "maltcp";
+// BEGIN -- URI manipulation functions maltcp:
+
+static const char MALTCP_PROTOCOL[] = "maltcp"; // unused
 static const char MALTCP_URI[] = "maltcp://";
+
+// Returns a newly allocated string containing the base URI of the full URI specified
+// in parameter: "maltcp://ipaddress:port/service" -> "maltcp://ipaddress:port"
+extern char *maltcp_get_base_uri(char *full_uri);
+
+// Returns a pointer to the substring that specify the requested service in the URI
+// specified in parameter: "maltcp://ipaddress:port/service" -> "service"
+extern char *maltcp_get_service_from_uri(char *full_uri);
+
+// Returns a newly allocated string containing the IP address from the URI specified
+// in parameter: "maltcp://ipaddress:port/service" -> "ipaddress"
+extern char *maltcp_get_host_from_uri(char *uri);
+
+// Returns the port number from the URI specified in parameter:
+// "maltcp://ipaddress:port/service" -> port
+extern int maltcp_get_port_from_uri(char *uri);
+
+// END -- URI manipulation functions
 
 // 'Variable length' offset
 // +1 byte: version + sdu type
@@ -99,8 +119,6 @@ static const int VARIABLE_LENGTH_OFFSET = 19;
 // Fixed header length
 // 'Variable length' offset (see above)
 // +4 bytes: variable length
-// TODO (AF): error: initializer element is not constant ??
-// static const int FIXED_HEADER_LENGTH = VARIABLE_LENGTH_OFFSET +4;
 static const int FIXED_HEADER_LENGTH = 23;
 
 //  Public API classes
