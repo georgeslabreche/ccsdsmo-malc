@@ -27,8 +27,6 @@
 
 static const char ZLOOP_ENDPOINTS_SOCKET_URI[] = "inproc://zloop.endpoints";
 
-static const char MALZMQ_PROTOCOL[] = "malzmq";
-
 struct _malzmq_ctx_t {
   mal_ctx_t *mal_ctx;
   zctx_t *zmq_ctx;
@@ -133,96 +131,42 @@ int malzmq_del_endpoint(malzmq_poller_data_t *poller_data, mal_endpoint_t *endpo
   return 0;
 }
 
-char **get_protocol_host_port(mal_uri_t *uri) {
-  char **split = (char **) calloc(3, sizeof(char *));
-  split[0] = strtok(uri, "/:");
-  split[1] = strtok(NULL, "/:");
-  split[2] = strtok(NULL, "/:");
-  return split;
-}
-
-mal_uri_t *get_short_uri(mal_uri_t *uri) {
-  // Get the "/<consumer id>" part
-  size_t uri_length = strlen(uri);
-  int slashCounter = 0;
-  int short_uri_length = 0;
-  for (int i = 0; i < uri_length; i++) {
-    if (uri[i] == '/') {
-      slashCounter++;
-      if (slashCounter == 3) {
-        short_uri_length = i;
-        break;
-      }
-    }
-  }
-  return uri+short_uri_length+1;
-}
-
-// Point-to-Point protocol used, should be tcp.
-#define PTP_PROTOCOL         "tcp"
-#define PTP_PROTOCOL_LENGTH  3
-
-// Publish/Subscribe protocol used, should be tcp, epgm or pgm
-#define PUBSUB_PROTOCOL         "tcp"
-#define PUBSUB_PROTOCOL_LENGTH  3
-
 mal_uri_t *get_uri_to(malzmq_ctx_t *self, mal_message_t *message) {
   if (self->mapping_uri && self->mapping_uri->getzmquri_to_fn) {
     return self->mapping_uri->getzmquri_to_fn(message);
   } else {
-    mal_uri_t *uri_to = strdup(mal_message_get_uri_to(message));
-
+    // Default handling of URI using TCP for all interactions
     mal_uri_t *socket_uri = NULL;
 
-    char **split = get_protocol_host_port(uri_to);
-    char *hostname = split[1];
-    char *port = split[2];
+    char *hostname = malzmq_get_host_from_uri(mal_message_get_uri_to(message));
+    int port = malzmq_get_port_from_uri(mal_message_get_uri_to(message));
 
+    // TODO: We should also test the interaction type
     if (mal_message_get_interaction_stage(message) != MAL_IP_STAGE_PUBSUB_PUBLISH) {
       // This not the publish URI, ex: tcp://192.168.1.46:5555
-      socket_uri = (mal_uri_t *) malloc(PTP_PROTOCOL_LENGTH + 4 + strlen(port) + 1);
-      // Need to set the final '\0' before using strcat
-      socket_uri[0] = '\0';
-      strcat(socket_uri, PTP_PROTOCOL "://");
-      strcat(socket_uri, hostname);
-      strcat(socket_uri, ":");
-      strcat(socket_uri, port);
+      socket_uri = (mal_uri_t *) malloc(PTP_PROTOCOL_LENGTH + 3 + strlen(hostname) + 1 + 5 + 1);
+      sprintf(socket_uri, "%s://%s:%d", PTP_PROTOCOL, hostname, port);
     } else {
-      char *mcast_addr = NULL; // ex: 224.0.0.251
-      char *network_interface = NULL; // ex: eth0
-
       // This the publish URI, ex: epgm://eth0;224.0.0.251:5555
-      char pubsub_port[6];
-      sprintf(pubsub_port,"%d", atoi(port) + 1);
-
       if (strcmp(PUBSUB_PROTOCOL, PROTOCOL_PGM) == 0 || strcmp(PUBSUB_PROTOCOL, PROTOCOL_EPGM) == 0) {
-        size_t uri_length = PUBSUB_PROTOCOL_LENGTH + strlen(network_interface) + 4 + strlen(pubsub_port);
-        if (mcast_addr)
-          uri_length += strlen(mcast_addr) + 1;
-        socket_uri = (mal_uri_t *) malloc(uri_length * sizeof(mal_uri_t *) + 1);
+        // TODO (AF): We should fix these parameters below
+        char *mcast_addr = NULL; // ex: 224.0.0.251
+        char *network_interface = NULL; // ex: eth0
 
-        // Need to set the final '\0' before using strcat
-        socket_uri[0] = '\0';
-        strcat(socket_uri, PUBSUB_PROTOCOL);
-        strcat(socket_uri, "://");
-        strcat(socket_uri, network_interface);
-        strcat(socket_uri, ";");
-        strcat(socket_uri, mcast_addr);
-        strcat(socket_uri, ":");
-        strcat(socket_uri, pubsub_port);
+        size_t uri_length = PUBSUB_PROTOCOL_LENGTH + 3 + strlen(network_interface) + 1 + 1 + 5 + 1;
+        if (mcast_addr)
+          uri_length += strlen(mcast_addr);
+        socket_uri = (mal_uri_t *) malloc(uri_length);
+        sprintf(socket_uri, "%s://%s;%s:%d", PUBSUB_PROTOCOL, network_interface, mcast_addr?mcast_addr:"", (port +1));
       } else {
         //ex: "tcp://*:5555"
-        size_t uri_length = PUBSUB_PROTOCOL_LENGTH + strlen(hostname) + 5 + strlen(pubsub_port);
-        socket_uri = (mal_uri_t *) malloc(uri_length * sizeof(mal_uri_t *) + 1);
-        // Need to set the final '\0' before using strcat
-        socket_uri[0] = '\0';
-        strcat(socket_uri, PUBSUB_PROTOCOL);
-        strcat(socket_uri, "://*:");
-        strcat(socket_uri, pubsub_port);
+        socket_uri = (mal_uri_t *) malloc(PUBSUB_PROTOCOL_LENGTH + 5 + 5 + 1);
+        sprintf(socket_uri, "%s://*:%d", PUBSUB_PROTOCOL, (port +1));
       }
     }
 
-    free(uri_to);
+    free(hostname);
+    clog_debug(malzmq_logger, "##### get_uri_to: %s\n", socket_uri);
     return socket_uri;
   }
 }
@@ -231,18 +175,10 @@ mal_uri_t *get_ptp_uri(malzmq_ctx_t *self, mal_uri_t *uri) {
   if (self->mapping_uri && self->mapping_uri->get_p2p_zmquri_fn) {
     return self->mapping_uri->get_p2p_zmquri_fn(uri);
   } else {
-    char *dupuri = strdup(uri);
-
-    char **split = get_protocol_host_port(dupuri);
-    char *port = split[2];
-
-    mal_uri_t *ptp_uri = (mal_uri_t *) malloc(PTP_PROTOCOL_LENGTH + 5 + strlen(port) + 1);
-    // Need to set the final '\0' before using strcat
-    ptp_uri[0] = '\0';
-    strcat(ptp_uri, PTP_PROTOCOL "://*:");
-    strcat(ptp_uri, port);
-
-    free(dupuri);
+    int port = malzmq_get_port_from_uri(uri);
+    mal_uri_t *ptp_uri = (mal_uri_t *) malloc(PTP_PROTOCOL_LENGTH + 5 + 5 + 1);
+    sprintf(ptp_uri, "%s://*:%d", PTP_PROTOCOL, port);
+    clog_debug(malzmq_logger, "##### get_ptp_uri: %s\n", ptp_uri);
     return ptp_uri;
   }
 }
@@ -251,44 +187,29 @@ mal_uri_t *get_ps_uri(malzmq_ctx_t *self, mal_uri_t *uri) {
   if (self->mapping_uri && self->mapping_uri->get_ps_zmquri_fn) {
     return self->mapping_uri->get_ps_zmquri_fn(uri);
   } else {
-    char *dupuri = strdup(uri);
+    char *hostname = malzmq_get_host_from_uri(uri);
+    int port = malzmq_get_port_from_uri(uri);
 
+    // TODO (AF): We should fix this parameter below
     char *mcast_addr = NULL; // ex: 224.0.0.251
-    char **split = get_protocol_host_port(dupuri);
-    char *hostname = split[1];
-    char *port = split[2];
-    char pubsub_port[6];
-    sprintf(pubsub_port,"%d", atoi(port) + 1);
 
     mal_uri_t *ps_uri = NULL;
     if (strcmp(PUBSUB_PROTOCOL, PROTOCOL_PGM) == 0 || strcmp(PUBSUB_PROTOCOL, PROTOCOL_EPGM) == 0) {
-      size_t uri_length = strlen(PUBSUB_PROTOCOL) + strlen(hostname) + 4 + strlen(pubsub_port);
-      if (mcast_addr) {
-        uri_length += strlen(mcast_addr) + 1;
-      }
-      ps_uri = (mal_uri_t *) malloc(uri_length * sizeof(mal_uri_t *) + 1);
-      // Need to set the final '\0' before using strcat
-      ps_uri[0] = '\0';
-      //epgm://192.168.1.46;224.0.0.251:5555
-      strcat(ps_uri, PUBSUB_PROTOCOL "://");
-      strcat(ps_uri, hostname);
-      strcat(ps_uri, ";");
-      strcat(ps_uri, mcast_addr);
-      strcat(ps_uri, ":");
-      strcat(ps_uri, pubsub_port);
+      size_t uri_length = PUBSUB_PROTOCOL_LENGTH + 3 + strlen(hostname) + 1 + 1 + 5 + 1;
+      if (mcast_addr)
+        uri_length += strlen(mcast_addr);
+
+      ps_uri = (mal_uri_t *) malloc(uri_length);
+      sprintf(ps_uri, "%s://%s;%s:%d", PUBSUB_PROTOCOL, hostname, mcast_addr?mcast_addr:"", (port +1));
     } else {
-      size_t uri_length = strlen(PUBSUB_PROTOCOL) + strlen(hostname) + 4 + strlen(pubsub_port);
-      ps_uri = (mal_uri_t *) malloc(uri_length * sizeof(mal_uri_t *) + 1);
-      // Need to set the final '\0' before using strcat
-      ps_uri[0] = '\0';
-      // tcp://192.168.1.46:5555
-      strcat(ps_uri, PUBSUB_PROTOCOL "://");
-      strcat(ps_uri, hostname);
-      strcat(ps_uri, ":");
-      strcat(ps_uri, pubsub_port);
+      size_t uri_length = PUBSUB_PROTOCOL_LENGTH + 3 + strlen(hostname) + 1 + 5 + 1;
+      ps_uri = (mal_uri_t *) malloc(uri_length);
+      sprintf(ps_uri, "%s://%s:%d", PUBSUB_PROTOCOL, hostname, (port +1));
     }
 
-    free(dupuri);
+    clog_debug(malzmq_logger, "##### get_ps_uri: %s\n", ps_uri);
+
+    free(hostname);
     return ps_uri;
   }
 }
@@ -355,7 +276,7 @@ int malzmq_ctx_mal_socket_handle(zloop_t *loop, zmq_pollitem_t *poller,
 
     clog_debug(malzmq_logger, "malzmq_ctx: uri_to: %s\n", uri_to);
 
-    mal_uri_t *short_uri_to = get_short_uri(uri_to);
+    mal_uri_t *short_uri_to = malzmq_get_service_from_uri(uri_to);
     clog_debug(malzmq_logger, "malzmq_ctx: short_uri_to: %s\n", short_uri_to);
 
     // Re-send the message to the appropriate endpoint.
@@ -402,11 +323,7 @@ malzmq_ctx_t *malzmq_ctx_new(mal_ctx_t *mal_ctx,
 
   int mal_uri_len = strlen(hostname) + strlen(port) + 10;
   mal_uri_t mal_uri[mal_uri_len + 1];
-  mal_uri[0] = '\0';
-  strcat(mal_uri, "malzmq://");
-  strcat(mal_uri, hostname);
-  strcat(mal_uri, ":");
-  strcat(mal_uri, port);
+  sprintf(mal_uri, "%s%s:%s", MALZMTP_URI, hostname, port);
 
   if (verbose)
     clog_debug(malzmq_logger, "malzmq_ctx_new: mal_uri=: %s\n", mal_uri);
@@ -672,7 +589,7 @@ int malzmq_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
     if (endpoint_data->mal_endpoint) {
       bool message_delivered = false;
       mal_uri_t *endpoint_uri = mal_endpoint_get_uri(endpoint_data->mal_endpoint);
-      if (strcmp(get_short_uri(endpoint_uri), get_short_uri(uri_to)) == 0)
+      if (strcmp(malzmq_get_service_from_uri(endpoint_uri), malzmq_get_service_from_uri(uri_to)) == 0)
         message_delivered = true;
 
       clog_debug(malzmq_logger, "malzmq_ctx_recv_message: message_delivered=%d\n", message_delivered);
@@ -740,7 +657,7 @@ mal_uri_t *malzmq_ctx_create_uri(void *self, char *id) {
 
   clog_debug(malzmq_logger, "malzmq_ctx_create_uri()\n");
 
-  size_t uri_length = strlen(MALZMQ_PROTOCOL) + 3;
+  size_t uri_length = strlen(MALZMTP_URI);
   if (malzmq_ctx->hostname) {
     uri_length += strlen(malzmq_ctx->hostname);
   }
@@ -757,8 +674,7 @@ mal_uri_t *malzmq_ctx_create_uri(void *self, char *id) {
   // Need to set the final '\0' before using strcat
   uri[0] = '\0';
   if (uri) {
-    strcat(uri, MALZMQ_PROTOCOL);
-    strcat(uri, "://");
+    strcat(uri, MALZMTP_URI);
     if (malzmq_ctx->hostname) {
       strcat(uri, malzmq_ctx->hostname);
     }
@@ -797,7 +713,7 @@ void *malzmq_ctx_create_endpoint(void *malzmq_ctx, mal_endpoint_t *mal_endpoint)
     clog_debug(malzmq_logger, "malzmq_ctx_create_endpoint: initialize endpoint\n");
 
     // Initialize the endpoint
-    mal_uri_t *handler_uri = get_short_uri(mal_endpoint_get_uri(endpoint_data->mal_endpoint));
+    mal_uri_t *handler_uri = malzmq_get_service_from_uri(mal_endpoint_get_uri(endpoint_data->mal_endpoint));
 
     clog_debug(malzmq_logger, "malzmq_ctx_create_endpoint: initialize endpoint -> %s\n", handler_uri);
 
