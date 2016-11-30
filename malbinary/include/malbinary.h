@@ -34,8 +34,8 @@ extern "C" {
 
 #include "malattributes.h"
 
-#include "../../mal/include/mal_encoder.h"
-#include "../../mal/include/mal_decoder.h"
+#include "mal_encoder.h"
+#include "mal_decoder.h"
 
 //  MALBINARY API version macros for compile-time API detection
 
