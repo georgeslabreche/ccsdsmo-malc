@@ -28,12 +28,6 @@ echo "##### -- LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
 
 echo "### Generate MAL/C from $MAL_HOME to $MAL_LOCAL"
 
-if  [ $# -ne 0 ]; then
-  CMD=$1
-else
-  CMD="all"
-fi
-
 genmake_clean() {
   echo "=== clean : $PWD"
   make clean
@@ -43,8 +37,7 @@ genmake_clean() {
   rm -f CMakeLists.txt configure Makefile.am test-suite.log
   rm -rf builds config doc autom4te.cache
 }
-
-genmake_all() {
+genmake_gen() {
   echo "=== generate : $PWD"
   ./generate.sh
   check
@@ -54,39 +47,57 @@ genmake_all() {
   echo "=== configure"
   ./configure --prefix=$MAL_LOCAL
   check
-  echo "=== make"
-  make
-  check
-  echo "=== make check"
-  make check
-  check
-  echo "=== make install"
-  make install
-  check
 }
 
 genmake_compile() {
   echo "=== make"
   make
   check
-  echo "=== make check"
-  make check
-  check
+}
+
+genmake_install() {
   echo "=== make install"
   make install
   check
 }
 
+genmake_check() {
+  echo "=== make check"
+  make check
+  check
+}
+
+genmake_all() {
+  genmake_gen
+  genmake_compile
+  genmake_install
+  genmake_check
+}
+
 genmake() {
-  if [ $CMD == "all" ]; then
-    genmake_all
-  else
-    if [ $CMD == "clean" ]; then
+  case "$CMD" in
+    all)
+      genmake_all
+      ;;
+    clean)
       genmake_clean
-    else
+      ;;
+    gen)
+      genmake_gen
+      ;;
+    compile)
       genmake_compile
-    fi
-  fi
+      ;;
+    install)
+      genmake_install
+      ;;
+    check)
+      genmake_check
+      ;;
+    *)
+      echo "Usage: $0 {all|clean|gen|compile|install|check}"
+      exit 1
+  esac
 }
 
 check() {
@@ -96,4 +107,15 @@ if  [ "$?" -ne "0" ]; then
 fi
 }
 
-genmake
+if  [ $# -eq 0 ]; then
+  CMD="all"
+  genmake
+else
+  while [ $# -ne 0 ]
+  do
+    CMD=$1
+    genmake
+    shift
+  done
+fi
+

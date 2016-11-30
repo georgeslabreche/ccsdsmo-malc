@@ -3,7 +3,19 @@
 PROGDIR=`cd "$(dirname "$0")" >/dev/null; pwd`
 echo "genmakeall PROGDIR=${PROGDIR}"
 
-echo "### Generate MAL/C from $PROGDIR to $MAL_LOCAL"
+# MAL_HOME should be the directory containing the MAL/C source directory.
+
+# Only set MAL_HOME if not already set
+[ -z "$MAL_HOME" ] && MAL_HOME=`cd "${PROGDIR}/.." >/dev/null; pwd`
+
+# MAL_LOCAL is the installation directory for MAL/C libraries and includes.
+# Normally it is $MAL_HOME/local for an installattion limited to the developer,
+# it could be /usr/local for a global installation. 
+
+# Only set MAL_LOCAL if not already set
+[ -z "$MAL_LOCAL" ] && MAL_LOCAL=${MAL_HOME}/local
+
+echo "### Generate MAL/C from $MAL_HOME to $MAL_LOCAL"
 
 #Stop when an error occurs
 check() {
@@ -13,72 +25,87 @@ if  [ "$?" -ne "0" ]; then
 fi
 }
 
-cd $PROGDIR/util;
-./genmake $*
-check
+# Should remove $MAL_LOCAL -> print a message
+if  [ "$#" -ne "0" ]; then
+  if [ $1 == "clean" ]; then
+    echo ""
+    echo "!! May be you should clean $MAL_LOCAL target directory !!"
+    echo ""
+  fi
+fi
 
-cd $PROGDIR/malattributes;
-./genmake $*
-check
+genmake_mal() {
+  cd $PROGDIR/util;
+  ./genmake $*
+  check
 
-cd $PROGDIR/mal;
-./genmake $*
-check
+  cd $PROGDIR/malattributes;
+  ./genmake $*
+  check
 
-cd $PROGDIR/malbinary;
-./genmake $*
-check
+  cd $PROGDIR/mal;
+  ./genmake $*
+  check
 
-cd $PROGDIR/malsplitbinary;
-./genmake $*
-check
+  cd $PROGDIR/malbinary;
+  ./genmake $*
+  check
 
-cd $PROGDIR/malzmq;
-./genmake $*
-check
+  cd $PROGDIR/malsplitbinary;
+  ./genmake $*
+  check
 
-cd $PROGDIR/maltcp;
-./genmake $*
-check
+  cd $PROGDIR/malzmq;
+  ./genmake $*
+  check
 
-cd $PROGDIR/malactor;
-./genmake $*
-check
+  cd $PROGDIR/maltcp;
+  ./genmake $*
+  check
 
-cd $PROGDIR/test/testarea;
-./genmake $*
-check
+  cd $PROGDIR/malactor;
+  ./genmake $*
+  check
+}
 
-#cd $PROGDIR/test/simple_app;
-#./genmake $*
-#check
+genmake_tests() {
+  cd $PROGDIR/test/testarea;
+  ./genmake $*
+  check
 
-cd $PROGDIR/test/send_app;
-./genmake $*
-check
+#  cd $PROGDIR/test/simple_app;
+#  ./genmake $*
+#  check
 
-cd $PROGDIR/test/submit_app;
-./genmake $*
-check
+  cd $PROGDIR/test/send_app;
+  ./genmake $*
+  check
 
-cd $PROGDIR/test/request_app;
-./genmake $*
-check
+  cd $PROGDIR/test/submit_app;
+  ./genmake $*
+  check
 
-cd $PROGDIR/test/invoke_app;
-./genmake $*
-check
+  cd $PROGDIR/test/request_app;
+  ./genmake $*
+  check
 
-cd $PROGDIR/test/progress_app;
-./genmake $*
-check
+  cd $PROGDIR/test/invoke_app;
+  ./genmake $*
+  check
 
-cd $PROGDIR/test/maltcp_pubsub_app;
-./genmake $*
-check
+  cd $PROGDIR/test/progress_app;
+  ./genmake $*
+  check
 
-cd $PROGDIR/test/pubsub_app;
-./genmake $*
-check
+  cd $PROGDIR/test/maltcp_pubsub_app;
+  ./genmake $*
+  check
 
-# TODO: If clean should remove $MAL_LOCAL or print a message
+  cd $PROGDIR/test/pubsub_app;
+  ./genmake $*
+  check
+}
+
+genmake_mal
+genmake_tests
+

@@ -104,15 +104,20 @@ Download the sources from github (https://github.com/ccsdsmo/malc) in the MAL_HO
 directory (for example ~/cnes/malc).
 
 Go to MAL_HOME directory and launch "./genmakeall" shell script. This script generates
-makefiles for each module then compiles and installs the different modules.The last
-module is a test for the PROGRESS interaction, currently it should be stopped by a
-CTRL-C after the message "###.progress\_app\_myprovider\_finalize".
+makefiles for each module then compiles and installs the different modules.
+
+The last modules are base tests for the multiples MAL interactions (SEND, SUBMIT, REQUEST, INVOKE,
+PROGRESS and PUBLISH/SUBSCRIBE). If unwanted you can comment the call to "genmake_tests" function in
+the last line of the genmakeall shell script.
 
 The genmakeall commands accept multiples targets: 
   - all (default target): generates makefiles, then compiles and installs
   all the modules.
   - clean: cleans all the generated stuff.
+  - gen: generates makefiles.
   - compile: compiles and tests each modules.
+  - install: installs the generated libraries and includes.
+  - check: launches unit tests.
 
 By default, the installation directory for MAL/C libraries and includes is "MAL_HOME/local".
 It can be changed in "MAL_HOME/bin/env.sh" shell script, this script defines various
@@ -130,26 +135,27 @@ The project is composed of multiples modules:
   - malattributes: The MAL attributes are extracted from the MAL API to avoid a circular
   dependency between MAL API and encoding APIs.
   - malbinary: An implementation of the SPP encoding.
+  - malsplitbinary: An implementation of the split binary encoding.
   - mal: The MAL/C API implementation.
   - malactor: An actor framework on top of the MAL C API, it uses the notions of poller,
   end-point and handler. It is based on the notion of CZMQ actor.
   - malzmq: An implementation of the ZMTP transport
+  - maltcp: An implementation of the TCP transport.
 
 The test directory contains examples of code for each MAL interaction: SEND, SUBMIT, REQUEST,
-INVOKE, PROGRESS and PUBLISH/SUBSCRIBE. Each test constitutes a module.
-
-Additionnaly there are two modules under development:
-  - malsplitbinary: An implementation of the split binary encoding.
-  - maltcp: An implementation of the TCP transport.
+INVOKE, PROGRESS and PUBLISH/SUBSCRIBE. Each example constitutes a module.
 
 Each module can be individually built using the genmake shell script in the corresponding
 directory. The genmake commands accept multiples targets: 
   - all (default target): generates makefiles for the module, then compiles and installs
   the generated libraries and includes.
   - clean: cleans all the generated stuff.
+  - gen: generates makefiles for the module.
   - compile: compiles and tests the module.
+  - check: launches unit tests.
+  - install: installs the generated libraries and includes.
 
-The module can be manually built as follows:
+The module can be manually built as follows (corresponding to target gen + compile):
 
     ./generate.sh
     ./autogen.sh
