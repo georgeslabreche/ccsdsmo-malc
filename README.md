@@ -115,7 +115,7 @@ The genmakeall commands accept multiples targets:
   all the modules.
   - clean: cleans all the generated stuff.
   - gen: generates makefiles.
-  - compile: compiles and tests each modules.
+  - compile: compiles each modules.
   - install: installs the generated libraries and includes.
   - check: launches unit tests.
 
@@ -151,7 +151,7 @@ directory. The genmake commands accept multiples targets:
   the generated libraries and includes.
   - clean: cleans all the generated stuff.
   - gen: generates makefiles for the module.
-  - compile: compiles and tests the module.
+  - compile: compiles the module.
   - check: launches unit tests.
   - install: installs the generated libraries and includes.
 
