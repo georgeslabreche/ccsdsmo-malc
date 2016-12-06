@@ -434,15 +434,17 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
   ((mal_encoder_t *) encoder)->varint_supported = false;
 
   // Copy the body in the frame.
-  char *body = mal_message_get_body(message);
-  unsigned int body_offset = mal_message_get_body_offset(message);
   unsigned int body_length = mal_message_get_body_length(message);
+  if (body_length > 0) {
+    char *body = mal_message_get_body(message);
+    unsigned int body_offset = mal_message_get_body_offset(message);
 
-  char *bytes = ((malbinary_cursor_t *) cursor)->body_ptr;
-  unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
+    char *bytes = ((malbinary_cursor_t *) cursor)->body_ptr;
+    unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
 
-  memcpy(bytes + index, body + body_offset, body_length);
-  ((malbinary_cursor_t *) cursor)->body_offset += body_length;
+    memcpy(bytes + index, body + body_offset, body_length);
+    ((malbinary_cursor_t *) cursor)->body_offset += body_length;
+  }
 
   // According to the specification this field contains the variable length of the PDU.
   int msg_len = malbinary_cursor_get_offset((malbinary_cursor_t *) cursor);
@@ -687,10 +689,14 @@ int maltcp_decode_message(maltcp_header_t *maltcp_header,
   unsigned int body_length = ((malbinary_cursor_t *) cursor)->body_length - body_offset;
 
   char *bytes = ((malbinary_cursor_t *) cursor)->body_ptr;
-  char *body = (char *) malloc(sizeof(char) * body_length);
+  char *body = NULL;
+  if (body_length > 0) {
+    // Copy the message in a newly allocated memory array.
+    body = (char *) malloc(sizeof(char) * body_length);
+    memcpy(body, bytes + body_offset, body_length);
+  }
 
-  memcpy(body, bytes + body_offset, body_length);
-
+  // TODO (AF): Normally we should keep the body in the frame!!
   mal_message_set_body(message, body);
   mal_message_set_body_offset(message, 0);
   mal_message_set_body_length(message, body_length);

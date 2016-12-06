@@ -96,7 +96,10 @@ mal_message_t *mal_message_new(mal_blob_t *authentication_id,
 
   self->body_offset = 0;
   self->body_length = body_length;
-  self->body = (char *) malloc(body_length);
+  if (self->body_length > 0)
+    self->body = (char *) malloc(body_length);
+  else
+    self->body = NULL;
 
   self->timestamp = 0L;
 
@@ -133,7 +136,8 @@ void mal_message_destroy(mal_message_t **self_p, mal_ctx_t *mal_ctx) {
 
     // If there is no body owner, free directly the body
     if (self->body_owner == NULL) {
-      free(self->body - self->body_offset);
+      if (self->body_length > 0)
+        free(self->body - self->body_offset);
     } else {
       mal_ctx_destroy_message(mal_ctx, self);
     }
@@ -379,6 +383,8 @@ bool free_session_name) {
 }
 
 char *mal_message_get_body(mal_message_t *self) {
+  if (self->body_length <= 0)
+    return NULL;
   return self->body;
 }
 

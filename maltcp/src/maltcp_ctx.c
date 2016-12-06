@@ -483,7 +483,7 @@ maltcp_ctx_t *maltcp_ctx_new(mal_ctx_t *mal_ctx,
   // supported by ZMQ. We should provide an inproc socket allowing to add the needed
   // poller. However it seems that a timer regularly awaking the zloop corrects this
   // issue.
-  zloop_timer (zloop, 100, 0, zloop_timer_handle, self);
+  zloop_timer(zloop, 100, 0, zloop_timer_handle, self);
 //  zloop_set_verbose(zloop, true);
   self->zloop = zloop;
 
@@ -752,13 +752,17 @@ int maltcp_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
     mal_uinteger_t variable_length;
 
     // 'maltcp' encoding format of the MAL header
-    if (maltcp_decode_message(maltcp_ctx->maltcp_header, *message,
-        maltcp_ctx->decoder, &cursor, &variable_length) != 0) {
+    if (maltcp_decode_message(maltcp_ctx->maltcp_header, *message, maltcp_ctx->decoder, &cursor, &variable_length) != 0) {
       clog_error(maltcp_logger, "maltcp_ctx_recv_message, cannot decode message\n");
       return -1;
     }
     // Note: Currently the message length is always equal to the frame size.
     assert(mal_msg_bytes_length == (variable_length + FIXED_HEADER_LENGTH));
+
+    // TODO (AF) : Normally the frame should be kept to avoid copying the body of the message.
+    // currently the body is always copied in a newly allocated memory.
+    // Destroy must free the tcp frame
+//    mal_message_set_body_owner(*message, frame);
 
     // If the From URI field is not completely filled, we have to complete it with
     // the information from TCP/IP protocol.
@@ -788,9 +792,6 @@ int maltcp_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
       mal_message_set_free_uri_to(*message, (1!=1));
     }
 
-    // Destroy must free the tcp frame
-    mal_message_set_body_owner(*message, frame);
-
     clog_debug(maltcp_logger, "maltcp_ctx_recv_message: ");
     if (clog_is_loggable(maltcp_logger, CLOG_DEBUG_LEVEL))
       mal_message_print(*message);
@@ -811,6 +812,10 @@ int maltcp_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
         mal_message_destroy(message, maltcp_ctx->mal_ctx);
       }
     }
+
+    // TODO (AF) : Normally the frame should be kept to avoid copying the body of the message.
+    // currently the body is always copied in a newly allocated memory.
+    zframe_destroy(&frame);
   } else {
     clog_debug(maltcp_logger, "maltcp_ctx_recv_message(): NULL\n");
   }

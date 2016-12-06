@@ -567,14 +567,15 @@ int malzmq_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
 	  malbinary_cursor_init(&cursor, (char *) mal_msg_bytes, mal_msg_bytes_length, 0);
 
     // 'malzmq' encoding format of the MAL header
-    if (malzmq_decode_message(malzmq_ctx->malzmq_header, *message,
-        malzmq_ctx->decoder, &cursor) != 0) {
+    if (malzmq_decode_message(malzmq_ctx->malzmq_header, *message, malzmq_ctx->decoder, &cursor) != 0) {
       clog_error(malzmq_logger, "malzmq_ctx_recv_message, cannot decode message\n");
       return -1;
     }
 
+    // TODO (AF) : Normally the frame should be kept to avoid copying the body of the message.
+    // currently the body is always copied in a newly allocated memory.
     // Destroy must free the zmq frame
-    mal_message_set_body_owner(*message, frame);
+//    mal_message_set_body_owner(*message, frame);
 
     clog_debug(malzmq_logger, "malzmq_ctx_recv_message: ");
     if (clog_is_loggable(malzmq_logger, CLOG_DEBUG_LEVEL))
@@ -600,6 +601,10 @@ int malzmq_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
         mal_message_destroy(message, malzmq_ctx->mal_ctx);
       }
     }
+
+    // TODO (AF) : Normally the frame should be kept to avoid copying the body of the message.
+    // currently the body is always copied in a newly allocated memory.
+    zframe_destroy(&frame);
   } else {
     clog_debug(malzmq_logger, "malzmq_ctx_recv_message(): NULL\n");
   }
