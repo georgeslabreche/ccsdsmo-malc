@@ -309,6 +309,7 @@ int mal_notify_decode_updateheader_list(void *cursor, mal_decoder_t *decoder, ma
 #define MAL_ROUTING_BAD_IP_STAGE_MSG            " *** mal_routing_handle: Error BAD IP STAGE"
 #define MAL_ROUTING_UNKNOW_INTERACTION_TYPE_MSG " *** mal_routing_handle: Error UNKNOW INTERACTION TYPE"
 
+// TODO (AF): Be careful these constants are also used in MALTCP!
 #define MALZMQ_BAD_INTERACTION_STAGE            -(MALZMQ_ERROR|0x00000001)
 #define MALZMQ_BAD_INTERACTION_TYPE             -(MALZMQ_ERROR|0x00000002)
 #define MALZMQ_BAD_SDU_TYPE                     -(MALZMQ_ERROR|0x00000003)
