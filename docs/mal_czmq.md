@@ -233,7 +233,7 @@ The constructor performs the following actions:
 
 The mapping between MAL URI and ZMQ URI is ensured by 3 functions:
 
-        - The first function, `get_p2p_zm`, takes in parameter the MAL URI of a service and returns the 
+        - The first function, `get_p2p_zmquri`, takes in parameter the MAL URI of a service and returns the 
         ZMQ URI to bind the ZMQ DEALER listening socket corresponding to the MAL context. For example:
         `malzmq://host:port/service` to `tcp://*:port`.
         - The second function, `get_ps_zmquri`, takes in parameter the MAL URI of a service and returns
