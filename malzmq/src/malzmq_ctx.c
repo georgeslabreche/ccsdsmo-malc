@@ -253,14 +253,13 @@ int malzmq_ctx_mal_socket_handle(zloop_t *loop, zmq_pollitem_t *poller,
 
     // Remove the first frame: this frame contains the identity of the sender and it is
     // currently unused.
-    // TODO: May be we should use this frame as in TCP binding.
     zframe_t *frame = zmsg_pop(zmsg);
     zframe_destroy(&frame);
 
     clog_debug(malzmq_logger, "malzmq_ctx: zmsg size: %d\n", zmsg_size(zmsg));
 
-    // The MAL message is in the second frame, leave the frame in the zmsg (don't pop the frame)
-    // as the zmsg is sent again to the endpoint.
+    // The MAL message is in the next frames, leave the frames in the zmsg (don't pop the frame)
+    // as the zmsg is sent again to the endpoint. This frame should contains at least the header.
     frame = zmsg_next(zmsg);
 
     clog_debug(malzmq_logger, "malzmq_ctx: frame size: %d\n", zframe_size(frame));
