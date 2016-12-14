@@ -73,7 +73,7 @@ void clog_print_header(char *fmt) {
 
 //  Log error condition - highest priority
 void clog_fatal(clog_logger_t logger, const char *fmt, ...) {
-  if ((out == NULL) || (logger < CLOG_FATAL_LEVEL))
+  if ((out == NULL) || (logger > CLOG_FATAL_LEVEL))
     return;
 
   va_list argptr;
@@ -81,11 +81,12 @@ void clog_fatal(clog_logger_t logger, const char *fmt, ...) {
   clog_print_header("F %d/%02d/%02d %02d:%02d:%02d.%03d ");
   vfprintf(out, fmt, argptr);
   va_end(argptr);
+  fflush(out);
 }
 
 //  Log error condition - high priority
 void clog_error(clog_logger_t logger, const char *fmt, ...) {
-  if ((out == NULL) || (logger < CLOG_ERROR_LEVEL))
+  if ((out == NULL) || (logger > CLOG_ERROR_LEVEL))
     return;
 
   va_list argptr;
@@ -93,11 +94,12 @@ void clog_error(clog_logger_t logger, const char *fmt, ...) {
   clog_print_header("E %d/%02d/%02d %02d:%02d:%02d.%03d ");
   vfprintf(out, fmt, argptr);
   va_end(argptr);
+  fflush(out);
 }
 
 //  Log warning condition - low priority
 void clog_warning(clog_logger_t logger, const char *fmt, ...) {
-  if ((out == NULL) || (logger < CLOG_WARN_LEVEL))
+  if ((out == NULL) || (logger > CLOG_WARN_LEVEL))
     return;
 
   va_list argptr;
@@ -105,11 +107,12 @@ void clog_warning(clog_logger_t logger, const char *fmt, ...) {
   clog_print_header("W %d/%02d/%02d %02d:%02d:%02d.%03d ");
   vfprintf(out, fmt, argptr);
   va_end(argptr);
+  fflush(out);
 }
 
 //  Log normal, but significant, condition - normal priority
 void clog_notice(clog_logger_t logger, const char *fmt, ...) {
-  if ((out == NULL) || (logger < CLOG_NOTICE_LEVEL))
+  if ((out == NULL) || (logger > CLOG_NOTICE_LEVEL))
     return;
 
   va_list argptr;
@@ -117,11 +120,12 @@ void clog_notice(clog_logger_t logger, const char *fmt, ...) {
   clog_print_header("N %d/%02d/%02d %02d:%02d:%02d.%03d ");
   vfprintf(out, fmt, argptr);
   va_end(argptr);
+  fflush(out);
 }
 
 //  Log informational message - low priority
 void clog_info(clog_logger_t logger, const char *fmt, ...) {
-  if ((out == NULL) || (logger < CLOG_INFO_LEVEL))
+  if ((out == NULL) || (logger > CLOG_INFO_LEVEL))
     return;
 
   va_list argptr;
@@ -129,11 +133,12 @@ void clog_info(clog_logger_t logger, const char *fmt, ...) {
   clog_print_header("I %d/%02d/%02d %02d:%02d:%02d.%03d ");
   vfprintf(out, fmt, argptr);
   va_end(argptr);
+  fflush(out);
 }
 
 //  Log debug-level message - lowest priority
 void clog_debug(clog_logger_t logger, const char *fmt, ...) {
-  if ((out == NULL) || (logger < CLOG_DEBUG_LEVEL))
+  if ((out == NULL) || (logger > CLOG_DEBUG_LEVEL))
     return;
 
   va_list argptr;
@@ -141,6 +146,20 @@ void clog_debug(clog_logger_t logger, const char *fmt, ...) {
   clog_print_header("D %d/%02d/%02d %02d:%02d:%02d.%03d ");
   vfprintf(out, fmt, argptr);
   va_end(argptr);
+  fflush(out);
+}
+
+//  Log debug-level message - no header - lowest priority
+void clog_debug_no_header(clog_logger_t logger, const char *fmt, ...) {
+  if ((out == NULL) || (logger > CLOG_DEBUG_LEVEL))
+    return;
+
+  va_list argptr;
+  va_start(argptr, fmt);
+  //clog_print_header("D %d/%02d/%02d %02d:%02d:%02d.%03d ");
+  vfprintf(out, fmt, argptr);
+  va_end(argptr);
+  fflush(out);
 }
 
 void clog_test(bool verbose) {

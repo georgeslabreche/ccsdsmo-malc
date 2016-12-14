@@ -42,12 +42,12 @@ extern "C" {
 #define CLOG_VERSION \
     CLOG_MAKE_VERSION(CLOG_VERSION_MAJOR, CLOG_VERSION_MINOR, CLOG_VERSION_PATCH)
 
-#define CLOG_DEBUG_LEVEL 1000
-#define CLOG_INFO_LEVEL   900
+#define CLOG_DEBUG_LEVEL 500
+#define CLOG_INFO_LEVEL   800
 #define CLOG_NOTICE_LEVEL 800
-#define CLOG_WARN_LEVEL   500
-#define CLOG_ERROR_LEVEL  200
-#define CLOG_FATAL_LEVEL  100
+#define CLOG_WARN_LEVEL   900
+#define CLOG_ERROR_LEVEL  1000
+#define CLOG_FATAL_LEVEL  2000
 
 typedef int clog_logger_t;
 
@@ -82,6 +82,9 @@ void clog_info (clog_logger_t logger, const char *format, ...);
 
 //  Log debug-level message - lowest priority
 void clog_debug (clog_logger_t logger, const char *format, ...);
+
+//  Log debug-level message - no header - lowest priority
+void clog_debug_no_header(clog_logger_t logger, const char *fmt, ...);
 
 //- Inevitable macros -------------------------------------------------------
 #define streq(s1,s2)    (!strcmp ((s1), (s2)))
