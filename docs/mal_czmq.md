@@ -67,6 +67,18 @@ field.
 It goes without saying that these configuration parameters must be provided in an identical manner to all
 entities of the application.
 
+### Internal broker
+
+The MALZMQ transport allow to use the multicast capabilities od ZMQ to implement an internal broker.
+If needed the user shall call the malzmq_header_enable_internal_broker function with true parameter to
+indicate this choice.
+
+```c
+void malzmq_header_enable_internal_broker(malzmq_header_t *self, bool internal_broker);
+```
+
+By default this mechanism is off and an external broker shall be used.
+
 ###	Mapping directory
 
 The MAL message header contains several fields whose size can be important: URIs, strings, etc.
@@ -231,36 +243,51 @@ The constructor performs the following actions:
 
 ###	URI mapping functions
 
-The mapping between MAL URI and ZMQ URI is ensured by 3 functions:
+Associated with each service (and MAL URI) there may be two ZMTP URIs corresponding to different
+communication modes, one URI for point-to-point channel and another used for multicast channel.
+The mapping between the MAL URI of a service and the ZMTP URIs is ensured by 4 configuration functions
+provided by the user:
 
-        - The first function, `get_p2p_zmquri`, takes in parameter the MAL URI of a service and returns the 
-        ZMQ URI to bind the ZMQ DEALER listening socket corresponding to the MAL context. For example:
-        `malzmq://host:port/service` to `tcp://*:port`.
-        - The second function, `get_ps_zmquri`, takes in parameter the MAL URI of a service and returns
-        the ZMQ URI to connect the ZMQ SUB listening socket corresponding to the MAL context. For example: 
-        `malzmq://host:port/service` to `tcp://host:(port+1)` or `pgm://itf;mcast_addr:(port+1)`.
-        - The last function, `get_zmquri_to`, takes in parameter a MAL message to send and returns the 
-        corresponding ZMQ URI to the interaction stage and MAL URI of the destination service. 
-        For example, if the MAL URI of the destination service is `malzmq://host1:port1/service`:
-          - for `MAL_INTERACTIONTYPE_INVOKE`, `MAL_IP_STAGE_INVOKE` it returns `tcp://host1:port1`.
-          - for `MAL_INTERACTIONTYPE_PUBSUB`, `MAL_IP_STAGE_PUBSUB_PUBLISH` it returns `tcp://*:(port1+1)`
-          or `epgm://itf;mcast_addr:(port+1)`.
+        - ‘get_local_p2p_ztmp_uri’ takes in parameter the MAL URI of the service and
+        returns the ZMTP URI needed to bind the ZMQ ROUTER listening socket corresponding
+        to the MAL context. This ZMQ socket will be used to receive messages during
+        point-to-point interactions. For example calling this function with
+        `malzmtp://host:port/service` MAL URI returns `tcp://*:port` ZMTP URI.
+        - ‘get_local_mcast_ztmp_uri’ takes in parameter the MAL URI of the service and returns
+        the ZMQ URI to bind the ZMQ SUB listening socket corresponding to the MAL context.
+        This socket will be used to receive messages during multicast interactions. If it returns
+        NULL the multicast channel is not used by the ZMTP transport. For example calling this
+        function with `malzmtp://host:port/service` MAL URI returns `tcp://host:(port+1)` or
+        `pgm://itf;mcast_addr:(port+1)` ZMTP URI.
+        - ‘get_remote_ptp_zmtp_uri’ accepts in parameters the MAL header fields ‘URI To’ of a
+        message and returns the ZMTP URI of the remote socket to send the message through the
+        point-to-point channel. It needs a ZMQ DEALER socket connected to this URI. For example
+        calling this function with `malztp://host1:port1/service` MAL URI returns `tcp://host1:port1`
+        ZMTP URI.
+        - ‘get_remote_mcast_zmtp_uri’ accepts in parameters the MAL header fields ‘URI To’ of
+        the message and returns the ZMTP URI of the remote socket to send the message through
+        the multicast channel. It needs PUB ZMTP socket connected to this URI. If it returns NULL
+        the multicast channel is not used by the ZMTP transport. For example calling this function
+        with `malztp://host1:port1/service` MAL URI returns `tcp://*:(port1+1)` or
+        `epgm://itf;mcast_addr:(port+1)` ZMTP URI.
 
 Functions for mapping MAL URI to ZMQ URI are given to the MALZMQ context through the malzmq_mapping_uri_t structure. If this
-parameter is null the default functions defined in the MALZMQ transport are used; these functions consider that TCPis used for
+parameter is null the default functions defined in the MALZMQ transport are used; these functions consider that TCP is used for
 all interactions and the port used for Publish/Subscribe interaction is the service port +1.
 
 ```c
-typedef mal_uri_t *malzmq_get_p2p_zmquri_fn(mal_uri_t *maluri);
-typedef mal_uri_t *malzmq_get_ps_zmquri_fn(mal_uri_t *maluri);
-typedef mal_uri_t *malzmq_getzmquri_to_fn(mal_message_t *message);
+typedef mal_uri_t *malzmq_get_local_ptp_zmtp_uri_fn(mal_uri_t *maluri);
+typedef mal_uri_t *malzmq_get_local_mcast_zmtp_uri_fn(mal_uri_t *maluri);
+typedef mal_uri_t *malzmq_get_remote_ptp_zmtp_uri_fn(mal_uri_t *maluri);
+typedef mal_uri_t *malzmq_get_remote_mcast_zmtp_uri_fn(mal_uri_t *maluri);
 
 typedef struct _malzmq_mapping_uri_t malzmq_mapping_uri_t;
 
 struct _malzmq_mapping_uri_t {
-  malzmq_get_p2p_zmquri_fn *get_p2p_zmquri_fn;
-  malzmq_get_ps_zmquri_fn *get_ps_zmquri_fn;
-  malzmq_getzmquri_to_fn *getzmquri_to_fn;
+  malzmq_get_local_ptp_zmtp_uri_fn *get_local_ptp_zmtp_uri;
+  malzmq_get_local_mcast_zmtp_uri_fn *get_local_mcast_zmtp_uri;
+  malzmq_get_remote_ptp_zmtp_uri_fn *get_remote_ptp_zmtp_uri;
+  malzmq_get_remote_mcast_zmtp_uri_fn *get_remote_mcast_zmtp_uri;
 };
 ```
 
@@ -269,15 +296,12 @@ struct _malzmq_mapping_uri_t {
 The default mapping implemented in the POC for MALZMQ transport uses TCP communications for both Point-to-Point and
 Publish/Subscribe:
 
-        - `malzmq_get_p2p_zmquri_fn`: for `malzmq://host:port/service` it returns `tcp://*:port`.
-        - `malzmq_get_ps_zmquri_fn`: for `malzmq://host:port/service` it returns `tcp://host:port_ps`
+        - `get_local_ptp_zmtp_uri`: for `malzmq://host:port/service` it returns `tcp://*:port`.
+        - `get_local_mcast_zmtp_uri`: for `malzmq://host:port/service` it returns `tcp://*:port_ps`
         with `port_ps=port+1`.
-        - `malzmq_getzmquri_to_fn`:
-           - If the `interaction_type` and `interaction_stage` fields of the sent message are
-           `MAL_INTERACTIONTYPE_PUBSUB` and `MAL_IP_STAGE_PUBSUB_PUBLISH`: for
-            `malzmq://host1:port1/service it returns `tcp://host1:port1_ps` with
-           `port1_ps=port1+1`
-           - In all other cases: for `malzmq://host1:port1/service` it returns `tcp://host1:port1`.
+        - `get_remote_ptp_zmtp_uri`: for `malzmq://host1:port1/service` it returns `tcp://host1:port1`.
+        - `get_remote_mcast_zmtp_uri`: for `malzmq://host1:port1/service it returns `tcp://host1:port1_ps`
+        with `port1_ps=port1+1`
 
 Start-up
 --------
