@@ -27,6 +27,8 @@
 
 #include "malattributes.h"
 
+//clog_logger_t logger = CLOG_DEBUG_LEVEL;
+
 struct _mal_blob_t {
   unsigned int length;
   char *content;
@@ -61,13 +63,20 @@ char *mal_blob_get_content(mal_blob_t *self) {
 
 // TODO: Needs better integration with logging subsystem.
 void mal_blob_print(mal_blob_t *self) {
-  printf("mal_blob(");
-  printf("length=%d", self->length);
-  printf(",content=");
-  for (int i = 0; i < self->length; i++) {
-    printf("%#02x,", self->content[i]);
+  //clog_debug(logger, "mal_blob(");
+  //clog_debug(logger, "length=%d", self->length);
+  if (self->length < 0) {
+    //clog_debug(logger, ",content=nil)\n");
+    return;
+  } else if (self->length == 0) {
+    //clog_debug(logger, ",content=)\n");
+    return;
   }
-  printf(")\n");
+  //clog_debug(logger, ",content=");
+  for (int i = 0; i < self->length; i++) {
+    //clog_debug(logger, "%#02x,", self->content[i]);
+  }
+  //clog_debug(logger, ")\n");
 }
 
 void mal_blob_test(bool verbose) {
