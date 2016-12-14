@@ -62,6 +62,8 @@ struct _mal_message_t {
   void *body_owner;
 };
 
+clog_logger_t logger = CLOG_WARN_LEVEL;
+
 mal_message_t *mal_message_new_void(void) {
   mal_message_t *self = (mal_message_t *) calloc(1, sizeof(mal_message_t));
   if (!self)
@@ -408,40 +410,43 @@ void mal_message_set_body_length(mal_message_t *self, unsigned int body_length) 
   self->body_length = body_length;
 }
 
-// TODO: Needs better integration with logging subsystem.
+void mal_message_set_log_level(int level) {
+  logger = level;
+}
+
 void mal_message_print(mal_message_t *self) {
   if (self) {
-    printf("mal_message(");
-    if (self->uri_from != NULL)
-      printf("uri_from=%s", self->uri_from);
-    printf(",authentication_id=");
-    if (self->authentication_id != NULL)
+    clog_debug_no_header(logger, "mal_message(");
+    if (self->uri_from)
+      clog_debug_no_header(logger, "uri_from=%s", self->uri_from);
+    clog_debug_no_header(logger, ",authentication_id=");
+    if (self->authentication_id)
       mal_blob_print(self->authentication_id);
-    if (self->uri_to != NULL)
-      printf(",uri_to=%s", self->uri_to);
-    printf(",timestamp=%lu", self->timestamp);
-    printf(",qoslevel=%d", self->qoslevel);
-    printf(",priority=%d", self->priority);
-    printf(",domain=");
-    if (self->domain != NULL)
+    if (self->uri_to)
+      clog_debug_no_header(logger, ",uri_to=%s", self->uri_to);
+    clog_debug_no_header(logger, ",timestamp=%lu", self->timestamp);
+    clog_debug_no_header(logger, ",qoslevel=%d", self->qoslevel);
+    clog_debug_no_header(logger, ",priority=%d", self->priority);
+    clog_debug_no_header(logger, ",domain=");
+    if (self->domain)
       mal_identifier_list_print(self->domain);
-    if (self->network_zone != NULL)
-      printf(",network_zone=%s", self->network_zone);
-    printf(",session=%d", self->session);
-    if (self->session_name != NULL)
-      printf(",session_name=%s", self->session_name);
-    printf(",interaction_type=%d", self->interaction_type);
-    printf(",interaction_stage=%d", self->interaction_stage);
-    printf(",transaction_id=%lu", self->transaction_id);
-    printf(",service_area=%d", self->service_area);
-    printf(",service=%d", self->service);
-    printf(",operation=%d", self->operation);
-    printf(",area_version=%d", self->area_version);
-    printf(",is_error_message=%d", self->is_error_message);
-    printf(",body_offset=%d", self->body_offset);
-    printf(",body_length=%d)", self->body_length);
+    if (self->network_zone)
+      clog_debug_no_header(logger, ",network_zone=%s", self->network_zone);
+    clog_debug_no_header(logger, ",session=%d", self->session);
+    if (self->session_name)
+      clog_debug_no_header(logger, ",session_name=%s", self->session_name);
+    clog_debug_no_header(logger, ",interaction_type=%d", self->interaction_type);
+    clog_debug_no_header(logger, ",interaction_stage=%d", self->interaction_stage);
+    clog_debug_no_header(logger, ",transaction_id=%lu", self->transaction_id);
+    clog_debug_no_header(logger, ",service_area=%d", self->service_area);
+    clog_debug_no_header(logger, ",service=%d", self->service);
+    clog_debug_no_header(logger, ",operation=%d", self->operation);
+    clog_debug_no_header(logger, ",area_version=%d", self->area_version);
+    clog_debug_no_header(logger, ",is_error_message=%d", self->is_error_message);
+    clog_debug_no_header(logger, ",body_offset=%d", self->body_offset);
+    clog_debug_no_header(logger, ",body_length=%d)", self->body_length);
   } else {
-    printf("NULL");
+    clog_debug_no_header(logger, "NULL");
   }
 }
 

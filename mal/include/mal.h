@@ -379,6 +379,7 @@ typedef struct _mal_file_list_t mal_file_list_t;
 // short form for list of composite type MAL:_:File
 #define MAL_FILE_LIST_SHORT_FORM 0x1000001ffffe2L
 
+void mal_message_set_log_level(int level);
 
 void mal_test(bool verbose);
 

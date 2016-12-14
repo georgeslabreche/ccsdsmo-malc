@@ -156,11 +156,19 @@ int mal_identifier_list_decode_malbinary(mal_identifier_list_t *self,
 
 // TODO: Needs better integration with logging subsystem.
 void mal_identifier_list_print(mal_identifier_list_t *self) {
-  printf("mal_identifier_list(element_count=%d, content=", self->element_count);
-  for (int i = 0; i < self->element_count; i++) {
-    printf("%s,", self->content[i]);
+  if (self == NULL) return;
+  clog_debug_no_header(mal_logger, "mal_identifier_list(element_count=%d, content=", self->element_count);
+  if (self->element_count < 0) {
+    clog_debug_no_header(mal_logger, "nil)\n");
+    return;
+  } else if (self->element_count == 0) {
+    clog_debug_no_header(mal_logger, ")\n");
+    return;
   }
-  printf(")");
+  for (int i = 0; i < self->element_count; i++) {
+    clog_debug_no_header(mal_logger, "%s,", self->content[i]);
+  }
+  clog_debug_no_header(mal_logger, ")");
 }
 
 void mal_identifier_list_test(bool verbose) {

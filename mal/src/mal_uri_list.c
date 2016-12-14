@@ -155,13 +155,13 @@ int mal_uri_list_decode_malbinary(mal_uri_list_t *self,
 
 // TODO: Needs better integration with logging subsystem.
 void mal_uri_list_print(mal_uri_list_t *self) {
-  printf("mal_uri_list(");
-  printf("element_count=%d", self->element_count);
-  printf(",content=");
+  clog_debug_no_header(mal_logger, "mal_uri_list(");
+  clog_debug_no_header(mal_logger, "element_count=%d", self->element_count);
+  clog_debug_no_header(mal_logger, ",content=");
   for (int i = 0; i < self->element_count; i++) {
-    printf("%s,", self->content[i]);
+    clog_debug_no_header(mal_logger, "%s,", self->content[i]);
   }
-  printf(")");
+  clog_debug_no_header(mal_logger, ")");
 }
 
 void mal_uri_list_test(bool verbose) {
