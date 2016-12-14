@@ -97,15 +97,15 @@ genmake_tests() {
   ./genmake $*
   check
 
-  cd $PROGDIR/test/maltcp_pubsub_app;
+  cd $PROGDIR/test/pubsub_app;
   ./genmake $*
   check
 
-  cd $PROGDIR/test/pubsub_app;
+  cd $PROGDIR/test/malzmq_pubsub_app;
   ./genmake $*
   check
 }
 
-genmake_mal
-genmake_tests
+genmake_mal $*
+genmake_tests $*
 
