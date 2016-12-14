@@ -162,7 +162,8 @@ int pubsub_app_mysubscriber_initialize(void *self, mal_actor_t *mal_actor) {
 
   mal_encoder_cursor_destroy(subscriber->encoder, register_cursor);
 
-  printf("=== register send... %s\n", broker_uri);
+  printf("\n\n-------------------- REGISTER -----------------\n\n");//NTA tmp
+  printf("=== register send... broker_uri: %s\n", broker_uri);
   rc = testarea_testservice_testmonitor_register(mal_actor_get_mal_endpoint(mal_actor),
       register_message, broker_uri);
   if (rc < 0)
@@ -182,14 +183,76 @@ int pubsub_app_mysubscriber_finalize(void *self, mal_actor_t *mal_actor) {
 int pubsub_app_mysubscriber_testregister_ack(void *self, mal_ctx_t *mal_ctx,
     mal_endpoint_t *mal_endpoint, mal_message_t *message) {
   int rc = 0;
-  printf("******** pubsub_app_mysubscriber_register_ack\n");
+  printf("\n\n-------------------- REGISTER_ACK -----------------\n\n");//NTA tmp
+
   return rc;
 }
 
 int pubsub_app_mysubscriber_testderegister_ack(void *self, mal_ctx_t *mal_ctx,
     mal_endpoint_t *mal_endpoint, mal_message_t *message) {
   int rc = 0;
-  printf("******** pubsub_app_mysubscriber_deregister_ack\n");
+  printf("\n\n-------------------- DEREGISTER_ACK -----------------\n\n");//NTA tmp
+
+  // Wait for actor's completion
+  zclock_sleep(1000);
+
+  mal_actor_send_command(publisher_actor, "$TERM");
+  mal_actor_send_command(broker_actor, "$TERM");
+  mal_actor_send_command(subscriber_actor, "$TERM");
+
+  // Wait for actor's completion
+  zclock_sleep(1000);
+
+  mal_ctx_stop(mal_ctx);
+
+  return rc;
+}
+
+int pubsub_app_mysubscriber_testderegister(void *self) {
+  int rc = 0;
+
+  pubsub_app_mysubscriber_t *subscriber = (pubsub_app_mysubscriber_t *) self;
+
+  printf("\n\n-------------------- DEREGISTER -----------------\n\n");//NTA tmp
+
+  mal_subscription_t *subscription = mal_subscription_new();
+  mal_identifier_t *subscriptionid = mal_identifier_new("test-sub");
+  mal_subscription_set_subscriptionid(subscription, subscriptionid);
+  mal_entityrequest_list_t *entities = mal_entityrequest_list_new(0);
+  mal_subscription_set_entities(subscription, entities);
+
+  void *deregister_cursor = mal_encoder_new_cursor(subscriber->encoder);
+
+    rc = mal_register_add_encoding_length(
+        subscriber->encoder, subscription, deregister_cursor);
+    if (rc < 0)
+      return rc;
+
+    mal_message_t *deregister_message = mal_message_new(
+        subscriber->authentication_id, subscriber->qoslevel, subscriber->priority,
+        subscriber->domain, subscriber->network_zone, subscriber->session,
+        subscriber->session_name, mal_encoder_cursor_get_length(subscriber->encoder, deregister_cursor));
+
+    mal_encoder_cursor_init(
+        subscriber->encoder, deregister_cursor,
+        mal_message_get_body(deregister_message),
+        mal_encoder_cursor_get_length(subscriber->encoder, deregister_cursor),
+        mal_message_get_body_offset(deregister_message));
+
+    rc = mal_register_encode(deregister_cursor, subscriber->encoder, subscription);
+    assert(rc == 0);
+
+    mal_encoder_cursor_destroy(subscriber->encoder, deregister_cursor);
+
+    printf("=== deregister send... broker_uri: %s\n", subscriber->broker_uri);
+    rc = testarea_testservice_testmonitor_deregister(mal_actor_get_mal_endpoint(subscriber_actor),
+        deregister_message, subscriber->broker_uri);
+    if (rc < 0)
+      return rc;
+
+    mal_subscription_destroy(&subscription);
+
+
   return rc;
 }
 
@@ -197,6 +260,8 @@ int pubsub_app_mysubscriber_testnotify(void *self, mal_ctx_t *mal_ctx,
     mal_endpoint_t *mal_endpoint, mal_message_t *message) {
   int rc = 0;
   pubsub_app_mysubscriber_t *subscriber = (pubsub_app_mysubscriber_t *) self;
+
+  printf("\n\n-------------------- NOTIFY -----------------\n\n");//NTA tmp
 
   printf("#### pubsub_app_mysubscriber_testnotify: %d, %d\n",
       mal_message_get_interaction_stage(message),
@@ -258,11 +323,7 @@ int pubsub_app_mysubscriber_testnotify(void *self, mal_ctx_t *mal_ctx,
 
   printf("Subscriber done.\n");
 
-  mal_actor_send_command(provider_actor, "$TERM");
-  mal_actor_send_command(consumer_actor, "$TERM");
-  mal_actor_send_command(broker_actor, "$TERM");
-  zclock_sleep(1000);
-  mal_ctx_stop(mal_ctx);
+  pubsub_app_mysubscriber_testderegister(self);
   return rc;
 }
 

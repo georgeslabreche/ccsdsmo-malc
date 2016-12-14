@@ -40,6 +40,7 @@ struct _pubsub_app_broker_t {
   mal_encoder_t *encoder;
   mal_decoder_t *decoder;
   pubsub_subscriber_t **subscribers;
+  //TODO: pubsub_publisher_t **publishers;
 };
 
 struct _pubsub_subscriber_t {
@@ -239,6 +240,30 @@ int pubsub_app_deregister_ack(mal_endpoint_t *mal_endpoint,
     mal_message_t *init_message, mal_message_t *result_message, bool is_error_message) {
   int rc = 0;
   mal_message_init(result_message, TESTAREA_AREA_NUMBER, TESTAREA_AREA_VERSION, TESTAREA_TESTSERVICE_SERVICE_NUMBER, TESTAREA_TESTSERVICE_TESTMONITOR_OPERATION_NUMBER, MAL_INTERACTIONTYPE_PUBSUB, MAL_IP_STAGE_PUBSUB_DEREGISTER_ACK);
+  rc = mal_endpoint_return_operation(mal_endpoint, init_message, result_message, is_error_message);
+  return rc;
+}
+
+/**
+ * This code below allows to send a PUBLISH_REGISTER_ACK message to the publisher.
+ * It should be shared between all broker implementations.
+ */
+int pubsub_app_publish_register_ack(mal_endpoint_t *mal_endpoint,
+    mal_message_t *init_message, mal_message_t *result_message, bool is_error_message) {
+  int rc = 0;
+  mal_message_init(result_message, TESTAREA_AREA_NUMBER, TESTAREA_AREA_VERSION, TESTAREA_TESTSERVICE_SERVICE_NUMBER, TESTAREA_TESTSERVICE_TESTMONITOR_OPERATION_NUMBER, MAL_INTERACTIONTYPE_PUBSUB, MAL_IP_STAGE_PUBSUB_PUBLISH_REGISTER_ACK);
+  rc = mal_endpoint_return_operation(mal_endpoint, init_message, result_message, is_error_message);
+  return rc;
+}
+
+/**
+ * This code below allows to send a PUBLISH_DEREGISTER_ACK message to the publisher.
+ * It should be shared between all broker implementations.
+ */
+int pubsub_app_publish_deregister_ack(mal_endpoint_t *mal_endpoint,
+    mal_message_t *init_message, mal_message_t *result_message, bool is_error_message) {
+  int rc = 0;
+  mal_message_init(result_message, TESTAREA_AREA_NUMBER, TESTAREA_AREA_VERSION, TESTAREA_TESTSERVICE_SERVICE_NUMBER, TESTAREA_TESTSERVICE_TESTMONITOR_OPERATION_NUMBER, MAL_INTERACTIONTYPE_PUBSUB, MAL_IP_STAGE_PUBSUB_PUBLISH_DEREGISTER_ACK);
   rc = mal_endpoint_return_operation(mal_endpoint, init_message, result_message, is_error_message);
   return rc;
 }
@@ -448,6 +473,44 @@ int pubsub_app_broker_on_publish_register(void *self, mal_ctx_t *mal_ctx,
     mal_endpoint_t *mal_endpoint, mal_message_t *message) {
   int rc = 0;
   printf("==== pubsub_app_broker_on_publish_register\n");
+  pubsub_app_broker_t *broker = (pubsub_app_broker_t *) self;
+
+  // Get response parameter.
+  void *cursor = mal_decoder_new_cursor(
+      broker->decoder,
+      mal_message_get_body(message),
+      mal_message_get_body_offset(message) + mal_message_get_body_length(message),
+      mal_message_get_body_offset(message));
+
+  printf("pubsub_app_broker_on_publish_register: offset=%d\n", mal_message_get_body_offset(message));
+
+  mal_entitykey_list_t *entitykey_list = mal_entitykey_list_new(1);
+  mal_publish_decode_entitykey_list(cursor, broker->decoder, &entitykey_list);
+
+  mal_entitykey_t **entitykey_list_content = mal_entitykey_list_get_content(entitykey_list);
+  printf("mal_entitykey_get_firstsubkey = %s\n", mal_entitykey_get_firstsubkey(entitykey_list_content[0]));
+  mal_decoder_cursor_assert(broker->decoder, cursor);
+  assert(rc == 0);
+
+  mal_decoder_cursor_destroy(broker->decoder, cursor);
+
+  //TODO add entitykey to the publishers table
+
+  // Send ack to publisher
+  mal_message_t *ack_message = mal_message_new(
+      broker->authentication_id,
+      broker->qoslevel,
+      broker->priority,
+      broker->domain,
+      broker->network_zone,
+      broker->session,
+      broker->session_name,
+      0);
+  mal_message_set_body(ack_message, NULL);
+  mal_message_set_body_length(ack_message, 0);
+  rc = pubsub_app_publish_register_ack(mal_endpoint, message, ack_message, false);
+  printf("destroy MAL result message\n");
+  mal_message_destroy(&ack_message, mal_ctx);
 
   return rc;
 }
@@ -459,6 +522,44 @@ int pubsub_app_broker_on_publish_deregister(void *self, mal_ctx_t *mal_ctx,
     mal_endpoint_t *mal_endpoint, mal_message_t *message) {
   int rc = 0;
   printf("==== pubsub_app_broker_on_publish_deregister\n");
+  pubsub_app_broker_t *broker = (pubsub_app_broker_t *) self;
+
+  // Get response parameter.
+  void *cursor = mal_decoder_new_cursor(
+      broker->decoder,
+      mal_message_get_body(message),
+      mal_message_get_body_offset(message) + mal_message_get_body_length(message),
+      mal_message_get_body_offset(message));
+
+  printf("pubsub_app_broker_on_publish_deregister: offset=%d\n", mal_message_get_body_offset(message));
+
+  mal_entitykey_list_t *entitykey_list = mal_entitykey_list_new(1);
+  mal_publish_decode_entitykey_list(cursor, broker->decoder, &entitykey_list);
+
+  mal_entitykey_t **entitykey_list_content = mal_entitykey_list_get_content(entitykey_list);
+  printf("mal_entitykey_get_firstsubkey = %s\n", mal_entitykey_get_firstsubkey(entitykey_list_content[0]));
+  mal_decoder_cursor_assert(broker->decoder, cursor);
+  assert(rc == 0);
+
+  //TODO remove publishers
+
+  mal_decoder_cursor_destroy(broker->decoder, cursor);
+
+  // Send ack to publisher
+  mal_message_t *ack_message = mal_message_new(
+      broker->authentication_id,
+      broker->qoslevel,
+      broker->priority,
+      broker->domain,
+      broker->network_zone,
+      broker->session,
+      broker->session_name,
+      0);
+  mal_message_set_body(ack_message, NULL);
+  mal_message_set_body_length(ack_message, 0);
+  rc = pubsub_app_publish_deregister_ack(mal_endpoint, message, ack_message, false);
+  printf("destroy MAL result message\n");
+  mal_message_destroy(&ack_message, mal_ctx);
 
   return rc;
 }
