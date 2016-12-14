@@ -59,6 +59,10 @@ struct _malsplitbinary_cursor_t {
 };
 typedef struct _malsplitbinary_cursor_t malsplitbinary_cursor_t;
 
+extern clog_logger_t malsplitbinary_logger;
+
+void malsplitbinary_set_log_level(int level);
+
 void malsplitbinary_cursor_destroy(void *cursor);
 void  malsplitbinary_cursor_reset(void *cursor);
 void  malsplitbinary_decoder_cursor_init(void *cursor,

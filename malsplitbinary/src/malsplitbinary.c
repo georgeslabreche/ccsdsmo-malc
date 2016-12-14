@@ -24,6 +24,12 @@
 
 #include "malsplitbinary.h"
 
+clog_logger_t malsplitbinary_logger = CLOG_WARN_LEVEL;
+
+void malsplitbinary_set_log_level(int level) {
+  malsplitbinary_logger = level;
+}
+
 //decode bitfield most significant
 unsigned int malbinary_read_uvarinteger(char *bytes) {
   unsigned int index = 0;
@@ -185,17 +191,17 @@ unsigned int malsplitbinary_cursor_get_offset(void *cursor) {
 
 
 void malsplitbinary_cursor_print(malsplitbinary_cursor_t *cursor) {
-  printf("malsplitbinary_cursor(");
+  clog_info(malsplitbinary_logger, "malsplitbinary_cursor(");
   if (cursor) {
-    printf("bitfield_idx=%d, ", malsplitbinary_cursor_get_bitfield_idx(cursor));
-    printf("bitfield_length=%d, ", malsplitbinary_cursor_get_bitfield_length(cursor));
-    printf("most_significant=%d, ", malsplitbinary_cursor_get_most_significant(cursor));
-    printf("body_offset=%d, ", malsplitbinary_cursor_get_body_offset(cursor));
-    printf("body_length=%d", malsplitbinary_cursor_get_body_length(cursor));
+    clog_info(malsplitbinary_logger, "bitfield_idx=%d, ", malsplitbinary_cursor_get_bitfield_idx(cursor));
+    clog_info(malsplitbinary_logger, "bitfield_length=%d, ", malsplitbinary_cursor_get_bitfield_length(cursor));
+    clog_info(malsplitbinary_logger, "most_significant=%d, ", malsplitbinary_cursor_get_most_significant(cursor));
+    clog_info(malsplitbinary_logger, "body_offset=%d, ", malsplitbinary_cursor_get_body_offset(cursor));
+    clog_info(malsplitbinary_logger, "body_length=%d", malsplitbinary_cursor_get_body_length(cursor));
   } else {
-    printf("NULL");
+    clog_info(malsplitbinary_logger, "NULL");
   }
-  printf(")\n");
+  clog_info(malsplitbinary_logger, ")\n");
 }
 
 void malsplitbinary_test(bool verbose) {
