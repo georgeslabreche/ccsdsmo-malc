@@ -131,61 +131,76 @@ int malzmq_del_endpoint(malzmq_poller_data_t *poller_data, mal_endpoint_t *endpo
   return 0;
 }
 
-mal_uri_t *get_uri_to(malzmq_ctx_t *self, mal_message_t *message) {
-  if (self->mapping_uri && self->mapping_uri->getzmquri_to_fn) {
-    return self->mapping_uri->getzmquri_to_fn(message);
+// ************************************************************
+// Default URI mapping
+// ************************************************************
+
+mal_uri_t *get_remote_ptp_zmtp_uri(malzmq_ctx_t *self, mal_uri_t *uri_to) {
+  if (self->mapping_uri && self->mapping_uri->get_remote_ptp_zmtp_uri) {
+    return self->mapping_uri->get_remote_ptp_zmtp_uri(uri_to);
   } else {
     // Default handling of URI using TCP for all interactions
     mal_uri_t *socket_uri = NULL;
 
-    char *hostname = malzmq_get_host_from_uri(mal_message_get_uri_to(message));
-    int port = malzmq_get_port_from_uri(mal_message_get_uri_to(message));
+    char *hostname = malzmq_get_host_from_uri(uri_to);
+    int port = malzmq_get_port_from_uri(uri_to);
 
-    // TODO: We should also test the interaction type
-    if (mal_message_get_interaction_stage(message) != MAL_IP_STAGE_PUBSUB_PUBLISH) {
-      // This not the publish URI, ex: tcp://192.168.1.46:5555
-      socket_uri = (mal_uri_t *) malloc(PTP_PROTOCOL_LENGTH + 3 + strlen(hostname) + 1 + 5 + 1);
-      sprintf(socket_uri, "%s://%s:%d", PTP_PROTOCOL, hostname, port);
-    } else {
-      // This the publish URI, ex: epgm://eth0;224.0.0.251:5555
-      if (strcmp(PUBSUB_PROTOCOL, PROTOCOL_PGM) == 0 || strcmp(PUBSUB_PROTOCOL, PROTOCOL_EPGM) == 0) {
-        // TODO (AF): We should fix these parameters below
-        char *mcast_addr = NULL; // ex: 224.0.0.251
-        char *network_interface = NULL; // ex: eth0
-
-        size_t uri_length = PUBSUB_PROTOCOL_LENGTH + 3 + strlen(network_interface) + 1 + 1 + 5 + 1;
-        if (mcast_addr)
-          uri_length += strlen(mcast_addr);
-        socket_uri = (mal_uri_t *) malloc(uri_length);
-        sprintf(socket_uri, "%s://%s;%s:%d", PUBSUB_PROTOCOL, network_interface, mcast_addr?mcast_addr:"", (port +1));
-      } else {
-        //ex: "tcp://*:5555"
-        socket_uri = (mal_uri_t *) malloc(PUBSUB_PROTOCOL_LENGTH + 5 + 5 + 1);
-        sprintf(socket_uri, "%s://*:%d", PUBSUB_PROTOCOL, (port +1));
-      }
-    }
-
+    socket_uri = (mal_uri_t *) malloc(PTP_PROTOCOL_LENGTH + 3 + strlen(hostname) + 1 + 5 + 1);
+    sprintf(socket_uri, "%s://%s:%d", PTP_PROTOCOL, hostname, port);
     free(hostname);
-    clog_debug(malzmq_logger, "##### get_uri_to: %s\n", socket_uri);
+    clog_debug(malzmq_logger, "##### get_remote_ptp_zmtp_uri: %s\n", socket_uri);
     return socket_uri;
   }
 }
 
-mal_uri_t *get_ptp_uri(malzmq_ctx_t *self, mal_uri_t *uri) {
-  if (self->mapping_uri && self->mapping_uri->get_p2p_zmquri_fn) {
-    return self->mapping_uri->get_p2p_zmquri_fn(uri);
+mal_uri_t *get_remote_mcast_zmtp_uri(malzmq_ctx_t *self, mal_uri_t *uri_to) {
+  if (self->mapping_uri && self->mapping_uri->get_remote_mcast_zmtp_uri) {
+    return self->mapping_uri->get_remote_mcast_zmtp_uri(uri_to);
+  } else {
+    // Default handling of URI using TCP for all interactions
+    mal_uri_t *socket_uri = NULL;
+
+    char *hostname = malzmq_get_host_from_uri(uri_to);
+    int port = malzmq_get_port_from_uri(uri_to);
+
+    // This the publish URI, ex: epgm://eth0;224.0.0.251:5555
+    if (strcmp(PUBSUB_PROTOCOL, PROTOCOL_PGM) == 0 || strcmp(PUBSUB_PROTOCOL, PROTOCOL_EPGM) == 0) {
+      // TODO (AF): We should fix these parameters below
+      char *mcast_addr = NULL; // ex: 224.0.0.251
+      char *network_interface = NULL; // ex: eth0
+
+      size_t uri_length = PUBSUB_PROTOCOL_LENGTH + 3 + strlen(network_interface) + 1 + 1 + 5 + 1;
+      if (mcast_addr)
+        uri_length += strlen(mcast_addr);
+      socket_uri = (mal_uri_t *) malloc(uri_length);
+      sprintf(socket_uri, "%s://%s;%s:%d", PUBSUB_PROTOCOL, network_interface, mcast_addr?mcast_addr:"", (port +1));
+    } else {
+      //ex: "tcp://*:5555"
+      socket_uri = (mal_uri_t *) malloc(PUBSUB_PROTOCOL_LENGTH + 3 + strlen(hostname) + 1 + 5 + 1);
+      sprintf(socket_uri, "%s://%s:%d", PUBSUB_PROTOCOL, hostname, (port +1));
+    }
+
+    free(hostname);
+    clog_debug(malzmq_logger, "##### get_remote_mcast_zmtp_uri: %s\n", socket_uri);
+    return socket_uri;
+  }
+}
+
+mal_uri_t *get_local_ptp_zmtp_uri(malzmq_ctx_t *self, mal_uri_t *uri) {
+  if (self->mapping_uri && self->mapping_uri->get_local_ptp_zmtp_uri) {
+    return self->mapping_uri->get_local_ptp_zmtp_uri(uri);
   } else {
     int port = malzmq_get_port_from_uri(uri);
     mal_uri_t *ptp_uri = (mal_uri_t *) malloc(PTP_PROTOCOL_LENGTH + 5 + 5 + 1);
     sprintf(ptp_uri, "%s://*:%d", PTP_PROTOCOL, port);
-    clog_debug(malzmq_logger, "##### get_ptp_uri: %s\n", ptp_uri);
+    clog_debug(malzmq_logger, "##### get_local_ptp_zmtp_uri: %s\n", ptp_uri);
     return ptp_uri;
   }
 }
 
-mal_uri_t *get_ps_uri(malzmq_ctx_t *self, mal_uri_t *uri) {
-  if (self->mapping_uri && self->mapping_uri->get_ps_zmquri_fn) {
-    return self->mapping_uri->get_ps_zmquri_fn(uri);
+mal_uri_t *get_local_mcast_zmtp_uri(malzmq_ctx_t *self, mal_uri_t *uri) {
+  if (self->mapping_uri && self->mapping_uri->get_local_mcast_zmtp_uri) {
+    return self->mapping_uri->get_local_mcast_zmtp_uri(uri);
   } else {
     char *hostname = malzmq_get_host_from_uri(uri);
     int port = malzmq_get_port_from_uri(uri);
@@ -193,24 +208,26 @@ mal_uri_t *get_ps_uri(malzmq_ctx_t *self, mal_uri_t *uri) {
     // TODO (AF): We should fix this parameter below
     char *mcast_addr = NULL; // ex: 224.0.0.251
 
-    mal_uri_t *ps_uri = NULL;
+    mal_uri_t *mcast_uri = NULL;
     if (strcmp(PUBSUB_PROTOCOL, PROTOCOL_PGM) == 0 || strcmp(PUBSUB_PROTOCOL, PROTOCOL_EPGM) == 0) {
       size_t uri_length = PUBSUB_PROTOCOL_LENGTH + 3 + strlen(hostname) + 1 + 1 + 5 + 1;
       if (mcast_addr)
         uri_length += strlen(mcast_addr);
 
-      ps_uri = (mal_uri_t *) malloc(uri_length);
-      sprintf(ps_uri, "%s://%s;%s:%d", PUBSUB_PROTOCOL, hostname, mcast_addr?mcast_addr:"", (port +1));
+      mcast_uri = (mal_uri_t *) malloc(uri_length);
+      sprintf(mcast_uri, "%s://%s;%s:%d", PUBSUB_PROTOCOL, hostname, mcast_addr?mcast_addr:"", (port +1));
     } else {
-      size_t uri_length = PUBSUB_PROTOCOL_LENGTH + 3 + strlen(hostname) + 1 + 5 + 1;
-      ps_uri = (mal_uri_t *) malloc(uri_length);
-      sprintf(ps_uri, "%s://%s:%d", PUBSUB_PROTOCOL, hostname, (port +1));
+//      size_t uri_length = PUBSUB_PROTOCOL_LENGTH + 3 + strlen(hostname) + 1 + 5 + 1;
+      size_t uri_length = PUBSUB_PROTOCOL_LENGTH + 3 + 1 + 1 + 5 + 1;
+      mcast_uri = (mal_uri_t *) malloc(uri_length);
+//      sprintf(mcast_uri, "%s://%s:%d", PUBSUB_PROTOCOL, hostname, (port +1));
+      sprintf(mcast_uri, "%s://*:%d", PUBSUB_PROTOCOL, (port +1));
     }
 
-    clog_debug(malzmq_logger, "##### get_ps_uri: %s\n", ps_uri);
+    clog_debug(malzmq_logger, "##### get_local_mcast_zmtp_uri: %s\n", mcast_uri);
 
     free(hostname);
-    return ps_uri;
+    return mcast_uri;
   }
 }
 
@@ -306,6 +323,7 @@ malzmq_ctx_t *malzmq_ctx_new(mal_ctx_t *mal_ctx,
     malzmq_mapping_uri_t *mapping_uri,
     char *hostname, char *port,
     malzmq_header_t *malzmq_header,
+    // TODO: no longer used
     bool verbose) {
   malzmq_ctx_t *self = (malzmq_ctx_t *) malloc(sizeof(malzmq_ctx_t));
   if (!self)
@@ -324,30 +342,30 @@ malzmq_ctx_t *malzmq_ctx_new(mal_ctx_t *mal_ctx,
   mal_uri_t mal_uri[mal_uri_len + 1];
   sprintf(mal_uri, "%s%s:%s", MALZMTP_URI, hostname, port);
 
-  if (verbose)
-    clog_debug(malzmq_logger, "malzmq_ctx_new: mal_uri=: %s\n", mal_uri);
+  clog_debug(malzmq_logger, "malzmq_ctx_new: mal_uri=: %s\n", mal_uri);
 
   zctx_t *zmq_ctx = zctx_new();
   self->zmq_ctx = zmq_ctx;
 
   // PTP : bind socket
+  mal_uri_t *ptp_uri = get_local_ptp_zmtp_uri(self, mal_uri);
   void *mal_socket = zsocket_new(zmq_ctx, ZMQ_ROUTER);
   self->mal_socket = mal_socket;
-  mal_uri_t *ptp_uri = get_ptp_uri(self, mal_uri);
   zsocket_bind(self->mal_socket, ptp_uri);
-  if (verbose)
-    clog_debug(malzmq_logger, "malzmq_ctx: ptp listening to: %s\n", ptp_uri);
+  clog_debug(malzmq_logger, "malzmq_ctx: ptp listening to: %s\n", ptp_uri);
 
-  // PS : connect socket
-  void *pub = zsocket_new(zmq_ctx, ZMQ_SUB);
-  assert (pub);
-  self->mal_pubsub_socket = pub;
-  mal_uri_t *ps_uri = get_ps_uri(self, mal_uri);
-  int rc = zsocket_connect(self->mal_pubsub_socket, ps_uri);
-  assert(rc == 0);
-  if (verbose)
-    clog_debug(malzmq_logger, "malzmq_ctx: pubsub connect to: %s\n", ps_uri);
-  zsocket_set_subscribe(self->mal_pubsub_socket, SUB_NAME);
+  // PS : bind socket
+  mal_uri_t *mcast_uri = get_local_mcast_zmtp_uri(self, mal_uri);
+  if (mcast_uri != NULL) {
+    void *sub = zsocket_new(zmq_ctx, ZMQ_SUB);
+    assert(sub);
+    self->mal_pubsub_socket = sub;
+    zsocket_bind(self->mal_pubsub_socket, mcast_uri);
+    clog_debug(malzmq_logger, "malzmq_ctx: mcast bound to: %s\n", mcast_uri);
+    zsocket_set_subscribe(self->mal_pubsub_socket, SUB_NAME);
+  } else {
+    self->mal_pubsub_socket = NULL;
+  }
 
   void *endpoints_socket = zsocket_new(zmq_ctx, ZMQ_ROUTER);
   self->endpoints_socket = endpoints_socket;
@@ -361,12 +379,14 @@ malzmq_ctx_t *malzmq_ctx_new(mal_ctx_t *mal_ctx,
   // zmq_pollitem_t is a libzmq structure (not a czmq) that is
   // not kept by the poller. It is only used as a set of parameters.
   zmq_pollitem_t poller = { self->mal_socket, 0, ZMQ_POLLIN };
-  rc = zloop_poller(zloop, &poller, malzmq_ctx_mal_standard_socket_handle, self);
+  int rc = zloop_poller(zloop, &poller, malzmq_ctx_mal_standard_socket_handle, self);
   assert(rc == 0);
 
-  poller.socket = self->mal_pubsub_socket;
-  rc = zloop_poller(zloop, &poller, malzmq_ctx_mal_pubsub_socket_handle, self);
-  assert(rc == 0);
+  if (self->mal_pubsub_socket != NULL) {
+    poller.socket = self->mal_pubsub_socket;
+    rc = zloop_poller(zloop, &poller, malzmq_ctx_mal_pubsub_socket_handle, self);
+    assert(rc == 0);
+  }
 
   mal_ctx_set_binding(
       mal_ctx, self,
@@ -412,18 +432,31 @@ int malzmq_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
     mal_message_t *mal_message) {
   malzmq_ctx_t *malzmq_ctx = (malzmq_ctx_t *) self;
 
-  if ((mal_message_get_interaction_type(mal_message) == MAL_INTERACTIONTYPE_PUBSUB) &&
+  mal_interactiontype_t interaction = mal_message_get_interaction_type(mal_message);
+  mal_uoctet_t stage = mal_message_get_interaction_stage(mal_message);
+  if ((interaction == MAL_INTERACTIONTYPE_PUBSUB) &&
       malzmq_header_is_internal_broker(malzmq_ctx->malzmq_header)) {
     // Note: Currently catch the PUBLISH_(DE)REGISTER message in order to automatically send
     // the corresponding ack. This code corresponds to the current ZMQ implementation of the
     // Pub/Sub interaction.
-    mal_uoctet_t stage = mal_message_get_interaction_stage(mal_message);
     if (stage == MAL_IP_STAGE_PUBSUB_PUBLISH_REGISTER) {
       return trap_publish_register(mal_endpoint, mal_message, MAL_IP_STAGE_PUBSUB_PUBLISH_REGISTER_ACK);
-    } else if(stage == MAL_IP_STAGE_PUBSUB_PUBLISH_DEREGISTER) {
+    } else if (stage == MAL_IP_STAGE_PUBSUB_PUBLISH_DEREGISTER) {
       return trap_publish_register(mal_endpoint, mal_message, MAL_IP_STAGE_PUBSUB_PUBLISH_DEREGISTER_ACK);
     }
   }
+
+  mal_uri_t *uri_to = mal_message_get_uri_to(mal_message);
+  mal_uri_t *ptp_uri = get_remote_ptp_zmtp_uri(malzmq_ctx, uri_to);
+  mal_uri_t *mcast_uri = NULL;
+  if ((interaction == MAL_INTERACTIONTYPE_PUBSUB) &&
+      (stage == MAL_IP_STAGE_PUBSUB_PUBLISH)) {
+    // In the current implementation only PUBLISH message are sent through
+    // the multicast channel if defined.
+    mcast_uri = get_remote_mcast_zmtp_uri(malzmq_ctx, uri_to);
+  }
+
+  clog_debug(malzmq_logger, "malzmq_ctx_send_message: socket_uri=%s, %s\n", ptp_uri, mcast_uri);
 
   if (clog_is_loggable(malzmq_logger, CLOG_INFO_LEVEL)) {
     clog_info(malzmq_logger, "malzmq_ctx_send_message()\n");
@@ -433,25 +466,31 @@ int malzmq_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
 
   int rc = 0;
 
-  mal_uri_t *socket_uri = get_uri_to(malzmq_ctx, mal_message);
-
-  clog_debug(malzmq_logger, "malzmq_ctx_send_message: socket_uri=%s\n", socket_uri);
-
   malzmq_endpoint_data_t *endpoint_data =
       (malzmq_endpoint_data_t *) mal_endpoint_get_endpoint_data(mal_endpoint);
 
-  void *socket = zhash_lookup(endpoint_data->remote_socket_table, socket_uri);
+  void *socket = NULL;
+  if (mcast_uri != NULL) {
+    // Needs to use the multicast channel, get the corresponding socket
+    socket = zhash_lookup(endpoint_data->remote_socket_table, mcast_uri);
+  } else {
+    // Gets the corresponding PTP socket
+    socket = zhash_lookup(endpoint_data->remote_socket_table, ptp_uri);
+  }
 
   if (socket == NULL) {
     // Open a new socket
+    mal_uri_t *socket_uri = NULL;
 
-    if (mal_message_get_interaction_stage(mal_message) != MAL_IP_STAGE_PUBSUB_PUBLISH) {
+    if (mcast_uri == NULL) {
+      socket_uri = ptp_uri;
       clog_debug(malzmq_logger, "malzmq_ctx: open a new PTP socket\n");
       socket = zsocket_new(malzmq_ctx->zmq_ctx, ZMQ_DEALER);
 
       clog_debug(malzmq_logger, "malzmq_ctx: connect to %s\n", socket_uri);
       zmq_connect(socket, socket_uri);
     } else {
+      socket_uri = mcast_uri;
       clog_debug(malzmq_logger, "malzmq_ctx: open a new PUBSUB socket\n");
       socket = zsocket_new(malzmq_ctx->zmq_ctx, ZMQ_PUB);
 
@@ -459,10 +498,9 @@ int malzmq_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
       rc = zmq_setsockopt(socket, ZMQ_LINGER, &val, sizeof(val));
       assert (rc == 0);
 
-      clog_debug(malzmq_logger, "malzmq_ctx: bind to %s\n", socket_uri);
+      clog_debug(malzmq_logger, "malzmq_ctx: connect to %s\n", socket_uri);
+      zmq_connect(socket, socket_uri);
 
-      rc = zsocket_bind(socket, socket_uri);
-      assert(rc);
       // Avoid to lost the first message
       zclock_sleep (500);
     }
@@ -512,7 +550,7 @@ int malzmq_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
 
   clog_debug(malzmq_logger, "malzmq_ctx: send zmq message\n");
 
-  if (mal_message_get_interaction_stage(mal_message) != MAL_IP_STAGE_PUBSUB_PUBLISH) {
+  if (mcast_uri == NULL) {
     // send one frame on send stage
     rc = zframe_send(&frame, socket, 0);
   } else {
