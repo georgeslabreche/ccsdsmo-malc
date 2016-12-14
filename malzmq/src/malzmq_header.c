@@ -55,7 +55,7 @@ malzmq_header_t *malzmq_header_new(malzmq_mapping_directory_t *mapping_directory
 
   self->version = MALZMQ_PROTOCOL_VERSION;
 
-  self->internal_broker = true;
+  self->internal_broker = false;
 
   self->mapping_directory = mapping_directory;
 
