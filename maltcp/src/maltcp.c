@@ -449,7 +449,7 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
   // According to the specification this field contains the variable length of the PDU.
   int msg_len = malbinary_cursor_get_offset((malbinary_cursor_t *) cursor);
   malbinary_write32(msg_len - FIXED_HEADER_LENGTH, &cursor_bl);
-  printf("--- message_length = %u\n" , msg_len);//NTA tmp
+  clog_debug(maltcp_logger, "--- message_length = %u\n" , msg_len);
 
   return 0;
 }

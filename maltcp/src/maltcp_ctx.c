@@ -368,7 +368,7 @@ int maltcp_ctx_server_socket_create(int port, int backlog) {
   server_addr.sin_port = htons(port);
 
   if (bind(listen_socket, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1) {
-    clog_error(maltcp_logger, "Failed to bind server to port\n");
+    clog_error(maltcp_logger, "Failed to bind server to port %d\n", port);
     return -1;
   }
 
