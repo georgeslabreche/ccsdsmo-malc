@@ -32,7 +32,7 @@ void malzmq_set_log_level(int level) {
 }
 
 typedef enum {
-  MAL_SDUTYPE_SEND,
+  MAL_SDUTYPE_SEND=0,
   MAL_SDUTYPE_SUBMIT,
   MAL_SDUTYPE_SUBMIT_ACK,
   MAL_SDUTYPE_REQUEST,
@@ -62,7 +62,7 @@ static int convert_to_sdu_type(mal_interactiontype_t type, mal_uoctet_t stage,
   case MAL_INTERACTIONTYPE_SEND:
     return MAL_SDUTYPE_SEND;
   case MAL_INTERACTIONTYPE_SUBMIT:
-    if (stage == MAL_IP_STAGE_SEND) {
+    if (stage == MAL_IP_STAGE_SUBMIT) {
       return MAL_SDUTYPE_SUBMIT;
     } else {
       return MAL_SDUTYPE_SUBMIT_ACK;
@@ -453,18 +453,25 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
   bool domain_flag = malzmq_header_get_domain_flag(malzmq_header);
   bool authentication_id_flag = malzmq_header_get_authentication_id_flag(malzmq_header);
 
-  ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++] = (char) (priority_flag << 5) | (timestamp_flag << 4)
-          | (network_zone_flag << 3) | (session_name_flag << 2) | (domain_flag << 1)
-          | (authentication_id_flag << 0);
+  ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++] =
+      (char) (priority_flag << 5) |
+             (timestamp_flag << 4) |
+             (network_zone_flag << 3) |
+             (session_name_flag << 2) |
+             (domain_flag << 1) |
+             (authentication_id_flag << 0);
+
+  // TODO (AF): Use Varint!
+//   ((mal_encoder_t *) encoder)->varint_supported = true;
 
   // always encode 'URI From' and 'URI To'
-  // this ordering is not consistent with the blue book proposal,
-  // but closer with the TCP/IP blue book proposal.
   malzmq_encode_uri(mal_message_get_uri_from(message),
       malzmq_header_get_mapping_directory(malzmq_header), encoder, cursor);
   malzmq_encode_uri(mal_message_get_uri_to(message),
       malzmq_header_get_mapping_directory(malzmq_header), encoder, cursor);
 
+  // TODO (AF): this ordering is not consistent with the blue book proposal,
+  // but closer with the TCP/IP blue book proposal.
   if (priority_flag > 0) {
     malbinary_encoder_encode_uinteger(encoder, cursor, mal_message_get_priority(message));
   }
@@ -491,6 +498,9 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
   if (authentication_id_flag > 0) {
     malbinary_encoder_encode_blob(encoder, cursor, mal_message_get_authentication_id(message));
   }
+
+  // TODO (AF): Stops using Varint
+//  ((mal_encoder_t *) encoder)->varint_supported = false;
 
   // Copy the body in the frame.
   unsigned int body_length = mal_message_get_body_length(message);
@@ -646,10 +656,10 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
   bool is_error_message = (b >> 7) & 0x01;
   mal_message_set_is_error_message(message, is_error_message);
 
-  int qoslevel = (b >> 5) & 0x03;
+  int qoslevel = (b >> 4) & 0x07;
   mal_message_set_qoslevel(message, (mal_qoslevel_t) qoslevel);
 
-  int session = (b >> 3) & 0x03;
+  int session = (b >> 0) & 0x0F;
   mal_message_set_session(message, (mal_sessiontype_t) session);
 
   long transaction_id = malbinary_read64(cursor);
@@ -663,7 +673,9 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
   bool domain_flag = (b >> 1) & 0x01;
   bool authentication_id_flag = b & 0x01;
 
-  // this ordering is not consistent with the blue book proposal
+  // TODO (AF): Use Varint!
+//  ((mal_decoder_t *) decoder)->varint_supported = true;
+
   mal_uri_t *uri_from;
   malzmq_decode_uri(malzmq_header_get_mapping_directory(malzmq_header),
       decoder, cursor, &uri_from);
@@ -676,6 +688,8 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
   mal_message_set_free_uri_to(message, true);
   mal_message_set_uri_to(message, uri_to);
 
+  // TODO (AF): this ordering is not consistent with the blue book proposal,
+  // but closer with the TCP/IP blue book proposal.
   mal_uinteger_t priority;
   if (priority_flag) {
     malbinary_decoder_decode_uinteger(decoder, cursor, &priority);
@@ -732,6 +746,9 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
     mal_message_set_free_authentication_id(message, false);
   }
   mal_message_set_authentication_id(message, authentication_id);
+
+  // TODO (AF): Stops using Varint
+//  ((mal_decoder_t *) decoder)->varint_supported = false;
 
   unsigned int body_offset = ((malbinary_cursor_t *) cursor)->body_offset;
   unsigned int body_length = ((malbinary_cursor_t *) cursor)->body_length - body_offset;
