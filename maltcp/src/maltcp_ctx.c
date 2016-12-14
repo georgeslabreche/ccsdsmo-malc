@@ -444,6 +444,7 @@ int zloop_timer_handle(zloop_t *loop, int timer_id, void *arg) {
 maltcp_ctx_t *maltcp_ctx_new(mal_ctx_t *mal_ctx,
     char *hostname, char *port,
     maltcp_header_t *maltcp_header,
+    // TODO: no longer used
     bool verbose) {
   maltcp_ctx_t *self = (maltcp_ctx_t *) malloc(sizeof(maltcp_ctx_t));
   if (!self)
@@ -470,8 +471,7 @@ maltcp_ctx_t *maltcp_ctx_new(mal_ctx_t *mal_ctx,
   int listen = maltcp_ctx_server_socket_create(atoi(port), BACKLOG);
   assert(listen >= 0);
   self->mal_socket = listen;
-  if (verbose)
-    clog_debug(maltcp_logger, "maltcp_ctx: ptp listening to: %s\n", port);
+  clog_debug(maltcp_logger, "maltcp_ctx: ptp listening to: %s\n", port);
 
   //inproc
   void *endpoints_socket = zsocket_new(zmq_ctx, ZMQ_ROUTER);
