@@ -31,7 +31,9 @@ extern "C" {
 
 #include "mal.h"
 #include "malbinary.h"
+#include "malsplitbinary.h"
 #include "malzmq.h"
+#include "maltcp.h"
 #include "testarea.h"
 #include "malactor.h"
 
@@ -56,8 +58,8 @@ void pubsub_app_test(bool verbose);
 #include "pubsub_app_mypublisher.h"
 #include "pubsub_app_broker.h"
 
-extern mal_actor_t *consumer_actor;
-extern mal_actor_t *provider_actor;
+extern mal_actor_t *publisher_actor;
+extern mal_actor_t *subscriber_actor;
 extern mal_actor_t *broker_actor;
 
 #ifdef __cplusplus
