@@ -38,16 +38,18 @@ extern "C" {
 
 #define SUB_NAME "MAL"
 
-typedef mal_uri_t *malzmq_get_p2p_zmquri_fn(mal_uri_t *maluri);
-typedef mal_uri_t *malzmq_get_ps_zmquri_fn(mal_uri_t *maluri);
-typedef mal_uri_t *malzmq_getzmquri_to_fn(mal_message_t *message);
+typedef mal_uri_t *malzmq_get_local_ptp_zmtp_uri_fn(mal_uri_t *maluri);
+typedef mal_uri_t *malzmq_get_local_mcast_zmtp_uri_fn(mal_uri_t *maluri);
+typedef mal_uri_t *malzmq_get_remote_ptp_zmtp_uri_fn(mal_uri_t *maluri);
+typedef mal_uri_t *malzmq_get_remote_mcast_zmtp_uri_fn(mal_uri_t *maluri);
 
 typedef struct _malzmq_mapping_uri_t malzmq_mapping_uri_t;
 
 struct _malzmq_mapping_uri_t {
-  malzmq_get_p2p_zmquri_fn *get_p2p_zmquri_fn;
-  malzmq_get_ps_zmquri_fn *get_ps_zmquri_fn;
-  malzmq_getzmquri_to_fn *getzmquri_to_fn;
+  malzmq_get_local_ptp_zmtp_uri_fn *get_local_ptp_zmtp_uri;
+  malzmq_get_local_mcast_zmtp_uri_fn *get_local_mcast_zmtp_uri;
+  malzmq_get_remote_ptp_zmtp_uri_fn *get_remote_ptp_zmtp_uri;
+  malzmq_get_remote_mcast_zmtp_uri_fn *get_remote_mcast_zmtp_uri;
 };
 
 malzmq_ctx_t *malzmq_ctx_new(
