@@ -145,9 +145,11 @@ void pubsub_app_test(bool verbose) {
   malzmq_header_t *malzmq_header = malzmq_header_new(NULL, true, 0, true, NULL, NULL,
       NULL, NULL);
 
-  // This test uses the same encoding configuration at the MAL/ZMQ transport
-  // level (MAL header encoding) and at the application
-  // level (MAL message body encoding)
+  // Change the logging level of malzmq transport
+  malzmq_set_log_level(CLOG_DEBUG_LEVEL);
+
+  // This test uses the same encoding configuration at the MAL/ZMQ transport level
+  // (MAL header encoding) and at the application level (MAL message body encoding)
   malzmq_ctx_new(
       mal_ctx,
       NULL,                 // Use default transformation of MAL URI to ZMQ URI
@@ -165,8 +167,8 @@ void pubsub_app_test(bool verbose) {
   printf("pubsub_app: broker URI: %s\n", broker_uri);
 
   pubsub_app_create_broker(verbose, mal_ctx, consumer_uri, provider_uri, broker_uri, encoder, decoder);
-  pubsub_app_create_publisher(verbose, mal_ctx, provider_uri, broker_uri, encoder, decoder);
   pubsub_app_create_subscriber(verbose, mal_ctx, consumer_uri, broker_uri, encoder, decoder);
+  pubsub_app_create_publisher(verbose, mal_ctx, provider_uri, broker_uri, encoder, decoder);
 
   //  @end
   printf("OK\n");
