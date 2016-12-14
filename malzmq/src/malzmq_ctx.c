@@ -365,6 +365,7 @@ malzmq_ctx_t *malzmq_ctx_new(mal_ctx_t *mal_ctx,
     zsocket_set_subscribe(self->mal_pubsub_socket, SUB_NAME);
   } else {
     self->mal_pubsub_socket = NULL;
+    clog_debug(malzmq_logger, "malzmq_ctx: mcast channel disable\n");
   }
 
   void *endpoints_socket = zsocket_new(zmq_ctx, ZMQ_ROUTER);
