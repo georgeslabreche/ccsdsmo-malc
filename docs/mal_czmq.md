@@ -248,23 +248,23 @@ communication modes, one URI for point-to-point channel and another used for mul
 The mapping between the MAL URI of a service and the ZMTP URIs is ensured by 4 configuration functions
 provided by the user:
 
-        - ‘get_local_p2p_ztmp_uri’ takes in parameter the MAL URI of the service and
+        - `get_local_p2p_ztmp_uri` takes in parameter the MAL URI of the service and
         returns the ZMTP URI needed to bind the ZMQ ROUTER listening socket corresponding
         to the MAL context. This ZMQ socket will be used to receive messages during
         point-to-point interactions. For example calling this function with
         `malzmtp://host:port/service` MAL URI returns `tcp://*:port` ZMTP URI.
-        - ‘get_local_mcast_ztmp_uri’ takes in parameter the MAL URI of the service and returns
+        - `get_local_mcast_ztmp_uri` takes in parameter the MAL URI of the service and returns
         the ZMQ URI to bind the ZMQ SUB listening socket corresponding to the MAL context.
         This socket will be used to receive messages during multicast interactions. If it returns
         NULL the multicast channel is not used by the ZMTP transport. For example calling this
         function with `malzmtp://host:port/service` MAL URI returns `tcp://host:(port+1)` or
         `pgm://itf;mcast_addr:(port+1)` ZMTP URI.
-        - ‘get_remote_ptp_zmtp_uri’ accepts in parameters the MAL header fields ‘URI To’ of a
+        - `get_remote_ptp_zmtp_uri` accepts in parameters the MAL header fields `URI To` of a
         message and returns the ZMTP URI of the remote socket to send the message through the
         point-to-point channel. It needs a ZMQ DEALER socket connected to this URI. For example
         calling this function with `malztp://host1:port1/service` MAL URI returns `tcp://host1:port1`
         ZMTP URI.
-        - ‘get_remote_mcast_zmtp_uri’ accepts in parameters the MAL header fields ‘URI To’ of
+        - `get_remote_mcast_zmtp_uri` accepts in parameters the MAL header fields `URI To` of
         the message and returns the ZMTP URI of the remote socket to send the message through
         the multicast channel. It needs PUB ZMTP socket connected to this URI. If it returns NULL
         the multicast channel is not used by the ZMTP transport. For example calling this function
