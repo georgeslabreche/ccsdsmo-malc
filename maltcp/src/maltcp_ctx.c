@@ -469,7 +469,12 @@ maltcp_ctx_t *maltcp_ctx_new(mal_ctx_t *mal_ctx,
 
   // Creates the TCP listening socket
   int listen = maltcp_ctx_server_socket_create(atoi(port), BACKLOG);
-  assert(listen >= 0);
+  //assert(listen >= 0);
+  if (listen < 0) {
+    clog_error(maltcp_logger, "EXCEPTION:: maltcp_ctx_new: listen = %d\n", listen);
+    return NULL;
+  }
+
   self->mal_socket = listen;
   clog_debug(maltcp_logger, "maltcp_ctx: ptp listening to: %s\n", port);
 
