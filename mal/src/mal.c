@@ -27,6 +27,7 @@
 
 #include "mal.h"
 
+// TODO: These values seem unused, verify and remove if needed.
 int MAL_INTERACTIONTYPE_NUMERIC_VALUES[] =
 {
   1,
@@ -37,6 +38,7 @@ int MAL_INTERACTIONTYPE_NUMERIC_VALUES[] =
   6
 };
 
+// TODO: These values seem unused, verify and remove if needed.
 int MAL_SESSIONTYPE_NUMERIC_VALUES[] =
 {
   1,
@@ -44,6 +46,7 @@ int MAL_SESSIONTYPE_NUMERIC_VALUES[] =
   3
 };
 
+// TODO: These values seem unused, verify and remove if needed.
 int MAL_QOSLEVEL_NUMERIC_VALUES[] =
 {
   1,
@@ -52,6 +55,7 @@ int MAL_QOSLEVEL_NUMERIC_VALUES[] =
   4
 };
 
+// TODO: These values seem unused, verify and remove if needed.
 int MAL_UPDATETYPE_NUMERIC_VALUES[] =
 {
   1,
@@ -104,6 +108,49 @@ int mal_register_decode(void *cursor, mal_decoder_t *decoder, mal_subscription_t
   if (presence_flag) {
     element = mal_subscription_new();
     rc = mal_subscription_decode_malbinary(element, decoder, cursor);
+    if (rc < 0)
+      return rc;
+  } else {
+    element = NULL;
+  }
+  (*res) = element;
+  return rc;
+}
+
+int mal_deregister_add_encoding_length(mal_encoder_t *encoder,
+    mal_identifier_list_t *element, void *cursor) {
+  int rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
+  if (rc < 0)
+    return rc;
+  if (element != NULL) {
+    rc = mal_identifier_list_add_encoding_length_malbinary(element, encoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  return rc;
+}
+
+int mal_deregister_encode(void *cursor, mal_encoder_t *encoder, mal_identifier_list_t *element) {
+  int rc = mal_encoder_encode_presence_flag(encoder, cursor, (element != NULL));
+  if (rc < 0)
+    return rc;
+  if (element != NULL) {
+    rc = mal_identifier_list_encode_malbinary(element, encoder, cursor);
+    if (rc < 0)
+      return rc;
+  }
+  return rc;
+}
+
+int mal_deregister_decode(void *cursor, mal_decoder_t *decoder, mal_identifier_list_t **res) {
+  bool presence_flag;
+  int rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
+  if (rc < 0)
+    return rc;
+  mal_identifier_list_t *element;
+  if (presence_flag) {
+    element = mal_identifier_list_new(0);
+    rc = mal_identifier_list_decode_malbinary(element, decoder, cursor);
     if (rc < 0)
       return rc;
   } else {

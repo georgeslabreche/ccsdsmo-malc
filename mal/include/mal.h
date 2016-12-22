@@ -266,6 +266,13 @@ int mal_register_encode(void *cursor, mal_encoder_t *encoder, mal_subscription_t
 
 int mal_register_decode(void *cursor, mal_decoder_t *decoder, mal_subscription_t **res);
 
+int mal_deregister_add_encoding_length(mal_encoder_t *encoder,
+    mal_identifier_list_t *element, void *cursor);
+
+int mal_deregister_encode(void *cursor, mal_encoder_t *encoder, mal_identifier_list_t *element);
+
+int mal_deregister_decode(void *cursor, mal_decoder_t *decoder, mal_identifier_list_t **res);
+
 int mal_publish_register_add_encoding_length_entitykey_list(
     mal_encoder_t *encoder, mal_entitykey_list_t *element,
     void *cursor);
