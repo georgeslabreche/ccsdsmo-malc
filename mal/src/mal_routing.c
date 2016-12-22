@@ -261,7 +261,7 @@ int mal_routing_register_consumer_submit_handler(
     mal_ushort_t area, mal_uoctet_t area_version,
     mal_ushort_t service, mal_ushort_t operation,
     mal_routing_on_message_fn *on_ack) {
-  clog_info(mal_logger, " *** mal_routclog_info(mal_logger, er_consumer_submit_handler: %hd %hhd %hd %hd\n", area, area_version, service, operation);
+  clog_info(mal_logger, " *** mal_routing_register_consumer_submit_handler: %hd %hhd %hd %hd\n", area, area_version, service, operation);
 
   // Allocates a new structure and initialize it
   mal_routing_handler_t *handler = mal_routing_new_handler(MAL_ACTOR_CONSUMER_SUBMIT_HANDLER, area, area_version, service, operation);
