@@ -37,9 +37,12 @@ mal_identifier_list_t *mal_identifier_list_new(unsigned int element_count) {
   if (!self)
     return NULL;
 
-  self->content = (mal_identifier_t **) calloc(element_count, sizeof(mal_identifier_t *));
-  if (!self->content && (element_count > 0))
-  {
+  if (element_count == 0) {
+    self->content = NULL;
+  } else {
+    self->content = (mal_identifier_t **) calloc(element_count, sizeof(mal_identifier_t *));
+  }
+  if (!self->content && (element_count > 0)) {
     free(self);
     return NULL;
   }
