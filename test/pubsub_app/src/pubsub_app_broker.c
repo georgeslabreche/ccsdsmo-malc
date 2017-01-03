@@ -415,7 +415,7 @@ int pubsub_app_broker_on_register(void *self, mal_ctx_t *mal_ctx,
 }
 
 /**
- * This code implements the reaction to a REGISTER message.
+ * This code implements the reaction to a DEREGISTER message.
  */
 int pubsub_app_broker_on_deregister(void *self, mal_ctx_t *mal_ctx,
     mal_endpoint_t *mal_endpoint, mal_message_t *message) {
@@ -431,16 +431,15 @@ int pubsub_app_broker_on_deregister(void *self, mal_ctx_t *mal_ctx,
        mal_message_get_body_offset(message) + mal_message_get_body_length(message),
        mal_message_get_body_offset(message));
 
-   printf("pubsub_app_broker_on_register: offset=%d\n", mal_message_get_body_offset(message));
+   printf("pubsub_app_broker_on_deregister: offset=%d\n", mal_message_get_body_offset(message));
 
-   mal_subscription_t *mal_subscription = mal_subscription_new();
-   rc = mal_register_decode(cursor, broker->decoder, &mal_subscription);
+   mal_identifier_list_t *subscription_list = mal_identifier_list_new(0);
+   rc = mal_deregister_decode(cursor, broker->decoder, &subscription_list);
    mal_decoder_cursor_assert(broker->decoder, cursor);
    assert(rc == 0);
-
    mal_decoder_cursor_destroy(broker->decoder, cursor);
 
-   mal_identifier_t *subscriptionid = mal_subscription_get_subscriptionid(mal_subscription);
+   mal_identifier_t *subscriptionid = *mal_identifier_list_get_content(subscription_list);
    assert(subscriptionid);
 
    mal_uri_t *consumer_uri = mal_message_get_uri_from(message);

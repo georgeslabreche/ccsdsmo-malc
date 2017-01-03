@@ -221,12 +221,18 @@ int pubsub_app_mysubscriber_testderegister(void *self) {
   mal_entityrequest_list_t *entities = mal_entityrequest_list_new(0);
   mal_subscription_set_entities(subscription, entities);
 
+  mal_identifier_list_t *subscription_list = mal_identifier_list_new(1);
+  mal_identifier_t **content = mal_identifier_list_get_content(subscription_list);
+  *content = subscriptionid;
+
   void *deregister_cursor = mal_encoder_new_cursor(subscriber->encoder);
 
-    rc = mal_register_add_encoding_length(
-        subscriber->encoder, subscription, deregister_cursor);
-    if (rc < 0)
-      return rc;
+    printf("########### subscription_list = ");
+    mal_identifier_list_print(subscription_list);
+    printf("\n");
+    rc = mal_deregister_add_encoding_length(subscriber->encoder, subscription_list, deregister_cursor);
+      if (rc < 0)
+        return rc;
 
     mal_message_t *deregister_message = mal_message_new(
         subscriber->authentication_id, subscriber->qoslevel, subscriber->priority,
@@ -239,7 +245,7 @@ int pubsub_app_mysubscriber_testderegister(void *self) {
         mal_encoder_cursor_get_length(subscriber->encoder, deregister_cursor),
         mal_message_get_body_offset(deregister_message));
 
-    rc = mal_register_encode(deregister_cursor, subscriber->encoder, subscription);
+    rc = mal_deregister_encode(deregister_cursor, subscriber->encoder, subscription_list);
     assert(rc == 0);
 
     mal_encoder_cursor_destroy(subscriber->encoder, deregister_cursor);
