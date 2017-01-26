@@ -376,10 +376,17 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
   bool priority_flag = maltcp_header_get_priority_flag(maltcp_header);
   bool timestamp_flag = maltcp_header_get_timestamp_flag(maltcp_header);
   bool network_zone_flag = maltcp_header_get_network_zone_flag(maltcp_header);
+  if (mal_message_get_network_zone(message) == NULL)
+    network_zone_flag = false;
   bool session_name_flag = maltcp_header_get_session_name_flag(maltcp_header);
+  if (mal_message_get_session_name(message) == NULL)
+    session_name_flag = false;
   bool domain_flag = maltcp_header_get_domain_flag(maltcp_header);
+  if (mal_message_get_domain(message) == NULL)
+    domain_flag = false;
   bool authentication_id_flag = maltcp_header_get_authentication_id_flag(maltcp_header);
-
+  if (mal_message_get_authentication_id(message) == NULL)
+    authentication_id_flag = false;
   ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++] =
       (char) (source_flag << 7) | (destination_flag << 6) |
              (priority_flag << 5) |
@@ -404,29 +411,29 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
   // Only encode the end part of the URI if it exist.
   maltcp_encode_uri(uri_to, encoder, cursor);
 
-  if (priority_flag > 0) {
+  if (priority_flag != false) {
     malbinary_encoder_encode_uinteger(encoder, cursor,
         mal_message_get_priority(message));
   }
 
-  if (timestamp_flag > 0) {
+  if (timestamp_flag != false) {
     malbinary_encoder_encode_time(encoder, cursor,
         mal_message_get_timestamp(message));
   }
 
-  if (network_zone_flag > 0) {
+  if (network_zone_flag != false) {
     maltcp_encode_identifier(mal_message_get_network_zone(message), encoder, cursor);
   }
 
-  if (session_name_flag > 0) {
+  if (session_name_flag != false) {
     maltcp_encode_identifier(mal_message_get_session_name(message), encoder, cursor);
   }
 
-  if (domain_flag > 0) {
+  if (domain_flag != false) {
     maltcp_encode_identifier_list(mal_message_get_domain(message), encoder, cursor);
   }
 
-  if (authentication_id_flag > 0) {
+  if (authentication_id_flag != false) {
     malbinary_encoder_encode_blob(encoder, cursor, mal_message_get_authentication_id(message));
   }
 

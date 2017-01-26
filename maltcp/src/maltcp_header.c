@@ -54,37 +54,44 @@ maltcp_header_t *maltcp_header_new(
   self->version = MALTCP_PROTOCOL_VERSION;
 
   self->priority_flag = priority_flag;
-  self->priority = priority;
+  if (self->priority_flag == false)
+    self->priority = priority;  // User defined default value
+  else
+    self->priority = 0;         // MAL/TCP default value (see section 3.3.7.2-c)
 
   self->timestamp_flag = timestamp_flag;
 
   if (network_zone == NULL) {
     self->network_zone_flag = true;
+    self->network_zone = "";            // MAL/TCP default value (see section 3.3.9.2-c)
   } else {
     self->network_zone_flag = false;
+    self->network_zone = network_zone;  // User defined default value
   }
-  self->network_zone = network_zone;
 
   if (session_name == NULL) {
     self->session_name_flag = true;
+    self->session_name = "";            // MAL/TCP default value (see section 3.3.11.2-c)
   } else {
     self->session_name_flag = false;
+    self->session_name = session_name;  // User defined default value
   }
-  self->session_name = session_name;
 
   if (domain == NULL) {
     self->domain_flag = true;
+    self->domain = mal_identifier_list_new(0);  // MAL/TCP default value (see section 3.3.8.2-c)
   } else {
     self->domain_flag = false;
+    self->domain = domain;                      // User defined default value
   }
-  self->domain = domain;
 
   if (authentication_id == NULL) {
     self->authentication_id_flag = true;
+    self->authentication_id = mal_blob_new(0);    // MAL/TCP default value (see section 3.3.3.2-c)
   } else {
     self->authentication_id_flag = false;
+    self->authentication_id = authentication_id;  // User defined default value
   }
-  self->authentication_id = authentication_id;
 
   return self;
 }
