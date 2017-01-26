@@ -62,29 +62,29 @@ maltcp_header_t *maltcp_header_new(
     self->network_zone_flag = true;
   } else {
     self->network_zone_flag = false;
-    self->network_zone = network_zone;
   }
+  self->network_zone = network_zone;
 
   if (session_name == NULL) {
     self->session_name_flag = true;
   } else {
     self->session_name_flag = false;
-    self->session_name = session_name;
   }
+  self->session_name = session_name;
 
   if (domain == NULL) {
     self->domain_flag = true;
   } else {
     self->domain_flag = false;
-    self->domain = domain;
   }
+  self->domain = domain;
 
   if (authentication_id == NULL) {
     self->authentication_id_flag = true;
   } else {
     self->authentication_id_flag = false;
-    self->authentication_id = authentication_id;
   }
+  self->authentication_id = authentication_id;
 
   return self;
 }
