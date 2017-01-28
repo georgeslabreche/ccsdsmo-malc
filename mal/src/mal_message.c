@@ -99,7 +99,7 @@ mal_message_t *mal_message_new(mal_blob_t *authentication_id,
   self->body_offset = 0;
   self->body_length = body_length;
   if (self->body_length > 0)
-    self->body = (char *) malloc(body_length);
+    self->body = (char *) calloc(1, body_length);
   else
     self->body = NULL;
 
