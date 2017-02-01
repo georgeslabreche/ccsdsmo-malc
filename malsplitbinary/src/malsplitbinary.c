@@ -99,6 +99,7 @@ void  malsplitbinary_encoder_cursor_init(void *cursor,
   malbinary_write_uvarinteger(bf_nb_bytes, bytes+offset);
 
   unsigned int bf_offset = offset + malbinary_var_uinteger_encoding_length(bf_nb_bytes);
+  memset(&bytes[bf_offset], 0, bf_nb_bytes);
   ((malsplitbinary_cursor_t *) cursor)->bitfield_ptr = &bytes[bf_offset];
   //body_offset
   int body_offset = bf_offset + bf_nb_bytes;
