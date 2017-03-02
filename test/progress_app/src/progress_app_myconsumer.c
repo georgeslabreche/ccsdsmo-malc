@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -222,7 +222,7 @@ int progress_app_myconsumer_testarea_testservice_testprogress_response(
     mal_endpoint_t *mal_endpoint, mal_message_t *message)  {
 	int rc = 0;
 
-  progress_app_myconsumer_t *consumer = (progress_app_myconsumer_t *) self;
+	progress_app_myconsumer_t *consumer = (progress_app_myconsumer_t *) self;
 
 	printf("#### progress_app_myconsumer, testprogress: %d, %d\n",
 			mal_message_get_interaction_stage(message),
@@ -260,11 +260,9 @@ int progress_app_myconsumer_testarea_testservice_testprogress_response(
 
   printf("Consumer done.\n");
 
-  mal_actor_send_command(provider_actor, "$TERM");
-  mal_actor_send_command(consumer_actor, "$TERM");
-  
-  // Wait for actor's completion
-  zclock_sleep(1000);
+  mal_actor_term(provider_actor);
+  mal_actor_term(consumer_actor);
+
   mal_ctx_stop(mal_ctx);
 
 	return 0;

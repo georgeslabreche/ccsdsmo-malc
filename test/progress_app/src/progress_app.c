@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -105,6 +105,7 @@ void progress_app_test(bool verbose) {
   mal_ctx_t *mal_ctx = mal_ctx_new();
   void *ctx;
 
+  mal_set_log_level(CLOG_DEBUG_LEVEL);
   if (tcp) {
     maltcp_set_log_level(CLOG_WARN_LEVEL);
     // All the MAL header fields are passed
@@ -118,6 +119,7 @@ void progress_app_test(bool verbose) {
         "127.0.0.1", "6666",
         maltcp_header,
         true);
+    maltcp_set_log_level(CLOG_DEBUG_LEVEL);
     // Change the logging level of maltcp encoding
     mal_encoder_set_log_level(maltcp_get_encoder((maltcp_ctx_t *) ctx), CLOG_WARN_LEVEL);
     mal_decoder_set_log_level(maltcp_get_decoder((maltcp_ctx_t *) ctx), CLOG_WARN_LEVEL);
@@ -135,6 +137,7 @@ void progress_app_test(bool verbose) {
         "localhost", "6666",
         malzmq_header,
         true);
+    malzmq_set_log_level(CLOG_DEBUG_LEVEL);
     // Change the logging level of malzmq encoding
     mal_encoder_set_log_level(malzmq_get_encoder((malzmq_ctx_t *) ctx), CLOG_WARN_LEVEL);
     mal_decoder_set_log_level(malzmq_get_decoder((malzmq_ctx_t *) ctx), CLOG_WARN_LEVEL);
@@ -163,6 +166,9 @@ void progress_app_test(bool verbose) {
   
   printf("Stopped.\n");
   
+  mal_actor_destroy(mal_ctx, &consumer_actor);
+  mal_actor_destroy(mal_ctx, &provider_actor);
+
   mal_ctx_destroy(&mal_ctx);
   printf("destroyed.\n");
 }
