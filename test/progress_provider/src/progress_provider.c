@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -268,6 +268,10 @@ int progress_provider_testarea_testservice_testprogress(
   printf("destroy MAL result message\n");
   mal_message_destroy(&result_message, mal_ctx);
 
+  mal_actor_term(provider_actor);
+
+  mal_ctx_stop(mal_ctx);
+
   printf("Provider done.\n");
   return rc;
 }
@@ -337,6 +341,8 @@ void progress_provider_test(bool verbose) {
   
   printf("Stopped.\n");
   
+  mal_actor_destroy(mal_ctx, &provider_actor);
+
   mal_ctx_destroy(&mal_ctx);
   printf("destroyed.\n");
 }

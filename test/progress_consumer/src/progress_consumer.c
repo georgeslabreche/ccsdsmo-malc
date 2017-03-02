@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -301,10 +301,8 @@ int progress_consumer_testarea_testservice_testprogress_response(
 
   printf("Consumer done.\n");
 
-  mal_actor_send_command(consumer_actor, "$TERM");
+  mal_actor_term(consumer_actor);
 
-  // Wait for actor's completion
-  zclock_sleep(1000);
   mal_ctx_stop(mal_ctx);
 
   return 0;
@@ -375,6 +373,8 @@ void progress_consumer_test(bool verbose) {
   
   printf("Stopped.\n");
   
+  mal_actor_destroy(mal_ctx, &consumer_actor);
+
   mal_ctx_destroy(&mal_ctx);
   printf("destroyed.\n");
 }
