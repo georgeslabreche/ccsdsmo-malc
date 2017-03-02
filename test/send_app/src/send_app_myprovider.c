@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -183,9 +183,9 @@ int send_app_myprovider_testarea_testservice_testsend(
 
   printf("Provider done.\n");
 
-  mal_actor_send_command(provider_actor, "$TERM");
-  mal_actor_send_command(consumer_actor, "$TERM");
-  
+  mal_actor_term(consumer_actor);
+  mal_actor_term(provider_actor);
+
   mal_ctx_stop(mal_ctx);
 
   return rc;
