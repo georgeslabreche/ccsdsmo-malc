@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -145,6 +145,7 @@ int pubsub_app_broker_initialize(void *self, mal_actor_t *mal_actor) {
 int pubsub_app_broker_finalize(void *self, mal_actor_t *mal_actor) {
   int rc = 0;
   // TODO: unregister, ...
+  printf("broker ended\n");
   return rc;
 }
 
