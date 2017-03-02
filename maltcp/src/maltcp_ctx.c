@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -196,6 +196,15 @@ maltcp_ctx_connection_t *maltcp_ctx_connection_register_outgoing(maltcp_ctx_t *s
   return cnx_ptr;
 }
 
+void maltcp_ctx_socket_destroy(maltcp_ctx_connection_t *cnx_ptr) {
+  if (close(cnx_ptr->socket) != 0) {
+    clog_error(maltcp_logger, "maltcp_ctx_socket_destroy: Failed to close socket.\n");
+  }
+  if (pthread_mutex_destroy(&cnx_ptr->lock) != 0) {
+    clog_error(maltcp_logger, "maltcp_ctx_socket_destroy: Failed to destroy mutex.\n");
+  }
+}
+
 int maltcp_ctx_connection_remove_socket(maltcp_ctx_t *self, int socket) {
   clog_debug(maltcp_logger, "maltcp_ctx_connection_remove_socket(%d).\n", socket);
   maltcp_ctx_connection_t *cnx_ptr =  (maltcp_ctx_connection_t*) zhash_first(self->cnx_table);
@@ -203,9 +212,9 @@ int maltcp_ctx_connection_remove_socket(maltcp_ctx_t *self, int socket) {
     if (cnx_ptr->socket == socket) {
       // Close registered TCP connections
       clog_debug(maltcp_logger, "maltcp_ctx_connection_remove_socket: close and remove socket.\n");
-      close(cnx_ptr->socket);
-      pthread_mutex_destroy(&cnx_ptr->lock);
+      maltcp_ctx_socket_destroy(cnx_ptr);
       zhash_delete(self->cnx_table, zhash_cursor(self->cnx_table));
+      // TODO: Should free the allocated string key and element structure.
       return 0;
     }
     cnx_ptr = (maltcp_ctx_connection_t*) zhash_next(self->cnx_table);
@@ -521,30 +530,16 @@ int maltcp_ctx_stop(void *self) {
   maltcp_ctx_t *mal_ctx = (maltcp_ctx_t *) self;
 
   clog_debug(maltcp_logger, "maltcp_ctx_stop..\n");
-  // Note: this method is not symmetric with maltcp_ctx_start, may be we have to
-  // create and bind the socket in maltcp_ctx_start rather than in maltcp_ctx_new.
-  int socket = mal_ctx->mal_socket;
-  mal_ctx->mal_socket = -1;
-  close(socket);
-  // TODO(AF): zmq_close versus zsocket_destroy
-  zsocket_destroy(((maltcp_ctx_t *)self)->zmq_ctx, ((maltcp_ctx_t *)self)->endpoints_socket);
-  //  zmq_close(mal_ctx->endpoints_socket);
+  if (mal_ctx->mal_socket != -1) {
+    // Note: this method is not symmetric with maltcp_ctx_start, may be we have to
+    // create and bind the socket in maltcp_ctx_start rather than in maltcp_ctx_new.
+    int socket = mal_ctx->mal_socket;
+    mal_ctx->mal_socket = -1;
+    close(socket);
 
-  // Free all structures in hash-table, close socket and destroy mutex.
-  if (mal_ctx->cnx_table) {
-    maltcp_ctx_connection_t *cnx_ptr =  (maltcp_ctx_connection_t*) zhash_first(mal_ctx->cnx_table);
-    while (cnx_ptr) {
-      // Close registered TCP connections
-      clog_debug(maltcp_logger, "maltcp_ctx_destroy: close socket.\n");
-      close(cnx_ptr->socket);
-      pthread_mutex_destroy(&cnx_ptr->lock);
-      // destroy all registered sockets
-      cnx_ptr = (maltcp_ctx_connection_t*) zhash_next(mal_ctx->cnx_table);
-    }
+    clog_debug(maltcp_logger, "maltcp_ctx_stop: stopped.\n");
   }
 
-  // TODO (AF): Close all pollers?
-  clog_debug(maltcp_logger, "maltcp_ctx_stop: stopped.\n");
   return 0;
 }
 
@@ -552,16 +547,42 @@ int maltcp_ctx_destroy(void **self_p) {
   clog_debug(maltcp_logger, "maltcp_ctx_destroy..\n");
   if (*self_p) {
     maltcp_ctx_t *self = (maltcp_ctx_t *) *self_p;
+
+
+    // TODO(AF): zmq_close versus zsocket_destroy
+    zsocket_set_linger(self->endpoints_socket, 0);
+    clog_debug(maltcp_logger, "maltcp_ctx_stop: linger=%d\n", zsocket_linger(self->endpoints_socket));
+    zsocket_destroy(self->zmq_ctx, self->endpoints_socket);
+  //  zmq_close(mal_ctx->endpoints_socket);
+
+    // Free all structures in hash-table, close socket and destroy mutex.
+    if (self->cnx_table) {
+      maltcp_ctx_connection_t *cnx_ptr =  (maltcp_ctx_connection_t*) zhash_first(self->cnx_table);
+      while (cnx_ptr) {
+        // Close registered TCP connections
+        clog_debug(maltcp_logger, "maltcp_ctx_stop: close socket %d.\n", cnx_ptr->socket);
+        maltcp_ctx_socket_destroy(cnx_ptr);
+        // destroy all registered sockets
+        cnx_ptr = (maltcp_ctx_connection_t*) zhash_next(self->cnx_table);
+      }
+    }
+
+    // TODO (AF): Close all pollers?
+    clog_debug(maltcp_logger, "maltcp_ctx_stop: stopped.\n");
+
     free(self->maltcp_header);
     // Free all structures in hash-table, close socket and destroy mutex.
     if (self->cnx_table)
       zhash_destroy(&self->cnx_table);
     zloop_destroy(&self->zloop);
+//    zsocket_destroy(self->zmq_ctx, self->endpoints_socket);
+//    zmq_close(self->endpoints_socket);
     zctx_destroy(&self->zmq_ctx);
 
     free(self);
     *self_p = NULL;
   }
+  clog_debug(maltcp_logger, "maltcp_ctx_destroyed.\n");
   return 0;
 }
 
@@ -629,14 +650,6 @@ maltcp_ctx_connection_t *maltcp_ctx_socket_connect(maltcp_ctx_t *self, mal_uri_t
   return cnx_ptr;
 }
 
-void maltcp_ctx_socket_destroy(maltcp_ctx_connection_t *cnx_ptr) {
-  if (close(cnx_ptr->socket) != 0) {
-    clog_error(maltcp_logger, "maltcp_ctx_socket_destroy: Failed to close socket.\n");
-  }
-  if (pthread_mutex_destroy(&cnx_ptr->lock) != 0) {
-    clog_error(maltcp_logger, "maltcp_ctx_socket_destroy: Failed to destroy mutex.\n");
-  }
-}
 // Must be compliant with MAL virtual function: void *self
 int maltcp_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint, mal_message_t *mal_message) {
   maltcp_ctx_t *maltcp_ctx = (maltcp_ctx_t *) self;
@@ -928,9 +941,11 @@ void maltcp_ctx_destroy_endpoint(void *self, void **endpoint_p) {
   assert(endpoint_p);
   if (*endpoint_p) {
     maltcp_endpoint_data_t *endpoint = *(maltcp_endpoint_data_t **) endpoint_p;
+    *endpoint_p = NULL;
 
-    // TODO(AF): zmq_close versus zsocket_destroy
-    // NOTE: Closing this socket makes a core dump
+    clog_debug(maltcp_logger, "maltcp_ctx_destroy_endpoint(): %d ..\n", endpoint->socket);
+    // NOTE: Closing this socket makes a core dump during maltcp_ctx_destroy !!
+    zsock_set_linger(endpoint->socket, 0);
 //    zsocket_destroy(endpoint->maltcp_ctx->zmq_ctx, endpoint->socket);
 //    zmq_close(endpoint->socket);
 
@@ -940,7 +955,7 @@ void maltcp_ctx_destroy_endpoint(void *self, void **endpoint_p) {
     // but where they have been created.
 
     free(endpoint);
-    *endpoint_p = NULL;
+    clog_debug(maltcp_logger, "maltcp_ctx_destroy_endpoint().\n");
   }
 }
 
@@ -976,6 +991,7 @@ void maltcp_ctx_destroy_poller(void *self, void **poller_p) {
 
   if (*self_p) {
     maltcp_poller_data_t *self = *self_p;
+    *self_p = NULL;
     zpoller_destroy(&self->poller);
 
     free(self->endpoints);
@@ -984,7 +1000,6 @@ void maltcp_ctx_destroy_poller(void *self, void **poller_p) {
     // but where they have been created.
 
     free(self);
-    *self_p = NULL;
   }
 }
 
