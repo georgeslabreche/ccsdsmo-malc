@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -145,6 +145,9 @@ void invoke_app_test(bool verbose) {
   // Start blocks until interrupted (see zloop).
   mal_ctx_start(mal_ctx);
   printf("Stopped.\n");
+
+  mal_actor_destroy(mal_ctx, &consumer_actor);
+  mal_actor_destroy(mal_ctx, &provider_actor);
   
   mal_ctx_destroy(&mal_ctx);
   printf("destroyed.\n");
