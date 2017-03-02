@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -114,16 +114,24 @@ mal_actor_t *mal_actor_new(
 //  return zactor;
 //}
 
+void mal_actor_term(mal_actor_t *actor) {
+  mal_actor_send_command(actor, "$TERM");
+}
+
 void mal_actor_destroy(mal_ctx_t *mal_ctx, mal_actor_t **self_p) {
+  clog_debug(mal_logger, "mal_actor_destroy..\n");
   if (*self_p) {
     mal_actor_t *self = *self_p;
-
-    zactor_destroy((zactor_t **) &self->actor);
 
     mal_poller_destroy(&self->poller);
     mal_endpoint_destroy(&self->endpoint);
     mal_routing_destroy(&self->router);
-    mal_endpoint_destroy(&self->actor_endpoint);
+// Note: The internal endoint is destroyed during the actor termination.
+//    mal_endpoint_destroy(&self->actor_endpoint);
+
+    zactor_destroy((zactor_t **) &self->actor);
+    
+    clog_debug(mal_logger, "mal_actor_destroy..destroyed\n");
 
     free(self);
     *self_p = NULL;
@@ -192,28 +200,28 @@ static int mal_actor_handle_pipe(mal_actor_t *self) {
 
 static void mal_actor_run(zsock_t *pipe, void *args) {
   int rc = 0;
-  mal_actor_t *actor_data = (mal_actor_t *) args;
+  mal_actor_t *self = (mal_actor_t *) args;
 
-    clog_debug(mal_logger, "mal_actor_run()\n");
+  clog_debug(mal_logger, "mal_actor_run()\n");
 
-  actor_data->pipe = pipe;
-  actor_data->actor_endpoint = mal_actor_endpoint_create(mal_actor_get_mal_ctx(actor_data), pipe);
-  mal_poller_add_endpoint(actor_data->poller, actor_data->actor_endpoint);
+  self->pipe = pipe;
+  self->actor_endpoint = mal_actor_endpoint_create(mal_actor_get_mal_ctx(self), pipe);
+  mal_poller_add_endpoint(self->poller, self->actor_endpoint);
 
   //  Signal successful initialization
   zsock_signal(pipe, 0);
 
-  if (actor_data && actor_data->initialize) {
+  if (self && self->initialize) {
     clog_debug(mal_logger, "mal_actor_run: initialize..\n");
-    actor_data->initialize(mal_routing_get_state(actor_data->router), actor_data);
+    self->initialize(mal_routing_get_state(self->router), self);
   }
 
-  while (!actor_data->terminated) {
+  while (!self->terminated) {
 
     clog_debug(mal_logger, "mal_actor_run: mal_poller_wait...\n");
 
     mal_endpoint_t *which;
-    rc = mal_poller_wait(actor_data->poller, &which, -1);
+    rc = mal_poller_wait(self->poller, &which, -1);
     if (rc) {
       clog_fatal(mal_logger, "mal_actor_run: poller returns error %d\n", rc);
       break;
@@ -222,9 +230,9 @@ static void mal_actor_run(zsock_t *pipe, void *args) {
     if (which) {
       clog_debug(mal_logger, "mal_actor_run: mal_poller_wait, receives on %s\n", mal_endpoint_get_uri(which));
 
-      if (which == actor_data->actor_endpoint) {
+      if (which == self->actor_endpoint) {
         clog_debug(mal_logger, "mal_actor_run: actor_endpoint activated...\n");
-        mal_actor_handle_pipe(actor_data);
+        mal_actor_handle_pipe(self);
         //    } else if (zpoller_terminated(actor_data->poller)) {
         //
         //      if (actor_data->verbose)
@@ -236,10 +244,10 @@ static void mal_actor_run(zsock_t *pipe, void *args) {
 
         bool message_delivered = false;
         mal_message_t *mal_message = NULL;
-        rc = mal_endpoint_recv_message(actor_data->endpoint, &mal_message);
+        rc = mal_endpoint_recv_message(self->endpoint, &mal_message);
 
         if ((rc == 0) && mal_message) {
-          if (mal_routing_handle(actor_data->router, mal_message) == 0)
+          if (mal_routing_handle(self->router, mal_message) == 0)
             message_delivered = true;
         }
 
@@ -248,7 +256,7 @@ static void mal_actor_run(zsock_t *pipe, void *args) {
         if (!message_delivered) {
           clog_warning(mal_logger, "mal_actor_run: destroy undelivered MAL message\n");
 
-          mal_message_destroy(&mal_message, mal_endpoint_get_mal_ctx(actor_data->endpoint));
+          mal_message_destroy(&mal_message, mal_endpoint_get_mal_ctx(self->endpoint));
         }
       }
     } else {
@@ -256,21 +264,16 @@ static void mal_actor_run(zsock_t *pipe, void *args) {
     }
   }
 
-  if (actor_data && actor_data->finalize) {
+  if (self && self->finalize) {
     clog_debug(mal_logger, "mal_actor_run: finalize..\n");
 
-    actor_data->finalize(mal_routing_get_state(actor_data->router), actor_data);
+    self->finalize(mal_routing_get_state(self->router), self);
   }
 
-  // destroy the actor resources
-  mal_poller_destroy(&actor_data->poller);
-  mal_endpoint_destroy(&actor_data->endpoint);
-  mal_routing_destroy(&actor_data->router);
-  mal_endpoint_destroy(&actor_data->actor_endpoint);
+	// destroy the actor's internal endpoint
+  mal_endpoint_destroy(&self->actor_endpoint);
 
-	// Try to self-destroy in order to better clean ZMQ resources.
   clog_debug(mal_logger, "mal_actor_run: end.\n");
-  zactor_destroy((zactor_t **) &actor_data->actor);
 }
 
 void mal_actor_test(bool verbose) {
