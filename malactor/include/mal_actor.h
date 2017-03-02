@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -44,6 +44,7 @@ mal_actor_t *mal_actor_new(
     mal_actor_initialize_fn *initialize,
     mal_actor_finalize_fn *finalize);
 
+void mal_actor_term(mal_actor_t *actor);
 void mal_actor_destroy(mal_ctx_t *mal_ctx, mal_actor_t **self_p);
 
 mal_uri_t *mal_actor_get_uri(mal_actor_t *self);
