@@ -83,6 +83,7 @@ mal_actor_t *mal_actor_new(
   self->router = mal_routing_new(self->endpoint, state);
   self->initialize = initialize;
   self->finalize = finalize;
+  self->terminated = false;
 
   self->actor = zactor_new(mal_actor_run, self);
 
