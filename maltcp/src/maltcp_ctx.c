@@ -536,7 +536,7 @@ int maltcp_ctx_start(void *self) {
 int maltcp_ctx_stop(void *self) {
   maltcp_ctx_t *mal_ctx = (maltcp_ctx_t *) self;
 
-  clog_debug(maltcp_logger, "maltcp_ctx_stop..\n");
+  clog_debug(maltcp_logger, "maltcp_ctx_stop...\n");
   if (mal_ctx->mal_socket != -1) {
     // Note: this method is not symmetric with maltcp_ctx_start, may be we have to
     // create and bind the socket in maltcp_ctx_start rather than in maltcp_ctx_new.
@@ -550,7 +550,7 @@ int maltcp_ctx_stop(void *self) {
 }
 
 int maltcp_ctx_destroy(void **self_p) {
-  clog_debug(maltcp_logger, "maltcp_ctx_destroy..\n");
+  clog_debug(maltcp_logger, "maltcp_ctx_destroy...\n");
   if (self_p && *self_p) {
     maltcp_ctx_t *self = (maltcp_ctx_t *) *self_p;
 
