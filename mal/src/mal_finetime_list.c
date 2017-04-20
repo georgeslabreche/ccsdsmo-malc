@@ -134,8 +134,7 @@ int mal_finetime_list_decode_malbinary(mal_finetime_list_t *self,
   rc = mal_decoder_decode_list_size(decoder, cursor, &list_size);
   if (rc < 0)
     return rc;
-  if (list_size == 0)
-  {
+  if (list_size == 0) {
     self->element_count = 0;
     self->content = NULL;
     return 0;
@@ -146,13 +145,12 @@ int mal_finetime_list_decode_malbinary(mal_finetime_list_t *self,
   self->presence_flags = (bool *) calloc(list_size, sizeof(bool *));
   if (self->presence_flags == NULL)
     return -1;
-  for (int i = 0; i < list_size; i++)
-  {
+  self->element_count = list_size;
+  for (int i = 0; i < list_size; i++) {
     rc = mal_decoder_decode_presence_flag(decoder, cursor, &self->presence_flags[i]);
     if (rc < 0)
       return rc;
-    if (self->presence_flags[i])
-    {
+    if (self->presence_flags[i]) {
       rc = mal_decoder_decode_finetime(decoder, cursor, &self->content[i]);
       if (rc < 0)
         return rc;

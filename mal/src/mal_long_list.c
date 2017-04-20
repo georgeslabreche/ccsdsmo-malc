@@ -110,15 +110,13 @@ int mal_long_list_encode_malbinary(mal_long_list_t *self,
   rc = mal_encoder_encode_list_size(encoder, cursor, list_size);
   if (rc < 0)
     return rc;
-  for (int i = 0; i < list_size; i++)
-  {
+  for (int i = 0; i < list_size; i++) {
     mal_long_t list_element = self->content[i];
     bool presence_flag = self->presence_flags[i];
     rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
     if (rc < 0)
       return rc;
-    if (presence_flag)
-    {
+    if (presence_flag) {
       rc = mal_encoder_encode_long(encoder, cursor, list_element);
       if (rc < 0)
         return rc;
@@ -134,8 +132,7 @@ int mal_long_list_decode_malbinary(mal_long_list_t *self,
   rc = mal_decoder_decode_list_size(decoder, cursor, &list_size);
   if (rc < 0)
     return rc;
-  if (list_size == 0)
-  {
+  if (list_size == 0) {
     self->element_count = 0;
     self->content = NULL;
     return 0;
@@ -146,13 +143,12 @@ int mal_long_list_decode_malbinary(mal_long_list_t *self,
   self->presence_flags = (bool *) calloc(list_size, sizeof(bool *));
   if (self->presence_flags == NULL)
     return -1;
-  for (int i = 0; i < list_size; i++)
-  {
+  self->element_count = list_size;
+  for (int i = 0; i < list_size; i++) {
     rc = mal_decoder_decode_presence_flag(decoder, cursor, &self->presence_flags[i]);
     if (rc < 0)
       return rc;
-    if (self->presence_flags[i])
-    {
+    if (self->presence_flags[i]) {
       rc = mal_decoder_decode_long(decoder, cursor, &self->content[i]);
       if (rc < 0)
         return rc;
