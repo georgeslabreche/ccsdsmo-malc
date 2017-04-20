@@ -117,6 +117,14 @@ The actor's interface defines a function to find the corresponding router:
 mal_routing_t *mal_actor_get_router(mal_actor_t *self);
 ```
 
+### Stopping a MAL actor
+
+Request the MAL actor to stop executing, this function sends a $TERM command to the MAL actor.
+
+```c
+void mal_actor_term(mal_actor_t *actor);
+```
+
 ### Sending a command to the MAL actor
 
 Sending commands to the an actor via its internal endpoint can be done through the following function:
@@ -132,12 +140,37 @@ For example, to request the termination of an actor:
 mal_actor_send_command(actor, "$TERM");
 ```
 
+### Test if the MAL actor is alive
+
+Tests if this MAL actor is alive.
+
+
+```c
+bool mal_actor_alive(mal_actor_t *self);
+```
+
+### Wait for the MAL actor termination
+
+Waits for this MAL actor to die.
+
+```c
+void mal_actor_join(mal_actor_t *self);
+```
+
 ### Destructor
 
 Deletes the actor and free its state.
 
 ```c
 void mal_actor_destroy(mal_actor_t **self_p);
+```
+
+### Number of active MAL actor
+
+Returns the current number of active MAL actors.
+
+```c
+void mal_actor_active_count();
 ```
 
 Simple example of a MAL application

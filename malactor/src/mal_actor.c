@@ -25,6 +25,12 @@
 /* */
 #include "malactor.h"
 
+static int active_count = 0;
+
+int mal_actor_active_count() {
+  return active_count;
+}
+
 struct _mal_actor_t {
   zsock_t *pipe;
   mal_endpoint_t *actor_endpoint;
@@ -38,6 +44,7 @@ struct _mal_actor_t {
 
   void *actor;
 
+  bool running;
   bool terminated;            //  Did caller ask us to quit?
 };
 
@@ -83,6 +90,7 @@ mal_actor_t *mal_actor_new(
   self->router = mal_routing_new(self->endpoint, state);
   self->initialize = initialize;
   self->finalize = finalize;
+  self->running = false;
   self->terminated = false;
 
   self->actor = zactor_new(mal_actor_run, self);
@@ -212,6 +220,8 @@ static void mal_actor_run(zsock_t *pipe, void *args) {
   //  Signal successful initialization
   zsock_signal(pipe, 0);
 
+  self->running = true;
+  active_count += 1;
   if (self && self->initialize) {
     clog_debug(mal_logger, "mal_actor_run: initialize..\n");
     self->initialize(mal_routing_get_state(self->router), self);
@@ -274,7 +284,20 @@ static void mal_actor_run(zsock_t *pipe, void *args) {
 	// destroy the actor's internal endpoint
   mal_endpoint_destroy(&self->actor_endpoint);
 
+  self->running = false;
+  active_count -= 1;
+
   clog_debug(mal_logger, "mal_actor_run: end.\n");
+}
+
+bool mal_actor_alive(mal_actor_t *self) {
+  return self->running;
+}
+
+void mal_actor_join(mal_actor_t *self) {
+  while (self->running) {
+    zclock_sleep(100);
+  }
 }
 
 void mal_actor_test(bool verbose) {

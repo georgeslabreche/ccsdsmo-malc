@@ -37,6 +37,8 @@ typedef int mal_actor_initialize_fn(void *self, mal_actor_t *mal_actor);
 // Callback function for finalizing an actor
 typedef int mal_actor_finalize_fn(void *self, mal_actor_t *mal_actor);
 
+int mal_actor_active_count();
+
 mal_actor_t *mal_actor_new(
     mal_ctx_t *mal_ctx,
     mal_uri_t *uri,
@@ -52,6 +54,8 @@ mal_ctx_t *mal_actor_get_mal_ctx(mal_actor_t *self);
 mal_endpoint_t *mal_actor_get_mal_endpoint(mal_actor_t *self);
 mal_routing_t *mal_actor_get_router(mal_actor_t *self);
 void *mal_actor_get_state(mal_actor_t *self);
+bool mal_actor_alive(mal_actor_t *self);
+void mal_actor_join(mal_actor_t *self);
 
 int mal_actor_send_command(mal_actor_t *to, char *cmd);
 
