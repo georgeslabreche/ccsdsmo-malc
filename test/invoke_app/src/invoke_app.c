@@ -146,7 +146,9 @@ void invoke_app_test(bool verbose) {
   mal_ctx_start(mal_ctx);
   printf("Stopped.\n");
 
+  mal_actor_join(consumer_actor);
   mal_actor_destroy(mal_ctx, &consumer_actor);
+  mal_actor_join(provider_actor);
   mal_actor_destroy(mal_ctx, &provider_actor);
   
   mal_ctx_destroy(&mal_ctx);
