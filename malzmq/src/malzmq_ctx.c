@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -783,27 +783,26 @@ void *malzmq_ctx_create_endpoint(void *malzmq_ctx, mal_endpoint_t *mal_endpoint)
 }
 
 void malzmq_ctx_destroy_endpoint(void *self, void **endpoint_p) {
-  malzmq_endpoint_data_t **self_p = (malzmq_endpoint_data_t **) endpoint_p;
-  assert(self_p);
-  if (*self_p) {
-    malzmq_endpoint_data_t *self = *self_p;
+  assert(endpoint_p);
+  if (*endpoint_p) {
+    malzmq_endpoint_data_t *endpoint = *(malzmq_endpoint_data_t **) endpoint_p;
+    *endpoint_p = NULL;
 
     //  ... destroy your own state here
-    if (self->remote_socket_table) {
-      void *socket = zhash_first(self->remote_socket_table);
+    if (endpoint->remote_socket_table) {
+      void *socket = zhash_first(endpoint->remote_socket_table);
       while (socket) {
         // destroy all registered sockets
-        zsocket_destroy(self->malzmq_ctx->zmq_ctx, socket);
-        socket = zhash_next(self->remote_socket_table);
+        zsocket_destroy(endpoint->malzmq_ctx->zmq_ctx, socket);
+        socket = zhash_next(endpoint->remote_socket_table);
       }
-      zhash_destroy(&self->remote_socket_table);
+      zhash_destroy(&endpoint->remote_socket_table);
     }
 
     // mal_ctx and mal_endpoint must not be destroyed here
     // but where they have been created.
 
-    free(self);
-    *self_p = NULL;
+    free(endpoint);
   }
 }
 
@@ -834,20 +833,19 @@ void *malzmq_ctx_create_poller(void *malzmq_ctx, mal_poller_t *mal_poller)  {
 }
 
 void malzmq_ctx_destroy_poller(void *self, void **poller_p) {
-  malzmq_poller_data_t **self_p = (malzmq_poller_data_t **) poller_p;
-  assert(self_p);
+  assert(poller_p);
 
-  if (*self_p) {
-    malzmq_poller_data_t *self = *self_p;
-    zpoller_destroy(&self->poller);
+  if (*poller_p) {
+    malzmq_poller_data_t *poller = *(malzmq_poller_data_t **) poller_p;
+    *poller_p = NULL;
+    zpoller_destroy(&poller->poller);
 
-    free(self->endpoints);
+    free(poller->endpoints);
 
     // mal_ctx and mal_poller must not be destroyed here
     // but where they have been created.
 
-    free(self);
-    *self_p = NULL;
+    free(poller);
   }
 }
 
