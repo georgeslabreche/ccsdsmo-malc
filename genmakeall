@@ -69,6 +69,10 @@ genmake_mal() {
 }
 
 genmake_tests() {
+  cd $PROGDIR/test/encoding;
+  ./genmake $*
+  check
+
   cd $PROGDIR/test/testarea;
   ./genmake $*
   check
