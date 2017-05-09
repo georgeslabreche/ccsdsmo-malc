@@ -392,56 +392,64 @@ bool encoding_test_long(bool split, long value, bool verbose) {
   return (err == 0);
 }
 
-void encoding_test1(bool split, bool verbose) {
-  encoding_test_ushort(split, 0, true);
-  encoding_test_ushort(split, 1, true);
-  encoding_test_ushort(split, 127, true);
-  encoding_test_ushort(split, 128, true);
-  encoding_test_ushort(split, 65535, true);
+bool encoding_test1(bool split, bool verbose) {
+  bool ok = true;
 
-  encoding_test_uint(split, 0, true);
-  encoding_test_uint(split, 127, true);
-  encoding_test_uint(split, 128, true);
-  encoding_test_uint(split, 65535, true);
-  encoding_test_uint(split, 65536, true);
+  ok &= encoding_test_ushort(split, 0, true);
+  ok &= encoding_test_ushort(split, 1, true);
+  ok &= encoding_test_ushort(split, 127, true);
+  ok &= encoding_test_ushort(split, 128, true);
+  ok &= encoding_test_ushort(split, 65535, true);
 
-  encoding_test_ulong(split, 0L, true);
-  encoding_test_ulong(split, 127L, true);
-  encoding_test_ulong(split, 1L<<16, true);
-  encoding_test_ulong(split, 1L<<32, true);
-  encoding_test_ulong(split, 1L<<63, true);
+  ok &= encoding_test_uint(split, 0, true);
+  ok &= encoding_test_uint(split, 127, true);
+  ok &= encoding_test_uint(split, 128, true);
+  ok &= encoding_test_uint(split, 65535, true);
+  ok &= encoding_test_uint(split, 65536, true);
 
-  encoding_test_short(split, 0, true);
-  encoding_test_short(split, 1, true);
-  encoding_test_short(split, -1, true);
-  encoding_test_short(split, 127, true);
-  encoding_test_short(split, 128, true);
-  encoding_test_short(split, 32267, true);
+  ok &= encoding_test_ulong(split, 0L, true);
+  ok &= encoding_test_ulong(split, 127L, true);
+  ok &= encoding_test_ulong(split, 1L<<16, true);
+  ok &= encoding_test_ulong(split, 1L<<32, true);
+  ok &= encoding_test_ulong(split, 1L<<63, true);
+
+  ok &= encoding_test_short(split, 0, true);
+  ok &= encoding_test_short(split, 1, true);
+  ok &= encoding_test_short(split, -1, true);
+  ok &= encoding_test_short(split, 127, true);
+  ok &= encoding_test_short(split, 128, true);
+  ok &= encoding_test_short(split, 32267, true);
   encoding_test_short(split, -32768, true);
 
-  encoding_test_int(split, 0, true);
-  encoding_test_int(split, 1, true);
-  encoding_test_int(split, -1, true);
-  encoding_test_int(split, 127, true);
-  encoding_test_int(split, 128, true);
-  encoding_test_int(split, 32267, true);
-  encoding_test_int(split, -32768, true);
+  ok &= encoding_test_int(split, 0, true);
+  ok &= encoding_test_int(split, 1, true);
+  ok &= encoding_test_int(split, -1, true);
+  ok &= encoding_test_int(split, 127, true);
+  ok &= encoding_test_int(split, 128, true);
+  ok &= encoding_test_int(split, 32267, true);
+  ok &= encoding_test_int(split, -32768, true);
 
-  encoding_test_long(split, 0L, true);
-  encoding_test_long(split, 127L, true);
-  encoding_test_long(split, 1L<<16, true);
-  encoding_test_long(split, 1L<<32, true);
-  encoding_test_long(split, 1L<<62, true);
-  encoding_test_long(split, -(1L<<62), true);
+  ok &= encoding_test_long(split, 0L, true);
+  ok &= encoding_test_long(split, 127L, true);
+  ok &= encoding_test_long(split, 1L<<16, true);
+  ok &= encoding_test_long(split, 1L<<32, true);
+  ok &= encoding_test_long(split, 1L<<62, true);
+  ok &= encoding_test_long(split, -(1L<<62), true);
+
+  return ok;
 }
 
-// #################### Encoding test primitives ## End
-
 void encoding_test(bool verbose) {
+  bool ok = true;
+
   // @selftest
-  printf(" * encoding: \n");
-  encoding_test1(false, verbose);
-  encoding_test1(true, verbose);
+  printf(" * encoding: ");
+  if (verbose)
+    printf("\n");
+
+  ok &= encoding_test1(false, verbose);
+  ok &= encoding_test1(true, verbose);
   //  @end
-  printf("OK\n");
+
+  printf("%s\n", ok?"OK":"ERROR");
 }
