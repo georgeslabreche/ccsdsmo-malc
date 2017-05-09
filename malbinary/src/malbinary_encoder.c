@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -79,7 +79,7 @@ void malbinary_write64(long long_value, void *cursor) {
 int malbinary_var_ushort_encoding_length(unsigned short value) {
   if (value == 0) return 1;
   int ret = 0;
-  for (int i = 0; i < 14; i += 7) {
+  for (int i = 0; i < 16; i += 7) {
     if ((value >> i) == 0) {
       break;
     }
@@ -113,28 +113,18 @@ int malbinary_var_ulong_encoding_length(unsigned long value) {
 }
 
 int malbinary_var_short_encoding_length(short value) {
-  if (value > 0)
-    return malbinary_var_ushort_encoding_length(2 * value);
-  else
-    return malbinary_var_ushort_encoding_length(-2 * value - 1);
+  return malbinary_var_ushort_encoding_length((value << 1) ^ (value >> 15));
 }
 
 int malbinary_var_integer_encoding_length(int value) {
-  if (value > 0)
-    return malbinary_var_uinteger_encoding_length(2 * value);
-  else
-    return malbinary_var_uinteger_encoding_length(-2 * value - 1);
+  return malbinary_var_uinteger_encoding_length((value << 1) ^ (value >> 31));
 }
 
 int malbinary_var_long_encoding_length(long value) {
-  if (value > 0)
-    return malbinary_var_ulong_encoding_length(2 * value);
-  else
-    return malbinary_var_ulong_encoding_length(-2 * value - 1);
+  return malbinary_var_ulong_encoding_length((value << 1) ^ (value >> 63));
 }
 
-void malbinary_write_uvarinteger(unsigned int value, char *bytes)
-{
+void malbinary_write_uvarinteger(unsigned int value, char *bytes) {
   unsigned int index = 0;
   while ((value & -128) != 0)
   {
@@ -938,13 +928,96 @@ void malbinary_init_encode_functions(mal_encoder_t *self) {
 // Test
 
 void malbinary_encoder_test(bool verbose) {
+  verbose = true;
+  int errors = 0;
+
   printf(" * malbinary_encoder: ");
   if (verbose)
     printf("\n");
 
-//  @selftest
+  unsigned short ushort_value = 0;
+  if (malbinary_var_ushort_encoding_length(ushort_value) != 1) {
+    errors += 1;
+    if (verbose)
+      printf("malbinary_var_ushort_encoding_length(%hu) -> %d ERROR\n", ushort_value, malbinary_var_ushort_encoding_length(ushort_value));
+  }
+  ushort_value = 127;
+  if (malbinary_var_ushort_encoding_length(ushort_value) != 1) {
+    errors += 1;
+    if (verbose)
+      printf("malbinary_var_ushort_encoding_length(%hu) -> %d ERROR\n", ushort_value, malbinary_var_ushort_encoding_length(ushort_value));
+  }
+  ushort_value = 128;
+  if (malbinary_var_ushort_encoding_length(ushort_value) != 2) {
+    errors += 1;
+    if (verbose)
+      printf("malbinary_var_ushort_encoding_length(%hu) -> %d ERROR\n", ushort_value, malbinary_var_ushort_encoding_length(ushort_value));
+  }
+  ushort_value = 65535;
+  if (malbinary_var_ushort_encoding_length(ushort_value) != 3) {
+    errors += 1;
+    if (verbose)
+      printf("malbinary_var_ushort_encoding_length(%hu) -> %d ERROR\n", ushort_value, malbinary_var_ushort_encoding_length(ushort_value));
+  }
+
+  short short_value = 0;
+  if (malbinary_var_short_encoding_length(short_value) != 1) {
+    errors += 1;
+    if (verbose)
+      printf("malbinary_var_short_encoding_length(%hd) -> %d ERROR\n", short_value, malbinary_var_short_encoding_length(short_value));
+  }
+  short_value = 1;
+  if (malbinary_var_short_encoding_length(short_value) != 1) {
+    errors += 1;
+    if (verbose)
+      printf("malbinary_var_short_encoding_length(%hd) -> %d ERROR\n", short_value, malbinary_var_short_encoding_length(short_value));
+  }
+  short_value = -1;
+  if (malbinary_var_short_encoding_length(short_value) != 1) {
+    errors += 1;
+    if (verbose)
+      printf("malbinary_var_short_encoding_length(%hd) -> %d ERROR\n", short_value, malbinary_var_short_encoding_length(short_value));
+  }
+  short_value = 127;
+  if (malbinary_var_short_encoding_length(short_value) != 2) {
+    errors += 1;
+    if (verbose)
+      printf("malbinary_var_short_encoding_length(%hd) -> %d ERROR\n", short_value, malbinary_var_short_encoding_length(short_value));
+  }
+  short_value = -127;
+  if (malbinary_var_short_encoding_length(short_value) != 2) {
+    errors += 1;
+    if (verbose)
+      printf("malbinary_var_short_encoding_length(%hd) -> %d ERROR\n", short_value, malbinary_var_short_encoding_length(short_value));
+  }
+  short_value = 128;
+  if (malbinary_var_short_encoding_length(short_value) != 2) {
+    errors += 1;
+    if (verbose)
+      printf("malbinary_var_short_encoding_length(%hd) -> %d ERROR\n", short_value, malbinary_var_short_encoding_length(short_value));
+  }
+  short_value = -128;
+  if (malbinary_var_short_encoding_length(short_value) != 2) {
+    errors += 1;
+    if (verbose)
+      printf("malbinary_var_short_encoding_length(%hd) -> %d ERROR\n", short_value, malbinary_var_short_encoding_length(short_value));
+  }
+  short_value = 32767;
+  if (malbinary_var_short_encoding_length(short_value) != 3) {
+    errors += 1;
+    if (verbose)
+      printf("malbinary_var_short_encoding_length(%hd) -> %d ERROR\n", short_value, malbinary_var_short_encoding_length(short_value));
+  }
+  short_value = -32768;
+  if (malbinary_var_short_encoding_length(short_value) != 3) {
+    errors += 1;
+    if (verbose)
+      printf("malbinary_var_short_encoding_length(%hd) -> %d ERROR\n", short_value, malbinary_var_short_encoding_length(short_value));
+  }
+
+  //  @selftest
 // ...
 //  @end
-  printf("OK\n");
+  printf((errors == 0)?"OK\n":"ERROR\n");
 }
 
