@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -112,6 +112,7 @@ int malbinary_encoder_add_attribute_encoding_length(mal_encoder_t *encoder,
 /*
  * Encoding functions.
  */
+void malbinary_write_array(char *array, unsigned int length, void *cursor);
 
 int malbinary_encoder_encode_string(mal_encoder_t *self, void *cursor, mal_string_t *to_encode);
 

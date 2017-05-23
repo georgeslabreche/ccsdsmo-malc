@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,8 @@ struct _malzmq_header_t {
   unsigned char version;
   malzmq_mapping_directory_t *mapping_directory;
   bool internal_broker;
+  char encoding_id_flag;
+  mal_uoctet_t encoding_id;
   bool priority_flag;
   mal_uinteger_t priority;
   bool timestamp_flag;
@@ -45,7 +47,7 @@ struct _malzmq_header_t {
 };
 
 malzmq_header_t *malzmq_header_new(malzmq_mapping_directory_t *mapping_directory,
-	bool priority_flag, mal_uinteger_t priority,
+    bool priority_flag, mal_uinteger_t priority,
     bool timestamp_flag, mal_identifier_t *network_zone,
     mal_identifier_t *session_name, mal_identifier_list_t *domain,
     mal_blob_t *authentication_id) {
@@ -58,6 +60,9 @@ malzmq_header_t *malzmq_header_new(malzmq_mapping_directory_t *mapping_directory
   self->internal_broker = false;
 
   self->mapping_directory = mapping_directory;
+
+  self->encoding_id_flag = 2;
+  //self->encoding_id = encoding_id;
 
   self->priority_flag = priority_flag;
   self->priority = priority;
@@ -121,6 +126,15 @@ void malzmq_header_set_mapping_directory(malzmq_header_t *self,
   self->mapping_directory = mapping_directory;
 }
 
+char malzmq_header_get_encoding_id_flag(malzmq_header_t *self) {
+  return self->encoding_id_flag;
+}
+
+void malzmq_header_set_encoding_id_flag(malzmq_header_t *self,
+    char encoding_id_flag) {
+  self->encoding_id_flag = encoding_id_flag;
+}
+
 bool malzmq_header_get_priority_flag(malzmq_header_t *self) {
   return self->priority_flag;
 }
@@ -182,6 +196,14 @@ mal_blob_t *malzmq_header_get_authentication_id(malzmq_header_t *self) {
 void malzmq_header_set_authentication_id(malzmq_header_t *self,
     mal_blob_t *authentication_id) {
   self->authentication_id = authentication_id;
+}
+
+mal_uoctet_t malzmq_header_get_encoding_id(malzmq_header_t *self) {
+  return self->encoding_id;
+}
+
+void malzmq_header_set_encoding_id(malzmq_header_t *self, mal_uoctet_t encoding_id) {
+  self->encoding_id = encoding_id;
 }
 
 mal_uinteger_t malzmq_header_get_priority(malzmq_header_t *self) {

@@ -281,12 +281,19 @@ int malzmq_ctx_mal_socket_handle(zloop_t *loop, zmq_pollitem_t *poller,
 
     clog_debug(malzmq_logger, "malzmq_ctx: frame size: %d\n", zframe_size(frame));
 
+    // Use Varint!
+    ((mal_decoder_t *) self->decoder)->varint_supported = true;
+
     mal_uri_t *uri_to;
     if (malzmq_decode_uri_to(self->malzmq_header,
         self->decoder, (char *) zframe_data(frame), zframe_size(frame), &uri_to) != 0) {
       clog_error(malzmq_logger, "malzmq_ctx_mal_socket_handle, could not decode uri_to\n");
+      // Use Varint!
+      ((mal_decoder_t *) self->decoder)->varint_supported = false;
       return -1;
     }
+    // Use Varint!
+    ((mal_decoder_t *) self->decoder)->varint_supported = false;
 
     clog_debug(malzmq_logger, "malzmq_ctx: zmsg decoded.\n");
 
@@ -586,7 +593,7 @@ int malzmq_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
     // Now the frame is owned by us.
     zframe_t *frame = zmsg_pop(zmsg);
 
-    clog_debug(malzmq_logger, "malzmq_ctx_recv_message: frame size = %d", zframe_size(frame));
+    clog_debug(malzmq_logger, "malzmq_ctx_recv_message: frame size = %d\n", zframe_size(frame));
 
     size_t mal_msg_bytes_length = zframe_size(frame);
     clog_debug(malzmq_logger, "malzmq_ctx_recv_message: mal_msg_bytes_length=%d\n", mal_msg_bytes_length);

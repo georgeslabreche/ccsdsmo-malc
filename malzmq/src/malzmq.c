@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -236,9 +236,15 @@ int malzmq_add_string_encoding_length(mal_string_t *to_encode,
       mdk_encode = true;
   }
   if (mdk_encode) {
-    ((malbinary_cursor_t *) cursor)->body_length += 4;
+    malbinary_encoder_add_integer_encoding_length(encoder, (-md_key), cursor);
   } else {
-    rc = malbinary_encoder_add_string_encoding_length(encoder, to_encode, cursor);
+    size_t length = mal_string_get_char_count(to_encode);
+    if (encoder->varint_supported) {
+      malbinary_encoder_add_integer_encoding_length(encoder, length, cursor);
+      ((malbinary_cursor_t *) cursor)->body_length += length;
+    } else {
+      ((malbinary_cursor_t *) cursor)->body_length += 4 + length;
+    }
   }
   return rc;
 }
@@ -299,6 +305,7 @@ int malzmq_add_message_encoding_length(malzmq_header_t *malzmq_header,
       malzmq_header_get_mapping_directory(malzmq_header), encoder, cursor);
   if (rc < 0) return rc;
 
+  char encoding_id_flag = malzmq_header_get_encoding_id_flag(malzmq_header);
   bool priority_flag = malzmq_header_get_priority_flag(malzmq_header);
   bool timestamp_flag = malzmq_header_get_timestamp_flag(malzmq_header);
   bool network_zone_flag = malzmq_header_get_network_zone_flag(malzmq_header);
@@ -306,6 +313,12 @@ int malzmq_add_message_encoding_length(malzmq_header_t *malzmq_header,
   bool domain_flag = malzmq_header_get_domain_flag(malzmq_header);
   bool authentication_id_flag = malzmq_header_get_authentication_id_flag(
       malzmq_header);
+
+  if (encoding_id_flag == 3) {
+    rc = malbinary_encoder_add_uinteger_encoding_length(encoder,
+        mal_message_get_encoding_id(message), cursor);
+    if (rc < 0) return rc;
+  }
 
   if (priority_flag > 0) {
     rc = malbinary_encoder_add_uinteger_encoding_length(encoder,
@@ -370,8 +383,7 @@ int malzmq_encode_string(
       clog_error(malzmq_logger, "malzmq_encode_string, bad optional key: %d.", opt_mdk);
       return -1;
     }
-    // TODO: varint ?
-    malbinary_write32(opt_mdk, cursor);
+    malbinary_encoder_encode_integer(encoder, cursor, opt_mdk);
   } else {
     // check length is not too large
     int len = strlen(to_encode);
@@ -379,7 +391,8 @@ int malzmq_encode_string(
       clog_error(malzmq_logger, "malzmq_encode_string, length too large: %d.", len);
       return -1;
     }
-    rc = malbinary_encoder_encode_string(encoder, cursor, to_encode);
+    rc = malbinary_encoder_encode_integer(encoder, cursor, len);
+    malbinary_write_array(to_encode, len, cursor);
   }
   return rc;
 }
@@ -401,7 +414,6 @@ int malzmq_encode_identifier_list(mal_identifier_list_t *to_encode,
     void *cursor) {
   int rc = 0;
   unsigned int list_size = mal_identifier_list_get_element_count(to_encode);
-  // TODO varint ?
   malbinary_encoder_encode_list_size(encoder, cursor, list_size);
   mal_identifier_t **content = mal_identifier_list_get_content(to_encode);
   for (int i = 0; i < list_size; i++) {
@@ -446,6 +458,7 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
 
   malbinary_write64(mal_message_get_transaction_id(message), cursor);
 
+  char encoding_id_flag = malzmq_header_get_encoding_id_flag(malzmq_header);
   bool priority_flag = malzmq_header_get_priority_flag(malzmq_header);
   bool timestamp_flag = malzmq_header_get_timestamp_flag(malzmq_header);
   bool network_zone_flag = malzmq_header_get_network_zone_flag(malzmq_header);
@@ -454,15 +467,16 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
   bool authentication_id_flag = malzmq_header_get_authentication_id_flag(malzmq_header);
 
   ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++] =
-      (char) (priority_flag << 5) |
+      (char) (encoding_id_flag << 6) |
+             (priority_flag << 5) |
              (timestamp_flag << 4) |
              (network_zone_flag << 3) |
              (session_name_flag << 2) |
              (domain_flag << 1) |
              (authentication_id_flag << 0);
 
-  // TODO (AF): Use Varint!
-//   ((mal_encoder_t *) encoder)->varint_supported = true;
+  // Use Varint!
+  ((mal_encoder_t *) encoder)->varint_supported = true;
 
   // always encode 'URI From' and 'URI To'
   malzmq_encode_uri(mal_message_get_uri_from(message),
@@ -470,14 +484,16 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
   malzmq_encode_uri(mal_message_get_uri_to(message),
       malzmq_header_get_mapping_directory(malzmq_header), encoder, cursor);
 
-  // TODO (AF): this ordering is not consistent with the blue book proposal,
-  // but closer with the TCP/IP blue book proposal.
-  if (priority_flag > 0) {
-    malbinary_encoder_encode_uinteger(encoder, cursor, mal_message_get_priority(message));
-  }
+   if (encoding_id_flag == 3) {
+     malbinary_encoder_encode_uoctet(encoder, cursor, mal_message_get_encoding_id(message));
+   }
+
+   if (priority_flag > 0) {
+     malbinary_encoder_encode_uinteger(encoder, cursor, mal_message_get_priority(message));
+   }
 
   if (timestamp_flag > 0) {
-    malbinary_encoder_encode_time(encoder, cursor, mal_message_get_timestamp(message));
+    malbinary_encoder_encode_ulong(encoder, cursor, mal_message_get_timestamp(message));
   }
 
   if (network_zone_flag > 0) {
@@ -499,8 +515,8 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
     malbinary_encoder_encode_blob(encoder, cursor, mal_message_get_authentication_id(message));
   }
 
-  // TODO (AF): Stops using Varint
-//  ((mal_encoder_t *) encoder)->varint_supported = false;
+  // Stops using Varint
+  ((mal_encoder_t *) encoder)->varint_supported = false;
 
   // Copy the body in the frame.
   unsigned int body_length = mal_message_get_body_length(message);
@@ -522,7 +538,8 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
 int malzmq_decode_string(malzmq_mapping_directory_t *mapping_directory,
     mal_decoder_t *decoder, void *cursor, mal_string_t **result) {
   int rc = 0;
-  int opt_mdk = malbinary_read32(cursor);
+  mal_integer_t opt_mdk;
+  malbinary_decoder_decode_integer(decoder, cursor, &opt_mdk);
   if (opt_mdk < 0) {
     unsigned int md_key = - opt_mdk;
     char *result_str;
@@ -571,13 +588,14 @@ int malzmq_decode_uri_to(malzmq_header_t *malzmq_header,
 
   // Note: this ordering is not consistent with the blue book proposal
 
-  // Go beyond the 'URI From'
-  int opt_mdk = malbinary_read32(&cursor);
-  if (opt_mdk >= 0)
-    cursor.body_offset += opt_mdk;
-
-  return malzmq_decode_uri(malzmq_header_get_mapping_directory(malzmq_header),
+  mal_uri_t *uri_from;
+  int rc = malzmq_decode_uri(malzmq_header_get_mapping_directory(malzmq_header),
+        decoder, &cursor, &uri_from);
+  if (rc != 0)
+    return rc;
+  rc = malzmq_decode_uri(malzmq_header_get_mapping_directory(malzmq_header),
       decoder, &cursor, uri_to);
+  return rc;
 }
 
 int malzmq_decode_identifier(malzmq_mapping_directory_t *mapping_directory,
@@ -666,6 +684,7 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
   mal_message_set_transaction_id(message, transaction_id);
 
   b = ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++];
+  char encoding_id_flag = (b >> 6) & 0x02;
   bool priority_flag = (b >> 5) & 0x01;
   bool timestamp_flag = (b >> 4) & 0x01;
   bool network_zone_flag = (b >> 3) & 0x01;
@@ -673,8 +692,8 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
   bool domain_flag = (b >> 1) & 0x01;
   bool authentication_id_flag = b & 0x01;
 
-  // TODO (AF): Use Varint!
-//  ((mal_decoder_t *) decoder)->varint_supported = true;
+  // Use Varint!
+  ((mal_decoder_t *) decoder)->varint_supported = true;
 
   mal_uri_t *uri_from;
   malzmq_decode_uri(malzmq_header_get_mapping_directory(malzmq_header),
@@ -688,19 +707,27 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
   mal_message_set_free_uri_to(message, true);
   mal_message_set_uri_to(message, uri_to);
 
-  // TODO (AF): this ordering is not consistent with the blue book proposal,
-  // but closer with the TCP/IP blue book proposal.
-  mal_uinteger_t priority;
-  if (priority_flag) {
-    malbinary_decoder_decode_uinteger(decoder, cursor, &priority);
-  } else {
-    priority = malzmq_header_get_priority(malzmq_header);
+  mal_uoctet_t encoding_id;
+  if (encoding_id_flag == 3) {
+    malbinary_decoder_decode_uoctet(decoder, cursor, &encoding_id);
+    mal_message_set_encoding_id(message, encoding_id);
   }
-  mal_message_set_priority(message, priority);
+  //else {
+  //  encoding_id = malzmq_header_get_encodingid(malzmq_header);
+  //  mal_message_set_encoding_id(message, 2);
+  //}
+
+   mal_uinteger_t priority;
+   if (priority_flag) {
+     malbinary_decoder_decode_uinteger(decoder, cursor, &priority);
+   } else {
+     priority = malzmq_header_get_priority(malzmq_header);
+   }
+   mal_message_set_priority(message, priority);
 
   mal_time_t timestamp;
   if (timestamp_flag) {
-    malbinary_decoder_decode_time(decoder, cursor, &timestamp);
+    malbinary_decoder_decode_ulong(decoder, cursor, &timestamp);
   }
   mal_message_set_timestamp(message, timestamp);
 
@@ -747,8 +774,8 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
   }
   mal_message_set_authentication_id(message, authentication_id);
 
-  // TODO (AF): Stops using Varint
-//  ((mal_decoder_t *) decoder)->varint_supported = false;
+  // Stops using Varint
+  ((mal_decoder_t *) decoder)->varint_supported = false;
 
   unsigned int body_offset = ((malbinary_cursor_t *) cursor)->body_offset;
   unsigned int body_length = ((malbinary_cursor_t *) cursor)->body_length - body_offset;
