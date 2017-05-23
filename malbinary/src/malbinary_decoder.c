@@ -425,62 +425,62 @@ int malbinary_decoder_decode_finetime(mal_decoder_t *self, void *cursor, mal_fin
 }
 
 int malbinary_decoder_decode_attribute(mal_decoder_t *decoder, void *cursor,
-    unsigned char attribute_tag, union mal_attribute_t self) {
+    unsigned char attribute_tag, union mal_attribute_t *self) {
   int rc = 0;
   switch (attribute_tag) {
   case MAL_BLOB_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_blob(decoder, cursor, &self.blob_value);
+    rc = malbinary_decoder_decode_blob(decoder, cursor, &self->blob_value);
     break;
   case MAL_BOOLEAN_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_boolean(decoder, cursor, &self.boolean_value);
+    rc = malbinary_decoder_decode_boolean(decoder, cursor, &self->boolean_value);
     break;
   case MAL_DURATION_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_duration(decoder, cursor, &self.duration_value);
+    rc = malbinary_decoder_decode_duration(decoder, cursor, &self->duration_value);
     break;
   case MAL_FLOAT_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_float(decoder, cursor, &self.float_value);
+    rc = malbinary_decoder_decode_float(decoder, cursor, &self->float_value);
     break;
   case MAL_DOUBLE_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_double(decoder, cursor, &self.double_value);
+    rc = malbinary_decoder_decode_double(decoder, cursor, &self->double_value);
     break;
   case MAL_IDENTIFIER_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_identifier(decoder, cursor, &self.identifier_value);
+    rc = malbinary_decoder_decode_identifier(decoder, cursor, &self->identifier_value);
     break;
   case MAL_OCTET_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_octet(decoder, cursor, &self.octet_value);
+    rc = malbinary_decoder_decode_octet(decoder, cursor, &self->octet_value);
     break;
   case MAL_UOCTET_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_uoctet(decoder, cursor, &self.uoctet_value);
+    rc = malbinary_decoder_decode_uoctet(decoder, cursor, &self->uoctet_value);
     break;
   case MAL_SHORT_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_short(decoder, cursor, &self.short_value);
+    rc = malbinary_decoder_decode_short(decoder, cursor, &self->short_value);
     break;
   case MAL_USHORT_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_ushort(decoder, cursor, &self.ushort_value);
+    rc = malbinary_decoder_decode_ushort(decoder, cursor, &self->ushort_value);
     break;
   case MAL_INTEGER_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_integer(decoder, cursor, &self.integer_value);
+    rc = malbinary_decoder_decode_integer(decoder, cursor, &self->integer_value);
     break;
   case MAL_UINTEGER_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_uinteger(decoder, cursor, &self.uinteger_value);
+    rc = malbinary_decoder_decode_uinteger(decoder, cursor, &self->uinteger_value);
     break;
   case MAL_LONG_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_long(decoder, cursor, &self.long_value);
+    rc = malbinary_decoder_decode_long(decoder, cursor, &self->long_value);
     break;
   case MAL_ULONG_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_ulong(decoder, cursor, &self.ulong_value);
+    rc = malbinary_decoder_decode_ulong(decoder, cursor, &self->ulong_value);
     break;
   case MAL_STRING_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_string(decoder, cursor, &self.string_value);
+    rc = malbinary_decoder_decode_string(decoder, cursor, &self->string_value);
     break;
   case MAL_TIME_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_time(decoder, cursor, &self.time_value);
+    rc = malbinary_decoder_decode_time(decoder, cursor, &self->time_value);
     break;
   case MAL_FINETIME_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_finetime(decoder, cursor, &self.finetime_value);
+    rc = malbinary_decoder_decode_finetime(decoder, cursor, &self->finetime_value);
     break;
   case MAL_URI_ATTRIBUTE_TAG:
-    rc = malbinary_decoder_decode_uri(decoder, cursor, &self.uri_value);
+    rc = malbinary_decoder_decode_uri(decoder, cursor, &self->uri_value);
     break;
   default:
     clog_error(decoder->logger, "Unexpected attribute tag value: %d\n", attribute_tag);

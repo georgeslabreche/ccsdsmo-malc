@@ -145,7 +145,7 @@ int com_archive_compositefilter_decode_malbinary(com_archive_compositefilter_t *
     rc = mal_decoder_decode_attribute_tag(decoder, cursor, &self->f_fieldvalue_attribute_tag);
     if (rc < 0)
       return rc;
-    rc = mal_decoder_decode_attribute(decoder, cursor, self->f_fieldvalue_attribute_tag, self->f_fieldvalue);
+    rc = mal_decoder_decode_attribute(decoder, cursor, self->f_fieldvalue_attribute_tag, &self->f_fieldvalue);
     if (rc < 0)
       return rc;
   }
