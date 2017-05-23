@@ -243,8 +243,8 @@ int malsplitbinary_decoder_decode_attribute(mal_decoder_t *malsplitbinary_decode
     rc = malsplitbinary_decoder_decode_uri(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self.uri_value);
     break;
   default:
-    //nothing to do
-    break;
+    clog_error(malsplitbinary_decoder->logger, "Unexpected attribute tag value: %d\n", attribute_tag);
+    return -1;
   }
   return rc;
 }

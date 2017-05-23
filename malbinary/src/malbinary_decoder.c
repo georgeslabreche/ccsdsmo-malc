@@ -483,8 +483,8 @@ int malbinary_decoder_decode_attribute(mal_decoder_t *decoder, void *cursor,
     rc = malbinary_decoder_decode_uri(decoder, cursor, &self.uri_value);
     break;
   default:
-    //nothing to do
-    break;
+    clog_error(decoder->logger, "Unexpected attribute tag value: %d\n", attribute_tag);
+    return -1;
   }
   return rc;
 }
