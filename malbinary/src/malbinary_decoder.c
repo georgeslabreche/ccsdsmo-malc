@@ -348,12 +348,7 @@ int malbinary_decoder_decode_boolean(mal_decoder_t *self, void *cursor, mal_bool
 }
 
 int malbinary_decoder_decode_attribute_tag(mal_decoder_t *self, void *cursor, unsigned char *result) {
-  int rc = 0;
-  if (self->varint_supported)
-    (*result) = malbinary_read_uvarint(cursor);
-  else
-    (*result) = malbinary_read32(cursor);
-  return rc;
+  return malbinary_decoder_decode_uoctet(self, cursor, result);
 }
 
 int malbinary_decoder_decode_duration(mal_decoder_t *self, void *cursor, mal_duration_t *result) {

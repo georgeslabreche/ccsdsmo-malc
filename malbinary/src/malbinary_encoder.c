@@ -504,12 +504,7 @@ int malbinary_encoder_encode_boolean(mal_encoder_t *self, void *cursor, mal_bool
 }
 
 int malbinary_encoder_encode_attribute_tag(mal_encoder_t *self, void *cursor, unsigned char to_encode) {
-  int rc = 0;
-  if (self->varint_supported)
-    malbinary_write_uvarint(to_encode, cursor);
-  else
-    malbinary_write32(to_encode, cursor);
-  return rc;
+  return malbinary_encoder_encode_uoctet(self, cursor, to_encode);
 }
 
 int malbinary_encoder_add_duration_encoding_length(mal_encoder_t *self,
