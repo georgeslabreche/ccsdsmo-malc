@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -124,28 +124,23 @@ int mal_namedvalue_encode_malbinary(mal_namedvalue_t * self, mal_encoder_t * enc
   }
   return rc;
 }
-int mal_namedvalue_decode_malbinary(mal_namedvalue_t * self, mal_decoder_t * decoder, void * cursor)
-{
+int mal_namedvalue_decode_malbinary(mal_namedvalue_t * self, mal_decoder_t * decoder, void * cursor) {
   int rc = 0;
   bool presence_flag;
   rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
   if (rc < 0)
     return rc;
-  if (presence_flag)
-  {
+  if (presence_flag) {
     rc = mal_decoder_decode_identifier(decoder, cursor, &self->name);
     if (rc < 0)
       return rc;
-  }
-  else
-  {
+  } else {
     self->name = NULL;
   }
   rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
   if (rc < 0)
     return rc;
-  if (presence_flag)
-  {
+  if (presence_flag) {
     rc = mal_decoder_decode_attribute_tag(decoder, cursor, &self->value_attribute_tag);
     if (rc < 0)
       return rc;

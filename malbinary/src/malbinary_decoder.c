@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -194,74 +194,65 @@ char malbinary_read(void *cursor) {
 }
 
 int malbinary_decoder_decode_string(mal_decoder_t *self, void *cursor, mal_string_t **result) {
-  int rc = 0;
   (*result) = malbinary_read_str(self, cursor);
   if (*result == NULL)
     return -1;
-  return rc;
+  return 0;
 }
 
-int malbinary_decoder_decode_presence_flag(mal_decoder_t *self,
-    void *cursor, bool *result) {
-  int rc = 0;
+int malbinary_decoder_decode_presence_flag(mal_decoder_t *self, void *cursor, bool *result) {
   char flag = malbinary_read(cursor);
   if (flag == 1) {
     (*result) = true;
   } else {
     (*result) = false;
   }
-  return rc;
+  return 0;
 }
 
 int malbinary_decoder_decode_integer(mal_decoder_t *self, void *cursor, mal_integer_t *result) {
-  int rc = 0;
   if (self->varint_supported)
     (*result) = malbinary_read_varint(cursor);
   else
     (*result) = malbinary_read32(cursor);
-  return rc;
+  return 0;
 }
 
 int malbinary_decoder_decode_short_form(mal_decoder_t *self, void *cursor, long *result) {
-  int rc = 0;
   if (self->varint_supported)
     (*result) = malbinary_read_varlong(cursor);
   else
     (*result) = malbinary_read64(cursor);
-  return rc;
+  return 0;
 }
 
 int malbinary_decoder_decode_list_size(mal_decoder_t *self, void *cursor, unsigned int *result) {
-  int rc = 0;
   if (self->varint_supported)
     (*result) = malbinary_read_uvarint(cursor);
   else
     (*result) = malbinary_read32(cursor);
-  return rc;
+  return 0;
 }
 
 int malbinary_decoder_decode_small_enum(mal_decoder_t *self, void *cursor, int *result) {
-  int rc = 0;
   (*result) = malbinary_read(cursor);
-  return rc;
+  return 0;
 }
 
 int malbinary_decoder_decode_medium_enum(mal_decoder_t *self, void *cursor, int *result) {
-  int rc = 0;
   if (self->varint_supported)
     (*result) = malbinary_read_uvarshort(cursor);
   else
     (*result) = malbinary_read16(cursor);
-  return rc;
+  return 0;
 }
 
 int malbinary_decoder_decode_large_enum(mal_decoder_t *self, void *cursor, int *result) {
-  int rc = 0;
   if (self->varint_supported)
     (*result) = malbinary_read_uvarint(cursor);
   else
     (*result) = malbinary_read32(cursor);
-  return rc;
+  return 0;
 }
 
 int malbinary_decoder_decode_uri(mal_decoder_t *self, void *cursor, mal_uri_t **result) {
@@ -292,30 +283,26 @@ int malbinary_decoder_decode_blob(mal_decoder_t *self, void *cursor, mal_blob_t 
 }
 
 int malbinary_decoder_decode_time(mal_decoder_t *self, void *cursor, mal_time_t *result) {
-  int rc = 0;
   (*result) = malbinary_read64(cursor);
-  return rc;
+  return 0;
 }
 
 int malbinary_decoder_decode_uinteger(mal_decoder_t *self, void *cursor, mal_uinteger_t *result) {
-  int rc = 0;
   if (self->varint_supported)
     (*result) = malbinary_read_uvarint(cursor);
   else
     (*result) = malbinary_read32(cursor);
-  return rc;
+  return 0;
 }
 
 int malbinary_decoder_decode_identifier(mal_decoder_t *self, void *cursor, mal_identifier_t **result) {
-  int rc = 0;
   (*result) = malbinary_read_str(self, cursor);
-  return rc;
+  return 0;
 }
 
 int malbinary_decoder_decode_uoctet(mal_decoder_t *self, void *cursor, mal_uoctet_t *result) {
-  int rc = 0;
   (*result) = malbinary_read(cursor);
-  return rc;
+  return 0;
 }
 
 int malbinary_decoder_decode_long(mal_decoder_t *self, void *cursor, mal_long_t *result) {

@@ -302,11 +302,9 @@ int malbinary_encoder_add_time_encoding_length(mal_encoder_t *self,
   return rc;
 }
 
-int malbinary_encoder_add_uoctet_encoding_length(mal_encoder_t *self,
-    mal_uoctet_t to_encode, void *cursor) {
-  int rc = 0;
+int malbinary_encoder_add_uoctet_encoding_length(mal_encoder_t *self, mal_uoctet_t to_encode, void *cursor) {
   ((malbinary_cursor_t *) cursor)->body_length += 1;
-  return rc;
+  return 0;
 }
 
 int malbinary_encoder_add_long_encoding_length(mal_encoder_t *self,
@@ -629,16 +627,13 @@ int malbinary_encoder_encode_ulong(mal_encoder_t *self, void *cursor, mal_ulong_
 }
 
 int malbinary_encoder_encode_finetime(mal_encoder_t *self, void *cursor, mal_finetime_t to_encode) {
-  int rc = 0;
-   malbinary_write64(to_encode, cursor);
-   return rc;
+  malbinary_write64(to_encode, cursor);
+  return 0;
 }
 
-int malbinary_encoder_add_attribute_tag_encoding_length(mal_encoder_t *encoder,
-    unsigned char attribute_tag, void *cursor) {
-  int rc = 0;
+int malbinary_encoder_add_attribute_tag_encoding_length(mal_encoder_t *encoder, unsigned char attribute_tag, void *cursor) {
   ((malbinary_cursor_t *) cursor)->body_length += MALBINARY_ATTRIBUTE_TAG_SIZE;
-  return rc;
+  return 0;
 }
 
 int malbinary_encoder_add_attribute_encoding_length(mal_encoder_t *encoder,
