@@ -185,66 +185,66 @@ int malsplitbinary_decoder_decode_finetime(mal_decoder_t *self,
 }
 
 int malsplitbinary_decoder_decode_attribute(mal_decoder_t *malsplitbinary_decoder,
-    void *cursor, unsigned char attribute_tag, union mal_attribute_t self) {
+    void *cursor, unsigned char attribute_tag, union mal_attribute_t *self) {
   int rc = 0;
   switch (attribute_tag) {
   case MAL_BLOB_ATTRIBUTE_TAG:
-    rc = malsplitbinary_decoder_decode_blob(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self.blob_value);
+    rc = malsplitbinary_decoder_decode_blob(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self->blob_value);
     break;
   case MAL_BOOLEAN_ATTRIBUTE_TAG:
-    rc = malsplitbinary_decoder_decode_boolean(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self.boolean_value);
+    rc = malsplitbinary_decoder_decode_boolean(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self->boolean_value);
     break;
   case MAL_DURATION_ATTRIBUTE_TAG:
-    rc = malsplitbinary_decoder_decode_duration(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self.duration_value);
+    rc = malsplitbinary_decoder_decode_duration(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self->duration_value);
     break;
   case MAL_FLOAT_ATTRIBUTE_TAG:
-    rc = malsplitbinary_decoder_decode_float(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self.float_value);
+    rc = malsplitbinary_decoder_decode_float(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self->float_value);
     break;
   case MAL_DOUBLE_ATTRIBUTE_TAG:
-    rc = malsplitbinary_decoder_decode_double(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self.double_value);
+    rc = malsplitbinary_decoder_decode_double(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self->double_value);
     break;
   case MAL_IDENTIFIER_ATTRIBUTE_TAG:
-    rc = malsplitbinary_decoder_decode_identifier(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self.identifier_value);
+    rc = malsplitbinary_decoder_decode_identifier(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self->identifier_value);
     break;
   case MAL_OCTET_ATTRIBUTE_TAG:
-    rc = malsplitbinary_decoder_decode_octet(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self.octet_value);
+    rc = malsplitbinary_decoder_decode_octet(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self->octet_value);
     break;
   case MAL_UOCTET_ATTRIBUTE_TAG:
-    rc = malsplitbinary_decoder_decode_uoctet(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self.uoctet_value);
+    rc = malsplitbinary_decoder_decode_uoctet(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self->uoctet_value);
     break;
   case MAL_SHORT_ATTRIBUTE_TAG:
-    rc = malsplitbinary_decoder_decode_short(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self.short_value);
+    rc = malsplitbinary_decoder_decode_short(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self->short_value);
     break;
   case MAL_USHORT_ATTRIBUTE_TAG:
-    rc = malsplitbinary_decoder_decode_ushort(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self.ushort_value);
+    rc = malsplitbinary_decoder_decode_ushort(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self->ushort_value);
     break;
   case MAL_INTEGER_ATTRIBUTE_TAG:
-    rc = malsplitbinary_decoder_decode_integer(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self.integer_value);
+    rc = malsplitbinary_decoder_decode_integer(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self->integer_value);
     break;
   case MAL_UINTEGER_ATTRIBUTE_TAG:
-    rc = malsplitbinary_decoder_decode_uinteger(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self.uinteger_value);
+    rc = malsplitbinary_decoder_decode_uinteger(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self->uinteger_value);
     break;
   case MAL_LONG_ATTRIBUTE_TAG:
-    rc = malsplitbinary_decoder_decode_long(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self.long_value);
+    rc = malsplitbinary_decoder_decode_long(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self->long_value);
     break;
   case MAL_ULONG_ATTRIBUTE_TAG:
-    rc = malsplitbinary_decoder_decode_ulong(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self.ulong_value);
+    rc = malsplitbinary_decoder_decode_ulong(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self->ulong_value);
     break;
   case MAL_STRING_ATTRIBUTE_TAG:
-    rc = malsplitbinary_decoder_decode_string(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self.string_value);
+    rc = malsplitbinary_decoder_decode_string(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self->string_value);
     break;
   case MAL_TIME_ATTRIBUTE_TAG:
-    rc = malsplitbinary_decoder_decode_time(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self.time_value);
+    rc = malsplitbinary_decoder_decode_time(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self->time_value);
     break;
   case MAL_FINETIME_ATTRIBUTE_TAG:
-    rc = malsplitbinary_decoder_decode_finetime(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self.finetime_value);
+    rc = malsplitbinary_decoder_decode_finetime(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self->finetime_value);
     break;
   case MAL_URI_ATTRIBUTE_TAG:
-    rc = malsplitbinary_decoder_decode_uri(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self.uri_value);
+    rc = malsplitbinary_decoder_decode_uri(malsplitbinary_decoder, &((malsplitbinary_cursor_t *)cursor)->malbinary_cursor, &self->uri_value);
     break;
   default:
-    //nothing to do
-    break;
+    clog_error(malsplitbinary_decoder->logger, "Unexpected attribute tag value: %d\n", attribute_tag);
+    return -1;
   }
   return rc;
 }

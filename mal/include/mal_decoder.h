@@ -93,7 +93,7 @@ int mal_decoder_decode_short(mal_decoder_t *self, void *cursor, mal_short_t *res
 int mal_decoder_decode_ulong(mal_decoder_t *self, void *cursor, mal_ulong_t *result);
 int mal_decoder_decode_finetime(mal_decoder_t *self, void *cursor, mal_finetime_t *result);
 int mal_decoder_decode_attribute(mal_decoder_t *decoder, void *cursor,
-    unsigned char attribute_tag, union mal_attribute_t self);
+    unsigned char attribute_tag, union mal_attribute_t *self);
 int mal_decoder_decode_attribute_tag(mal_decoder_t *self, void *cursor, unsigned char *result);
 
 int mal_decoder_decode_entitykey(mal_entitykey_t * self, mal_decoder_t * mal_decoder, void * cursor);
@@ -182,7 +182,7 @@ typedef int mal_decoder_decode_short_fn(mal_decoder_t *self, void *cursor, mal_s
 typedef int mal_decoder_decode_ulong_fn(mal_decoder_t *self, void *cursor, mal_ulong_t *result);
 typedef int mal_decoder_decode_finetime_fn(mal_decoder_t *self, void *cursor, mal_finetime_t *result);
 typedef int mal_decoder_decode_attribute_fn(mal_decoder_t *decoder, void *cursor,
-    unsigned char attribute_tag, union mal_attribute_t self);
+    unsigned char attribute_tag, union mal_attribute_t *self);
 typedef int mal_decoder_decode_attribute_tag_fn(mal_decoder_t *self, void *cursor, unsigned char *result);
 
 typedef int mal_decoder_decode_entitykey_fn(mal_entitykey_t * self, mal_decoder_t * mal_decoder, void * cursor);

@@ -149,7 +149,7 @@ int mal_namedvalue_decode_malbinary(mal_namedvalue_t * self, mal_decoder_t * dec
     rc = mal_decoder_decode_attribute_tag(decoder, cursor, &self->value_attribute_tag);
     if (rc < 0)
       return rc;
-    rc = mal_decoder_decode_attribute(decoder, cursor, self->value_attribute_tag, self->value);
+    rc = mal_decoder_decode_attribute(decoder, cursor, self->value_attribute_tag, &self->value);
     if (rc < 0)
       return rc;
   }

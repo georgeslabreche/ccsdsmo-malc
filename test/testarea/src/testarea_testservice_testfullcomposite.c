@@ -457,7 +457,7 @@ int testarea_testservice_testfullcomposite_decode_malbinary(testarea_testservice
   rc = mal_decoder_decode_attribute_tag(decoder, cursor, &self->f_attributefield_attribute_tag);
   if (rc < 0)
     return rc;
-  rc = mal_decoder_decode_attribute(decoder, cursor, self->f_attributefield_attribute_tag, self->f_attributefield);
+  rc = mal_decoder_decode_attribute(decoder, cursor, self->f_attributefield_attribute_tag, &self->f_attributefield);
   if (rc < 0)
     return rc;
   return rc;

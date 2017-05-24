@@ -504,12 +504,7 @@ int malbinary_encoder_encode_boolean(mal_encoder_t *self, void *cursor, mal_bool
 }
 
 int malbinary_encoder_encode_attribute_tag(mal_encoder_t *self, void *cursor, unsigned char to_encode) {
-  int rc = 0;
-  if (self->varint_supported)
-    malbinary_write_uvarint(to_encode, cursor);
-  else
-    malbinary_write32(to_encode, cursor);
-  return rc;
+  return malbinary_encoder_encode_uoctet(self, cursor, to_encode);
 }
 
 int malbinary_encoder_add_duration_encoding_length(mal_encoder_t *self,
@@ -705,8 +700,8 @@ int malbinary_encoder_add_attribute_encoding_length(mal_encoder_t *encoder,
     rc = malbinary_encoder_add_uri_encoding_length(encoder, self.uri_value, cursor);
     break;
   default:
-    //nothing to do
-    break;
+    clog_error(encoder->logger, "Unexpected attribute tag value: %d\n", attribute_tag);
+    return -1;
   }
   return rc;
 }
@@ -769,8 +764,8 @@ int malbinary_encoder_encode_attribute(mal_encoder_t *encoder, void *cursor, uns
     rc = malbinary_encoder_encode_uri(encoder, cursor, self.uri_value);
     break;
   default:
-    //nothing to do
-    break;
+    clog_error(encoder->logger, "Unexpected attribute tag value: %d\n", attribute_tag);
+    return -1;
   }
   return rc;
 }

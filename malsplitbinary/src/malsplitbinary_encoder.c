@@ -371,8 +371,8 @@ int malsplitbinary_encoder_add_attribute_encoding_length(mal_encoder_t *malsplit
     rc = malsplitbinary_encoder_add_uri_encoding_length(malsplitbinary_encoder, self.uri_value, cursor);
     break;
   default:
-    //nothing to do
-    break;
+    clog_error(malsplitbinary_encoder->logger, "Unexpected attribute tag value: %d\n", attribute_tag);
+    return -1;
   }
   return rc;
 }
@@ -436,8 +436,8 @@ int malsplitbinary_encoder_encode_attribute(mal_encoder_t *malsplitbinary_encode
     rc = malsplitbinary_encoder_encode_uri(malsplitbinary_encoder, cursor, self.uri_value);
     break;
   default:
-    //nothing to do
-    break;
+    clog_error(malsplitbinary_encoder->logger, "Unexpected attribute tag value: %d\n", attribute_tag);
+    return -1;
   }
   return rc;
 }
