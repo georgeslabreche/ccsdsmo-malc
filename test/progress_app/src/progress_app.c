@@ -29,7 +29,7 @@ mal_actor_t *consumer_actor = NULL;
 mal_actor_t *provider_actor = NULL;
 
 bool split = false;
-bool tcp = false;
+bool tcp = true;
 
 //  --------------------------------------------------------------------------
 //  Selftest
@@ -163,8 +163,12 @@ void progress_app_test(bool verbose) {
 
   // Start blocks until interrupted (see zloop).
   mal_ctx_start(mal_ctx);
-  
   printf("Stopped.\n");
+  
+  printf("provider is alive: %d / %d\n", mal_actor_alive(provider_actor), mal_actor_active_count());
+  mal_actor_join(provider_actor);
+  printf("consumer is alive: %d / %d\n", mal_actor_alive(consumer_actor), mal_actor_active_count());
+  mal_actor_join(consumer_actor);
   
   mal_actor_destroy(mal_ctx, &consumer_actor);
   mal_actor_destroy(mal_ctx, &provider_actor);
