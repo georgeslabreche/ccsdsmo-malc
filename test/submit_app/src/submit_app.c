@@ -121,6 +121,7 @@ void submit_app_test(bool verbose) {
         "localhost", "6666",
         malzmq_header,
         true);
+    malzmq_set_log_level(CLOG_DEBUG_LEVEL);
     // Change the logging level of malzmq encoding
     mal_encoder_set_log_level(malzmq_get_encoder((malzmq_ctx_t *) ctx), CLOG_WARN_LEVEL);
     mal_decoder_set_log_level(malzmq_get_decoder((malzmq_ctx_t *) ctx), CLOG_WARN_LEVEL);
@@ -150,7 +151,9 @@ void submit_app_test(bool verbose) {
   
   printf("Stopped.\n");
   
+  mal_actor_join(consumer_actor);
   mal_actor_destroy(mal_ctx, &consumer_actor);
+  mal_actor_join(provider_actor);
   mal_actor_destroy(mal_ctx, &provider_actor);
 
   mal_ctx_destroy(&mal_ctx);
