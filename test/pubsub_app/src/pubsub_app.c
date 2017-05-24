@@ -225,7 +225,6 @@ void pubsub_app_test(bool verbose) {
   mal_ctx_start(mal_ctx);
   printf("Stopped.\n");
 
-
   mal_actor_join(publisher_actor);
   mal_actor_destroy(mal_ctx, &publisher_actor);
   mal_actor_join(subscriber_actor);
