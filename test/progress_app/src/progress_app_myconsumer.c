@@ -261,8 +261,11 @@ int progress_app_myconsumer_testarea_testservice_testprogress_response(
   printf("Consumer done.\n");
 
   mal_actor_term(provider_actor);
+  mal_actor_join(provider_actor);
+
   mal_actor_term(consumer_actor);
 
+  printf("Stop context.\n");
   mal_ctx_stop(mal_ctx);
 
 	return 0;
