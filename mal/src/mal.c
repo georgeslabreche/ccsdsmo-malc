@@ -235,9 +235,7 @@ int mal_publish_deregister_encode_entitykey_list(
 int mal_publish_add_encoding_length_updateheader_list(
     mal_encoder_t *encoder, mal_updateheader_list_t *element,
     void *cursor) {
-  int rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
-  if (rc < 0)
-    return rc;
+  int rc = 0;
   if (element != NULL) {
     rc = mal_updateheader_list_add_encoding_length_malbinary(element,
         encoder, cursor);
@@ -248,9 +246,7 @@ int mal_publish_add_encoding_length_updateheader_list(
 }
 
 int mal_publish_encode_updateheader_list(void *cursor, mal_encoder_t *encoder, mal_updateheader_list_t *element) {
-  int rc = mal_encoder_encode_presence_flag(encoder, cursor, (element != NULL));
-  if (rc < 0)
-    return rc;
+  int rc = 0;
   if (element != NULL) {
     rc = mal_updateheader_list_encode_malbinary(element, encoder, cursor);
     if (rc < 0)
@@ -260,10 +256,8 @@ int mal_publish_encode_updateheader_list(void *cursor, mal_encoder_t *encoder, m
 }
 
 int mal_publish_decode_updateheader_list(void *cursor, mal_decoder_t *decoder, mal_updateheader_list_t **res) {
-  bool presence_flag;
-  int rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
-  if (rc < 0)
-    return rc;
+  bool presence_flag = true;
+  int rc = 0;
   mal_updateheader_list_t *element;
   if (presence_flag) {
     element = mal_updateheader_list_new(1);
@@ -278,10 +272,8 @@ int mal_publish_decode_updateheader_list(void *cursor, mal_decoder_t *decoder, m
 }
 
 int mal_notify_decode_updateheader_list(void *cursor, mal_decoder_t *decoder, mal_updateheader_list_t **res) {
-  bool presence_flag;
-  int rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
-  if (rc < 0)
-    return rc;
+  bool presence_flag = true;
+  int rc = 0;
   mal_updateheader_list_t *element;
   if (presence_flag) {
     element = mal_updateheader_list_new(1);
