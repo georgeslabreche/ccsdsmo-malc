@@ -76,9 +76,7 @@ void mal_set_log_level(int level) {
 
 int mal_register_add_encoding_length(mal_encoder_t *encoder,
     mal_subscription_t *element, void *cursor) {
-  int rc = mal_encoder_add_presence_flag_encoding_length(encoder, (element != NULL), cursor);
-  if (rc < 0)
-    return rc;
+  int rc = 0;
   if (element != NULL) {
     rc = mal_subscription_add_encoding_length_malbinary(element, encoder, cursor);
     if (rc < 0)
@@ -88,9 +86,7 @@ int mal_register_add_encoding_length(mal_encoder_t *encoder,
 }
 
 int mal_register_encode(void *cursor, mal_encoder_t *encoder, mal_subscription_t *element) {
-  int rc = mal_encoder_encode_presence_flag(encoder, cursor, (element != NULL));
-  if (rc < 0)
-    return rc;
+  int rc = 0;
   if (element != NULL) {
     rc = mal_subscription_encode_malbinary(element, encoder, cursor);
     if (rc < 0)
@@ -100,10 +96,8 @@ int mal_register_encode(void *cursor, mal_encoder_t *encoder, mal_subscription_t
 }
 
 int mal_register_decode(void *cursor, mal_decoder_t *decoder, mal_subscription_t **res) {
-  bool presence_flag;
-  int rc = mal_decoder_decode_presence_flag(decoder, cursor, &presence_flag);
-  if (rc < 0)
-    return rc;
+  bool presence_flag = true;
+  int rc = 0;
   mal_subscription_t *element;
   if (presence_flag) {
     element = mal_subscription_new();
