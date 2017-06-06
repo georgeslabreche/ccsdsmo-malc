@@ -207,17 +207,11 @@ void malsplitbinary_cursor_print(malsplitbinary_cursor_t *cursor) {
 
 void malsplitbinary_cursor_dump(malsplitbinary_cursor_t *cursor) {
   char *bitfield = malsplitbinary_cursor_get_bitfield_ptr(cursor);
-  int length = malsplitbinary_cursor_get_bitfield_length(cursor);
-  if (length > 9) {
-    // Avoid abnormal cursors
-    clog_debug(malsplitbinary_logger, "invalid bitfield length=%d\n", length);
-    return;
-  }
   int bitfield_idx = malsplitbinary_cursor_get_bitfield_idx(cursor);
-  clog_debug(malsplitbinary_logger, "malsplitbinary_cursor(bitfield_length=%d:[", length);
+  clog_debug(malsplitbinary_logger, "malsplitbinary_cursor(bitfield_length=%d:[", cursor->bitfield_length);
   if (bitfield != NULL)
-  for (int i = 0; i < length ; i++) {
-    for (int j = 0 ; j < 8 ; j++) {
+  for (int i = 0 ; cursor->bitfield_length > 0 && i < (cursor->bitfield_length/8 + 1) ; i++) {
+    for (int j = 0 ; j < 8 && (i*8+j) < cursor->bitfield_length ; j++) {
       if ((i*8+j) == bitfield_idx) {
         // Add a marker for the current position
         clog_debug_no_header(malsplitbinary_logger, ">");
