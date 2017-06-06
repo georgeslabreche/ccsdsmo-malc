@@ -84,6 +84,7 @@ unsigned int malsplitbinary_cursor_get_bitfield_length(malsplitbinary_cursor_t *
 char *malsplitbinary_cursor_get_body_ptr(malsplitbinary_cursor_t *cursor);
 unsigned int malsplitbinary_cursor_get_body_offset(malsplitbinary_cursor_t *cursor);
 void malsplitbinary_cursor_print(malsplitbinary_cursor_t *cursor);
+void malsplitbinary_cursor_dump(malsplitbinary_cursor_t *cursor);
 
 unsigned int malsplitbinary_cursor_get_length(void *cursor);
 unsigned int malsplitbinary_cursor_get_offset(void *cursor);
