@@ -205,6 +205,37 @@ void malsplitbinary_cursor_print(malsplitbinary_cursor_t *cursor) {
   clog_debug_no_header(malsplitbinary_logger, ")\n");
 }
 
+void malsplitbinary_cursor_dump(malsplitbinary_cursor_t *cursor) {
+  char *bitfield = malsplitbinary_cursor_get_bitfield_ptr(cursor);
+  int bitfield_idx = malsplitbinary_cursor_get_bitfield_idx(cursor);
+  clog_debug(malsplitbinary_logger, "malsplitbinary_cursor(bitfield_length=%d:[", cursor->bitfield_length);
+  if (bitfield != NULL)
+  for (int i = 0 ; cursor->bitfield_length > 0 && i < (cursor->bitfield_length/8 + 1) ; i++) {
+    for (int j = 0 ; j < 8 && (i*8+j) < cursor->bitfield_length ; j++) {
+      if ((i*8+j) == bitfield_idx) {
+        // Add a marker for the current position
+        clog_debug_no_header(malsplitbinary_logger, ">");
+      }
+      clog_debug_no_header(malsplitbinary_logger, "%d", (bitfield[i] & (1 << j)) >> j);
+    }
+  }
+  clog_debug_no_header(malsplitbinary_logger, "]");
+  char *body = malsplitbinary_cursor_get_body_ptr(cursor);
+  unsigned int body_len = malsplitbinary_cursor_get_body_length(cursor);
+  int body_offset = malsplitbinary_cursor_get_body_offset(cursor);
+  clog_debug_no_header(malsplitbinary_logger, ",body_length=%d:[", body_len);
+  if (body != NULL)
+  for (int j = 0 ; j < body_len ; j++) {
+    if (j == body_offset) {
+      // Add a marker for the current position
+      clog_debug_no_header(malsplitbinary_logger, ">");
+    }
+    clog_debug_no_header(malsplitbinary_logger, "%02X ", (unsigned char)body[j]);
+  }
+  clog_debug_no_header(malsplitbinary_logger,"])\n");
+}
+
+
 void malsplitbinary_test(bool verbose) {
   printf(" * malsplitbinary: ");
   if (verbose)
