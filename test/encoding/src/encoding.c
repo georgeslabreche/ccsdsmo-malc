@@ -392,6 +392,74 @@ bool encoding_test_long(bool split, long value, bool verbose) {
   return (err == 0);
 }
 
+bool encoding_test_bools(bool split, unsigned int nb, unsigned long value, bool verbose) {
+  int err = 0;
+  if (verbose)
+    printf("Test encode_bools(%s, %d, %0lx)\n", split?"true":"false", nb, value);
+
+  mal_encoder_t *encoder;
+  mal_decoder_t *decoder;
+  if (split) {
+    encoder = malsplitbinary_encoder_new();
+    decoder = malsplitbinary_decoder_new();
+  } else {
+    encoder = malbinary_encoder_new(false);
+    decoder = malbinary_decoder_new(false);
+  }
+
+  void *cursor1 = mal_encoder_new_cursor(encoder);
+  int size = mal_encoder_cursor_get_length(encoder, cursor1);
+  for (int i = 0 ; i<nb ; i++) {
+    encoder->mal_encoder_add_boolean_encoding_length(encoder, value, cursor1);
+  }
+  size = (mal_encoder_cursor_get_length(encoder, cursor1) - size);
+  unsigned int length = mal_encoder_cursor_get_length(encoder, cursor1);
+  char* buf = (char *) calloc(1, length);
+  mal_encoder_cursor_init(
+        encoder, cursor1,
+        buf,
+        length,
+        0);
+  for (int i = 0 ; i<nb ; i++) {
+    encoder->mal_encoder_encode_boolean(encoder, cursor1, (value >> i) & 0x01);
+  }
+  int offset1 = mal_encoder_cursor_get_offset(encoder, cursor1);
+  if (size != offset1) {
+    if (verbose)
+      printf("Test encode_bools(%s, %ld) Bad encoding offset: %d != %d\n", split?"true":"false", value, size, offset1);
+    err +=1;
+  }
+
+  void *cursor2 = mal_decoder_new_cursor(
+      decoder,
+      buf,
+      length,
+      0);
+  unsigned long decoded = 0;
+  for (int i = 0 ; i<nb ; i++) {
+    mal_boolean_t current;
+    decoder->mal_decoder_decode_boolean(decoder, cursor2, &current);
+    decoded = decoded | (current << i);
+  }
+  int offset2 = mal_encoder_cursor_get_offset(encoder, cursor2);
+  if (size != offset2) {
+    if (verbose)
+      printf("Test encode_bools(%s, %ld) Bad decoding offset: %d != %d\n", split?"true":"false", value, size, offset2);
+    err +=1;
+  }
+  if (decoded != value) {
+    if (verbose)
+      printf("Test encode_bools(%s, %ld) Bad decoding value\n", split?"true":"false", value);
+    err +=1;
+  }
+
+  if ((verbose) || (err > 0))
+    printf("Test encode_bools -> %d/%d/%d, %0lx ? %0lx %s\n",
+        size, offset1, offset2, value, decoded, (err == 0)?"OK":"ERROR");
+
+  return (err == 0);
+}
+
 bool encoding_test1(bool split, bool verbose) {
   bool ok = true;
 
@@ -435,6 +503,13 @@ bool encoding_test1(bool split, bool verbose) {
   ok &= encoding_test_long(split, 1L<<32, true);
   ok &= encoding_test_long(split, 1L<<62, true);
   ok &= encoding_test_long(split, -(1L<<62), true);
+
+  ok &= encoding_test_bools(split, 1, 1, true);
+  ok &= encoding_test_bools(split, 2, 0x2, true);
+  ok &= encoding_test_bools(split, 8, 0x55, true);
+  ok &= encoding_test_bools(split, 16, 0x5555, true);
+  ok &= encoding_test_bools(split, 24, 0x555555, true);
+  ok &= encoding_test_bools(split, 32, 0x55555555, true);
 
   return ok;
 }

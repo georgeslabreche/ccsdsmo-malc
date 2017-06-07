@@ -192,17 +192,17 @@ unsigned int malsplitbinary_cursor_get_offset(void *cursor) {
 
 
 void malsplitbinary_cursor_print(malsplitbinary_cursor_t *cursor) {
-  clog_info(malsplitbinary_logger, "malsplitbinary_cursor(");
+  clog_debug(malsplitbinary_logger, "malsplitbinary_cursor(");
   if (cursor) {
-    clog_info(malsplitbinary_logger, "bitfield_idx=%d, ", malsplitbinary_cursor_get_bitfield_idx(cursor));
-    clog_info(malsplitbinary_logger, "bitfield_length=%d, ", malsplitbinary_cursor_get_bitfield_length(cursor));
-    clog_info(malsplitbinary_logger, "most_significant=%d, ", malsplitbinary_cursor_get_most_significant(cursor));
-    clog_info(malsplitbinary_logger, "body_offset=%d, ", malsplitbinary_cursor_get_body_offset(cursor));
-    clog_info(malsplitbinary_logger, "body_length=%d", malsplitbinary_cursor_get_body_length(cursor));
+    clog_debug_no_header(malsplitbinary_logger, "bitfield_idx=%d, ", malsplitbinary_cursor_get_bitfield_idx(cursor));
+    clog_debug_no_header(malsplitbinary_logger, "bitfield_length=%d, ", malsplitbinary_cursor_get_bitfield_length(cursor));
+    clog_debug_no_header(malsplitbinary_logger, "most_significant=%d, ", malsplitbinary_cursor_get_most_significant(cursor));
+    clog_debug_no_header(malsplitbinary_logger, "body_offset=%d, ", malsplitbinary_cursor_get_body_offset(cursor));
+    clog_debug_no_header(malsplitbinary_logger, "body_length=%d", malsplitbinary_cursor_get_body_length(cursor));
   } else {
-    clog_info(malsplitbinary_logger, "NULL");
+    clog_debug_no_header(malsplitbinary_logger, "NULL");
   }
-  clog_info(malsplitbinary_logger, ")\n");
+  clog_debug_no_header(malsplitbinary_logger, ")\n");
 }
 
 void malsplitbinary_test(bool verbose) {
