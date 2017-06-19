@@ -54,7 +54,7 @@ Duration
 Definition of type `MAL::Duration`:
 
 ```c
-	typedef float mal_duration_t;
+	typedef double mal_duration_t;
 ```
 
 String type

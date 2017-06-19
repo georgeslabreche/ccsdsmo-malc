@@ -507,7 +507,7 @@ int malbinary_encoder_encode_attribute_tag(mal_encoder_t *self, void *cursor, un
 
 int malbinary_encoder_add_duration_encoding_length(mal_encoder_t *self,
     mal_duration_t to_encode, void *cursor) {
-  return malbinary_encoder_add_float_encoding_length(self, (mal_float_t) to_encode, cursor);
+  return malbinary_encoder_add_double_encoding_length(self, (mal_float_t) to_encode, cursor);
 }
 
 int floatToIntBits(float x) {
@@ -579,7 +579,7 @@ int malbinary_encoder_add_finetime_encoding_length(mal_encoder_t *self,
 }
 
 int malbinary_encoder_encode_duration(mal_encoder_t *self, void *cursor, mal_duration_t to_encode) {
- return  malbinary_encoder_encode_float(self, cursor, (mal_float_t) to_encode);
+ return  malbinary_encoder_encode_double(self, cursor, (mal_float_t) to_encode);
 }
 
 int malbinary_encoder_encode_float(mal_encoder_t *self, void *cursor, mal_float_t to_encode) {

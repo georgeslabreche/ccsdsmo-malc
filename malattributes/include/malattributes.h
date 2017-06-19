@@ -78,7 +78,7 @@ typedef char mal_identifier_t;
 typedef char mal_uri_t;
 typedef unsigned long mal_time_t;
 typedef unsigned long mal_finetime_t;
-typedef float mal_duration_t;
+typedef double mal_duration_t;
 
 #define MAL_BLOB_SHORT_FORM 0x1000001000001L
 #define MAL_BOOLEAN_SHORT_FORM 0x1000001000002L
