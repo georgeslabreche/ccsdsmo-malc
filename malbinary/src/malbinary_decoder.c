@@ -339,7 +339,7 @@ int malbinary_decoder_decode_attribute_tag(mal_decoder_t *self, void *cursor, un
 }
 
 int malbinary_decoder_decode_duration(mal_decoder_t *self, void *cursor, mal_duration_t *result) {
-  return malbinary_decoder_decode_float(self, cursor, result);
+  return malbinary_decoder_decode_double(self, cursor, result);
 }
 
 float intBitsToFloat(int x) {
