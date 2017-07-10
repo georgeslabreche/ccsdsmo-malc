@@ -89,6 +89,12 @@ unsigned int malbinary_cursor_get_offset(void *cursor);
 
 void malbinary_test(bool verbose);
 
+#define ONE_MILLION 1000000L
+#define MILLISECONDS_FROM_CCSDS_TO_UNIX_EPOCH 378691200000L
+#define MILLISECONDS_IN_DAY 86400000L
+#define NANOSECONDS_FROM_CCSDS_TO_UNIX_EPOCH (MILLISECONDS_FROM_CCSDS_TO_UNIX_EPOCH * ONE_MILLION)
+#define NANOSECONDS_IN_DAY (MILLISECONDS_IN_DAY * ONE_MILLION)
+
 //  Public API classes
 #include "malbinary_encoder.h"
 #include "malbinary_decoder.h"
