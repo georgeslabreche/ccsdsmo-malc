@@ -295,7 +295,7 @@ int malzmq_add_message_encoding_length(malzmq_header_t *malzmq_header,
   // +1 bytes: is error message + qos level + session
   // +8 bytes: transaction id
   // +1 byte: flags
-  ((malbinary_cursor_t *) cursor)->body_length += 1 + 2 * 3 + 1 + 1 + 8 + 1;
+  ((malbinary_cursor_t *) cursor)->body_length += 18;
 
   // always encode 'URI From' and 'URI To'
   rc = malzmq_add_uri_encoding_length(mal_message_get_uri_from(message),
@@ -305,7 +305,12 @@ int malzmq_add_message_encoding_length(malzmq_header_t *malzmq_header,
       malzmq_header_get_mapping_directory(malzmq_header), encoder, cursor);
   if (rc < 0) return rc;
 
-  char encoding_id_flag = malzmq_header_get_encoding_id_flag(malzmq_header);
+  char encoding_id_flag;
+  mal_uoctet_t encoding_id = mal_message_get_encoding_id(message);
+  if (encoding_id < 3)
+    encoding_id_flag = encoding_id;
+  else
+    encoding_id_flag = 3;
   bool priority_flag = malzmq_header_get_priority_flag(malzmq_header);
   bool timestamp_flag = malzmq_header_get_timestamp_flag(malzmq_header);
   bool network_zone_flag = malzmq_header_get_network_zone_flag(malzmq_header);
@@ -315,8 +320,7 @@ int malzmq_add_message_encoding_length(malzmq_header_t *malzmq_header,
       malzmq_header);
 
   if (encoding_id_flag == 3) {
-    rc = malbinary_encoder_add_uinteger_encoding_length(encoder,
-        mal_message_get_encoding_id(message), cursor);
+    rc = malbinary_encoder_add_uoctet_encoding_length(encoder, encoding_id, cursor);
     if (rc < 0) return rc;
   }
 
@@ -458,7 +462,12 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
 
   malbinary_write64(mal_message_get_transaction_id(message), cursor);
 
-  char encoding_id_flag = malzmq_header_get_encoding_id_flag(malzmq_header);
+  char encoding_id_flag;
+  mal_uoctet_t encoding_id = mal_message_get_encoding_id(message);
+  if (encoding_id < 3)
+    encoding_id_flag = encoding_id;
+  else
+    encoding_id_flag = 3;
   bool priority_flag = malzmq_header_get_priority_flag(malzmq_header);
   bool timestamp_flag = malzmq_header_get_timestamp_flag(malzmq_header);
   bool network_zone_flag = malzmq_header_get_network_zone_flag(malzmq_header);
@@ -485,7 +494,7 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
       malzmq_header_get_mapping_directory(malzmq_header), encoder, cursor);
 
    if (encoding_id_flag == 3) {
-     malbinary_encoder_encode_uoctet(encoder, cursor, mal_message_get_encoding_id(message));
+     malbinary_encoder_encode_uoctet(encoder, cursor, encoding_id);
    }
 
    if (priority_flag > 0) {
@@ -584,10 +593,9 @@ int malzmq_decode_uri_to(malzmq_header_t *malzmq_header,
   // +1 bytes: is error message + qos level + session
   // +8 bytes: transaction id
   // +1 bytes: flags
-  cursor.body_offset += 1 + 2 * 3 + 1 + 1 + 8 + 1;
+  cursor.body_offset += 18;
 
-  // Note: this ordering is not consistent with the blue book proposal
-
+  // Go beyond the 'URI From'
   mal_uri_t *uri_from;
   int rc = malzmq_decode_uri(malzmq_header_get_mapping_directory(malzmq_header),
         decoder, &cursor, &uri_from);
@@ -684,7 +692,7 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
   mal_message_set_transaction_id(message, transaction_id);
 
   b = ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++];
-  char encoding_id_flag = (b >> 6) & 0x02;
+  char encoding_id_flag = (b >> 6) & 0x03;
   bool priority_flag = (b >> 5) & 0x01;
   bool timestamp_flag = (b >> 4) & 0x01;
   bool network_zone_flag = (b >> 3) & 0x01;
@@ -711,11 +719,9 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
   if (encoding_id_flag == 3) {
     malbinary_decoder_decode_uoctet(decoder, cursor, &encoding_id);
     mal_message_set_encoding_id(message, encoding_id);
+  } else {
+    mal_message_set_encoding_id(message, encoding_id_flag);
   }
-  //else {
-  //  encoding_id = malzmq_header_get_encodingid(malzmq_header);
-  //  mal_message_set_encoding_id(message, 2);
-  //}
 
    mal_uinteger_t priority;
    if (priority_flag) {
