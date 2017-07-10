@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -273,6 +273,7 @@ int pubsub_app_mypublisher_on_publish_register_ack(void *self, mal_ctx_t *mal_ct
 
 int pubsub_app_mypublisher_on_publish_deregister_ack(void *self, mal_ctx_t *mal_ctx,
     mal_endpoint_t *mal_endpoint, mal_message_t *message) {
+  // Note: Never called!!
   int rc = 0;
 
   printf("Provider testpublish_deregister_ack done.\n");

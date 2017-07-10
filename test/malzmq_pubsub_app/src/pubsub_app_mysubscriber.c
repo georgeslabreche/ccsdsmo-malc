@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -188,6 +188,7 @@ int pubsub_app_mysubscriber_testregister_ack(void *self, mal_ctx_t *mal_ctx,
 
 int pubsub_app_mysubscriber_testderegister_ack(void *self, mal_ctx_t *mal_ctx,
     mal_endpoint_t *mal_endpoint, mal_message_t *message) {
+  // Note: Never called!!
   int rc = 0;
   printf("******** pubsub_app_mysubscriber_deregister_ack\n");
   return rc;
@@ -258,10 +259,18 @@ int pubsub_app_mysubscriber_testnotify(void *self, mal_ctx_t *mal_ctx,
 
   printf("Subscriber done.\n");
 
-  mal_actor_send_command(provider_actor, "$TERM");
-  mal_actor_send_command(consumer_actor, "$TERM");
-  mal_actor_send_command(broker_actor, "$TERM");
+  // Wait for actor's completion
   zclock_sleep(1000);
+
+  mal_actor_term(broker_actor);
+  mal_actor_join(broker_actor);
+  mal_actor_term(publisher_actor);
+  mal_actor_join(publisher_actor);
+  mal_actor_term(subscriber_actor);
+
+  // Wait for actor's completion
+  zclock_sleep(1000);
+
   mal_ctx_stop(mal_ctx);
   return rc;
 }

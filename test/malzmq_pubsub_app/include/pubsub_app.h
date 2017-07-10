@@ -56,8 +56,8 @@ void pubsub_app_test(bool verbose);
 #include "../../malzmq_pubsub_app/include/pubsub_app_mypublisher.h"
 #include "../../malzmq_pubsub_app/include/pubsub_app_broker.h"
 
-extern mal_actor_t *consumer_actor;
-extern mal_actor_t *provider_actor;
+extern mal_actor_t *publisher_actor;
+extern mal_actor_t *subscriber_actor;
 extern mal_actor_t *broker_actor;
 
 #ifdef __cplusplus

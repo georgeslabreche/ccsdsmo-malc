@@ -25,8 +25,8 @@
 /* */
 #include "../include/pubsub_app.h"
 
-mal_actor_t *consumer_actor = NULL;
-mal_actor_t *provider_actor = NULL;
+mal_actor_t *subscriber_actor = NULL;
+mal_actor_t *publisher_actor = NULL;
 mal_actor_t *broker_actor = NULL;
 
 //  --------------------------------------------------------------------------
@@ -54,12 +54,12 @@ int pubsub_app_create_publisher(
       authentication_id, qoslevel, priority, domain, network_zone, session,
       session_name, encoder, decoder);
 
-  provider_actor = mal_actor_new(
+  publisher_actor = mal_actor_new(
       mal_ctx,
       provider_uri, provider,
       pubsub_app_mypublisher_initialize, pubsub_app_mypublisher_finalize);
 
-  printf(" * pubsub_app create provider actor: %s\n", mal_actor_get_uri(provider_actor));
+  printf(" * pubsub_app create provider actor: %s\n", mal_actor_get_uri(publisher_actor));
 
   return rc;
 }
@@ -87,12 +87,12 @@ int pubsub_app_create_subscriber(
       authentication_id, qoslevel, priority, domain, network_zone, session,
       session_name, encoder, decoder);
 
-  consumer_actor = mal_actor_new(
+  subscriber_actor = mal_actor_new(
       mal_ctx,
       consumer_uri, consumer,
       pubsub_app_mysubscriber_initialize, pubsub_app_mysubscriber_finalize);
 
-  printf(" * pubsub_app create consumer actor: %s\n", mal_actor_get_uri(consumer_actor));
+  printf(" * pubsub_app create consumer actor: %s\n", mal_actor_get_uri(subscriber_actor));
 
   return rc;
 }
@@ -177,6 +177,14 @@ void pubsub_app_test(bool verbose) {
   // Start blocks until interrupted (see zloop).
   mal_ctx_start(mal_ctx);
   printf("Stopped.\n");
+
+  mal_actor_join(subscriber_actor);
+  mal_actor_destroy(mal_ctx, &subscriber_actor);
+  mal_actor_join(publisher_actor);
+  mal_actor_destroy(mal_ctx, &publisher_actor);
+  mal_actor_join(broker_actor);
+  mal_actor_destroy(mal_ctx, &broker_actor);
+
   mal_ctx_destroy(&mal_ctx);
   printf("destroyed.\n");
 }
