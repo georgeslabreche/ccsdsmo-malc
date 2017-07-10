@@ -58,10 +58,6 @@ bool malzmq_header_is_internal_broker(malzmq_header_t *self);
 
 void malzmq_header_enable_internal_broker(malzmq_header_t *self, bool internal_broker);
 
-char malzmq_header_get_encoding_id_flag(malzmq_header_t *self);
-
-void malzmq_header_set_encoding_id_flag(malzmq_header_t *self, char encoding_id_flag);
-
 bool malzmq_header_get_priority_flag(malzmq_header_t *self);
 
 void malzmq_header_set_priority_flag(malzmq_header_t *self, bool priority_flag);
@@ -94,10 +90,6 @@ mal_blob_t *malzmq_header_get_authentication_id(malzmq_header_t *self);
 
 void malzmq_header_set_authentication_id(malzmq_header_t *self,
     mal_blob_t *authentication_id);
-
-mal_uoctet_t malzmq_header_get_encoding_id(malzmq_header_t *self);
-
-void malzmq_header_set_encoding_id(malzmq_header_t *self, mal_uoctet_t encoding_id);
 
 mal_uinteger_t malzmq_header_get_priority(malzmq_header_t *self);
 
