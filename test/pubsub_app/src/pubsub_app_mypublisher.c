@@ -356,6 +356,7 @@ int pubsub_app_mypublisher_on_publish_deregister_ack(void *self, mal_ctx_t *mal_
 
   printf("\n\n-------------------- PUBLISH_DEREGISTER_ACK -----------------\n\n");//NTA tmp
 
+  mal_actor_term(broker_actor);
   mal_actor_term(publisher_actor);
 
   return rc;

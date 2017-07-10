@@ -197,7 +197,6 @@ int pubsub_app_mysubscriber_testderegister_ack(void *self, mal_ctx_t *mal_ctx,
   // Wait for actor's completion
   zclock_sleep(1000);
 
-  mal_actor_term(broker_actor);
   mal_actor_term(subscriber_actor);
 
   // Wait for actor's completion
