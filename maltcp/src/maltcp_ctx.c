@@ -40,16 +40,22 @@ struct _maltcp_ctx_t {
   void *endpoints_socket; // inproc connected to endpoints
   zloop_t *zloop;
   maltcp_header_t *maltcp_header;
+  // Private encoder / decoder used for PDU, always varint as the fixed part of the PDU
+  // is handled directly through malbinary methods.
   mal_encoder_t *encoder;
   mal_decoder_t *decoder;
 };
 
-mal_encoder_t *maltcp_get_encoder(maltcp_ctx_t *self) {
-  return self->encoder;
+void maltcp_ctx_set_encoder_log_level(maltcp_ctx_t *self, int level) {
+  if (self != NULL) {
+    mal_encoder_set_log_level(self->encoder, level);
+  }
 }
 
-mal_decoder_t *maltcp_get_decoder(maltcp_ctx_t *self) {
-  return self->decoder;
+void maltcp_ctx_set_decoder_log_level(maltcp_ctx_t *self, int level) {
+  if (self != NULL) {
+    mal_decoder_set_log_level(self->decoder, level);
+  }
 }
 
 //  --------------------------------------------------------------------------
@@ -464,8 +470,8 @@ maltcp_ctx_t *maltcp_ctx_new(mal_ctx_t *mal_ctx,
   self->port = port;
   self->maltcp_header = maltcp_header;
 
-  self->encoder = malbinary_encoder_new(false);
-  self->decoder = malbinary_decoder_new(false);
+  self->encoder = malbinary_encoder_new(true);
+  self->decoder = malbinary_decoder_new(true);
 
   self->root_uri = (char *) malloc(strlen(hostname) + strlen(port) + 10 + 1);
   sprintf((char*) self->root_uri, "%s%s:%s", MALTCP_URI, hostname, port);
@@ -536,9 +542,8 @@ int maltcp_ctx_stop(void *self) {
     int socket = mal_ctx->mal_socket;
     mal_ctx->mal_socket = -1;
     close(socket);
-
-    clog_debug(maltcp_logger, "maltcp_ctx_stop: stopped.\n");
   }
+  clog_debug(maltcp_logger, "maltcp_ctx_stop: stopped.\n");
 
   return 0;
 }
