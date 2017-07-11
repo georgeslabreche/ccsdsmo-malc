@@ -28,8 +28,8 @@
 mal_actor_t *consumer_actor = NULL;
 mal_actor_t *provider_actor = NULL;
 
-bool split = false;
-bool tcp = true;
+bool split = TEST_SPLIT;
+bool tcp = TEST_TCP;
 
 //  --------------------------------------------------------------------------
 //  Selftest
@@ -121,8 +121,8 @@ void progress_app_test(bool verbose) {
         true);
     maltcp_set_log_level(CLOG_DEBUG_LEVEL);
     // Change the logging level of maltcp encoding
-    mal_encoder_set_log_level(maltcp_get_encoder((maltcp_ctx_t *) ctx), CLOG_WARN_LEVEL);
-    mal_decoder_set_log_level(maltcp_get_decoder((maltcp_ctx_t *) ctx), CLOG_WARN_LEVEL);
+    maltcp_ctx_set_encoder_log_level((maltcp_ctx_t *) ctx, CLOG_WARN_LEVEL);
+    maltcp_ctx_set_decoder_log_level((maltcp_ctx_t *) ctx, CLOG_WARN_LEVEL);
   } else {
     malzmq_set_log_level(CLOG_WARN_LEVEL);
     // All the MAL header fields are passed
@@ -139,8 +139,8 @@ void progress_app_test(bool verbose) {
         true);
     malzmq_set_log_level(CLOG_DEBUG_LEVEL);
     // Change the logging level of malzmq encoding
-    mal_encoder_set_log_level(malzmq_get_encoder((malzmq_ctx_t *) ctx), CLOG_WARN_LEVEL);
-    mal_decoder_set_log_level(malzmq_get_decoder((malzmq_ctx_t *) ctx), CLOG_WARN_LEVEL);
+    malzmq_ctx_set_encoder_log_level((malzmq_ctx_t *) ctx, CLOG_WARN_LEVEL);
+    malzmq_ctx_set_decoder_log_level((malzmq_ctx_t *) ctx, CLOG_WARN_LEVEL);
   }
 
   mal_uri_t *provider_uri = mal_ctx_create_uri(mal_ctx, "progress_app/myprovider");
