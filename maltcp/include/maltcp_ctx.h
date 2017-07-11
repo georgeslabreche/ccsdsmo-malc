@@ -34,8 +34,8 @@ extern "C" {
 
 #include<pthread.h>
 
-mal_encoder_t *maltcp_get_encoder(maltcp_ctx_t *self);
-mal_decoder_t *maltcp_get_decoder(maltcp_ctx_t *self);
+void maltcp_ctx_set_encoder_log_level(maltcp_ctx_t *self, int level);
+void maltcp_ctx_set_decoder_log_level(maltcp_ctx_t *self, int level);
 
 maltcp_ctx_t *maltcp_ctx_new(
     mal_ctx_t *mal_ctx,
