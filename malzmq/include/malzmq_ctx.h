@@ -36,7 +36,9 @@ extern "C" {
 #define PROTOCOL_EPGM "epgm"
 #define PROTOCOL_PGM "pgm"
 
-#define SUB_NAME "MAL"
+// TODO (AF): fix SUB_NAME?
+// #define SUB_NAME "MAL"
+#define SUB_NAME ""
 
 typedef mal_uri_t *malzmq_get_local_ptp_zmtp_uri_fn(mal_uri_t *maluri);
 typedef mal_uri_t *malzmq_get_local_mcast_zmtp_uri_fn(mal_uri_t *maluri);
@@ -59,8 +61,8 @@ malzmq_ctx_t *malzmq_ctx_new(
     malzmq_header_t *malzmq_header,
     bool verbose);
 
-mal_encoder_t *malzmq_get_encoder(malzmq_ctx_t *self);
-mal_decoder_t *malzmq_get_decoder(malzmq_ctx_t *self);
+void malzmq_ctx_set_encoder_log_level(malzmq_ctx_t *self, int level);
+void malzmq_ctx_set_decoder_log_level(malzmq_ctx_t *self, int level);
 
 int malzmq_ctx_start(void *self);
 int malzmq_ctx_stop(void *self);
