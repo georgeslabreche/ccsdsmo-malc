@@ -39,6 +39,8 @@ void malbinary_init_decode_functions(mal_decoder_t *decoder);
 void malbinary_decoder_set_log_level(mal_decoder_t *self, int level);
 clog_logger_t malbinary_decoder_get_logger(mal_decoder_t *self);
 
+char malbinary_read(void *cursor);
+
 short malbinary_read16(void *cursor);
 
 int malbinary_read32(void *cursor);

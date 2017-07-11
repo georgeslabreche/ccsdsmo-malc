@@ -148,6 +148,8 @@ int malbinary_encoder_encode_ushort(mal_encoder_t *self, void *cursor, mal_ushor
 
 int malbinary_encoder_encode_boolean(mal_encoder_t *self, void *cursor, mal_boolean_t to_encode);
 
+void malbinary_write(char b, void *cursor);
+
 void malbinary_write16(int int_value, void *cursor);
 
 void malbinary_write32(int int_value, void *cursor);
