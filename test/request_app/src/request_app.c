@@ -25,8 +25,8 @@
 /* */
 #include "request_app.h"
 
-bool split = false;
-bool tcp = true;
+bool split = TEST_SPLIT;
+bool tcp = TEST_TCP;
 
 mal_actor_t *provider_actor = NULL;
 mal_actor_t *consumer_actor = NULL;
@@ -38,31 +38,31 @@ char **md_content = NULL;
 int md_size = 0;
 
 int md_get_key(char *string, unsigned int *key) {
-  printf("#DEBUG md_get_key(%s)\n", string);
   if (string == NULL) return -1;
   if (md_size == 0) return -1;
   for (int i = 0; i < md_size; i++) {
-	if (!strcmp(string, md_content[i])) {
-	  (*key) = i+1;
-	  printf("#DEBUG md_get_key(%s) -> %d\n", string, *key);
-	  return 0;
-	}
+    if (strcmp(string, md_content[i]) == 0) {
+      (*key) = (i+1);
+      printf("#DEBUG md_get_key(%s) -> %d\n", string, *key);
+      return 0;
+    }
   }
+  printf("#DEBUG md_get_key(%s) -> NOT FOUND\n", string);
   return -1;
 }
 
 int md_get_string(unsigned int key, char **string) {
-  printf("#DEBUG md_get_string(%d)\n", key);
   int i = key - 1;
-  if ((i < 0) || (i >= md_size))
-	return -1;
+  if ((i < 0) || (i >= md_size)) {
+    printf("#DEBUG md_get_string(%d) -> NOT FOUND\n", key);
+    return -1;
+  }
   (*string) = md_content[i];
   printf("#DEBUG md_get_key(%d) -> %s\n", key, *string);
   return 0;
 }
 
 int md_put_string(char *string, unsigned int *key) {
-  printf("#DEBUG md_put_string(%s)\n", string);
   if (md_size >= MD_SIZE)
 	return -1;
   if (md_size == 0) {
@@ -143,25 +143,17 @@ void request_app_test(bool verbose) {
   if (tcp) {
     // All the MAL header fields are passed
     maltcp_header_t *maltcp_header = maltcp_header_new(true, 0, true, NULL, NULL, NULL, NULL);
-
-    // This test uses the same encoding configuration at the MAL/ZMQ transport
-    // level (MAL header encoding) and at the application
-    // level (MAL message body encoding)
     ctx = maltcp_ctx_new(
         mal_ctx,
         "127.0.0.1", "6666",
         maltcp_header,
         true);
     // Change the logging level of maltcp encoding
-    mal_encoder_set_log_level(maltcp_get_encoder((maltcp_ctx_t *) ctx), CLOG_WARN_LEVEL);
-    mal_decoder_set_log_level(maltcp_get_decoder((maltcp_ctx_t *) ctx), CLOG_WARN_LEVEL);
+    maltcp_ctx_set_encoder_log_level((maltcp_ctx_t *) ctx, CLOG_WARN_LEVEL);
+    maltcp_ctx_set_decoder_log_level((maltcp_ctx_t *) ctx, CLOG_WARN_LEVEL);
   } else {
     // All the MAL header fields are passed
     malzmq_header_t *malzmq_header = malzmq_header_new(&mapping_directory, true, 0, true, NULL, NULL, NULL, NULL);
-
-    // This test uses the same encoding configuration at the MAL/ZMQ transport
-    // level (MAL header encoding) and at the application
-    // level (MAL message body encoding)
     ctx = malzmq_ctx_new(
         mal_ctx,
         NULL,                 // Use default transformation of MAL URI to ZMQ URI
@@ -169,16 +161,19 @@ void request_app_test(bool verbose) {
         malzmq_header,
         true);
     // Change the logging level of malzmq encoding
-    mal_encoder_set_log_level(malzmq_get_encoder((malzmq_ctx_t *) ctx), CLOG_WARN_LEVEL);
-    mal_decoder_set_log_level(malzmq_get_decoder((malzmq_ctx_t *) ctx), CLOG_WARN_LEVEL);
+    malzmq_ctx_set_encoder_log_level((malzmq_ctx_t *) ctx, CLOG_WARN_LEVEL);
+    malzmq_ctx_set_decoder_log_level((malzmq_ctx_t *) ctx, CLOG_WARN_LEVEL);
   }
 
   mal_uri_t *provider_uri = mal_ctx_create_uri(mal_ctx, "request_app/myprovider");
   printf("request_app: provider URI: %s\n", provider_uri);
+//  mal_uri_t *consumer_uri = mal_ctx_create_uri(mal_ctx, "request_app/myconsumer");
+//  printf("request_app: consumer URI: %s\n", consumer_uri);
 
   if (!tcp) {
     unsigned int md_key;
     mapping_directory.put_string_fn(provider_uri, &md_key);
+//    mapping_directory.put_string_fn(consumer_uri, &md_key);
   }
 
   mal_encoder_t *encoder;
@@ -202,8 +197,11 @@ void request_app_test(bool verbose) {
   
   printf("Stopped.\n");
 
-  mal_actor_destroy(mal_ctx, &consumer_actor);
+  mal_actor_join(provider_actor);
   mal_actor_destroy(mal_ctx, &provider_actor);
+
+  mal_actor_join(consumer_actor);
+  mal_actor_destroy(mal_ctx, &consumer_actor);
   
   mal_ctx_destroy(&mal_ctx);
   printf("destroyed.\n");
