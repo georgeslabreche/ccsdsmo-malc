@@ -116,8 +116,7 @@ malzmq_mapping_directory_t *malzmq_header_get_mapping_directory(malzmq_header_t 
   return self->mapping_directory;
 }
 
-void malzmq_header_set_mapping_directory(malzmq_header_t *self,
-	malzmq_mapping_directory_t *mapping_directory) {
+void malzmq_header_set_mapping_directory(malzmq_header_t *self, malzmq_mapping_directory_t *mapping_directory) {
   self->mapping_directory = mapping_directory;
 }
 
