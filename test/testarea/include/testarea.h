@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
+
+#define TEST_SPLIT (false)
+#define TEST_TCP (false)
 
 #include "mal.h"
 #include "malbinary.h"
