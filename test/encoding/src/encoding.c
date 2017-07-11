@@ -25,9 +25,6 @@
 /* */
 #include "../include/encoding.h"
 
-bool split = false;
-bool tcp = true;
-
 //  --------------------------------------------------------------------------
 //  Selftest
 
