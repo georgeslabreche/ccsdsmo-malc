@@ -28,8 +28,8 @@
 zactor_t *provider_actor = NULL;
 zactor_t *consumer_actor = NULL;
 
-bool split = true;
-bool tcp = true;
+bool split = TEST_SPLIT;
+bool tcp = TEST_TCP;
 
 //  --------------------------------------------------------------------------
 //  Selftest
