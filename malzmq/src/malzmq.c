@@ -226,12 +226,11 @@ static mal_uoctet_t convert_to_interaction_stage(int sduType) {
 int malzmq_add_string_encoding_length(mal_string_t *to_encode,
     malzmq_mapping_directory_t *mapping_directory, mal_encoder_t *encoder,
     void *cursor) {
-  int rc = 0;
   bool mdk_encode = false;
   unsigned int md_key;
   // find the string in the mapping directory
   if (mapping_directory != NULL) {
-    rc = mapping_directory->get_key_fn(to_encode, &md_key);
+    int rc = mapping_directory->get_key_fn(to_encode, &md_key);
     if ((rc == 0) && (md_key > 0))
       mdk_encode = true;
   }
@@ -246,7 +245,7 @@ int malzmq_add_string_encoding_length(mal_string_t *to_encode,
       ((malbinary_cursor_t *) cursor)->body_length += 4 + length;
     }
   }
-  return rc;
+  return 0;
 }
 
 int malzmq_add_uri_encoding_length(mal_uri_t *to_encode,
@@ -325,15 +324,12 @@ int malzmq_add_message_encoding_length(malzmq_header_t *malzmq_header,
   }
 
   if (priority_flag > 0) {
-    rc = malbinary_encoder_add_uinteger_encoding_length(encoder,
-        mal_message_get_priority(message), cursor);
+    rc = malbinary_encoder_add_uinteger_encoding_length(encoder, mal_message_get_priority(message), cursor);
     if (rc < 0) return rc;
   }
 
   if (timestamp_flag > 0) {
-    rc = malbinary_encoder_add_time_encoding_length(encoder,
-        mal_message_get_timestamp(message), cursor);
-    if (rc < 0) return rc;
+    ((malbinary_cursor_t *) cursor)->body_length += 6;
   }
 
   if (network_zone_flag > 0) {
@@ -355,8 +351,7 @@ int malzmq_add_message_encoding_length(malzmq_header_t *malzmq_header,
   }
 
   if (authentication_id_flag > 0) {
-    rc = malbinary_encoder_add_blob_encoding_length(encoder,
-        mal_message_get_authentication_id(message), cursor);
+    rc = malbinary_encoder_add_blob_encoding_length(encoder, mal_message_get_authentication_id(message), cursor);
     if (rc < 0) return rc;
   }
 
@@ -371,17 +366,16 @@ int malzmq_encode_string(
     malzmq_mapping_directory_t *mapping_directory,
     mal_encoder_t *encoder,
     void *cursor) {
-  int rc = 0;
   bool mdk_encode = false;
   unsigned int md_key;
   // find the string in the mapping directory
   if (mapping_directory != NULL) {
-    rc = mapping_directory->get_key_fn(to_encode, &md_key);
+    int rc = mapping_directory->get_key_fn(to_encode, &md_key);
     if ((rc == 0) && (md_key > 0))
       mdk_encode = true;
   }
   if (mdk_encode) {
-    int opt_mdk = - md_key;
+    int opt_mdk = (-md_key);
     // check opt_mdk is negative
     if (! (opt_mdk < 0)) {
       clog_error(malzmq_logger, "malzmq_encode_string, bad optional key: %d.", opt_mdk);
@@ -395,10 +389,10 @@ int malzmq_encode_string(
       clog_error(malzmq_logger, "malzmq_encode_string, length too large: %d.", len);
       return -1;
     }
-    rc = malbinary_encoder_encode_integer(encoder, cursor, len);
+    malbinary_encoder_encode_integer(encoder, cursor, len);
     malbinary_write_array(to_encode, len, cursor);
   }
-  return rc;
+  return 0;
 }
 
 int malzmq_encode_uri(mal_uri_t *to_encode,
@@ -435,8 +429,27 @@ int malzmq_encode_identifier_list(mal_identifier_list_t *to_encode,
   return rc;
 }
 
-int malzmq_encode_message(malzmq_header_t *malzmq_header,
-    mal_message_t *message, mal_encoder_t *encoder, void *cursor) {
+int malzmq_encode_time(mal_encoder_t *encoder, void *cursor, mal_time_t to_encode) {
+  int rc = 0;
+
+  clog_debug(malzmq_logger, "malzmq_encode_time: to_encode = %lu\n", to_encode);
+
+  long timestamp = to_encode;
+  timestamp += MILLISECONDS_FROM_CCSDS_TO_UNIX_EPOCH;
+  long days = timestamp / MILLISECONDS_IN_DAY;
+  long millisecondsInDay = (timestamp % MILLISECONDS_IN_DAY);
+
+  if (days > 65535)
+  {
+    clog_debug(malzmq_logger, "malzmq_encode_time: days > 65535\n");
+    return 1;
+  }
+  malbinary_write16(days, cursor);
+  malbinary_write32(millisecondsInDay, cursor);
+  return rc;
+}
+
+int malzmq_encode_message(malzmq_header_t *malzmq_header, mal_message_t *message, mal_encoder_t *encoder, void *cursor) {
   clog_debug(mal_encoder_get_logger(encoder), "malzmq_encode_message()\n");
 
   int sdu_type = convert_to_sdu_type(
@@ -484,9 +497,6 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
              (domain_flag << 1) |
              (authentication_id_flag << 0);
 
-  // Use Varint!
-  ((mal_encoder_t *) encoder)->varint_supported = true;
-
   // always encode 'URI From' and 'URI To'
   malzmq_encode_uri(mal_message_get_uri_from(message),
       malzmq_header_get_mapping_directory(malzmq_header), encoder, cursor);
@@ -501,8 +511,8 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
      malbinary_encoder_encode_uinteger(encoder, cursor, mal_message_get_priority(message));
    }
 
-  if (timestamp_flag > 0) {
-    malbinary_encoder_encode_ulong(encoder, cursor, mal_message_get_timestamp(message));
+  if (timestamp_flag != false) {
+    malzmq_encode_time(encoder, cursor, mal_message_get_timestamp(message));
   }
 
   if (network_zone_flag > 0) {
@@ -524,9 +534,6 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
     malbinary_encoder_encode_blob(encoder, cursor, mal_message_get_authentication_id(message));
   }
 
-  // Stops using Varint
-  ((mal_encoder_t *) encoder)->varint_supported = false;
-
   // Copy the body in the frame.
   unsigned int body_length = mal_message_get_body_length(message);
   if (body_length > 0) {
@@ -546,8 +553,8 @@ int malzmq_encode_message(malzmq_header_t *malzmq_header,
 // internal functions, should not be visible from outside this module
 int malzmq_decode_string(malzmq_mapping_directory_t *mapping_directory,
     mal_decoder_t *decoder, void *cursor, mal_string_t **result) {
-  int rc = 0;
   mal_integer_t opt_mdk;
+
   malbinary_decoder_decode_integer(decoder, cursor, &opt_mdk);
   if (opt_mdk < 0) {
     unsigned int md_key = - opt_mdk;
@@ -555,7 +562,7 @@ int malzmq_decode_string(malzmq_mapping_directory_t *mapping_directory,
     // find the string in the mapping directory
     if (mapping_directory == NULL)
       return -1;
-    rc = mapping_directory->get_string_fn(md_key, &result_str);
+    int rc = mapping_directory->get_string_fn(md_key, &result_str);
     if (rc < 0)
       return rc;
     (*result) = mal_string_new(result_str);
@@ -567,7 +574,7 @@ int malzmq_decode_string(malzmq_mapping_directory_t *mapping_directory,
     (*result)[length] = '\0';
     ((malbinary_cursor_t *) cursor)->body_offset += length;
   }
-  return rc;
+  return 0;
 }
 
 int malzmq_decode_uri(malzmq_mapping_directory_t *mapping_directory,
@@ -642,8 +649,18 @@ int malzmq_decode_identifier_list(malzmq_mapping_directory_t *mapping_directory,
   return rc;
 }
 
-int malzmq_decode_message(malzmq_header_t *malzmq_header,
-    mal_message_t *message, mal_decoder_t *decoder, void *cursor) {
+int malzmq_decode_time(mal_decoder_t *decoder, void *cursor, mal_time_t *result) {
+  int rc = 0;
+  long days = malbinary_read16(cursor) & 0xFFFFL;
+  long millisecondsInDay = malbinary_read32(cursor) & 0xFFFFFFFFL;
+  long timestamp = days * MILLISECONDS_IN_DAY;
+  timestamp += millisecondsInDay;
+  timestamp -= MILLISECONDS_FROM_CCSDS_TO_UNIX_EPOCH;
+  *result = timestamp;
+  return rc;
+}
+
+int malzmq_decode_message(malzmq_header_t *malzmq_header, mal_message_t *message, mal_decoder_t *decoder, void *cursor) {
   char b = ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++];
 
   unsigned char version = (b >> 5) & 0x07;
@@ -700,9 +717,6 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
   bool domain_flag = (b >> 1) & 0x01;
   bool authentication_id_flag = b & 0x01;
 
-  // Use Varint!
-  ((mal_decoder_t *) decoder)->varint_supported = true;
-
   mal_uri_t *uri_from;
   malzmq_decode_uri(malzmq_header_get_mapping_directory(malzmq_header),
       decoder, cursor, &uri_from);
@@ -733,7 +747,7 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
 
   mal_time_t timestamp;
   if (timestamp_flag) {
-    malbinary_decoder_decode_ulong(decoder, cursor, &timestamp);
+    malzmq_decode_time(decoder, cursor, &timestamp);
   }
   mal_message_set_timestamp(message, timestamp);
 
@@ -779,9 +793,6 @@ int malzmq_decode_message(malzmq_header_t *malzmq_header,
     mal_message_set_free_authentication_id(message, false);
   }
   mal_message_set_authentication_id(message, authentication_id);
-
-  // Stops using Varint
-  ((mal_decoder_t *) decoder)->varint_supported = false;
 
   unsigned int body_offset = ((malbinary_cursor_t *) cursor)->body_offset;
   unsigned int body_length = ((malbinary_cursor_t *) cursor)->body_length - body_offset;
