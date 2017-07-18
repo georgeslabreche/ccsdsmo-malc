@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2017 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -78,6 +78,8 @@ typedef char mal_identifier_t;
 typedef char mal_uri_t;
 typedef unsigned long mal_time_t;
 typedef unsigned long mal_finetime_t;
+// TODO: Be careful, during MAL/ZMTP interop duration was defined as a float (fixed by Guilhem).
+// typedef float mal_duration_t;
 typedef double mal_duration_t;
 
 #define MAL_BLOB_SHORT_FORM 0x1000001000001L
