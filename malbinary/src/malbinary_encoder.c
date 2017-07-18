@@ -297,9 +297,8 @@ int malbinary_encoder_add_uri_encoding_length(mal_encoder_t *self,
 
 int malbinary_encoder_add_time_encoding_length(mal_encoder_t *self,
     mal_time_t to_encode, void *cursor) {
-  int rc = 0;
-  ((malbinary_cursor_t *) cursor)->body_length += 8;
-  return rc;
+  ((malbinary_cursor_t *) cursor)->body_length += 6;
+  return 0;
 }
 
 int malbinary_encoder_add_uoctet_encoding_length(mal_encoder_t *self, mal_uoctet_t to_encode, void *cursor) {
@@ -442,9 +441,18 @@ int malbinary_encoder_encode_blob(mal_encoder_t *self, void *cursor, mal_blob_t 
 }
 
 int malbinary_encoder_encode_time(mal_encoder_t *self, void *cursor, mal_time_t to_encode) {
-  int rc = 0;
-  malbinary_write64(to_encode, cursor);
-  return rc;
+  unsigned long timestamp = to_encode;
+  timestamp += MILLISECONDS_FROM_CCSDS_TO_UNIX_EPOCH;
+  long days = timestamp / MILLISECONDS_IN_DAY;
+  long millisecondsInDay = (timestamp % MILLISECONDS_IN_DAY);
+
+  if (days > 65535) {
+    clog_debug(mal_encoder_get_logger(self), "malbinary_encoder_encode_time: days > 65535\n");
+    return 1;
+  }
+  malbinary_write16(days, cursor);
+  malbinary_write32(millisecondsInDay, cursor);
+  return 0;
 }
 
 int malbinary_encoder_encode_uinteger(mal_encoder_t *self, void *cursor, mal_uinteger_t to_encode) {
@@ -507,6 +515,8 @@ int malbinary_encoder_encode_attribute_tag(mal_encoder_t *self, void *cursor, un
 
 int malbinary_encoder_add_duration_encoding_length(mal_encoder_t *self,
     mal_duration_t to_encode, void *cursor) {
+// TODO: Be careful, during MAL/ZMTP interop duration was defined as a float (fixed by Guilhem).
+//  return malbinary_encoder_add_float_encoding_length(self, (mal_float_t) to_encode, cursor);
   return malbinary_encoder_add_double_encoding_length(self, (mal_float_t) to_encode, cursor);
 }
 
@@ -573,12 +583,13 @@ int malbinary_encoder_add_ulong_encoding_length(mal_encoder_t *self,
 
 int malbinary_encoder_add_finetime_encoding_length(mal_encoder_t *self,
     mal_finetime_t to_encode, void *cursor) {
-  int rc = 0;
-  ((malbinary_cursor_t *) cursor)->body_length += 8;
-  return rc;
+  ((malbinary_cursor_t *) cursor)->body_length += 10;
+  return 0;
 }
 
 int malbinary_encoder_encode_duration(mal_encoder_t *self, void *cursor, mal_duration_t to_encode) {
+// TODO: Be careful, during MAL/ZMTP interop duration was defined as a float (fixed by Guilhem).
+// return  malbinary_encoder_encode_float(self, cursor, (mal_float_t) to_encode);
  return  malbinary_encoder_encode_double(self, cursor, (mal_float_t) to_encode);
 }
 
@@ -627,7 +638,22 @@ int malbinary_encoder_encode_ulong(mal_encoder_t *self, void *cursor, mal_ulong_
 }
 
 int malbinary_encoder_encode_finetime(mal_encoder_t *self, void *cursor, mal_finetime_t to_encode) {
-  malbinary_write64(to_encode, cursor);
+  unsigned long timestamp = to_encode;
+  timestamp += NANOSECONDS_FROM_CCSDS_TO_UNIX_EPOCH;
+  unsigned long days = timestamp / NANOSECONDS_IN_DAY;
+  unsigned long nanosecondsInDay = (timestamp % NANOSECONDS_IN_DAY);
+  unsigned long millisecondsInDay = nanosecondsInDay / ONE_MILLION;
+  unsigned long picosecondsInMillisecond = (nanosecondsInDay % ONE_MILLION) * 1000;
+
+  if (days > 65535)
+  {
+    clog_debug(mal_encoder_get_logger(self), "malbinary_encoder_encode_finetime: days > 65535\n");
+    return 1;
+  }
+  malbinary_write16(days, cursor);
+  malbinary_write32(millisecondsInDay, cursor);
+  malbinary_write32(picosecondsInMillisecond, cursor);
+
   return 0;
 }
 

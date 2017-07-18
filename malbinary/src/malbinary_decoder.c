@@ -283,7 +283,12 @@ int malbinary_decoder_decode_blob(mal_decoder_t *self, void *cursor, mal_blob_t 
 }
 
 int malbinary_decoder_decode_time(mal_decoder_t *self, void *cursor, mal_time_t *result) {
-  (*result) = malbinary_read64(cursor);
+  long days = malbinary_read16(cursor) & 0xFFFFL;
+  long millisecondsInDay = malbinary_read32(cursor) & 0xFFFFFFFFL;
+  long timestamp = days * MILLISECONDS_IN_DAY;
+  timestamp += millisecondsInDay;
+  timestamp -= MILLISECONDS_FROM_CCSDS_TO_UNIX_EPOCH;
+  (*result) = timestamp;
   return 0;
 }
 
@@ -339,6 +344,8 @@ int malbinary_decoder_decode_attribute_tag(mal_decoder_t *self, void *cursor, un
 }
 
 int malbinary_decoder_decode_duration(mal_decoder_t *self, void *cursor, mal_duration_t *result) {
+// TODO: Be careful, during MAL/ZMTP interop duration was defined as a float (fixed by Guilhem).
+//  return malbinary_decoder_decode_float(self, cursor, result);
   return malbinary_decoder_decode_double(self, cursor, result);
 }
 
@@ -401,9 +408,15 @@ int malbinary_decoder_decode_ulong(mal_decoder_t *self, void *cursor, mal_ulong_
 }
 
 int malbinary_decoder_decode_finetime(mal_decoder_t *self, void *cursor, mal_finetime_t *result) {
-  int rc = 0;
-  (*result) = malbinary_read64(cursor);
-  return rc;
+  long days = malbinary_read16(cursor) & 0xFFFFL;
+  long millisecondsInDay = malbinary_read32(cursor) & 0xFFFFFFFFL;
+  long picosecondsInMillisecond = malbinary_read32(cursor) & 0xFFFFFFFFL;
+  unsigned long timestamp = days * NANOSECONDS_IN_DAY;
+  timestamp += millisecondsInDay * ONE_MILLION;
+  timestamp += picosecondsInMillisecond / 1000;
+  timestamp -= NANOSECONDS_FROM_CCSDS_TO_UNIX_EPOCH;
+  (*result) = timestamp;
+  return 0;
 }
 
 int malbinary_decoder_decode_attribute(mal_decoder_t *decoder, void *cursor,
