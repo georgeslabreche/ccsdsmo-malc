@@ -45,7 +45,7 @@ genmake_gen() {
   ./autogen.sh
   check
   echo "=== configure"
-  ./configure --prefix=$MAL_LOCAL
+  ./configure --enable-drafts=no --prefix=$MAL_LOCAL
   check
 }
 
