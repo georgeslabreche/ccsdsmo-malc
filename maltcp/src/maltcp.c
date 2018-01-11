@@ -367,6 +367,8 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
   char *uri_to = maltcp_get_service_from_uri(mal_message_get_uri_to(message));
   bool destination_flag = (strlen(uri_to) > 0);
 
+  // TODO (AF): We could use a static byte field for all flags rather than separate
+  // boolean fields for each flags.
   bool priority_flag = maltcp_header_get_priority_flag(maltcp_header);
   bool timestamp_flag = maltcp_header_get_timestamp_flag(maltcp_header);
   bool network_zone_flag = maltcp_header_get_network_zone_flag(maltcp_header);
@@ -605,6 +607,7 @@ int maltcp_decode_message(maltcp_header_t *maltcp_header,
     mal_message_set_free_uri_from(message, true);
     mal_message_set_uri_from(message, uri_from);
   }
+  // TODO (AF): Optimized mapping
 
   mal_uri_t *uri_to;
   if (destination_flag) {
@@ -612,6 +615,7 @@ int maltcp_decode_message(maltcp_header_t *maltcp_header,
     mal_message_set_free_uri_to(message, true);
     mal_message_set_uri_to(message, uri_to);
   }
+  // TODO (AF): Optimized mapping
 
   mal_uinteger_t priority;
   if (priority_flag) {
