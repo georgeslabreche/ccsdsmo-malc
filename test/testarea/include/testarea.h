@@ -235,6 +235,9 @@ void testarea_test(bool verbose);
 #include "testarea_testservice_testfinalcompositeb.h"
 #include "testarea_testservice_testfinalcompositeb_list.h"
 
+// Fixes somes compilation issues with recent releases of Zproject.
+void testarea_private_selftest(bool verbose);
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus

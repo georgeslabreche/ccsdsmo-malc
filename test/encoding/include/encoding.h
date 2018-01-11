@@ -44,6 +44,9 @@ extern "C" {
 
 void encoding_test(bool verbose);
 
+// Fixes somes compilation issues with recent releases of Zproject.
+void encoding_private_selftest(bool verbose);
+
 #ifdef __cplusplus
 }
 #endif
