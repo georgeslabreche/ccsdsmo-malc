@@ -1,7 +1,7 @@
 FROM opensuse:latest
 
 MAINTAINER andre.freyssinet@scalagent.com
-cd ..
+
 # Adding dependencies
 RUN zypper install -y pcre-devel git automake autoconf libtool pkgconfig gcc gcc-c++ make
 
