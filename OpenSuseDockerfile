@@ -1,0 +1,32 @@
+FROM opensuse:latest
+
+MAINTAINER andre.freyssinet@scalagent.com
+cd ..
+# Adding dependencies
+RUN zypper install -y pcre-devel git automake autoconf libtool pkgconfig gcc gcc-c++ make
+
+# Installing client
+WORKDIR /opt
+#!/bin/sh
+
+ENV GIT_DEPTH=3
+
+RUN git clone --depth $GIT_DEPTH https://github.com/imatix/gsl && cd gsl/src && make && make install
+
+RUN git clone --depth $GIT_DEPTH https://github.com/zeromq/zproject.git && cd zproject && ./autogen.sh && ./configure && make && make install
+
+# Installation of last release of ZeroMQ from github
+RUN git clone --depth $GIT_DEPTH https://github.com/zeromq/libzmq libzmq && cd libzmq && ./autogen.sh && ./configure --prefix=/usr/local && make && make install
+
+# Installaton of ZeroMQ v4.1.3 as required in the documentation
+# RUN wget https://archive.org/download/zeromq_4.1.3/zeromq-4.1.3.zip && unzip zeromq-4.1.3.zip && cd zeromq-4.1.3 && ./autogen.sh && ./configure --without-libsodium --prefix=/usr/local && make && make install
+
+# Installation of CZMQ v3.0.2 from github.
+# Be careful, the us of Version 4.0 needs changes in code.
+RUN git clone --depth $GIT_DEPTH --branch v3.0.2 https://github.com/zeromq/czmq czmq && cd czmq && ./autogen.sh && ./configure --without-libsodium --prefix=/usr/local && make && make install
+
+RUN ldconfig
+
+RUN git clone --depth $GIT_DEPTH https://github.com/ccsdsmo/malc malc && cd malc && sh ./bin/update_known_projects.sh /usr/local/bin/zproject_known_projects.xml
+
+# RUN ./genmakeall
