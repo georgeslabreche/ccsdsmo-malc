@@ -125,6 +125,9 @@ static const int FIXED_HEADER_LENGTH = 23;
 #include "maltcp_ctx.h"
 #include "maltcp_header.h"
 
+// Fixes somes compilation issues with recent releases of Zproject.
+void maltcp_private_selftest(bool verbose);
+
 #ifdef __cplusplus
 }
 #endif

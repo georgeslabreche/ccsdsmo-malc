@@ -127,6 +127,9 @@ typedef double mal_duration_t;
 #include "mal_uri.h"
 #include "mal_attribute.h"
 
+// Fixes somes compilation issues with recent releases of Zproject.
+void malattributes_private_selftest(bool verbose);
+
 #ifdef __cplusplus
 }
 #endif

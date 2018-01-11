@@ -438,6 +438,8 @@ void mal_test(bool verbose);
 #include "mal_encoder.h"
 #include "mal_decoder.h"
 
+// Fixes somes compilation issues with recent releases of Zproject.
+void mal_private_selftest(bool verbose);
 
 #ifdef __cplusplus
 }
