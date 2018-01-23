@@ -170,11 +170,11 @@ void malbinary_write_varshort(short value, void *cursor) {
 }
 
 void malbinary_write_varint(int value, void *cursor) {
-  malbinary_write_uvarint(value << 1 ^ value >> 31, cursor);
+  malbinary_write_uvarint((value << 1) ^ (value >> 31), cursor);
 }
 
 void malbinary_write_varlong(long value, void *cursor) {
-  malbinary_write_uvarlong(value << 1 ^ value >> 63, cursor);
+  malbinary_write_uvarlong((value << 1) ^ (value >> 63), cursor);
 }
 
 void malbinary_write_array(char *array, unsigned int length, void *cursor) {
