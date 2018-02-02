@@ -30,6 +30,7 @@ extern "C" {
 #endif
 
 mal_blob_t *mal_blob_new(unsigned int length);
+mal_blob_t *mal_blob_create(char *content, unsigned int length);
 
 void mal_blob_destroy(mal_blob_t **self_p);
 

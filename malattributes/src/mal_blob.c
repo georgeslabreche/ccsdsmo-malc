@@ -43,6 +43,15 @@ mal_blob_t *mal_blob_new(unsigned int length) {
   return self;
 }
 
+mal_blob_t *mal_blob_create(char *content, unsigned int length) {
+  mal_blob_t *self = (mal_blob_t *) calloc(1, sizeof(mal_blob_t));
+  if (!self)
+    return NULL;
+  self->content = content;
+  self->length = length;
+  return self;
+}
+
 void mal_blob_destroy(mal_blob_t **self_p) {
   if (*self_p) {
     mal_blob_t *self = *self_p;
