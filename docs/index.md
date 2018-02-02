@@ -122,12 +122,12 @@ Overview of the MAL C API
 
 The MAL C API consists of several APIs:
 
-  -	**MAL attribute API** : The MAL attributes are extracted from the MAL API to avoid a circular dependency bween MAL API (which depends on the encoding APIs) and encoding APIs (which depends of MAL attributes).
-  -	**Encoding APIs** : Encoding APIs are specifically defined for each encoding format.
-  -	**MAL API** : The MAL API allows the use of MAL level concepts.
-  - **Area APIs** (generated) : The MAL API contains the Area API generated from the definition of the MAL Area.
-  -	**Transport APIs** : which manages the mapping of MAL concepts to the underlying concepts of transport chosen.
-  -	**Extraction API for configuration paramters**.
+  -	**MAL attribute API**: The MAL attributes are extracted from the MAL API to avoid a circular dependency bween MAL API (which depends on the encoding APIs) and encoding APIs (which depends of MAL attributes).
+  -	**Encoding APIs**: Encoding APIs are specifically defined for each encoding format.
+  -	**MAL API**: The MAL API allows the use of MAL level concepts.
+  - **Area APIs** (generated): The MAL API contains the Area API generated from the definition of the MAL Area.
+  -	**Transport APIs**: which manages the mapping of MAL concepts to the underlying concepts of transport chosen.
+  -	**Extraction API for configuration parameters**.
 
 Most concepts are each represented by a class that conforms to the zproject Class model:
 
