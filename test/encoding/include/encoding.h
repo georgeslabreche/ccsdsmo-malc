@@ -43,6 +43,8 @@ extern "C" {
     ENCODING_MAKE_VERSION(ENCODING_VERSION_MAJOR, ENCODING_VERSION_MINOR, ENCODING_VERSION_PATCH)
 
 void encoding_test(bool verbose);
+void file_encoding_test(bool verbose);
+bool testFixedBinaryEncoding();
 
 // Fixes somes compilation issues with recent releases of Zproject.
 void encoding_private_selftest(bool verbose);
