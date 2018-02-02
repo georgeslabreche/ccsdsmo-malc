@@ -66,7 +66,8 @@ void malbinary_write_uvarinteger(unsigned int value, char *bytes)
 }
 
 unsigned int malsplitbinary_cursor_get_bitfield_nb_bytes(unsigned int most_significant) {
-    return most_significant/8+1;
+  // TODO (AF): the result should be zero if most_significant is zero.
+  return most_significant/8+1;
 }
 
 void malsplitbinary_cursor_destroy(void *cursor) {
