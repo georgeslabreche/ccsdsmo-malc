@@ -250,7 +250,7 @@ int maltcp_add_message_encoding_length(maltcp_header_t *maltcp_header,
   ((malbinary_cursor_t *) cursor)->body_length += FIXED_HEADER_LENGTH;
 
   // always encode 'URI From' and 'URI To'
-  rc = maltcp_add_uri_encoding_length(mal_message_get_uri_from(message), encoder, cursor);
+  rc = maltcp_add_uri_encoding_length(maltcp_get_service_from_uri(mal_message_get_uri_from(message)), encoder, cursor);
   if (rc < 0) return rc;
   char *uri_to = maltcp_get_service_from_uri(mal_message_get_uri_to(message));
   if (strlen(uri_to) > 0)
@@ -400,9 +400,10 @@ int maltcp_encode_message(maltcp_header_t *maltcp_header,
   ((malbinary_cursor_t *) cursor)->body_offset += 4;
 
   // Always encode 'URI From'
-  maltcp_encode_uri(mal_message_get_uri_from(message), encoder, cursor);
+  maltcp_encode_uri(maltcp_get_service_from_uri(mal_message_get_uri_from(message)), encoder, cursor);
   // Only encode the end part of the URI if it exist.
-  maltcp_encode_uri(uri_to, encoder, cursor);
+  if (destination_flag != false)
+    maltcp_encode_uri(uri_to, encoder, cursor);
 
   if (priority_flag != false) {
     malbinary_encoder_encode_uinteger(encoder, cursor,
@@ -540,10 +541,13 @@ int maltcp_decode_message(maltcp_header_t *maltcp_header,
   char b = ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++];
 
   unsigned char version = (b >> 5) & 0x07;
+  clog_debug(maltcp_logger, "maltcp_decode_message: version=%d\n", version);
   if (version != 1)
     return -1;
 
   int sduType = b & 0x1F;
+
+  clog_debug(maltcp_logger, "maltcp_decode_message: sduType=%d\n", sduType);
 
   mal_interactiontype_t interaction_type = convert_to_interaction_type(sduType);
   if (interaction_type == -1) {
@@ -559,6 +563,8 @@ int maltcp_decode_message(maltcp_header_t *maltcp_header,
   }
   mal_message_set_interaction_stage(message, interaction_stage);
 
+  clog_debug(maltcp_logger, "maltcp_decode_message: %d, %d\n", interaction_type, interaction_stage);
+
   mal_ushort_t service_area = malbinary_read16(cursor) & 0xFFFF;
   mal_message_set_service_area(message, service_area);
 
@@ -570,6 +576,8 @@ int maltcp_decode_message(maltcp_header_t *maltcp_header,
 
   byte area_version = ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++];
   mal_message_set_area_version(message, area_version);
+
+  clog_debug(maltcp_logger, "maltcp_decode_message: %d, %d, %d, %d\n", service_area, service, operation, area_version);
 
   b = ((malbinary_cursor_t *) cursor)->body_ptr[((malbinary_cursor_t *) cursor)->body_offset++];
   bool is_error_message = (b >> 7) & 0x01;
