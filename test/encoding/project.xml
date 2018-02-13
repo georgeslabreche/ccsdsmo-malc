@@ -67,6 +67,7 @@
     -->
     
     <class name = "encoding" />
+    <class name = "file_encoding" />
 
     <!--
         Actors, are build using the simple actor framework from czmq. If the 
