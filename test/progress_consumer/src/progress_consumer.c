@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 - 2017 CNES
+ * Copyright (c) 2016 - 2018 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,8 +27,8 @@
 
 mal_actor_t *consumer_actor = NULL;
 
-bool split = TEST_SPLIT;
-bool tcp = TEST_TCP;
+bool split = false;
+bool tcp = true;
 
 //  --------------------------------------------------------------------------
 //  Selftest
@@ -327,7 +327,7 @@ void progress_consumer_test(bool verbose) {
     // level (MAL message body encoding)
     ctx = maltcp_ctx_new(
         mal_ctx,
-        "127.0.0.1", "7777",
+        "192.168.1.80", "7777",
         maltcp_header,
         true);
     // Change the logging level of maltcp encoding
@@ -351,7 +351,7 @@ void progress_consumer_test(bool verbose) {
     malzmq_ctx_set_decoder_log_level((malzmq_ctx_t *) ctx, CLOG_WARN_LEVEL);
   }
 
-  mal_uri_t *provider_uri = "maltcp://127.0.0.1:6666/progress_provider/provider";
+  mal_uri_t *provider_uri = "maltcp://192.168.1.80:6666/progress_provider/provider";
   printf("progress_consumer: provider URI: %s\n", provider_uri);
 
   mal_encoder_t *encoder;

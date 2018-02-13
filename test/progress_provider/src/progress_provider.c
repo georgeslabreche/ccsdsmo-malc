@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 - 2017 CNES
+ * Copyright (c) 2016 - 2018 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,8 @@
 mal_actor_t *consumer_actor = NULL;
 mal_actor_t *provider_actor = NULL;
 
-bool split = TEST_SPLIT;
-bool tcp = TEST_TCP;
+bool split = false;
+bool tcp = true;
 
 //  --------------------------------------------------------------------------
 //  Selftest
@@ -278,7 +278,6 @@ int progress_provider_testarea_testservice_testprogress(
 
 void progress_provider_test(bool verbose) {
   mal_set_log_level(CLOG_DEBUG_LEVEL);
-  malzmq_set_log_level(CLOG_DEBUG_LEVEL);
 
   printf(" * progress_provider: \n");
 
@@ -287,6 +286,7 @@ void progress_provider_test(bool verbose) {
   void *ctx;
 
   if (tcp) {
+    maltcp_set_log_level(CLOG_DEBUG_LEVEL);
     // All the MAL header fields are passed
     maltcp_header_t *maltcp_header = maltcp_header_new(true, 0, true, NULL, NULL, NULL, NULL);
 
@@ -302,6 +302,7 @@ void progress_provider_test(bool verbose) {
     maltcp_ctx_set_encoder_log_level((maltcp_ctx_t *) ctx, CLOG_WARN_LEVEL);
     maltcp_ctx_set_decoder_log_level((maltcp_ctx_t *) ctx, CLOG_WARN_LEVEL);
   } else {
+    malzmq_set_log_level(CLOG_DEBUG_LEVEL);
     // All the MAL header fields are passed
     malzmq_header_t *malzmq_header = malzmq_header_new(NULL, true, 0, true, NULL, NULL, NULL, NULL);
 
