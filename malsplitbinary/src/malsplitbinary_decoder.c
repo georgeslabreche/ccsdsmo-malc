@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 - 2017 CNES
+ * Copyright (c) 2016 - 2018 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -132,16 +132,15 @@ int malsplitbinary_decoder_decode_ushort(mal_decoder_t *self,
 
 int malsplitbinary_decoder_decode_boolean(mal_decoder_t *self,
     void *cursor, mal_boolean_t *result) {
-  int rc = 0;
-  if (((malsplitbinary_cursor_t *) cursor)->bitfield_length <= ((malsplitbinary_cursor_t *) cursor)->bitfield_idx) {
+  if (((malsplitbinary_cursor_t *) cursor)->bitfield_idx < ((malsplitbinary_cursor_t *) cursor)->bitfield_length) {
+    char *bitfield = malsplitbinary_cursor_get_bitfield_ptr((malsplitbinary_cursor_t *) cursor);
+    unsigned int v = bitfield[(((malsplitbinary_cursor_t *) cursor)->bitfield_idx) >> 3];
+    (*result) = (v >> ((malsplitbinary_cursor_t *) cursor)->bitfield_idx % 8) & 1;
+  } else {
     (*result) = false;
-    return rc;
   }
-  char *bitfield = malsplitbinary_cursor_get_bitfield_ptr((malsplitbinary_cursor_t *) cursor);
-  unsigned int v = bitfield[(((malsplitbinary_cursor_t *) cursor)->bitfield_idx) >> 3];
-  (*result) = (v >> ((malsplitbinary_cursor_t *) cursor)->bitfield_idx % 8) & 1;
   ((malsplitbinary_cursor_t *) cursor)->bitfield_idx++;
-  return rc;
+  return 0;
 }
 
 int malsplitbinary_decoder_decode_attribute_tag(mal_decoder_t *self,

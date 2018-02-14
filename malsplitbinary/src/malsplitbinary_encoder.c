@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 - 2017 CNES
+ * Copyright (c) 2016 - 2018 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,6 +38,11 @@ mal_encoder_t *malsplitbinary_encoder_new() {
   return self;
 }
 
+/**
+ * Creates and initializes a new cursor to encode a message.
+ * This cursor will be used first to calculate the size of the encoded message, and
+ * then to encode data in the related buffer (after a call to mal_encoder_cursor_init).
+ */
 void *malsplitbinary_encoder_new_cursor() {
   malsplitbinary_cursor_t *cursor = (malsplitbinary_cursor_t *) malloc(sizeof(malsplitbinary_cursor_t));
   if (! cursor) return NULL;
@@ -124,13 +129,12 @@ int malsplitbinary_encoder_add_ushort_encoding_length(mal_encoder_t *self,
 
 int malsplitbinary_encoder_add_boolean_encoding_length(mal_encoder_t *self,
     mal_boolean_t to_encode, void *cursor) {
-  int rc = 0;
-  //use bitfield_length as a counter, the bitfield_length is set on cursor init.
+  //use bitfield_length as a counter, the bitfield_length is set on cursor initialization.
+  ((malsplitbinary_cursor_t *) cursor)->bitfield_length++;
   if (to_encode) {
     ((malsplitbinary_cursor_t *) cursor)->most_significant = ((malsplitbinary_cursor_t *) cursor)->bitfield_length;
   }
-  ((malsplitbinary_cursor_t *) cursor)->bitfield_length++;
-  return rc;
+  return 0;
 }
 
 int malsplitbinary_encoder_add_blob_encoding_length(mal_encoder_t *self,
@@ -220,17 +224,17 @@ int malsplitbinary_encoder_encode_ushort(mal_encoder_t *self,
 
 int malsplitbinary_encoder_encode_boolean(mal_encoder_t *self,
     void *cursor, mal_boolean_t to_encode) {
-  int rc = 0;
   char *bitfield = malsplitbinary_cursor_get_bitfield_ptr((malsplitbinary_cursor_t *) cursor);
   // NOTE: Only used for debug
 //  printf("--encoding_length bitfield_idx = %d\n", ((malsplitbinary_cursor_t *) cursor)->bitfield_idx);
 
-  if (to_encode)
+  if (to_encode) {
+    assert((((malsplitbinary_cursor_t *) cursor)->bitfield_idx) < (((malsplitbinary_cursor_t *) cursor)->bitfield_length));
     bitfield[(((malsplitbinary_cursor_t *) cursor)->bitfield_idx) >> 3] |=
         to_encode << ((((malsplitbinary_cursor_t *) cursor)->bitfield_idx) & 7);
-
+  }
   ((malsplitbinary_cursor_t *) cursor)->bitfield_idx++;
-  return rc;
+  return 0;
 }
 
 int malsplitbinary_encoder_encode_attribute_tag(mal_encoder_t *self, void *cursor, unsigned char to_encode) {
