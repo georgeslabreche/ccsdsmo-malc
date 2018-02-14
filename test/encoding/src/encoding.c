@@ -528,7 +528,7 @@ bool encoding_test1(bool split, bool verbose) {
   ok &= encoding_test_short(split, 127, true);
   ok &= encoding_test_short(split, 128, true);
   ok &= encoding_test_short(split, 32267, true);
-  encoding_test_short(split, -32768, true);
+  ok &= encoding_test_short(split, -32768, true);
 
   ok &= encoding_test_int(split, 0, true);
   ok &= encoding_test_int(split, 1, true);
