@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 CNES
+ * Copyright (c) 2016 - 2018 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -52,10 +52,20 @@ typedef struct _malsplitbinary_decoder_t malsplitbinary_decoder_t;
 
 struct _malsplitbinary_cursor_t {
   malbinary_cursor_t malbinary_cursor;
+  // Pointer to the bitfield.
   char *bitfield_ptr;
+  // Index of next bit to use during encode or decode.
   unsigned int bitfield_idx;
+  // Number of useful bits in bitfield, this counter is only used during the
+  // evaluation of bitfield size.
   unsigned int most_significant;
+  // Number of bits in bitfield, this counter has several semantics depending of
+  // the encoding phase: during the size evaluation it contains the number of encoded
+  // bits, during encoding or decoding phases it contains the maximum number of bits
+  // in the bitfield area (depending of the most significant bit of this area)
   unsigned int bitfield_length;
+  // Note: Normally only 2 counters are needed: bitfield_idx is not used during the
+  // size evaluation, most_significant is not used during encoding or decoding.
 };
 typedef struct _malsplitbinary_cursor_t malsplitbinary_cursor_t;
 
