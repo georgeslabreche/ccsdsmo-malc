@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 - 2017 CNES
+ * Copyright (c) 2016 - 2018 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -450,7 +450,6 @@ bool encoding_test_duration(bool split, mal_duration_t value, bool verbose) {
 }
 
 bool encoding_test_bools(bool split, unsigned int nb, unsigned long value, bool verbose) {
-  int err = 0;
   if (verbose)
     printf("Test encode_bools(%s, %d, %0lx)\n", split?"true":"false", nb, value);
 
@@ -463,13 +462,14 @@ bool encoding_test_bools(bool split, unsigned int nb, unsigned long value, bool 
     encoder = malbinary_encoder_new(false);
     decoder = malbinary_decoder_new(false);
   }
+    malsplitbinary_set_log_level(CLOG_DEBUG_LEVEL);
 
   void *cursor1 = mal_encoder_new_cursor(encoder);
-  int size = mal_encoder_cursor_get_length(encoder, cursor1);
   for (int i = 0 ; i<nb ; i++) {
-    encoder->mal_encoder_add_boolean_encoding_length(encoder, value, cursor1);
+    encoder->mal_encoder_add_boolean_encoding_length(encoder, (value >> i) & 0x01, cursor1);
   }
-  size = (mal_encoder_cursor_get_length(encoder, cursor1) - size);
+//  malsplitbinary_cursor_print((malsplitbinary_cursor_t *) cursor1);
+
   unsigned int length = mal_encoder_cursor_get_length(encoder, cursor1);
   char* buf = (char *) calloc(1, length);
   mal_encoder_cursor_init(
@@ -477,44 +477,28 @@ bool encoding_test_bools(bool split, unsigned int nb, unsigned long value, bool 
         buf,
         length,
         0);
+//  malsplitbinary_cursor_print((malsplitbinary_cursor_t *) cursor1);
   for (int i = 0 ; i<nb ; i++) {
     encoder->mal_encoder_encode_boolean(encoder, cursor1, (value >> i) & 0x01);
   }
-  int offset1 = mal_encoder_cursor_get_offset(encoder, cursor1);
-  if (size != offset1) {
-    if (verbose)
-      printf("Test encode_bools(%s, %ld) Bad encoding offset: %d != %d\n", split?"true":"false", value, size, offset1);
-    err +=1;
-  }
+//  malsplitbinary_cursor_print((malsplitbinary_cursor_t *) cursor1);
 
   void *cursor2 = mal_decoder_new_cursor(
       decoder,
       buf,
       length,
       0);
+//  malsplitbinary_cursor_print((malsplitbinary_cursor_t *) cursor2);
   unsigned long decoded = 0;
   for (int i = 0 ; i<nb ; i++) {
     mal_boolean_t current;
     decoder->mal_decoder_decode_boolean(decoder, cursor2, &current);
-    decoded = decoded | (current << i);
+    decoded = decoded | (((long) current) << i);
   }
-  int offset2 = mal_encoder_cursor_get_offset(encoder, cursor2);
-  if (size != offset2) {
-    if (verbose)
-      printf("Test encode_bools(%s, %ld) Bad decoding offset: %d != %d\n", split?"true":"false", value, size, offset2);
-    err +=1;
-  }
-  if (decoded != value) {
-    if (verbose)
-      printf("Test encode_bools(%s, %ld) Bad decoding value\n", split?"true":"false", value);
-    err +=1;
-  }
+//  malsplitbinary_cursor_print((malsplitbinary_cursor_t *) cursor2);
 
-  if ((verbose) || (err > 0))
-    printf("Test encode_bools -> %d/%d/%d, %0lx ? %0lx %s\n",
-        size, offset1, offset2, value, decoded, (err == 0)?"OK":"ERROR");
-
-  return (err == 0);
+  printf("Test encode_bools -> %0lx %s\n", decoded, (decoded == value)?"OK":"ERROR");
+  return (decoded == value);
 }
 
 bool encoding_test1(bool split, bool verbose) {
@@ -563,12 +547,18 @@ bool encoding_test1(bool split, bool verbose) {
 
   ok &= encoding_test_duration(split, 1.0, true);
 
+  ok &= encoding_test_bools(split, 1, 0, true);
   ok &= encoding_test_bools(split, 1, 1, true);
+  ok &= encoding_test_bools(split, 2, 0, true);
+  ok &= encoding_test_bools(split, 2, 0x1, true);
   ok &= encoding_test_bools(split, 2, 0x2, true);
+  ok &= encoding_test_bools(split, 3, 0x2, true);
+  ok &= encoding_test_bools(split, 4, 0x2, true);
   ok &= encoding_test_bools(split, 8, 0x55, true);
   ok &= encoding_test_bools(split, 16, 0x5555, true);
   ok &= encoding_test_bools(split, 24, 0x555555, true);
   ok &= encoding_test_bools(split, 32, 0x55555555, true);
+  ok &= encoding_test_bools(split, 55, 0x1010101010100, true);
 
   return ok;
 }

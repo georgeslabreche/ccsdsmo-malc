@@ -27,11 +27,13 @@
 #include <unistd.h>
 #include "../include/encoding.h"
 
+mal_boolean_t BOOL1 = false;
 mal_uoctet_t UOCTET1 = 0;
 mal_uoctet_t UOCTET2 = 255;
 mal_octet_t OCTET1 = -128;
 mal_octet_t OCTET2 = 0;
 mal_octet_t OCTET3 = 127;
+mal_boolean_t BOOL2 = true;
 mal_ushort_t USHORT1 = 0;
 mal_ushort_t USHORT2 = 256;
 mal_ushort_t USHORT3 = 65535;
@@ -40,6 +42,7 @@ mal_short_t SHORT2 = -256;
 mal_short_t SHORT3 = 0;
 mal_short_t SHORT4 = 256;
 mal_short_t SHORT5 = 32767;
+mal_boolean_t BOOL3 = false;
 unsigned int UINT1 = 0;
 unsigned int UINT2 = 256;
 unsigned int UINT3 = 65536;
@@ -51,26 +54,52 @@ int INT4 = 0;
 int INT5 = 256;
 int INT6 = 32767;
 int INT7 = 2147483647;
+mal_boolean_t BOOL4 = false;
 unsigned long ULONG1 = 0;
 unsigned long ULONG2 = 65536;
 unsigned long ULONG3 = 4294967295;
 long LONG1 = -2147483648;
 long LONG2 = 0;
 long LONG3 = 2147483647;
+mal_boolean_t BOOL5 = false;
 float FLOAT1 = 1.25E6;
 float FLOAT2 = -5.8E-2;
+mal_boolean_t BOOL6 = false;
 double DOUBLE1 = 1.25E6;
 double DOUBLE2 = -5.8E-2;
+mal_boolean_t BOOL7 = false;
 char BLOB_C1[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 mal_blob_t *BLOB1;
+mal_boolean_t BOOL8 = false;
 char* STRING1 = "Hello world";
+mal_boolean_t BOOL9 = true;
 // Encode 1234567.000000500 seconds from Unix epoch (in ms and ns)
 mal_time_t TIME1 = 1234567000;
+mal_boolean_t BOOL10 = true;
 mal_finetime_t FINETIME1= 1234567000000500;
+mal_boolean_t BOOL11 = false;
 
 // Initializes data structures.
 bool initialize() {
   BLOB1 = mal_blob_create(BLOB_C1, sizeof(BLOB_C1));
+  return true;
+}
+
+void addBooleanEncodingLength(mal_encoder_t *encoder, void *cursor, mal_boolean_t value) {
+  encoder->mal_encoder_add_boolean_encoding_length(encoder, value, cursor);
+}
+
+void writeBoolean(mal_encoder_t *encoder, void *cursor, mal_boolean_t value) {
+  encoder->mal_encoder_encode_boolean(encoder, cursor, value);
+}
+
+bool testBoolean(mal_decoder_t *decoder, void *cursor, mal_boolean_t ref) {
+  mal_boolean_t value;
+  decoder->mal_decoder_decode_boolean(decoder, cursor, &value);
+  if (value != ref) {
+      printf("Test boolean %d != %d\n", value, ref);
+      return false;
+  }
   return true;
 }
 
@@ -232,7 +261,6 @@ int floatToIntBits(float x) {
 }
 
 void writeFloat(mal_encoder_t *encoder, void *cursor, mal_float_t value) {
-  printf("float: %ud\n", floatToIntBits(value));
   encoder->mal_encoder_encode_float(encoder, cursor, value);
 }
 
@@ -260,7 +288,6 @@ long doubleToLongBits(double x) {
 }
 
 void writeDouble(mal_encoder_t *encoder, void *cursor, mal_double_t value) {
-  printf("double: %lud\n", doubleToLongBits(value));
   encoder->mal_encoder_encode_double(encoder, cursor, value);
 }
 
@@ -348,11 +375,13 @@ bool testFineTime(mal_decoder_t *decoder, void *cursor, mal_finetime_t ref) {
 }
 
 char *testEncoding(mal_encoder_t *encoder, void *cursor) {
+  addBooleanEncodingLength(encoder, cursor, BOOL1);
   addUOctetEncodingLength(encoder, cursor, UOCTET1);
   addUOctetEncodingLength(encoder, cursor, UOCTET2);
   addOctetEncodingLength(encoder, cursor, OCTET1);
   addOctetEncodingLength(encoder, cursor, OCTET2);
   addOctetEncodingLength(encoder, cursor, OCTET3);
+  addBooleanEncodingLength(encoder, cursor, BOOL2);
   addUShortEncodingLength(encoder, cursor, USHORT1);
   addUShortEncodingLength(encoder, cursor, USHORT2);
   addUShortEncodingLength(encoder, cursor, USHORT3);
@@ -361,6 +390,7 @@ char *testEncoding(mal_encoder_t *encoder, void *cursor) {
   addShortEncodingLength(encoder, cursor, SHORT3);
   addShortEncodingLength(encoder, cursor, SHORT4);
   addShortEncodingLength(encoder, cursor, SHORT5);
+  addBooleanEncodingLength(encoder, cursor, BOOL3);
   addUIntEncodingLength(encoder, cursor, UINT1);
   addUIntEncodingLength(encoder, cursor, UINT2);
   addUIntEncodingLength(encoder, cursor, UINT3);
@@ -372,30 +402,41 @@ char *testEncoding(mal_encoder_t *encoder, void *cursor) {
   addIntEncodingLength(encoder, cursor, INT5);
   addIntEncodingLength(encoder, cursor, INT6);
   addIntEncodingLength(encoder, cursor, INT7);
+  addBooleanEncodingLength(encoder, cursor, BOOL4);
   addULongEncodingLength(encoder, cursor, ULONG1);
   addULongEncodingLength(encoder, cursor, ULONG2);
   addULongEncodingLength(encoder, cursor, ULONG3);
   addLongEncodingLength(encoder, cursor, LONG1);
   addLongEncodingLength(encoder, cursor, LONG2);
   addLongEncodingLength(encoder, cursor, LONG3);
+  addBooleanEncodingLength(encoder, cursor, BOOL5);
   addFloatEncodingLength(encoder, cursor, FLOAT1);
   addFloatEncodingLength(encoder, cursor, FLOAT2);
+  addBooleanEncodingLength(encoder, cursor, BOOL6);
   addDoubleEncodingLength(encoder, cursor, DOUBLE1);
   addDoubleEncodingLength(encoder, cursor, DOUBLE2);
+  addBooleanEncodingLength(encoder, cursor, BOOL7);
   addBlobEncodingLength(encoder, cursor, BLOB1);
+  addBooleanEncodingLength(encoder, cursor, BOOL8);
   addStringEncodingLength(encoder, cursor, STRING1);
+  addBooleanEncodingLength(encoder, cursor, BOOL9);
   addTimeEncodingLength(encoder, cursor, TIME1);
+  addBooleanEncodingLength(encoder, cursor, BOOL10);
   addFineTimeEncodingLength(encoder, cursor, FINETIME1);
+  addBooleanEncodingLength(encoder, cursor, BOOL11);
 
   unsigned int length = mal_encoder_cursor_get_length(encoder, cursor);
+  malsplitbinary_cursor_print((malsplitbinary_cursor_t *) cursor);
   char* buf = (char *) calloc(1, length);
   mal_encoder_cursor_init(encoder, cursor, buf, length, 0);
 
+  writeBoolean(encoder, cursor, BOOL1);
   writeUOctet(encoder, cursor, UOCTET1);
   writeUOctet(encoder, cursor, UOCTET2);
   writeOctet(encoder, cursor, OCTET1);
   writeOctet(encoder, cursor, OCTET2);
   writeOctet(encoder, cursor, OCTET3);
+  writeBoolean(encoder, cursor, BOOL2);
   writeUShort(encoder, cursor, USHORT1);
   writeUShort(encoder, cursor, USHORT2);
   writeUShort(encoder, cursor, USHORT3);
@@ -404,6 +445,7 @@ char *testEncoding(mal_encoder_t *encoder, void *cursor) {
   writeShort(encoder, cursor, SHORT3);
   writeShort(encoder, cursor, SHORT4);
   writeShort(encoder, cursor, SHORT5);
+  writeBoolean(encoder, cursor, BOOL3);
   writeUInt(encoder, cursor, UINT1);
   writeUInt(encoder, cursor, UINT2);
   writeUInt(encoder, cursor, UINT3);
@@ -415,20 +457,28 @@ char *testEncoding(mal_encoder_t *encoder, void *cursor) {
   writeInt(encoder, cursor, INT5);
   writeInt(encoder, cursor, INT6);
   writeInt(encoder, cursor, INT7);
+  writeBoolean(encoder, cursor, BOOL4);
   writeULong(encoder, cursor, ULONG1);
   writeULong(encoder, cursor, ULONG2);
   writeULong(encoder, cursor, ULONG3);
   writeLong(encoder, cursor, LONG1);
   writeLong(encoder, cursor, LONG2);
   writeLong(encoder, cursor, LONG3);
+  writeBoolean(encoder, cursor, BOOL5);
   writeFloat(encoder, cursor, FLOAT1);
   writeFloat(encoder, cursor, FLOAT2);
+  writeBoolean(encoder, cursor, BOOL6);
   writeDouble(encoder, cursor, DOUBLE1);
   writeDouble(encoder, cursor, DOUBLE2);
+  writeBoolean(encoder, cursor, BOOL7);
   writeBlob(encoder, cursor, BLOB1);
+  writeBoolean(encoder, cursor, BOOL8);
   writeString(encoder, cursor, STRING1);
+  writeBoolean(encoder, cursor, BOOL9);
   writeTime(encoder, cursor, TIME1);
+  writeBoolean(encoder, cursor, BOOL10);
   writeFineTime(encoder, cursor, FINETIME1);
+  writeBoolean(encoder, cursor, BOOL11);
 
   return buf;
 }
@@ -472,11 +522,13 @@ void readFile(char *path, char **buf, int *len) {
 bool testDecoding(mal_decoder_t *decoder, void *cursor) {
   bool ok = true;
 
+  ok &= testBoolean(decoder, cursor, BOOL1);
   ok &= testUOctet(decoder, cursor, UOCTET1);
   ok &= testUOctet(decoder, cursor, UOCTET2);
   ok &= testOctet(decoder, cursor, OCTET1);
   ok &= testOctet(decoder, cursor, OCTET2);
   ok &= testOctet(decoder, cursor, OCTET3);
+  ok &= testBoolean(decoder, cursor, BOOL2);
   ok &= testUShort(decoder, cursor, USHORT1);
   ok &= testUShort(decoder, cursor, USHORT2);
   ok &= testUShort(decoder, cursor, USHORT3);
@@ -485,6 +537,7 @@ bool testDecoding(mal_decoder_t *decoder, void *cursor) {
   ok &= testShort(decoder, cursor, SHORT3);
   ok &= testShort(decoder, cursor, SHORT4);
   ok &= testShort(decoder, cursor, SHORT5);
+  ok &= testBoolean(decoder, cursor, BOOL3);
   ok &= testUInt(decoder, cursor, UINT1);
   ok &= testUInt(decoder, cursor, UINT2);
   ok &= testUInt(decoder, cursor, UINT3);
@@ -496,20 +549,28 @@ bool testDecoding(mal_decoder_t *decoder, void *cursor) {
   ok &= testInt(decoder, cursor, INT5);
   ok &= testInt(decoder, cursor, INT6);
   ok &= testInt(decoder, cursor, INT7);
+  ok &= testBoolean(decoder, cursor, BOOL4);
   ok &= testULong(decoder, cursor, ULONG1);
   ok &= testULong(decoder, cursor, ULONG2);
   ok &= testULong(decoder, cursor, ULONG3);
   ok &= testLong(decoder, cursor, LONG1);
   ok &= testLong(decoder, cursor, LONG2);
   ok &= testLong(decoder, cursor, LONG3);
+  ok &= testBoolean(decoder, cursor, BOOL5);
   ok &= testFloat(decoder, cursor, FLOAT1);
   ok &= testFloat(decoder, cursor, FLOAT2);
+  ok &= testBoolean(decoder, cursor, BOOL6);
   ok &= testDouble(decoder, cursor, DOUBLE1);
   ok &= testDouble(decoder, cursor, DOUBLE2);
+  ok &= testBoolean(decoder, cursor, BOOL7);
   ok &= testBlob(decoder, cursor, BLOB1);
+  ok &= testBoolean(decoder, cursor, BOOL8);
   ok &= testString(decoder, cursor, STRING1);
+  ok &= testBoolean(decoder, cursor, BOOL9);
   ok &= testTime(decoder, cursor, TIME1);
+  ok &= testBoolean(decoder, cursor, BOOL10);
   ok &= testFineTime(decoder, cursor, FINETIME1);
+  ok &= testBoolean(decoder, cursor, BOOL11);
 
   return ok;
 }
@@ -568,6 +629,7 @@ bool testSplitBinaryEncoding() {
   void *cursor1 = mal_encoder_new_cursor(encoder);
   // Runs the test
   char* buf = testEncoding(encoder, cursor1);
+  malsplitbinary_cursor_print((malsplitbinary_cursor_t *) cursor1);
   int length = mal_encoder_cursor_get_length(encoder, cursor1);
   // Writes encoding datas in file
   writeFile("./csplitbinary.data", buf, length);
