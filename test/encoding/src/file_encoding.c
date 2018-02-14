@@ -426,7 +426,7 @@ char *testEncoding(mal_encoder_t *encoder, void *cursor) {
   addBooleanEncodingLength(encoder, cursor, BOOL11);
 
   unsigned int length = mal_encoder_cursor_get_length(encoder, cursor);
-  malsplitbinary_cursor_print((malsplitbinary_cursor_t *) cursor);
+//  malsplitbinary_cursor_print((malsplitbinary_cursor_t *) cursor);
   char* buf = (char *) calloc(1, length);
   mal_encoder_cursor_init(encoder, cursor, buf, length, 0);
 
@@ -506,6 +506,7 @@ void writeFile(char *path, char *buf, int len) {
 void readFile(char *path, char **buf, int *len) {
   int fd = open(path, O_RDONLY);
   if (fd < 0) {
+    perror(path);
     printf("open ERROR: %d\n", errno);
     return;
   }
@@ -575,6 +576,8 @@ bool testDecoding(mal_decoder_t *decoder, void *cursor) {
   return ok;
 }
 
+bool compareFiles(char *msg, char *file1, char *file2);
+
 bool testFixedBinaryEncoding() {
   // Creates the encoder
   mal_encoder_t *encoder = malbinary_encoder_new(false);
@@ -584,14 +587,14 @@ bool testFixedBinaryEncoding() {
   int length = mal_encoder_cursor_get_length(encoder, cursor);
   // Writes encoding datas in file
   writeFile("./cfixedbinary.data", buf, length);
-  return true;
+  return compareFiles("testFixedBinaryEncoding: %s\n", "./cfixedbinary.ref", "./cfixedbinary.data");
 }
 
 bool testFixedBinaryDecoding() {
   int length = 0;
   char *buf = NULL;
   // Reads file
-  readFile("./cfixedbinary.data", &buf, &length);
+  readFile("./cfixedbinary.ref", &buf, &length);
   // Creates the decoder
   mal_decoder_t *decoder = malbinary_decoder_new(false);
   void *cursor = mal_decoder_new_cursor(decoder, buf, length, 0);
@@ -608,14 +611,14 @@ bool testVarintBinaryEncoding() {
   int length = mal_encoder_cursor_get_length(encoder, cursor1);
   // Writes encoding datas in file
   writeFile("./cvarintbinary.data", buf, length);
-  return true;
+  return compareFiles("testVarintBinaryEncoding: %s\n", "./cfixedbinary.ref", "./cfixedbinary.data");
 }
 
 bool testVarintBinaryDecoding() {
   int length = 0;
   char *buf = NULL;
   // Reads file
-  readFile("./cvarintbinary.data", &buf, &length);
+  readFile("./cvarintbinary.ref", &buf, &length);
   // Creates the decoder
   mal_decoder_t *decoder = malbinary_decoder_new(true);
   void *cursor2 = mal_decoder_new_cursor(decoder, buf, length, 0);
@@ -629,18 +632,17 @@ bool testSplitBinaryEncoding() {
   void *cursor1 = mal_encoder_new_cursor(encoder);
   // Runs the test
   char* buf = testEncoding(encoder, cursor1);
-  malsplitbinary_cursor_print((malsplitbinary_cursor_t *) cursor1);
   int length = mal_encoder_cursor_get_length(encoder, cursor1);
   // Writes encoding datas in file
   writeFile("./csplitbinary.data", buf, length);
-  return true;
+  return compareFiles("testSplitBinaryEncoding: %s\n", "./cfixedbinary.ref", "./cfixedbinary.data");
 }
 
 bool testSplitBinaryDecoding() {
   int length = 0;
   char *buf = NULL;
   // Reads file
-  readFile("./csplitbinary.data", &buf, &length);
+  readFile("./csplitbinary.ref", &buf, &length);
   // Creates the decoder
   mal_decoder_t *decoder = malsplitbinary_decoder_new();
   void *cursor2 = mal_decoder_new_cursor(decoder, buf, length, 0);
@@ -672,4 +674,51 @@ void file_encoding_test(bool verbose) {
   //  @end
 
   printf("%s\n", ok?"OK":"ERROR");
+}
+
+bool compareFiles(char *msg, char *file1, char *file2) {
+  FILE *fp1, *fp2;
+  char ch1, ch2, same;
+  unsigned long l;
+
+  /* open first file */
+  if((fp1 = fopen(file1, "rb"))==NULL) {
+    printf(msg, "Cannot open first file.\n");
+    return false;
+  }
+
+  /* open second file */
+  if((fp2 = fopen(file2, "rb"))==NULL) {
+    printf(msg, "Cannot open second file.\n");
+    return false;
+  }
+
+  l = 0;
+  same = true;
+  /* compare the files */
+  while(!feof(fp1)) {
+    ch1 = fgetc(fp1);
+    if(ferror(fp1)) {
+      printf(msg, "Error reading first file.\n");
+      same = false;
+      break;
+    }
+    ch2 = fgetc(fp2);
+    if(ferror(fp2)) {
+      printf(msg, "Error reading second file.\n");
+      same = false;
+      break;
+    }
+    if(ch1 != ch2) {
+      printf(msg, "Files differ");
+      same = false;
+      break;
+    }
+    l++;
+  }
+
+  fclose(fp1);
+  fclose(fp2);
+
+  return same;
 }
