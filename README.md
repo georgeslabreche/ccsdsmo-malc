@@ -30,7 +30,7 @@ The project requires **GSL** version 4.1 to be installed. **GSL** can be found [
 
 ### CZMQ
 
-The project requires **CZMQ** version 3.0.3 to be installed. **CZMQ** can be found [here](http://github.com/zeromq/czmq).
+The project requires **CZMQ** version 3.0.2 to be installed. **CZMQ** can be found [here](http://github.com/zeromq/czmq).
 
 ### ZPROJECT
 
