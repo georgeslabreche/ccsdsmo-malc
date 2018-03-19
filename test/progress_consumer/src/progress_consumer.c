@@ -327,7 +327,7 @@ void progress_consumer_test(bool verbose) {
     // level (MAL message body encoding)
     ctx = maltcp_ctx_new(
         mal_ctx,
-        "192.168.1.80", "7777",
+        "127.0.0.1", "7777",
         maltcp_header,
         true);
     // Change the logging level of maltcp encoding
