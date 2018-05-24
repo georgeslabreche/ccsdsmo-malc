@@ -1,0 +1,26 @@
+sudo: required
+
+language: c
+
+services:
+  - docker
+
+matrix:
+  include:
+    - env:
+        - "DOCKER_OS=CentOS"
+        - "DOCKER_TAG=centos"
+      services:
+        - docker
+    - env:
+        - "DOCKER_OS=OpenSuse"
+        - "DOCKER_TAG=opensuse"
+      services:
+        - docker
+
+before_install:
+  - docker build -t malc-$DOCKER_TAG -f ${DOCKER_OS}Dockerfile .
+
+script:
+  - docker run --rm=true -v $HOME:$HOME:rw malc-$DOCKER_TAG /bin/bash -c "cd $PWD && ./bin/update_known_projects.sh /usr/local/bin/zproject_known_projects.xml && ./genmakeall"
+
