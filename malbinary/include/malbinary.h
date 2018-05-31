@@ -1,18 +1,18 @@
 /*
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2016 CNES
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -32,24 +32,10 @@
 extern "C" {
 #endif
 
-#include "malattributes.h"
-
 #include "mal_encoder.h"
 #include "mal_decoder.h"
 
-//  MALBINARY API version macros for compile-time API detection
-
-#define MALBINARY_VERSION_MAJOR 1
-#define MALBINARY_VERSION_MINOR 0
-#define MALBINARY_VERSION_PATCH 0
-
-#define MALBINARY_MAKE_VERSION(major, minor, patch) \
-    ((major) * 10000 + (minor) * 100 + (patch))
-#define MALBINARY_VERSION \
-    MALBINARY_MAKE_VERSION(MALBINARY_VERSION_MAJOR, MALBINARY_VERSION_MINOR, MALBINARY_VERSION_PATCH)
-
-typedef struct _malbinary_encoder_t malbinary_encoder_t;
-typedef struct _malbinary_decoder_t malbinary_decoder_t;
+#include "malbinary_library.h"
 
 struct _malbinary_cursor_t {
   // Pointer to the first byte of the body, calculated in malbinary_cursor_init from the ptr and
@@ -94,10 +80,6 @@ void malbinary_test(bool verbose);
 #define MILLISECONDS_IN_DAY 86400000L
 #define NANOSECONDS_FROM_CCSDS_TO_UNIX_EPOCH (MILLISECONDS_FROM_CCSDS_TO_UNIX_EPOCH * ONE_MILLION)
 #define NANOSECONDS_IN_DAY (MILLISECONDS_IN_DAY * ONE_MILLION)
-
-//  Public API classes
-#include "malbinary_encoder.h"
-#include "malbinary_decoder.h"
 
 #ifdef __cplusplus
 }
