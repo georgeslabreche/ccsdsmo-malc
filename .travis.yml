@@ -10,11 +10,29 @@ matrix:
     - env:
         - "DOCKER_OS=CentOS"
         - "DOCKER_TAG=centos"
+        - "TEST_SPLIT=false"
+        - "TEST_TCP=false"
       services:
         - docker
     - env:
         - "DOCKER_OS=OpenSuse"
         - "DOCKER_TAG=opensuse"
+        - "TEST_SPLIT=false"
+        - "TEST_TCP=false"
+      services:
+        - docker
+    - env:
+        - "DOCKER_OS=CentOS"
+        - "DOCKER_TAG=centos"
+        - "TEST_SPLIT=true"
+        - "TEST_TCP=true"
+      services:
+        - docker
+    - env:
+        - "DOCKER_OS=OpenSuse"
+        - "DOCKER_TAG=opensuse"
+        - "TEST_SPLIT=true"
+        - "TEST_TCP=true"
       services:
         - docker
 
@@ -22,5 +40,5 @@ before_install:
   - docker build -t malc-$DOCKER_TAG -f ${DOCKER_OS}Dockerfile .
 
 script:
-  - docker run --rm=true -v $HOME:$HOME:rw malc-$DOCKER_TAG /bin/bash -c "cd $PWD && sh ./bin/update_known_projects.sh /usr/local/bin/zproject_known_projects.xml && ./genmakeall"
+  - docker run --rm=true -v $HOME:$HOME:rw malc-$DOCKER_TAG /bin/bash -c "cd $PWD && sh ./bin/update_known_projects.sh /usr/local/bin/zproject_known_projects.xml && sed -i -e 's/#define TEST_SPLIT.*/#define TEST_SPLIT $TEST_SPLIT/' -e 's/#define TEST_TCP.*/#define TEST_TCP $TEST_TCP/' ./test/testarea/include/testarea.h && ./genmakeall"
 
