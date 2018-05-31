@@ -8,4 +8,8 @@ For example to build an OpenSuse instance of MAL/C:
   docker build -t malc-centos -f CentOSDockerfile .
 2. Creates and launches a emporary docker container to build current project
   docker run --rm -u `id -u`:`id -g` -v $PWD:$PWD -w $PWD malc-centos ./genmakeall
-  
+
+If you are behind a corporate proxy, think of using the build-args:
+  docker build \
+    --build-arg http_proxy=http://proxy.example.com:3128 --build-arg https_proxy=http://proxy.example.com:3128 \
+    -t malc-centos -f CentOSDockerfile .
