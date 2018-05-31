@@ -106,7 +106,7 @@ Download the current stable version of ZeroMQ (4.1.3) from [here](http://zeromq.
 Download the sources from github (https://github.com/ccsdsmo/malc) in the MAL_HOME
 directory (for example ~/cnes/malc).
 
-Go to MAL_HOME directory and launch "./genmakeall" shell script. This script generates
+Go to MAL home (MAL_HOME) directory and launch "./genmakeall" shell script. This script generates
 makefiles for each module then compiles and installs the different modules.
 
 The last modules are base tests for the multiples MAL interactions (SEND, SUBMIT, REQUEST, INVOKE,
@@ -122,14 +122,8 @@ The genmakeall commands accept multiples targets:
   - install: installs the generated libraries and includes.
   - check: launches unit tests.
 
-By default, the installation directory for MAL/C libraries and includes is "MAL_HOME/local".
-It can be changed in "MAL_HOME/bin/env.sh" shell script, this script defines various
-environment variables depending of the installation directory:
+By default, the installation directory for MAL/C libraries and includes is "MAL\_HOME/local". It can be changed by defining the MAL\_LOCAL environnement variable.
 
-    export MAL_LOCAL=$MAL_HOME/local
-    export CFLAGS=-I$MAL_LOCAL/include
-    export LDFLAGS=-L$MAL_LOCAL/lib
-    export LD_LIBRARY_PATH=/usr/local/lib:$MAL_LOCAL/lib
 
 ### COMPILATION, INSTALLATION
 
