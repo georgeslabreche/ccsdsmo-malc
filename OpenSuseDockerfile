@@ -27,6 +27,3 @@ RUN git clone --depth $GIT_DEPTH --branch v3.0.2 https://github.com/zeromq/czmq 
 
 RUN ldconfig
 
-RUN git clone --depth $GIT_DEPTH https://github.com/ccsdsmo/malc malc && cd malc && sh ./bin/update_known_projects.sh /usr/local/bin/zproject_known_projects.xml
-
-# RUN ./genmakeall
