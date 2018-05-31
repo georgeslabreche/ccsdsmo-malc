@@ -1,18 +1,18 @@
 /*
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2016 CNES
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -29,31 +29,9 @@
 extern "C" {
 #endif
 
-#include "mal.h"
-#include "malbinary.h"
-#include "malsplitbinary.h"
-#include "malzmq.h"
-#include "maltcp.h"
-#include "testarea.h"
-#include "malactor.h"
-
-#define PROGRESS_APP_VERSION_MAJOR 1
-#define PROGRESS_APP_VERSION_MINOR 0
-#define PROGRESS_APP_VERSION_PATCH 0
-
-#define PROGRESS_APP_MAKE_VERSION(major, minor, patch) \
-    ((major) * 10000 + (minor) * 100 + (patch))
-#define PROGRESS_APP_VERSION \
-		PROGRESS_APP_MAKE_VERSION(PROGRESS_APP_VERSION_MAJOR, PROGRESS_APP_VERSION_MINOR, PROGRESS_APP_VERSION_PATCH)
-
-typedef struct _progress_app_myprovider_t progress_app_myprovider_t;
-typedef struct _progress_app_myconsumer_t progress_app_myconsumer_t;
+#include "progress_app_library.h"
 
 void progress_app_test(bool verbose);
-
-// Public API classes
-#include "progress_app_myconsumer.h"
-#include "progress_app_myprovider.h"
 
 extern mal_actor_t *consumer_actor;
 extern mal_actor_t *provider_actor;
