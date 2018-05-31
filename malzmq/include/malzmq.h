@@ -103,9 +103,6 @@ extern char *malzmq_get_service_from_uri(char *full_uri);
 #include "malzmq_ctx.h"
 #include "malzmq_header.h"
 
-// Fixes somes compilation issues with recent releases of Zproject.
-void malzmq_private_selftest(bool verbose);
-
 #ifdef __cplusplus
 }
 #endif

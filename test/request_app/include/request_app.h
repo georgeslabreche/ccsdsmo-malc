@@ -58,9 +58,6 @@ void request_app_test(bool verbose);
 extern mal_actor_t *provider_actor;
 extern mal_actor_t *consumer_actor;
 
-// Fixes somes compilation issues with recent releases of Zproject.
-void request_app_private_selftest(bool verbose);
-
 #ifdef __cplusplus
 }
 #endif

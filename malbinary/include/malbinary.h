@@ -99,9 +99,6 @@ void malbinary_test(bool verbose);
 #include "malbinary_encoder.h"
 #include "malbinary_decoder.h"
 
-// Fixes somes compilation issues with recent releases of Zproject.
-void malbinary_private_selftest(bool verbose);
-
 #ifdef __cplusplus
 }
 #endif

@@ -62,9 +62,6 @@ extern mal_actor_t *publisher_actor;
 extern mal_actor_t *subscriber_actor;
 extern mal_actor_t *broker_actor;
 
-// Fixes somes compilation issues with recent releases of Zproject.
-void pubsub_app_private_selftest(bool verbose);
-
 #ifdef __cplusplus
 }
 #endif

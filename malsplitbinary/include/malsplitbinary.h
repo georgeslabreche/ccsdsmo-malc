@@ -115,9 +115,6 @@ unsigned int malsplitbinary_cursor_get_offset(void *cursor);
 
 void malsplitbinary_test(bool verbose);
 
-// Fixes somes compilation issues with recent releases of Zproject.
-void malsplitbinary_private_selftest(bool verbose);
-
 #ifdef __cplusplus
 }
 #endif

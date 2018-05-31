@@ -58,9 +58,6 @@ void simple_app_test(bool verbose);
 extern zactor_t *provider_actor;
 extern zactor_t *consumer_actor;
 
-// Fixes somes compilation issues with recent releases of Zproject.
-void simple_app_private_selftest(bool verbose);
-
 #ifdef __cplusplus
 }
 #endif

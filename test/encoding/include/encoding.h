@@ -46,9 +46,6 @@ void encoding_test(bool verbose);
 void file_encoding_test(bool verbose);
 bool testFixedBinaryEncoding();
 
-// Fixes somes compilation issues with recent releases of Zproject.
-void encoding_private_selftest(bool verbose);
-
 #ifdef __cplusplus
 }
 #endif

@@ -53,9 +53,6 @@ void malactor_test(bool verbose);
 //  Public API classes
 #include "mal_actor.h"
 
-// Fixes somes compilation issues with recent releases of Zproject.
-void malactor_private_selftest(bool verbose);
-
 #ifdef __cplusplus
 }
 #endif
