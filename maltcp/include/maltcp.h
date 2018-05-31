@@ -1,18 +1,18 @@
 /*
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2016 CNES
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -32,21 +32,7 @@
 extern "C" {
 #endif
 
-#include "mal.h"
-#include "malbinary.h"
-#include "czmq.h"
-#include "zmq.h"
-
-//  MALTCP API version macros for compile-time API detection
-
-#define MALTCP_VERSION_MAJOR 1
-#define MALTCP_VERSION_MINOR 0
-#define MALTCP_VERSION_PATCH 0
-
-#define MALTCP_MAKE_VERSION(major, minor, patch) \
-    ((major) * 10000 + (minor) * 100 + (patch))
-#define MALTCP_VERSION \
-		MALTCP_MAKE_VERSION(MALTCP_VERSION_MAJOR, MALTCP_VERSION_MINOR, MALTCP_VERSION_PATCH)
+#include "maltcp_library.h"
 
 typedef struct _mal_tcp_message_t mal_tcp_message_t;
 
@@ -56,8 +42,24 @@ void maltcp_set_log_level(int level);
 
 #define MALTCP_PROTOCOL_VERSION 1
 
-typedef struct _maltcp_ctx_t maltcp_ctx_t;
-typedef struct _maltcp_header_t maltcp_header_t;
+
+// 'Variable length' offset
+// +1 byte: version + sdu type
+// +2 bytes: service area
+// +2 bytes: service
+// +2 bytes: operation
+// +1 bytes: area version
+// +1 bytes: is error message + qos level + session
+// +8 bytes: transaction id
+// +1 bytes: flags
+// +1 bytes: encoding id
+
+static const int VARIABLE_LENGTH_OFFSET = 19;
+
+// Fixed header length
+// 'Variable length' offset (see above)
+// +4 bytes: variable length
+static const int FIXED_HEADER_LENGTH = 23;
 
 int maltcp_add_message_encoding_length(maltcp_header_t *maltcp_header,
     mal_message_t *message, mal_encoder_t *encoder,
@@ -102,28 +104,6 @@ extern char *maltcp_get_host_from_uri(char *uri);
 extern int maltcp_get_port_from_uri(char *uri);
 
 // END -- URI manipulation functions
-
-// 'Variable length' offset
-// +1 byte: version + sdu type
-// +2 bytes: service area
-// +2 bytes: service
-// +2 bytes: operation
-// +1 bytes: area version
-// +1 bytes: is error message + qos level + session
-// +8 bytes: transaction id
-// +1 bytes: flags
-// +1 bytes: encoding id
-
-static const int VARIABLE_LENGTH_OFFSET = 19;
-
-// Fixed header length
-// 'Variable length' offset (see above)
-// +4 bytes: variable length
-static const int FIXED_HEADER_LENGTH = 23;
-
-//  Public API classes
-#include "maltcp_ctx.h"
-#include "maltcp_header.h"
 
 #ifdef __cplusplus
 }
