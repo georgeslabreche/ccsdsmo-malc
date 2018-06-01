@@ -32,24 +32,7 @@
 extern "C" {
 #endif
 
-#include "clog.h"
-
-#include "malattributes.h"
-
-//  MAL API version macros for compile-time API detection
-
-#define MAL_VERSION_MAJOR 1
-#define MAL_VERSION_MINOR 0
-#define MAL_VERSION_PATCH 0
-
-#define MAL_MAKE_VERSION(major, minor, patch) \
-    ((major) * 10000 + (minor) * 100 + (patch))
-#define MAL_VERSION \
-    MAL_MAKE_VERSION(MAL_VERSION_MAJOR, MAL_VERSION_MINOR, MAL_VERSION_PATCH)
-
-extern clog_logger_t mal_logger;
-
-void mal_set_log_level(int level);
+#include <malattributes.h>
 
 #define MAL_AREA_NUMBER 1
 #define MAL_AREA_VERSION 1
@@ -77,42 +60,6 @@ void mal_set_log_level(int level);
 #define MAL_IP_STAGE_PUBSUB_PUBLISH_DEREGISTER 9
 #define MAL_IP_STAGE_PUBSUB_PUBLISH_DEREGISTER_ACK 10
 
-typedef struct _mal_encoder_t mal_encoder_t;
-typedef struct _mal_decoder_t mal_decoder_t;
-
-typedef struct _mal_ctx_t mal_ctx_t;
-typedef struct _mal_message_t mal_message_t;
-typedef struct _mal_poller_t mal_poller_t;
-typedef struct _mal_endpoint_t mal_endpoint_t;
-typedef struct _mal_subscription_t mal_subscription_t;
-typedef struct _mal_entitykey_t mal_entitykey_t;
-typedef struct _mal_entityrequest_t mal_entityrequest_t;
-typedef struct _mal_element_holder_t mal_element_holder_t;
-typedef struct _mal_updateheader_t mal_updateheader_t;
-
-typedef struct _mal_integer_list_t mal_integer_list_t;
-typedef struct _mal_uinteger_list_t mal_uinteger_list_t;
-typedef struct _mal_double_list_t mal_double_list_t;
-typedef struct _mal_float_list_t mal_float_list_t;
-typedef struct _mal_long_list_t mal_long_list_t;
-typedef struct _mal_ulong_list_t mal_ulong_list_t;
-typedef struct _mal_short_list_t mal_short_list_t;
-typedef struct _mal_ushort_list_t mal_ushort_list_t;
-typedef struct _mal_octet_list_t mal_octet_list_t;
-typedef struct _mal_uoctet_list_t mal_uoctet_list_t;
-typedef struct _mal_identifier_list_t mal_identifier_list_t;
-typedef struct _mal_string_list_t mal_string_list_t;
-typedef struct _mal_blob_list_t mal_blob_list_t;
-typedef struct _mal_entityrequest_list_t mal_entityrequest_list_t;
-typedef struct _mal_entitykey_list_t mal_entitykey_list_t;
-typedef struct _mal_updateheader_list_t mal_updateheader_list_t;
-typedef struct _mal_boolean_list_t mal_boolean_list_t;
-typedef struct _mal_time_list_t mal_time_list_t;
-typedef struct _mal_finetime_list_t mal_finetime_list_t;
-typedef struct _mal_duration_list_t mal_duration_list_t;
-typedef struct _mal_uri_list_t mal_uri_list_t;
-typedef struct _mal_subscription_list_t mal_subscription_list_t;
-
 // generated code for enumeration mal_interactiontype
 typedef enum {
   MAL_INTERACTIONTYPE_SEND,
@@ -125,7 +72,6 @@ typedef enum {
 
 // short form for enumeration type mal_interactiontype
 #define MAL_INTERACTIONTYPE_SHORT_FORM 0x1000001000013L
-typedef struct _mal_interactiontype_list_t mal_interactiontype_list_t;
 
 // short form for list of enumeration type mal_interactiontype
 #define MAL_INTERACTIONTYPE_LIST_SHORT_FORM 0x1000001ffffedL
@@ -139,7 +85,6 @@ typedef enum {
 
 // short form for enumeration type mal_sessiontype
 #define MAL_SESSIONTYPE_SHORT_FORM 0x1000001000014L
-typedef struct _mal_sessiontype_list_t mal_sessiontype_list_t;
 
 // short form for list of enumeration type mal_sessiontype
 #define MAL_SESSIONTYPE_LIST_SHORT_FORM 0x1000001ffffecL
@@ -154,7 +99,6 @@ typedef enum {
 
 // short form for enumeration type mal_qoslevel
 #define MAL_QOSLEVEL_SHORT_FORM 0x1000001000015L
-typedef struct _mal_qoslevel_list_t mal_qoslevel_list_t;
 
 // short form for list of enumeration type mal_qoslevel
 #define MAL_QOSLEVEL_LIST_SHORT_FORM 0x1000001ffffebL
@@ -169,7 +113,6 @@ typedef enum {
 
 // short form for enumeration type mal_updatetype
 #define MAL_UPDATETYPE_SHORT_FORM 0x1000001000016L
-typedef struct _mal_updatetype_list_t mal_updatetype_list_t;
 
 // short form for list of enumeration type mal_updatetype
 #define MAL_UPDATETYPE_LIST_SHORT_FORM 0x1000001ffffeaL
@@ -198,62 +141,11 @@ union mal_element_t {
   void *list_value;
 };
 
-/* ***** ***** ***** ***** ***** ***** ***** ***** ***** *****
- * Transport SPI
- * ***** ***** ***** ***** ***** ***** ***** ***** ***** ******/
+#include "mal_library.h"
 
-// Function to be provided by a MAL binding to create a URI
-typedef mal_uri_t *mal_binding_ctx_create_uri_fn(void *mal_binding_ctx, char *id);
+extern clog_logger_t mal_logger;
 
-// Function to be provided by a MAL binding to create an MAL end-point
-typedef void *mal_binding_ctx_create_endpoint_fn(void *mal_binding_ctx, mal_endpoint_t *mal_endpoint);
-
-// Function to be provided by a MAL binding to destroy an MAL end-point
-typedef void mal_binding_ctx_destroy_endpoint_fn(void *mal_binding_ctx, void **endpoint_p);
-
-// Function to be provided by a MAL binding to create a MAL poller
-typedef void *mal_binding_ctx_create_poller_fn(void *mal_binding_ctx, mal_poller_t *mal_poller);
-
-// Function to be provided by a MAL binding to destroy a MAL poller
-typedef void mal_binding_ctx_destroy_poller_fn(void *mal_binding_ctx, void **poller_p);
-
-// Function to be provided by a MAL binding to add an end-point to a MAL poller
-typedef int mal_binding_ctx_poller_add_endpoint_fn(
-    void *mal_binding_ctx,
-    mal_poller_t *mal_poller,
-    mal_endpoint_t *mal_endpoint);
-
-// Function to be provided by a MAL binding to remove an end-point to a MAL poller
-typedef int mal_binding_ctx_poller_del_endpoint_fn(
-    void *mal_binding_ctx,
-    mal_poller_t *mal_poller,
-    mal_endpoint_t *mal_endpoint);
-
-// Function to be provided by a MAL binding to send a message
-typedef int mal_binding_ctx_send_message_fn(
-    void *mal_binding_ctx,
-    mal_endpoint_t *mal_endpoint,
-    mal_message_t *message);
-
-// Function to be provided by a MAL binding to receive a message
-typedef int mal_binding_ctx_recv_message_fn(
-    void *mal_binding_ctx,
-    mal_endpoint_t *mal_endpoint, mal_message_t **message);
-
-typedef int mal_binding_ctx_init_operation_fn(
-    mal_endpoint_t *mal_endpoint, mal_message_t *message, mal_uri_t *uri_to, bool set_tid);
-
-// Function to be provided by a MAL binding to wait on a MAL poller
-typedef int mal_binding_ctx_poller_wait_fn(
-    void *mal_binding_ctx,
-    mal_poller_t *mal_poller, mal_endpoint_t **mal_endpoint, int timeout);
-
-// Function to be provided by a MAL binding to destroy a message
-typedef int mal_binding_ctx_destroy_message_fn(void *mal_binding_ctx, mal_message_t *message);
-
-typedef int mal_binding_ctx_start_fn(void *mal_binding_ctx);
-typedef int mal_binding_ctx_stop_fn(void *mal_binding_ctx);
-typedef int mal_binding_ctx_destroy_fn(void **mal_binding_ctx);
+void mal_set_log_level(int level);
 
 /* ***** ***** ***** ***** ***** ***** ***** ***** ***** *****
  * Encoding API
@@ -351,95 +243,36 @@ int mal_notify_decode_updateheader_list(void *cursor, mal_decoder_t *decoder, ma
 #define MAL_UPDATEHEADER_LIST_SHORT_FORM 0x1000001ffffe6L
 
 // generated code for composite MAL:_:IdBooleanPair
-typedef struct _mal_idbooleanpair_t mal_idbooleanpair_t;
 // short form for composite type MAL:_:IdBooleanPair
 #define MAL_IDBOOLEANPAIR_SHORT_FORM 0x100000100001bL
 
-typedef struct _mal_idbooleanpair_list_t mal_idbooleanpair_list_t;
 // short form for list of composite type MAL:_:IdBooleanPair
 #define MAL_IDBOOLEANPAIR_LIST_SHORT_FORM 0x1000001ffffe5L
 
 // generated code for composite MAL:_:Pair
-typedef struct _mal_pair_t mal_pair_t;
 // short form for composite type MAL:_:Pair
 #define MAL_PAIR_SHORT_FORM 0x100000100001cL
 
-typedef struct _mal_pair_list_t mal_pair_list_t;
 // short form for list of composite type MAL:_:Pair
 #define MAL_PAIR_LIST_SHORT_FORM 0x1000001ffffe4L
 
 // generated code for composite MAL:_:NamedValue
-typedef struct _mal_namedvalue_t mal_namedvalue_t;
 // short form for composite type MAL:_:NamedValue
 #define MAL_NAMEDVALUE_SHORT_FORM 0x100000100001dL
 
-typedef struct _mal_namedvalue_list_t mal_namedvalue_list_t;
 // short form for list of composite type MAL:_:NamedValue
 #define MAL_NAMEDVALUE_LIST_SHORT_FORM 0x1000001ffffe3L
 
 // generated code for composite MAL:_:File
-typedef struct _mal_file_t mal_file_t;
 // short form for composite type MAL:_:File
 #define MAL_FILE_SHORT_FORM 0x100000100001eL
 
-typedef struct _mal_file_list_t mal_file_list_t;
 // short form for list of composite type MAL:_:File
 #define MAL_FILE_LIST_SHORT_FORM 0x1000001ffffe2L
 
 void mal_message_set_log_level(int level);
 
 void mal_test(bool verbose);
-
-//  Public API classes
-#include "mal_ctx.h"
-#include "mal_endpoint.h"
-#include "mal_poller.h"
-#include "mal_integer_list.h"
-#include "mal_uinteger_list.h"
-#include "mal_double_list.h"
-#include "mal_float_list.h"
-#include "mal_long_list.h"
-#include "mal_ulong_list.h"
-#include "mal_short_list.h"
-#include "mal_ushort_list.h"
-#include "mal_octet_list.h"
-#include "mal_uoctet_list.h"
-#include "mal_identifier_list.h"
-#include "mal_blob_list.h"
-#include "mal_entitykey.h"
-#include "mal_string_list.h"
-#include "mal_interactiontype_list.h"
-#include "mal_entityrequest_list.h"
-#include "mal_entitykey_list.h"
-#include "mal_updateheader_list.h"
-#include "mal_subscription_list.h"
-#include "mal_subscription.h"
-#include "mal_entityrequest.h"
-#include "mal_message.h"
-#include "mal_updateheader.h"
-#include "mal_element_holder.h"
-#include "mal_boolean_list.h"
-#include "mal_routing.h"
-#include "mal_time_list.h"
-#include "mal_finetime_list.h"
-#include "mal_duration_list.h"
-#include "mal_uri_list.h"
-#include "mal_file.h"
-#include "mal_file_list.h"
-#include "mal_idbooleanpair.h"
-#include "mal_idbooleanpair_list.h"
-#include "mal_namedvalue.h"
-#include "mal_namedvalue_list.h"
-#include "mal_pair.h"
-#include "mal_pair_list.h"
-#include "mal_sessiontype_list.h"
-#include "mal_updatetype_list.h"
-#include "mal_qoslevel_list.h"
-#include "mal_encoder.h"
-#include "mal_decoder.h"
-
-// Fixes somes compilation issues with recent releases of Zproject.
-void mal_private_selftest(bool verbose);
 
 #ifdef __cplusplus
 }

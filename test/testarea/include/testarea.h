@@ -1,18 +1,18 @@
 /*
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2016 - 2017 CNES
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -32,12 +32,6 @@ extern "C" {
 #define TEST_SPLIT (false)
 #define TEST_TCP (false)
 
-#include "mal.h"
-#include "malbinary.h"
-#include "malsplitbinary.h"
-
-int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor, mal_element_holder_t * element_holder);
-
 // standard area identifiers
 #define TESTAREA_AREA_NUMBER 200
 #define TESTAREA_AREA_VERSION 1
@@ -51,7 +45,6 @@ typedef enum {
 
 // short form for enumeration type testarea_testenumeration
 #define TESTAREA_TESTENUMERATION_SHORT_FORM 0xc8000001000002L
-typedef struct _testarea_testenumeration_list_t testarea_testenumeration_list_t;
 
 // short form for list of enumeration type testarea_testenumeration
 #define TESTAREA_TESTENUMERATION_LIST_SHORT_FORM 0xc8000001fffffeL
@@ -60,54 +53,43 @@ typedef struct _testarea_testenumeration_list_t testarea_testenumeration_list_t;
 #define TESTAREA_TESTSERVICE_SERVICE_NUMBER 1
 
 // generated code for composite TestArea:TestService:TestComposite
-typedef struct _testarea_testservice_testcomposite_t testarea_testservice_testcomposite_t;
-
 // short form for composite type TestArea:TestService:TestComposite
 #define TESTAREA_TESTSERVICE_TESTCOMPOSITE_SHORT_FORM 0xc8000101000001L
-typedef struct _testarea_testservice_testcomposite_list_t testarea_testservice_testcomposite_list_t;
 
 // short form for list of composite type TestArea:TestService:TestComposite
 #define TESTAREA_TESTSERVICE_TESTCOMPOSITE_LIST_SHORT_FORM 0xc8000101ffffffL
 
 // generated code for composite TestArea:TestService:TestFullComposite
-typedef struct _testarea_testservice_testfullcomposite_t testarea_testservice_testfullcomposite_t;
-
 // short form for composite type TestArea:TestService:TestFullComposite
 #define TESTAREA_TESTSERVICE_TESTFULLCOMPOSITE_SHORT_FORM 0xc8000101000002L
-typedef struct _testarea_testservice_testfullcomposite_list_t testarea_testservice_testfullcomposite_list_t;
 
 // short form for list of composite type TestArea:TestService:TestFullComposite
 #define TESTAREA_TESTSERVICE_TESTFULLCOMPOSITE_LIST_SHORT_FORM 0xc8000101fffffeL
 
 // generated code for composite TestArea:TestService:TestUpdate
-typedef struct _testarea_testservice_testupdate_t testarea_testservice_testupdate_t;
-
 // short form for composite type TestArea:TestService:TestUpdate
 #define TESTAREA_TESTSERVICE_TESTUPDATE_SHORT_FORM 0xc8000101000003L
-typedef struct _testarea_testservice_testupdate_list_t testarea_testservice_testupdate_list_t;
 
 // short form for list of composite type TestArea:TestService:TestUpdate
 #define TESTAREA_TESTSERVICE_TESTUPDATE_LIST_SHORT_FORM 0xc8000101fffffdL
 
 // generated code for composite TestArea:TestService:TestFinalCompositeA
-typedef struct _testarea_testservice_testfinalcompositea_t testarea_testservice_testfinalcompositea_t;
-
 // short form for composite type TestArea:TestService:TestFinalCompositeA
 #define TESTAREA_TESTSERVICE_TESTFINALCOMPOSITEA_SHORT_FORM 0xc8000101000004L
-typedef struct _testarea_testservice_testfinalcompositea_list_t testarea_testservice_testfinalcompositea_list_t;
 
 // short form for list of composite type TestArea:TestService:TestFinalCompositeA
 #define TESTAREA_TESTSERVICE_TESTFINALCOMPOSITEA_LIST_SHORT_FORM 0xc8000101fffffcL
 
 // generated code for composite TestArea:TestService:TestFinalCompositeB
-typedef struct _testarea_testservice_testfinalcompositeb_t testarea_testservice_testfinalcompositeb_t;
-
 // short form for composite type TestArea:TestService:TestFinalCompositeB
 #define TESTAREA_TESTSERVICE_TESTFINALCOMPOSITEB_SHORT_FORM 0xc8000101000005L
-typedef struct _testarea_testservice_testfinalcompositeb_list_t testarea_testservice_testfinalcompositeb_list_t;
 
 // short form for list of composite type TestArea:TestService:TestFinalCompositeB
 #define TESTAREA_TESTSERVICE_TESTFINALCOMPOSITEB_LIST_SHORT_FORM 0xc8000101fffffbL
+
+#include "testarea_library.h"
+
+int testarea_malbinary_decode_mal_element(mal_decoder_t * decoder, void * cursor, mal_element_holder_t * element_holder);
 
 // include required areas definitions
 #include "com.h"
@@ -222,21 +204,6 @@ int testarea_testservice_testcrossref_send_decode_0(void * cursor, mal_decoder_t
 
 // test function
 void testarea_test(bool verbose);
-
-#include "testarea_testenumeration_list.h"
-#include "testarea_testservice_testcomposite.h"
-#include "testarea_testservice_testcomposite_list.h"
-#include "testarea_testservice_testfullcomposite.h"
-#include "testarea_testservice_testfullcomposite_list.h"
-#include "testarea_testservice_testupdate.h"
-#include "testarea_testservice_testupdate_list.h"
-#include "testarea_testservice_testfinalcompositea.h"
-#include "testarea_testservice_testfinalcompositea_list.h"
-#include "testarea_testservice_testfinalcompositeb.h"
-#include "testarea_testservice_testfinalcompositeb_list.h"
-
-// Fixes somes compilation issues with recent releases of Zproject.
-void testarea_private_selftest(bool verbose);
 
 #ifdef __cplusplus
 }

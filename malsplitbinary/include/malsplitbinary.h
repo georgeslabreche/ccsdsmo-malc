@@ -1,18 +1,18 @@
 /*
  * The MIT License (MIT)
- * 
+ *
  * Copyright (c) 2016 - 2018 CNES
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -32,23 +32,7 @@
 extern "C" {
 #endif
 
-#include "mal.h"
-#include "malattributes.h"
-#include "malbinary.h"
-
-//  MALSPLITBINARY API version macros for compile-time API detection
-
-#define MALSPLITBINARY_VERSION_MAJOR 1
-#define MALSPLITBINARY_VERSION_MINOR 0
-#define MALSPLITBINARY_VERSION_PATCH 0
-
-#define MALSPLITBINARY_MAKE_VERSION(major, minor, patch) \
-    ((major) * 10000 + (minor) * 100 + (patch))
-#define MALSPLITBINARY_VERSION \
-    MALSPLITBINARY_MAKE_VERSION(MALSPLITBINARY_VERSION_MAJOR, MALSPLITBINARY_VERSION_MINOR, MALSPLITBINARY_VERSION_PATCH)
-
-typedef struct _malsplitbinary_encoder_t malsplitbinary_encoder_t;
-typedef struct _malsplitbinary_decoder_t malsplitbinary_decoder_t;
+#include "malsplitbinary_library.h"
 
 struct _malsplitbinary_cursor_t {
   malbinary_cursor_t malbinary_cursor;
@@ -109,14 +93,7 @@ unsigned int malsplitbinary_cursor_get_offset(void *cursor);
 #define MALSPLITBINARY_MEDIUM_ENUM_SIZE 2
 #define MALSPLITBINARY_LARGE_ENUM_SIZE 4
 
-//  Public API classes
-#include "malsplitbinary_encoder.h"
-#include "malsplitbinary_decoder.h"
-
 void malsplitbinary_test(bool verbose);
-
-// Fixes somes compilation issues with recent releases of Zproject.
-void malsplitbinary_private_selftest(bool verbose);
 
 #ifdef __cplusplus
 }

@@ -84,9 +84,6 @@ void progress_consumer_test(bool verbose);
 
 extern mal_actor_t *consumer_actor;
 
-// Fixes somes compilation issues with recent releases of Zproject.
-void progress_consumer_private_selftest(bool verbose);
-
 #ifdef __cplusplus
 }
 #endif

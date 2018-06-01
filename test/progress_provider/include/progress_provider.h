@@ -70,9 +70,6 @@ void progress_provider_test(bool verbose);
 
 extern mal_actor_t *provider_actor;
 
-// Fixes somes compilation issues with recent releases of Zproject.
-void progress_provider_private_selftest(bool verbose);
-
 #ifdef __cplusplus
 }
 #endif

@@ -32,6 +32,59 @@
 extern "C" {
 #endif
 
+// Function to be provided by a MAL binding to create a URI
+typedef mal_uri_t *mal_binding_ctx_create_uri_fn(void *mal_binding_ctx, char *id);
+
+// Function to be provided by a MAL binding to create an MAL end-point
+typedef void *mal_binding_ctx_create_endpoint_fn(void *mal_binding_ctx, mal_endpoint_t *mal_endpoint);
+
+// Function to be provided by a MAL binding to destroy an MAL end-point
+typedef void mal_binding_ctx_destroy_endpoint_fn(void *mal_binding_ctx, void **endpoint_p);
+
+// Function to be provided by a MAL binding to create a MAL poller
+typedef void *mal_binding_ctx_create_poller_fn(void *mal_binding_ctx, mal_poller_t *mal_poller);
+
+// Function to be provided by a MAL binding to destroy a MAL poller
+typedef void mal_binding_ctx_destroy_poller_fn(void *mal_binding_ctx, void **poller_p);
+
+// Function to be provided by a MAL binding to add an end-point to a MAL poller
+typedef int mal_binding_ctx_poller_add_endpoint_fn(
+    void *mal_binding_ctx,
+    mal_poller_t *mal_poller,
+    mal_endpoint_t *mal_endpoint);
+
+// Function to be provided by a MAL binding to remove an end-point to a MAL poller
+typedef int mal_binding_ctx_poller_del_endpoint_fn(
+    void *mal_binding_ctx,
+    mal_poller_t *mal_poller,
+    mal_endpoint_t *mal_endpoint);
+
+// Function to be provided by a MAL binding to send a message
+typedef int mal_binding_ctx_send_message_fn(
+    void *mal_binding_ctx,
+    mal_endpoint_t *mal_endpoint,
+    mal_message_t *message);
+
+// Function to be provided by a MAL binding to receive a message
+typedef int mal_binding_ctx_recv_message_fn(
+    void *mal_binding_ctx,
+    mal_endpoint_t *mal_endpoint, mal_message_t **message);
+
+typedef int mal_binding_ctx_init_operation_fn(
+    mal_endpoint_t *mal_endpoint, mal_message_t *message, mal_uri_t *uri_to, bool set_tid);
+
+// Function to be provided by a MAL binding to wait on a MAL poller
+typedef int mal_binding_ctx_poller_wait_fn(
+    void *mal_binding_ctx,
+    mal_poller_t *mal_poller, mal_endpoint_t **mal_endpoint, int timeout);
+
+// Function to be provided by a MAL binding to destroy a message
+typedef int mal_binding_ctx_destroy_message_fn(void *mal_binding_ctx, mal_message_t *message);
+
+typedef int mal_binding_ctx_start_fn(void *mal_binding_ctx);
+typedef int mal_binding_ctx_stop_fn(void *mal_binding_ctx);
+typedef int mal_binding_ctx_destroy_fn(void **mal_binding_ctx);
+
 mal_ctx_t *mal_ctx_new();
 
 void mal_ctx_destroy(mal_ctx_t **self_p);
