@@ -18,10 +18,12 @@ echo "##### genmake PROGDIR= ${PROGDIR}"
 echo "##### -- MAL_HOME = $MAL_HOME"
 echo "##### -- MAL_LOCAL = $MAL_LOCAL"
 
-export CFLAGS=-"I$MAL_LOCAL/include -Wno-error=format-security"
+export CPPFLAGS="-I$MAL_LOCAL/include"
+export CFLAGS="-I$MAL_LOCAL/include -Wno-error=format-security"
 export LDFLAGS="-L$MAL_LOCAL/lib -L$MAL_LOCAL/lib64"
 export LD_LIBRARY_PATH=/usr/local/lib:$MAL_LOCAL/lib:$MAL_LOCAL/lib64
 
+echo "##### -- CPPFLAGS = $CPPFLAGS"
 echo "##### -- CFLAGS = $CFLAGS"
 echo "##### -- LDFLAGS = $LDFLAGS"
 echo "##### -- LD_LIBRARY_PATH=$LD_LIBRARY_PATH"
