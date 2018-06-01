@@ -27,7 +27,7 @@ fi
 
 # Should remove $MAL_LOCAL -> print a message
 if  [ "$#" -ne "0" ]; then
-  if [ $1 == "clean" ]; then
+  if [ $1 == "distclean" ]; then
     echo ""
     echo "!! May be you should clean $MAL_LOCAL target directory !!"
     echo ""
