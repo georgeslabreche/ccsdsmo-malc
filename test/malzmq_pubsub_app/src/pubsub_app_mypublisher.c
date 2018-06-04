@@ -121,7 +121,7 @@ int pubsub_app_mypublisher_initialize(void *self, mal_actor_t *mal_actor) {
   mal_uri_t *broker_uri = publisher->broker_uri;
 
   // initiate a PUBLISH REGISTER interaction PUBLISH
-  mal_entitykey_list_t *entitykey_list = mal_entitykey_list_new(0);
+  mal_entitykey_list_t *entitykey_list = mal_entitykey_list_new(1);
   mal_entitykey_t **entitykey_list_content = mal_entitykey_list_get_content(
       entitykey_list);
   // TODO: add missing parameters in EntityKey constructor
