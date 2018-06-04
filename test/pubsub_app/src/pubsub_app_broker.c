@@ -434,7 +434,7 @@ int pubsub_app_broker_on_deregister(void *self, mal_ctx_t *mal_ctx,
 
    printf("pubsub_app_broker_on_deregister: offset=%d\n", mal_message_get_body_offset(message));
 
-   mal_identifier_list_t *subscription_list = mal_identifier_list_new(0);
+   mal_identifier_list_t *subscription_list;
    rc = mal_deregister_decode(cursor, broker->decoder, &subscription_list);
    mal_decoder_cursor_assert(broker->decoder, cursor);
    assert(rc == 0);
