@@ -195,7 +195,7 @@ int submit_app_myprovider_testarea_testservice_testsubmit(
 
   printf("AF: submit_app_myprovider: handler send ACK\n");
   rc = testarea_testservice_testsubmit_submit_ack(mal_endpoint, message, result_message, (0 != 0));
-  printf("AF: submit_app_myprovider: handler ACK sent\n");
+  printf("AF: submit_app_myprovider: handler ACK sent: %d\n", rc);
 
   printf("destroy parameter_0\n");
   testarea_testservice_testcomposite_destroy(&parameter_0);
