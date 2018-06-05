@@ -42,29 +42,41 @@ mal_updatetype_list_t * mal_updatetype_list_new(unsigned int element_count)
   self->presence_flags = (bool *) calloc(element_count, sizeof(bool));
   if (!self->presence_flags)
   {
-    free(self);
+    mal_updatetype_list_destroy(&self);
     return NULL;
   }
   self->content = (mal_updatetype_t *) calloc(element_count, sizeof(mal_updatetype_t));
   if (!self->content)
   {
-    free(self->presence_flags);
-    free(self);
+    mal_updatetype_list_destroy(&self);
     return NULL;
   }
   return self;
 }
 
+void mal_updatetype_list_clear(mal_updatetype_list_t * self)
+{
+  if (self) {
+    if (self->element_count > 0)
+    {
+      self->element_count = 0;
+      free(self->content);
+      self->content = NULL;
+      free(self->presence_flags);
+      self->presence_flags = NULL;
+    }
+  }
+}
+
 // destructor, free the list and its content
 void mal_updatetype_list_destroy(mal_updatetype_list_t ** self_p)
 {
-  if ((*self_p)->element_count > 0)
+  if (self_p)
   {
-    free((*self_p)->presence_flags);
-    free((*self_p)->content);
+    mal_updatetype_list_clear((*self_p));
+    free (*self_p);
+    (*self_p) = NULL;
   }
-  free (*self_p);
-  (*self_p) = NULL;
 }
 
 // fields accessors for enumeration list mal_updatetype_list
@@ -135,9 +147,7 @@ int mal_updatetype_list_decode_malbinary(mal_updatetype_list_t * self, mal_decod
     return rc;
   if (list_size == 0)
   {
-    self->element_count = 0;
-    self->presence_flags = NULL;
-    self->content = NULL;
+    mal_updatetype_list_clear(self);
     return 0;
   }
   self->presence_flags = (bool *) calloc(list_size, sizeof(bool));
@@ -146,8 +156,7 @@ int mal_updatetype_list_decode_malbinary(mal_updatetype_list_t * self, mal_decod
   self->content = (mal_updatetype_t *) calloc(list_size, sizeof(mal_updatetype_t));
   if (self->content == NULL)
   {
-    free(self->presence_flags);
-    self->presence_flags = NULL;
+    mal_updatetype_list_clear(self);
     return -1;
   }
   self->element_count = list_size;

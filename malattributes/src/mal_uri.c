@@ -37,7 +37,7 @@ mal_uri_t *mal_uri_new(char *char_content) {
 }
 
 void mal_uri_destroy(mal_uri_t **self_p) {
-  if (*self_p) {
+  if (self_p && *self_p) {
     free((*self_p));
     *self_p = NULL;
   }

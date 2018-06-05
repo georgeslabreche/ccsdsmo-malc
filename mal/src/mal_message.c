@@ -109,7 +109,7 @@ mal_message_t *mal_message_new(mal_blob_t *authentication_id,
 }
 
 void mal_message_destroy(mal_message_t **self_p, mal_ctx_t *mal_ctx) {
-  if (*self_p) {
+  if (self_p && *self_p) {
     mal_message_t *self = *self_p;
 
     if (self->free_uri_to) {

@@ -40,27 +40,36 @@ mal_string_list_t *mal_string_list_new(unsigned int element_count) {
   self->content = (mal_string_t **) calloc(element_count, sizeof(mal_string_t *));
   if (!self->content && (element_count > 0))
   {
-    free(self->content);
-    free(self);
+    mal_string_list_destroy(&self);
     return NULL;
   }
   self->element_count = element_count;
   return self;
 }
 
+void mal_string_list_clear(mal_string_list_t * self)
+{
+  if (self)
+  {
+    for (int i = 0; i < self->element_count; i++)
+    {
+      if (self->content[i] != NULL)
+        mal_string_destroy(&self->content[i]);
+    }
+    self->element_count = 0;
+    free(self->content);
+    self->content = NULL;
+  }
+}
+
 void mal_string_list_destroy(mal_string_list_t ** self_p)
 {
-  if ((*self_p)->element_count > 0)
+  if (self_p && *self_p)
   {
-    for (int i = 0; i < (*self_p)->element_count; i++)
-    {
-      if ((*self_p)->content[i] != NULL)
-        mal_string_destroy(&(*self_p)->content[i]);
-    }
-    free((*self_p)->content);
+    mal_string_list_clear((*self_p));
+    free (*self_p);
+    (*self_p) = NULL;
   }
-  free (*self_p);
-  (*self_p) = NULL;
 }
 
 unsigned int mal_string_list_get_element_count(mal_string_list_t *self) {
@@ -129,8 +138,7 @@ int mal_string_list_decode_malbinary(mal_string_list_t *self,
     return rc;
   if (list_size == 0)
   {
-    self->element_count = 0;
-    self->content = NULL;
+    mal_string_list_clear(self);
     return 0;
   }
   self->content = (mal_string_t **) calloc(list_size, sizeof(mal_string_t *));
@@ -174,4 +182,3 @@ void mal_string_list_test(bool verbose) {
 //  @end
   printf("OK\n");
 }
-

@@ -34,6 +34,8 @@ extern "C" {
 
 mal_identifier_list_t *mal_identifier_list_new(unsigned int element_count);
 
+void mal_identifier_list_clear(mal_identifier_list_t * self);
+
 void mal_identifier_list_destroy(mal_identifier_list_t **self_p);
 
 unsigned int mal_identifier_list_get_element_count(mal_identifier_list_t *self);

@@ -33,6 +33,8 @@ extern "C" {
 // default constructor
 mal_sessiontype_list_t * mal_sessiontype_list_new(unsigned int element_count);
 
+void mal_sessiontype_list_clear(mal_sessiontype_list_t * self);
+
 // destructor, free the list and its content
 void mal_sessiontype_list_destroy(mal_sessiontype_list_t ** self_p);
 

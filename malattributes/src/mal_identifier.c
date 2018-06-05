@@ -37,7 +37,7 @@ mal_identifier_t *mal_identifier_new(char *char_content) {
 }
 
 void mal_identifier_destroy(mal_identifier_t **self_p) {
-  if (*self_p) {
+  if (self_p && *self_p) {
     free((*self_p));
     (*self_p) = NULL;
   }

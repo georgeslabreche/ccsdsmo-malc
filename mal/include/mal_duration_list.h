@@ -34,6 +34,8 @@ extern "C" {
 
 mal_duration_list_t *mal_duration_list_new(unsigned int element_count);
 
+void mal_duration_list_clear(mal_duration_list_t * self);
+
 void mal_duration_list_destroy(mal_duration_list_t **self_p);
 
 unsigned int mal_duration_list_get_element_count(mal_duration_list_t *self);

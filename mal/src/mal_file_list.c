@@ -45,20 +45,30 @@ mal_file_list_t * mal_file_list_new(unsigned int element_count)
   return self;
 }
 
+void mal_file_list_clear(mal_file_list_t * self)
+{
+  if (self)
+  {
+    for (int i = 0; i < self->element_count; i++)
+    {
+      if (self->content[i] != NULL)
+        mal_file_destroy(&self->content[i]);
+    }
+    self->element_count = 0;
+    free(self->content);
+    self->content = NULL;
+  }
+}
+
 // destructor, free the list, its content and its elements
 void mal_file_list_destroy(mal_file_list_t ** self_p)
 {
-  if ((*self_p)->element_count > 0)
+  if (self_p && *self_p)
   {
-    for (int i = 0; i < (*self_p)->element_count; i++)
-    {
-      if ((*self_p)->content[i] != NULL)
-        mal_file_destroy(&(*self_p)->content[i]);
-    }
-    free((*self_p)->content);
+    mal_file_list_clear((*self_p));
+    free (*self_p);
+    (*self_p) = NULL;
   }
-  free (*self_p);
-  (*self_p) = NULL;
 }
 
 // fields accessors for composite list mal_file_list
@@ -128,8 +138,7 @@ int mal_file_list_decode_malbinary(mal_file_list_t * self, mal_decoder_t * decod
     return rc;
   if (list_size == 0)
   {
-    self->element_count = 0;
-    self->content = NULL;
+    mal_file_list_clear(self);
     return 0;
   }
   self->content = (mal_file_t **) calloc(list_size, sizeof(mal_file_t *));

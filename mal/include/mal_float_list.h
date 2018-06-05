@@ -34,6 +34,8 @@ extern "C" {
 
 mal_float_list_t *mal_float_list_new(unsigned int element_count);
 
+void mal_float_list_clear(mal_float_list_t * self);
+
 void mal_float_list_destroy(mal_float_list_t **self_p);
 
 unsigned int mal_float_list_get_element_count(mal_float_list_t *self);

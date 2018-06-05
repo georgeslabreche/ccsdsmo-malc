@@ -34,6 +34,8 @@ extern "C" {
 
 mal_finetime_list_t *mal_finetime_list_new(unsigned int element_count);
 
+void mal_finetime_list_clear(mal_finetime_list_t * self);
+
 void mal_finetime_list_destroy(mal_finetime_list_t **self_p);
 
 unsigned int mal_finetime_list_get_element_count(mal_finetime_list_t *self);

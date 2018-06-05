@@ -53,7 +53,7 @@ mal_blob_t *mal_blob_create(char *content, unsigned int length) {
 }
 
 void mal_blob_destroy(mal_blob_t **self_p) {
-  if (*self_p) {
+  if (self_p && *self_p) {
     mal_blob_t *self = *self_p;
     free(self->content);
     self->content = NULL;

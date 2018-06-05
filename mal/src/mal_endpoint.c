@@ -67,7 +67,7 @@ mal_endpoint_t *mal_endpoint_actor(
 }
 
 void mal_endpoint_destroy(mal_endpoint_t **self_p) {
-  if (*self_p) {
+  if (self_p && *self_p) {
     mal_endpoint_t *self = *self_p;
     free(self->uri);
 

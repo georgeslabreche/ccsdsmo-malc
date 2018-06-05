@@ -34,6 +34,8 @@ extern "C" {
 
 mal_time_list_t *mal_time_list_new(unsigned int element_count);
 
+void mal_time_list_clear(mal_time_list_t * self);
+
 void mal_time_list_destroy(mal_time_list_t **self_p);
 
 unsigned int mal_time_list_get_element_count(mal_time_list_t *self);

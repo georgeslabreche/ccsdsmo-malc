@@ -33,6 +33,8 @@ extern "C" {
 // default constructor
 mal_namedvalue_list_t * mal_namedvalue_list_new(unsigned int element_count);
 
+void mal_namedvalue_list_clear(mal_namedvalue_list_t * self);
+
 // destructor, free the list, its content and its elements
 void mal_namedvalue_list_destroy(mal_namedvalue_list_t ** self_p);
 

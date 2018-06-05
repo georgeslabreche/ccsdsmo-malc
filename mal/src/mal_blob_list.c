@@ -47,17 +47,22 @@ mal_blob_list_t *mal_blob_list_new(unsigned int element_count) {
   return self;
 }
 
-void mal_blob_list_destroy(mal_blob_list_t **self_p) {
-  if (*self_p) {
-    if ((*self_p)->element_count > 0)
+void mal_blob_list_clear(mal_blob_list_t * self){
+  if (self) {
+    for (int i = 0; i < self->element_count; i++)
     {
-      for (int i = 0; i < (*self_p)->element_count; i++)
-      {
-        if ((*self_p)->content[i] != NULL)
-          mal_blob_destroy(&(*self_p)->content[i]);
-      }
-      free((*self_p)->content);
+      if (self->content[i] != NULL)
+        mal_blob_destroy(&self->content[i]);
     }
+    self->element_count = 0;
+    free(self->content);
+    self->content = NULL;
+  }
+}
+
+void mal_blob_list_destroy(mal_blob_list_t **self_p) {
+  if (self_p && *self_p) {
+    mal_blob_list_clear(*self_p);
     free (*self_p);
     (*self_p) = NULL;
   }
@@ -129,8 +134,7 @@ int mal_blob_list_decode_malbinary(mal_blob_list_t *self,
     return rc;
   if (list_size == 0)
   {
-    self->element_count = 0;
-    self->content = NULL;
+    mal_blob_list_clear(self);
     return 0;
   }
   self->content = (mal_blob_t **) calloc(list_size, sizeof(mal_blob_t *));
@@ -163,4 +167,3 @@ void mal_blob_list_test(bool verbose) {
 //  @end
   printf("OK\n");
 }
-

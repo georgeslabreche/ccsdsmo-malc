@@ -34,6 +34,8 @@ extern "C" {
 
 mal_ushort_list_t *mal_ushort_list_new(unsigned int element_count);
 
+void mal_ushort_list_clear(mal_ushort_list_t * self);
+
 void mal_ushort_list_destroy(mal_ushort_list_t **self_p);
 
 unsigned int mal_ushort_list_get_element_count(mal_ushort_list_t *self);

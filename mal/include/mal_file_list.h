@@ -33,6 +33,8 @@ extern "C" {
 // default constructor
 mal_file_list_t * mal_file_list_new(unsigned int element_count);
 
+void mal_file_list_clear(mal_file_list_t * self);
+
 // destructor, free the list, its content and its elements
 void mal_file_list_destroy(mal_file_list_t ** self_p);
 
