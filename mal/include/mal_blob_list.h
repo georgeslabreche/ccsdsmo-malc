@@ -34,6 +34,8 @@ extern "C" {
 
 mal_blob_list_t *mal_blob_list_new(unsigned int element_count);
 
+void mal_blob_list_clear(mal_blob_list_t * self);
+
 void mal_blob_list_destroy(mal_blob_list_t **self_p);
 
 unsigned int mal_blob_list_get_element_count(mal_blob_list_t *self);

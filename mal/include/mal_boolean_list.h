@@ -34,6 +34,8 @@ extern "C" {
 
 mal_boolean_list_t *mal_boolean_list_new(unsigned int element_count);
 
+void mal_boolean_list_clear(mal_boolean_list_t * self);
+
 void mal_boolean_list_destroy(mal_boolean_list_t **self_p);
 
 unsigned int mal_boolean_list_get_element_count(mal_boolean_list_t *self);

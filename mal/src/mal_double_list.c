@@ -41,27 +41,35 @@ mal_double_list_t *mal_double_list_new(unsigned int element_count) {
   self->content = (mal_double_t *) calloc(element_count, sizeof(mal_double_t));
   if (!self->content && (element_count > 0))
   {
-    free(self);
+    mal_double_list_destroy(&self);
     return NULL;
   }
   self->presence_flags = (bool *) calloc(element_count, sizeof(bool));
   if (!self->presence_flags && (element_count > 0))
   {
-    free(self->content);
-    free(self);
+    mal_double_list_destroy(&self);
     return NULL;
   }
   self->element_count = element_count;
   return self;
 }
 
+void mal_double_list_clear(mal_double_list_t *self) {
+  if (self) {
+    if (self->element_count > 0)
+    {
+      self->element_count = 0;
+      free(self->content);
+      self->content = NULL;
+      free(self->presence_flags);
+      self->presence_flags = NULL;
+    }
+  }
+}
+
 void mal_double_list_destroy(mal_double_list_t **self_p) {
   if (self_p && *self_p) {
-    if ((*self_p)->element_count > 0)
-    {
-      free((*self_p)->content);
-      free((*self_p)->presence_flags);
-    }
+    mal_double_list_clear(*self_p);
     free (*self_p);
     (*self_p) = NULL;
   }
@@ -135,8 +143,7 @@ int mal_double_list_decode_malbinary(mal_double_list_t *self,
   if (rc < 0)
     return rc;
   if (list_size == 0) {
-    self->element_count = 0;
-    self->content = NULL;
+    mal_double_list_clear(self);
     return 0;
   }
   self->content = (mal_double_t *) calloc(list_size, sizeof(mal_double_t *));
@@ -169,4 +176,3 @@ void mal_double_list_test(bool verbose) {
   //  @end
   printf("OK\n");
 }
-

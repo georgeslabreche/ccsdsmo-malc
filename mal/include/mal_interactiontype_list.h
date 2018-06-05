@@ -33,6 +33,8 @@ extern "C" {
 // default constructor
 mal_interactiontype_list_t * mal_interactiontype_list_new(unsigned int element_count);
 
+void mal_interactiontype_list_clear(mal_interactiontype_list_t * self);
+
 // destructor, free the list and its content
 void mal_interactiontype_list_destroy(mal_interactiontype_list_t ** self_p);
 

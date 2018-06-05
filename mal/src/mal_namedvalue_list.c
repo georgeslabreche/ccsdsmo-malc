@@ -45,17 +45,26 @@ mal_namedvalue_list_t * mal_namedvalue_list_new(unsigned int element_count)
   return self;
 }
 
+void mal_namedvalue_list_clear(mal_namedvalue_list_t * self){
+  if (self)
+  {
+    for (int i = 0; i < self->element_count; i++)
+    {
+      if (self->content[i] != NULL)
+        mal_namedvalue_destroy(&self->content[i]);
+    }
+    self->element_count = 0;
+    free(self->content);
+    self->content = NULL;
+  }
+}
+
 // destructor, free the list, its content and its elements
 void mal_namedvalue_list_destroy(mal_namedvalue_list_t ** self_p)
 {
   if (self_p && *self_p)
   {
-    for (int i = 0; i < (*self_p)->element_count; i++)
-    {
-      if ((*self_p)->content[i] != NULL)
-        mal_namedvalue_destroy(&(*self_p)->content[i]);
-    }
-    free((*self_p)->content);
+    mal_namedvalue_list_clear((*self_p));
     free (*self_p);
     (*self_p) = NULL;
   }
@@ -128,8 +137,7 @@ int mal_namedvalue_list_decode_malbinary(mal_namedvalue_list_t * self, mal_decod
     return rc;
   if (list_size == 0)
   {
-    self->element_count = 0;
-    self->content = NULL;
+    mal_namedvalue_list_clear(self);
     return 0;
   }
   self->content = (mal_namedvalue_t **) calloc(list_size, sizeof(mal_namedvalue_t *));

@@ -34,6 +34,8 @@ extern "C" {
 
 mal_double_list_t *mal_double_list_new(unsigned int element_count);
 
+void mal_double_list_clear(mal_double_list_t * self);
+
 void mal_double_list_destroy(mal_double_list_t **self_p);
 
 unsigned int mal_double_list_get_element_count(mal_double_list_t *self);

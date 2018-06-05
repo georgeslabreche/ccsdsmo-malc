@@ -34,6 +34,8 @@ extern "C" {
 
 mal_uoctet_list_t *mal_uoctet_list_new(unsigned int element_count);
 
+void mal_uoctet_list_clear(mal_uoctet_list_t * self);
+
 void mal_uoctet_list_destroy(mal_uoctet_list_t **self_p);
 
 unsigned int mal_uoctet_list_get_element_count(mal_uoctet_list_t *self);
