@@ -796,8 +796,9 @@ int maltcp_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
     } else if (strncmp(uri_from, MALTCP_URI, sizeof MALTCP_URI -1) != 0) {
       if (uri_from[0] == '/')
         uri_from += 1;
-      mal_uri_t *uri = (mal_uri_t *) malloc(strlen(peer_uri) + strlen(uri_from) +1);
+      mal_uri_t *uri = (mal_uri_t *) malloc(strlen(peer_uri) + strlen(uri_from) +2);
       strcpy(uri, peer_uri);
+      strcat(uri, "/");
       strcat(uri, uri_from);
       mal_message_set_uri_from(*message, uri);
       mal_message_set_free_uri_from(*message, (1==1));
