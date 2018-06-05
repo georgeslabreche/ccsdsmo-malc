@@ -50,7 +50,7 @@ mal_string_list_t *mal_string_list_new(unsigned int element_count) {
 
 void mal_string_list_destroy(mal_string_list_t ** self_p)
 {
-  if ((*self_p)->element_count > 0)
+  if (self_p && *self_p)
   {
     for (int i = 0; i < (*self_p)->element_count; i++)
     {
@@ -58,9 +58,9 @@ void mal_string_list_destroy(mal_string_list_t ** self_p)
         mal_string_destroy(&(*self_p)->content[i]);
     }
     free((*self_p)->content);
+    free (*self_p);
+    (*self_p) = NULL;
   }
-  free (*self_p);
-  (*self_p) = NULL;
 }
 
 unsigned int mal_string_list_get_element_count(mal_string_list_t *self) {

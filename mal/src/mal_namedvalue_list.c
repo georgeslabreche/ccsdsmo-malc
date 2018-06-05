@@ -48,7 +48,7 @@ mal_namedvalue_list_t * mal_namedvalue_list_new(unsigned int element_count)
 // destructor, free the list, its content and its elements
 void mal_namedvalue_list_destroy(mal_namedvalue_list_t ** self_p)
 {
-  if ((*self_p)->element_count > 0)
+  if (self_p && *self_p)
   {
     for (int i = 0; i < (*self_p)->element_count; i++)
     {
@@ -56,9 +56,9 @@ void mal_namedvalue_list_destroy(mal_namedvalue_list_t ** self_p)
         mal_namedvalue_destroy(&(*self_p)->content[i]);
     }
     free((*self_p)->content);
+    free (*self_p);
+    (*self_p) = NULL;
   }
-  free (*self_p);
-  (*self_p) = NULL;
 }
 
 // fields accessors for composite list mal_namedvalue_list

@@ -49,15 +49,12 @@ mal_uri_list_t *mal_uri_list_new(unsigned int element_count) {
 
 void mal_uri_list_destroy(mal_uri_list_t **self_p) {
   if (self_p && *self_p) {
-    if ((*self_p)->element_count > 0)
+    for (int i = 0; i < (*self_p)->element_count; i++)
     {
-      for (int i = 0; i < (*self_p)->element_count; i++)
-      {
-        if ((*self_p)->content[i] != NULL)
-          mal_uri_destroy(&(*self_p)->content[i]);
-      }
-      free((*self_p)->content);
+      if ((*self_p)->content[i] != NULL)
+        mal_uri_destroy(&(*self_p)->content[i]);
     }
+    free((*self_p)->content);
     free (*self_p);
     (*self_p) = NULL;
   }
