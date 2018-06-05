@@ -798,6 +798,7 @@ int maltcp_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
         uri_from += 1;
       mal_uri_t *uri = (mal_uri_t *) malloc(strlen(peer_uri) + strlen(uri_from) +2);
       strcpy(uri, peer_uri);
+      // Ensures presence of path separator (not added in maltcp_ctx_socket_receive).
       strcat(uri, "/");
       strcat(uri, uri_from);
       mal_message_set_uri_from(*message, uri);
