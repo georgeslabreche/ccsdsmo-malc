@@ -222,8 +222,8 @@ The initialization and termination functions are provided to the actor during it
 The initialization function allow to record the handlers of the provider.
 The message reception is now handled automatically by the MAL actor:
 
-  -	When a MAL message is received on the endpoint corresponding to the provider's URI the registered handler is automatically executed.
-  -	Otherwise the message is destroyed.
+  -	When a MAL message is received on the endpoint corresponding to the provider's URI if an handler is correctly registered the method corresponding to the interaction stage is automatically executed. The destroying of the message is then the responsability of this handler.
+  -	Otherwise (no registered handler, bad interaction stage or unknown interaction) the message is destroyed.
 
 ### Run the application
 

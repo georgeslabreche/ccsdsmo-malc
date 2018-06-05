@@ -519,7 +519,8 @@ Error code.
 ### MAL message reception
 
 The `mal_endpoint_recv_message` function allows to receive a message on the end-point.
-This function blocks until receiving a message.
+This function blocks until receiving a message. The destroying of the message is then the
+responsability of the caller of `mal_endpoint_recv_message` function.
 
 Declaration:
 
@@ -798,7 +799,8 @@ int mal_routing_remove_handler(
 
 The *router* interface provides a function to activate the rigth handler when receiving a MAL message.
 When called this function search the right handler in the list of registered handlers. If successful it
-activates the handler by calling the function corresponding to the received message.
+activates the handler by calling the function corresponding to the received message. The destroying of the
+incoming message is then the responsability of this handler.
 
 Declaration:
 
