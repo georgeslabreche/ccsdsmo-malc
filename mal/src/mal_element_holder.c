@@ -37,7 +37,7 @@ mal_element_holder_t *mal_element_holder_new() {
 }
 
 void mal_element_holder_destroy(mal_element_holder_t **self_p) {
-  if (*self_p) {
+  if (self_p && *self_p) {
     mal_element_holder_t *self = *self_p;
     free(self);
     *self_p = NULL;

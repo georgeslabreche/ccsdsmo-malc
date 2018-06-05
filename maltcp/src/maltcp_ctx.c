@@ -550,7 +550,7 @@ int maltcp_ctx_stop(void *self) {
 
 int maltcp_ctx_destroy(void **self_p) {
   clog_debug(maltcp_logger, "maltcp_ctx_destroy..\n");
-  if (*self_p) {
+  if (self_p && *self_p) {
     maltcp_ctx_t *self = (maltcp_ctx_t *) *self_p;
 
 
@@ -996,7 +996,7 @@ void maltcp_ctx_destroy_poller(void *self, void **poller_p) {
   maltcp_poller_data_t **self_p = (maltcp_poller_data_t **) poller_p;
   assert(self_p);
 
-  if (*self_p) {
+  if (self_p && *self_p) {
     maltcp_poller_data_t *self = *self_p;
     *self_p = NULL;
     zpoller_destroy(&self->poller);

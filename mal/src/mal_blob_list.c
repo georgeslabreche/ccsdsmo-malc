@@ -48,7 +48,7 @@ mal_blob_list_t *mal_blob_list_new(unsigned int element_count) {
 }
 
 void mal_blob_list_destroy(mal_blob_list_t **self_p) {
-  if (*self_p) {
+  if (self_p && *self_p) {
     if ((*self_p)->element_count > 0)
     {
       for (int i = 0; i < (*self_p)->element_count; i++)

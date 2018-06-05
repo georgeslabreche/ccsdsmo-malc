@@ -51,7 +51,7 @@ mal_identifier_list_t *mal_identifier_list_new(unsigned int element_count) {
 }
 
 void mal_identifier_list_destroy(mal_identifier_list_t **self_p) {
-  if (*self_p) {
+  if (self_p && *self_p) {
     if ((*self_p)->element_count > 0)
     {
       for (int i = 0; i < (*self_p)->element_count; i++)

@@ -129,7 +129,7 @@ void mal_actor_term(mal_actor_t *actor) {
 
 void mal_actor_destroy(mal_ctx_t *mal_ctx, mal_actor_t **self_p) {
   clog_debug(mal_logger, "mal_actor_destroy..\n");
-  if (*self_p) {
+  if (self_p && *self_p) {
     mal_actor_t *self = *self_p;
 
     mal_poller_destroy(&self->poller);

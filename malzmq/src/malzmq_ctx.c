@@ -453,7 +453,7 @@ int malzmq_ctx_stop(void *self) {
 }
 
 int malzmq_ctx_destroy(void **self_p) {
-  if (*self_p) {
+  if (self_p && *self_p) {
     malzmq_ctx_t *self = (malzmq_ctx_t *) *self_p;
     free(self->malzmq_header);
     free(self);

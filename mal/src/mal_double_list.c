@@ -56,7 +56,7 @@ mal_double_list_t *mal_double_list_new(unsigned int element_count) {
 }
 
 void mal_double_list_destroy(mal_double_list_t **self_p) {
-  if (*self_p) {
+  if (self_p && *self_p) {
     if ((*self_p)->element_count > 0)
     {
       free((*self_p)->content);

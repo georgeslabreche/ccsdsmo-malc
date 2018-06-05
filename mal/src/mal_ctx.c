@@ -71,7 +71,7 @@ mal_ctx_t *mal_ctx_new() {
 
 
 void mal_ctx_destroy(mal_ctx_t **self_p) {
-  if (*self_p) {
+  if (self_p && *self_p) {
     mal_ctx_t *self = *self_p;
     self->mal_binding_ctx_destroy(&self->mal_binding_ctx);
     free(self);

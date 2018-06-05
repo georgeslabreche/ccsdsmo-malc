@@ -44,7 +44,7 @@ mal_poller_t *mal_poller_new(mal_ctx_t *mal_ctx) {
 }
 
 void mal_poller_destroy(mal_poller_t **self_p) {
-  if (*self_p) {
+  if (self_p && *self_p) {
     mal_poller_t *self = *self_p;
 
     mal_ctx_destroy_poller(self->mal_ctx, &self->poller_data);

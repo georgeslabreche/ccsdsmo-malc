@@ -56,7 +56,7 @@ mal_uinteger_list_t *mal_uinteger_list_new(unsigned int element_count) {
 }
 
 void mal_uinteger_list_destroy(mal_uinteger_list_t **self_p) {
-  if (*self_p) {
+  if (self_p && *self_p) {
     if ((*self_p)->element_count > 0)
     {
       free((*self_p)->content);
