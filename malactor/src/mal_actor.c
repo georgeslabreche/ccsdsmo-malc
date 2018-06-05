@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2016 - 2017 CNES
+ * Copyright (c) 2016 - 2018 CNES
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -253,21 +253,17 @@ static void mal_actor_run(zsock_t *pipe, void *args) {
       } else {
         clog_debug(mal_logger, "mal_actor_run: receiving message...\n");
 
-        bool message_delivered = false;
         mal_message_t *mal_message = NULL;
         rc = mal_endpoint_recv_message(self->endpoint, &mal_message);
 
         if ((rc == 0) && mal_message) {
-          if (mal_routing_handle(self->router, mal_message) == 0)
-            message_delivered = true;
-        }
-
-        clog_debug(mal_logger, "mal_actor_run: message_delivered=%d\n", message_delivered);
-
-        if (!message_delivered) {
-          clog_warning(mal_logger, "mal_actor_run: destroy undelivered MAL message\n");
-
-          mal_message_destroy(&mal_message, mal_endpoint_get_mal_ctx(self->endpoint));
+          int ret = mal_routing_handle(self->router, mal_message);
+          if ((ret != MAL_ROUTING_NO_HANDLER) && (ret != MAL_ROUTING_BAD_IP_STAGE) && (ret != MAL_ROUTING_UNKNOW_INTERACTION_TYPE)) {
+            clog_debug(mal_logger, "mal_actor_run: message_delivered with success\n");
+          } else {
+            clog_warning(mal_logger, "mal_actor_run: destroy undelivered MAL message\n");
+            mal_message_destroy(&mal_message, mal_endpoint_get_mal_ctx(self->endpoint));
+          }
         }
       }
     } else {
