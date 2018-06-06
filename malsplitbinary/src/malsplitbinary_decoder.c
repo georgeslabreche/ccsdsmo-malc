@@ -44,7 +44,6 @@ void *malsplitbinary_decoder_new_cursor(
     unsigned int offset) {
   malsplitbinary_cursor_t *cursor = (malsplitbinary_cursor_t *) malloc(sizeof(malsplitbinary_cursor_t));
   if (! cursor) return NULL;
-  malsplitbinary_cursor_reset(cursor);
   malsplitbinary_decoder_cursor_init(cursor, bytes, length, offset);
 
   return (void *) cursor;

@@ -135,9 +135,12 @@ void  malsplitbinary_decoder_cursor_init(void *cursor,
   int body_offset = bf_offset + bf_nb_bytes;
   //body_length
   int body_length = length - body_offset;
+  // Initializes malbinary part of cursor
   malbinary_cursor_init(&((malsplitbinary_cursor_t *) cursor)->malbinary_cursor, bytes, body_length, body_offset);
-
+  // Set next bit to decode index
   ((malsplitbinary_cursor_t *) cursor)->bitfield_idx = 0;
+  // Unused during decoding but avoids leaving an uninitialized field
+  ((malsplitbinary_cursor_t *) cursor)->most_significant = 0;
 
   // NOTE: Only used for debug
   // malsplitbinary_cursor_print((malsplitbinary_cursor_t *) cursor);
