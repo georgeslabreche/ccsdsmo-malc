@@ -60,11 +60,11 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
     
-    <class name = "mal_blob" />
-    <class name = "mal_string" />
-    <class name = "mal_identifier" />
-    <class name = "mal_uri" />
-    <class name = "mal_attribute" />
+    <class name = "mal_blob" state = "stable" />
+    <class name = "mal_string" state = "stable" />
+    <class name = "mal_identifier" state = "stable" />
+    <class name = "mal_uri" state = "stable" />
+    <class name = "mal_attribute" state = "stable" />
 
     <!--
         Actors, are build using the simple actor framework from czmq. If the 

@@ -62,9 +62,9 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
     
-    <class name = "maltcp" />
-    <class name = "maltcp_ctx" />
-    <class name = "maltcp_header" />
+    <class name = "maltcp" state = "stable" />
+    <class name = "maltcp_ctx" state = "stable" />
+    <class name = "maltcp_header" state = "stable" />
 
     <!--
         Actors, are build using the simple actor framework from czmq. If the 

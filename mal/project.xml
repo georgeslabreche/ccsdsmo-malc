@@ -62,53 +62,53 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
     
-    <class name = "mal_ctx" />
-    <class name = "mal_routing" />
-    <class name = "mal_endpoint" />
-    <class name = "mal_poller" />
-    <class name = "mal_integer_list" />
-    <class name = "mal_uinteger_list" />
-    <class name = "mal_double_list" />
-    <class name = "mal_float_list" />
-    <class name = "mal_long_list" />
-    <class name = "mal_ulong_list" />
-    <class name = "mal_short_list" />
-    <class name = "mal_ushort_list" />
-    <class name = "mal_octet_list" />
-    <class name = "mal_uoctet_list" />
-    <class name = "mal_boolean_list" /> 
-    <class name = "mal_string_list" />
-    <class name = "mal_blob_list" />
-    <class name = "mal_time_list" />
-    <class name = "mal_finetime_list" />
-    <class name = "mal_duration_list" />
-    <class name = "mal_uri_list" />
-    <class name = "mal_interactiontype_list" />
-    <class name = "mal_identifier_list" /> 
-    <class name = "mal_message" />
-    <class name = "mal_entitykey" />
-    <class name = "mal_entitykey_list" />
-    <class name = "mal_entityrequest" />
-    <class name = "mal_entityrequest_list" />
-    <class name = "mal_updateheader" />
-    <class name = "mal_updateheader_list" />
-    <class name = "mal_subscription" />
-    <class name = "mal_subscription_list" />
-    <class name = "mal_element_holder" />
-    <class name =  "mal_file" />
-	<class name =  "mal_file_list" />
-	<class name =  "mal_idbooleanpair" />
-	<class name =  "mal_idbooleanpair_list" />
-	<class name =  "mal_namedvalue" />
-	<class name =  "mal_namedvalue_list" />
-	<class name =  "mal_pair" />
-	<class name =  "mal_pair_list" />
-	<class name =  "mal_sessiontype_list" />
-	<class name =  "mal_updatetype_list" />
-	<class name =  "mal_qoslevel_list" />
-    <class name = "mal_encoder" />
-    <class name = "mal_decoder" />
-    <class name = "mal" />
+    <class name = "mal_ctx" state = "stable" />
+    <class name = "mal_routing" state = "stable" />
+    <class name = "mal_endpoint" state = "stable" />
+    <class name = "mal_poller" state = "stable" />
+    <class name = "mal_integer_list" state = "stable" />
+    <class name = "mal_uinteger_list" state = "stable" />
+    <class name = "mal_double_list" state = "stable" />
+    <class name = "mal_float_list" state = "stable" />
+    <class name = "mal_long_list" state = "stable" />
+    <class name = "mal_ulong_list" state = "stable" />
+    <class name = "mal_short_list" state = "stable" />
+    <class name = "mal_ushort_list" state = "stable" />
+    <class name = "mal_octet_list" state = "stable" />
+    <class name = "mal_uoctet_list" state = "stable" />
+    <class name = "mal_boolean_list" state = "stable" /> 
+    <class name = "mal_string_list" state = "stable" />
+    <class name = "mal_blob_list" state = "stable" />
+    <class name = "mal_time_list" state = "stable" />
+    <class name = "mal_finetime_list" state = "stable" />
+    <class name = "mal_duration_list" state = "stable" />
+    <class name = "mal_uri_list" state = "stable" />
+    <class name = "mal_interactiontype_list" state = "stable" />
+    <class name = "mal_identifier_list" state = "stable" /> 
+    <class name = "mal_message" state = "stable" />
+    <class name = "mal_entitykey" state = "stable" />
+    <class name = "mal_entitykey_list" state = "stable" />
+    <class name = "mal_entityrequest" state = "stable" />
+    <class name = "mal_entityrequest_list" state = "stable" />
+    <class name = "mal_updateheader" state = "stable" />
+    <class name = "mal_updateheader_list" state = "stable" />
+    <class name = "mal_subscription" state = "stable" />
+    <class name = "mal_subscription_list" state = "stable" />
+    <class name = "mal_element_holder" state = "stable" />
+    <class name = "mal_file" state = "stable" />
+	<class name = "mal_file_list" state = "stable" />
+	<class name = "mal_idbooleanpair" state = "stable" />
+	<class name = "mal_idbooleanpair_list" state = "stable" />
+	<class name = "mal_namedvalue" state = "stable" />
+	<class name = "mal_namedvalue_list" state = "stable" />
+	<class name = "mal_pair" state = "stable" />
+	<class name = "mal_pair_list" state = "stable" />
+	<class name = "mal_sessiontype_list" state = "stable" />
+	<class name = "mal_updatetype_list" state = "stable" />
+	<class name = "mal_qoslevel_list" state = "stable" />
+    <class name = "mal_encoder" state = "stable" />
+    <class name = "mal_decoder" state = "stable" />
+    <class name = "mal" state = "stable" />
 
     <!--
         Actors, are build using the simple actor framework from czmq. If the 

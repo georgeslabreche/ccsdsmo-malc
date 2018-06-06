@@ -61,8 +61,8 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
     
-    <class name = "malactor" />
-    <class name = "mal_actor" />
+    <class name = "malactor" state = "stable" />
+    <class name = "mal_actor" state = "stable" />
 
     <!--
         Actors, are build using the simple actor framework from czmq. If the 

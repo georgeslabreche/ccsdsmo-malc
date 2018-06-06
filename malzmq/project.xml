@@ -62,9 +62,9 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
     
-    <class name = "malzmq" />
-    <class name = "malzmq_ctx" />
-    <class name = "malzmq_header" />
+    <class name = "malzmq" state = "stable" />
+    <class name = "malzmq_ctx" state = "stable" />
+    <class name = "malzmq_header" state = "stable" />
 
     <!--
         Actors, are build using the simple actor framework from czmq. If the 

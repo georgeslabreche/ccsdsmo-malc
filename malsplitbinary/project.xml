@@ -64,9 +64,9 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
     
-    <class name = "malsplitbinary" />
-    <class name = "malsplitbinary_encoder" />
-    <class name = "malsplitbinary_decoder" />
+    <class name = "malsplitbinary" state = "stable" />
+    <class name = "malsplitbinary_encoder" state = "stable" />
+    <class name = "malsplitbinary_decoder" state = "stable" />
 
     <!--
         Actors, are build using the simple actor framework from czmq. If the 
