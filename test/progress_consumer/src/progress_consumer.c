@@ -351,6 +351,8 @@ void progress_consumer_test(bool verbose) {
     malzmq_ctx_set_decoder_log_level((malzmq_ctx_t *) ctx, CLOG_WARN_LEVEL);
   }
 
+  if (!ctx) exit(EXIT_FAILURE);
+
   mal_uri_t *provider_uri = "maltcp://192.168.1.80:6666/progress_provider/provider";
   printf("progress_consumer: provider URI: %s\n", provider_uri);
 

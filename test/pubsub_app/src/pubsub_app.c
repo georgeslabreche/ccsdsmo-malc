@@ -194,6 +194,7 @@ void pubsub_app_test(bool verbose) {
     malzmq_ctx_set_decoder_log_level((malzmq_ctx_t *) ctx, CLOG_WARN_LEVEL);
   }
 
+  if (!ctx) exit(EXIT_FAILURE);
 
   mal_uri_t *provider_uri = mal_ctx_create_uri(mal_ctx, "pubsub_app/myprovider");
   printf("pubsub_app: provider URI: %s\n", provider_uri);
