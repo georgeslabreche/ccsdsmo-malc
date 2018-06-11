@@ -165,6 +165,8 @@ void request_app_test(bool verbose) {
     malzmq_ctx_set_decoder_log_level((malzmq_ctx_t *) ctx, CLOG_WARN_LEVEL);
   }
 
+  if (!ctx) exit(EXIT_FAILURE);
+
   mal_uri_t *provider_uri = mal_ctx_create_uri(mal_ctx, "request_app/myprovider");
   printf("request_app: provider URI: %s\n", provider_uri);
 //  mal_uri_t *consumer_uri = mal_ctx_create_uri(mal_ctx, "request_app/myconsumer");

@@ -30,8 +30,6 @@
 extern "C" {
 #endif
 
-typedef struct _mal_routing_t mal_routing_t;
-
 mal_routing_t *mal_routing_new(mal_endpoint_t *mal_endpoint, void *state);
 
 void mal_routing_destroy(mal_routing_t **self_p);

@@ -124,6 +124,8 @@ void invoke_app_test(bool verbose) {
     malzmq_ctx_set_decoder_log_level((malzmq_ctx_t *) ctx, CLOG_WARN_LEVEL);
   }
 
+  if (!ctx) exit(EXIT_FAILURE);
+
   mal_uri_t *provider_uri = mal_ctx_create_uri(mal_ctx, "invoke_app/myprovider");
 
   mal_encoder_t *encoder;

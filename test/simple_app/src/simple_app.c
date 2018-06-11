@@ -92,7 +92,7 @@ void simple_app_test(bool verbose) {
 
   // @selftest
   mal_ctx_t *mal_ctx = mal_ctx_new();
-  //void *ctx;
+  void *ctx;
 
   if (tcp) {
     // All the MAL header fields are passed
@@ -101,7 +101,7 @@ void simple_app_test(bool verbose) {
     // This test uses the same encoding configuration at the MAL/ZMQ transport
     // level (MAL header encoding) and at the application
     // level (MAL message body encoding)
-    maltcp_ctx_new(
+    ctx = maltcp_ctx_new(
         mal_ctx,
         "127.0.0.1", "6666",
         maltcp_header,
@@ -113,13 +113,15 @@ void simple_app_test(bool verbose) {
     // This test uses the same encoding configuration at the MAL/ZMQ transport
     // level (MAL header encoding) and at the application
     // level (MAL message body encoding)
-    malzmq_ctx_new(
+    ctx = malzmq_ctx_new(
         mal_ctx,
         NULL,                 // Use default transformation of MAL URI to ZMQ URI
         "localhost", "6666",
         malzmq_header,
         true);
   }
+
+  if (!ctx) exit(EXIT_FAILURE);
 
   mal_uri_t *provider_uri = mal_ctx_create_uri(mal_ctx, "simple_app/myprovider");
   printf("simple_app: provider URI: %s\n", provider_uri);
