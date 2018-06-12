@@ -37,7 +37,7 @@
         Current version of your project. 
         This will be used to package your distribution 
     -->
-    <version major = "1" minor = "0" patch = "0" />
+    <version major = "1" minor = "1" patch = "0" />
 
     <!--
         Specify which other projects this depends on.
@@ -62,9 +62,9 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
     
-    <class name = "maltcp" />
-    <class name = "maltcp_ctx" />
-    <class name = "maltcp_header" />
+    <class name = "maltcp" state = "stable" />
+    <class name = "maltcp_ctx" state = "stable" />
+    <class name = "maltcp_header" state = "stable" />
 
     <!--
         Actors, are build using the simple actor framework from czmq. If the 

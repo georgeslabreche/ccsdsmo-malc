@@ -37,7 +37,7 @@
         Current version of your project. 
         This will be used to package your distribution 
     -->
-    <version major = "1" minor = "0" patch = "0" />
+    <version major = "1" minor = "1" patch = "0" />
 
     <!--
         Specify which other projects this depends on.
@@ -64,9 +64,9 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
     
-    <class name = "malsplitbinary" />
-    <class name = "malsplitbinary_encoder" />
-    <class name = "malsplitbinary_decoder" />
+    <class name = "malsplitbinary" state = "stable" />
+    <class name = "malsplitbinary_encoder" state = "stable" />
+    <class name = "malsplitbinary_decoder" state = "stable" />
 
     <!--
         Actors, are build using the simple actor framework from czmq. If the 

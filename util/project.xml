@@ -37,7 +37,7 @@
         Current version of your project. 
         This will be used to package your distribution 
     -->
-    <version major = "1" minor = "0" patch = "0" />
+    <version major = "1" minor = "1" patch = "0" />
 
     <!--
         Specify which other projects this depends on.
@@ -58,7 +58,7 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
     
-    <class name = "clog" />
+    <class name = "clog" state = "stable" />
 
     <!--
         Actors, are build using the simple actor framework from czmq. If the 
