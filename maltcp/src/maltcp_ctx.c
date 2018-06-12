@@ -530,7 +530,9 @@ maltcp_ctx_t *maltcp_ctx_new(mal_ctx_t *mal_ctx,
 
 int maltcp_ctx_start(void *self) {
   clog_debug(maltcp_logger, "maltcp_ctx: running...\n");
-  return zloop_start(((maltcp_ctx_t *)self)->zloop);
+  int rc = zloop_start(((maltcp_ctx_t *)self)->zloop);
+  clog_debug(maltcp_logger, "maltcp_ctx: stopped: %d.\n", rc);
+  return rc;
 }
 
 int maltcp_ctx_stop(void *self) {
