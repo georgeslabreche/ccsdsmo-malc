@@ -216,6 +216,10 @@ int submit_app_myconsumer_initialize(void *self, mal_actor_t *mal_actor) {
 int submit_app_myconsumer_finalize(void *self, mal_actor_t *mal_actor) {
   int rc = 0;
   // ...
+
+  mal_ctx_t* mal_ctx = mal_actor_get_mal_ctx(mal_actor);
+  mal_ctx_stop(mal_ctx);
+
   return rc;
 }
 
@@ -236,10 +240,9 @@ int submit_app_myconsumer_testarea_testservice_testsubmitack(
   printf("Consumer done.\n");
 
   mal_actor_term(provider_actor);
+  mal_actor_join(provider_actor);
   mal_actor_term(consumer_actor);
   
-  mal_ctx_stop(mal_ctx);
-
   return rc;
 }
 

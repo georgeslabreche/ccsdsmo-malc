@@ -176,6 +176,8 @@ int pubsub_app_mysubscriber_initialize(void *self, mal_actor_t *mal_actor) {
 int pubsub_app_mysubscriber_finalize(void *self, mal_actor_t *mal_actor) {
   int rc = 0;
   // ...
+  mal_ctx_t *mal_ctx = mal_actor_get_mal_ctx(mal_actor);
+  mal_ctx_stop(mal_ctx);
   return rc;
 }
 
@@ -268,10 +270,6 @@ int pubsub_app_mysubscriber_testnotify(void *self, mal_ctx_t *mal_ctx,
   mal_actor_join(publisher_actor);
   mal_actor_term(subscriber_actor);
 
-  // Wait for actor's completion
-  zclock_sleep(1000);
-
-  mal_ctx_stop(mal_ctx);
   return rc;
 }
 

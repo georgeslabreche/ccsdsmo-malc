@@ -178,6 +178,10 @@ int pubsub_app_mysubscriber_finalize(void *self, mal_actor_t *mal_actor) {
   int rc = 0;
   // ...
   printf("subscriber ended\n");
+
+  mal_ctx_t* mal_ctx = mal_actor_get_mal_ctx(mal_actor);
+  mal_ctx_stop(mal_ctx);
+
   return rc;
 }
 
@@ -198,11 +202,6 @@ int pubsub_app_mysubscriber_testderegister_ack(void *self, mal_ctx_t *mal_ctx,
   zclock_sleep(1000);
 
   mal_actor_term(subscriber_actor);
-
-  // Wait for actor's completion
-  zclock_sleep(1000);
-
-  mal_ctx_stop(mal_ctx);
 
   return rc;
 }

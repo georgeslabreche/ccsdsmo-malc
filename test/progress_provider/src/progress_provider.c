@@ -121,6 +121,9 @@ int progress_provider_finalize(void *self, mal_actor_t *mal_actor) {
   //progress_provider_t *provider = (progress_provider_t *) self;
   printf("### progress_provider_finalize\n");
 
+  mal_ctx_t* mal_ctx = mal_actor_get_mal_ctx(mal_actor);
+  mal_ctx_stop(mal_ctx);
+
   return rc;
 }
 
@@ -269,8 +272,6 @@ int progress_provider_testarea_testservice_testprogress(
   mal_message_destroy(&result_message, mal_ctx);
 
   mal_actor_term(provider_actor);
-
-  mal_ctx_stop(mal_ctx);
 
   printf("Provider done.\n");
   return rc;
