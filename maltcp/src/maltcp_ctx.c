@@ -373,6 +373,8 @@ int maltcp_ctx_server_socket_create(int port, int backlog) {
     clog_error(maltcp_logger, "Failed to create listen socket: %s", strerror(errno));
     return -1;
   }
+  int one = 1;
+  setsockopt(listen_socket, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
   //  setsockopt(listen_socket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &one, sizeof(one));
   //  setsockopt(listen_socket, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
 
