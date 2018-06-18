@@ -373,6 +373,8 @@ int maltcp_ctx_server_socket_create(int port, int backlog) {
     clog_error(maltcp_logger, "Failed to create listen socket: %s", strerror(errno));
     return -1;
   }
+  int one = 1;
+  setsockopt(listen_socket, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
   //  setsockopt(listen_socket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &one, sizeof(one));
   //  setsockopt(listen_socket, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
 
@@ -530,7 +532,9 @@ maltcp_ctx_t *maltcp_ctx_new(mal_ctx_t *mal_ctx,
 
 int maltcp_ctx_start(void *self) {
   clog_debug(maltcp_logger, "maltcp_ctx: running...\n");
-  return zloop_start(((maltcp_ctx_t *)self)->zloop);
+  int rc = zloop_start(((maltcp_ctx_t *)self)->zloop);
+  clog_debug(maltcp_logger, "maltcp_ctx: stopped: %d.\n", rc);
+  return rc;
 }
 
 int maltcp_ctx_stop(void *self) {

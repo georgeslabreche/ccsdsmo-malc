@@ -216,6 +216,9 @@ int progress_consumer_finalize(void *self, mal_actor_t *mal_actor) {
   //progress_provider_t *provider = (progress_provider_t *) self;
   printf("### progress_consumer_finalize\n");
 
+  mal_ctx_t* mal_ctx = mal_actor_get_mal_ctx(mal_actor);
+  mal_ctx_stop(mal_ctx);
+
   return rc;
 }
 
@@ -302,8 +305,6 @@ int progress_consumer_testarea_testservice_testprogress_response(
   printf("Consumer done.\n");
 
   mal_actor_term(consumer_actor);
-
-  mal_ctx_stop(mal_ctx);
 
   return 0;
 }

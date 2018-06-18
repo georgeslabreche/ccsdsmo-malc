@@ -62,6 +62,9 @@ int send_app_myprovider_finalize(void *self, mal_actor_t *mal_actor) {
   int rc = 0;
   //send_app_myprovider_t *provider = (send_app_myprovider_t *) self;
 
+  mal_ctx_t* mal_ctx = mal_actor_get_mal_ctx(mal_actor);
+  mal_ctx_stop(mal_ctx);
+
   return rc;
 }
 
@@ -184,9 +187,8 @@ int send_app_myprovider_testarea_testservice_testsend(
   printf("Provider done.\n");
 
   mal_actor_term(consumer_actor);
+  mal_actor_join(consumer_actor);
   mal_actor_term(provider_actor);
-
-  mal_ctx_stop(mal_ctx);
 
   return rc;
 }
