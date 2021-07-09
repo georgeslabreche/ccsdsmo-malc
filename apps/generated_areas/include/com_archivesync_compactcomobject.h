@@ -1,0 +1,61 @@
+#ifndef __COM_ARCHIVESYNC_COMPACTCOMOBJECT_H_INCLUDED__
+#define __COM_ARCHIVESYNC_COMPACTCOMOBJECT_H_INCLUDED__
+
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
+
+// fields accessors for composite com_archivesync_compactcomobject
+bool com_archivesync_compactcomobject_network_is_present(com_archivesync_compactcomobject_t * self);
+void com_archivesync_compactcomobject_network_set_present(com_archivesync_compactcomobject_t * self, bool is_present);
+mal_uinteger_t com_archivesync_compactcomobject_get_network(com_archivesync_compactcomobject_t * self);
+void com_archivesync_compactcomobject_set_network(com_archivesync_compactcomobject_t * self, mal_uinteger_t f_network);
+bool com_archivesync_compactcomobject_provideruri_is_present(com_archivesync_compactcomobject_t * self);
+void com_archivesync_compactcomobject_provideruri_set_present(com_archivesync_compactcomobject_t * self, bool is_present);
+mal_uinteger_t com_archivesync_compactcomobject_get_provideruri(com_archivesync_compactcomobject_t * self);
+void com_archivesync_compactcomobject_set_provideruri(com_archivesync_compactcomobject_t * self, mal_uinteger_t f_provideruri);
+mal_long_t com_archivesync_compactcomobject_get_objecttype(com_archivesync_compactcomobject_t * self);
+void com_archivesync_compactcomobject_set_objecttype(com_archivesync_compactcomobject_t * self, mal_long_t f_objecttype);
+bool com_archivesync_compactcomobject_sourcelinkdomainid_is_present(com_archivesync_compactcomobject_t * self);
+void com_archivesync_compactcomobject_sourcelinkdomainid_set_present(com_archivesync_compactcomobject_t * self, bool is_present);
+mal_uinteger_t com_archivesync_compactcomobject_get_sourcelinkdomainid(com_archivesync_compactcomobject_t * self);
+void com_archivesync_compactcomobject_set_sourcelinkdomainid(com_archivesync_compactcomobject_t * self, mal_uinteger_t f_sourcelinkdomainid);
+bool com_archivesync_compactcomobject_sourcelinkobjecttype_is_present(com_archivesync_compactcomobject_t * self);
+void com_archivesync_compactcomobject_sourcelinkobjecttype_set_present(com_archivesync_compactcomobject_t * self, bool is_present);
+mal_long_t com_archivesync_compactcomobject_get_sourcelinkobjecttype(com_archivesync_compactcomobject_t * self);
+void com_archivesync_compactcomobject_set_sourcelinkobjecttype(com_archivesync_compactcomobject_t * self, mal_long_t f_sourcelinkobjecttype);
+bool com_archivesync_compactcomobject_sourcelinkobjid_is_present(com_archivesync_compactcomobject_t * self);
+void com_archivesync_compactcomobject_sourcelinkobjid_set_present(com_archivesync_compactcomobject_t * self, bool is_present);
+mal_long_t com_archivesync_compactcomobject_get_sourcelinkobjid(com_archivesync_compactcomobject_t * self);
+void com_archivesync_compactcomobject_set_sourcelinkobjid(com_archivesync_compactcomobject_t * self, mal_long_t f_sourcelinkobjid);
+bool com_archivesync_compactcomobject_relatedlink_is_present(com_archivesync_compactcomobject_t * self);
+void com_archivesync_compactcomobject_relatedlink_set_present(com_archivesync_compactcomobject_t * self, bool is_present);
+mal_long_t com_archivesync_compactcomobject_get_relatedlink(com_archivesync_compactcomobject_t * self);
+void com_archivesync_compactcomobject_set_relatedlink(com_archivesync_compactcomobject_t * self, mal_long_t f_relatedlink);
+mal_blob_t * com_archivesync_compactcomobject_get_objectbody(com_archivesync_compactcomobject_t * self);
+void com_archivesync_compactcomobject_set_objectbody(com_archivesync_compactcomobject_t * self, mal_blob_t * f_objectbody);
+mal_long_t com_archivesync_compactcomobject_get_objid(com_archivesync_compactcomobject_t * self);
+void com_archivesync_compactcomobject_set_objid(com_archivesync_compactcomobject_t * self, mal_long_t f_objid);
+mal_finetime_t com_archivesync_compactcomobject_get_timestamp(com_archivesync_compactcomobject_t * self);
+void com_archivesync_compactcomobject_set_timestamp(com_archivesync_compactcomobject_t * self, mal_finetime_t f_timestamp);
+
+// default constructor
+com_archivesync_compactcomobject_t * com_archivesync_compactcomobject_new(void);
+
+// encoding functions related to transport malbinary
+int com_archivesync_compactcomobject_add_encoding_length_malbinary(com_archivesync_compactcomobject_t * self, mal_encoder_t * encoder, void * cursor);
+int com_archivesync_compactcomobject_encode_malbinary(com_archivesync_compactcomobject_t * self, mal_encoder_t * encoder, void * cursor);
+int com_archivesync_compactcomobject_decode_malbinary(com_archivesync_compactcomobject_t * self, mal_decoder_t * decoder, void * cursor);
+
+// destructor
+void com_archivesync_compactcomobject_destroy(com_archivesync_compactcomobject_t ** self_p);
+
+// test function
+void com_archivesync_compactcomobject_test(bool verbose);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+
+#endif // __COM_ARCHIVESYNC_COMPACTCOMOBJECT_H_INCLUDED__

@@ -1,0 +1,45 @@
+#ifndef __PF_SOFTWAREDEFINEDRADIO_SDRCONFIGURATION_H_INCLUDED__
+#define __PF_SOFTWAREDEFINEDRADIO_SDRCONFIGURATION_H_INCLUDED__
+
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
+
+// fields accessors for composite pf_softwaredefinedradio_sdrconfiguration
+bool pf_softwaredefinedradio_sdrconfiguration_rxcarrierfrequency_is_present(pf_softwaredefinedradio_sdrconfiguration_t * self);
+void pf_softwaredefinedradio_sdrconfiguration_rxcarrierfrequency_set_present(pf_softwaredefinedradio_sdrconfiguration_t * self, bool is_present);
+mal_float_t pf_softwaredefinedradio_sdrconfiguration_get_rxcarrierfrequency(pf_softwaredefinedradio_sdrconfiguration_t * self);
+void pf_softwaredefinedradio_sdrconfiguration_set_rxcarrierfrequency(pf_softwaredefinedradio_sdrconfiguration_t * self, mal_float_t f_rxcarrierfrequency);
+bool pf_softwaredefinedradio_sdrconfiguration_rxgain_is_present(pf_softwaredefinedradio_sdrconfiguration_t * self);
+void pf_softwaredefinedradio_sdrconfiguration_rxgain_set_present(pf_softwaredefinedradio_sdrconfiguration_t * self, bool is_present);
+mal_integer_t pf_softwaredefinedradio_sdrconfiguration_get_rxgain(pf_softwaredefinedradio_sdrconfiguration_t * self);
+void pf_softwaredefinedradio_sdrconfiguration_set_rxgain(pf_softwaredefinedradio_sdrconfiguration_t * self, mal_integer_t f_rxgain);
+bool pf_softwaredefinedradio_sdrconfiguration_rxlowpassbw_is_present(pf_softwaredefinedradio_sdrconfiguration_t * self);
+void pf_softwaredefinedradio_sdrconfiguration_rxlowpassbw_set_present(pf_softwaredefinedradio_sdrconfiguration_t * self, bool is_present);
+mal_float_t pf_softwaredefinedradio_sdrconfiguration_get_rxlowpassbw(pf_softwaredefinedradio_sdrconfiguration_t * self);
+void pf_softwaredefinedradio_sdrconfiguration_set_rxlowpassbw(pf_softwaredefinedradio_sdrconfiguration_t * self, mal_float_t f_rxlowpassbw);
+bool pf_softwaredefinedradio_sdrconfiguration_rxsamplingfrequency_is_present(pf_softwaredefinedradio_sdrconfiguration_t * self);
+void pf_softwaredefinedradio_sdrconfiguration_rxsamplingfrequency_set_present(pf_softwaredefinedradio_sdrconfiguration_t * self, bool is_present);
+mal_float_t pf_softwaredefinedradio_sdrconfiguration_get_rxsamplingfrequency(pf_softwaredefinedradio_sdrconfiguration_t * self);
+void pf_softwaredefinedradio_sdrconfiguration_set_rxsamplingfrequency(pf_softwaredefinedradio_sdrconfiguration_t * self, mal_float_t f_rxsamplingfrequency);
+
+// default constructor
+pf_softwaredefinedradio_sdrconfiguration_t * pf_softwaredefinedradio_sdrconfiguration_new(void);
+
+// encoding functions related to transport malbinary
+int pf_softwaredefinedradio_sdrconfiguration_add_encoding_length_malbinary(pf_softwaredefinedradio_sdrconfiguration_t * self, mal_encoder_t * encoder, void * cursor);
+int pf_softwaredefinedradio_sdrconfiguration_encode_malbinary(pf_softwaredefinedradio_sdrconfiguration_t * self, mal_encoder_t * encoder, void * cursor);
+int pf_softwaredefinedradio_sdrconfiguration_decode_malbinary(pf_softwaredefinedradio_sdrconfiguration_t * self, mal_decoder_t * decoder, void * cursor);
+
+// destructor
+void pf_softwaredefinedradio_sdrconfiguration_destroy(pf_softwaredefinedradio_sdrconfiguration_t ** self_p);
+
+// test function
+void pf_softwaredefinedradio_sdrconfiguration_test(bool verbose);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+
+#endif // __PF_SOFTWAREDEFINEDRADIO_SDRCONFIGURATION_H_INCLUDED__

@@ -1,0 +1,39 @@
+#ifndef __SOFTWAREMANAGEMENT_COMMANDEXECUTOR_COMMANDDETAILS_H_INCLUDED__
+#define __SOFTWAREMANAGEMENT_COMMANDEXECUTOR_COMMANDDETAILS_H_INCLUDED__
+
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
+
+// fields accessors for composite softwaremanagement_commandexecutor_commanddetails
+mal_string_t * softwaremanagement_commandexecutor_commanddetails_get_command(softwaremanagement_commandexecutor_commanddetails_t * self);
+void softwaremanagement_commandexecutor_commanddetails_set_command(softwaremanagement_commandexecutor_commanddetails_t * self, mal_string_t * f_command);
+bool softwaremanagement_commandexecutor_commanddetails_pid_is_present(softwaremanagement_commandexecutor_commanddetails_t * self);
+void softwaremanagement_commandexecutor_commanddetails_pid_set_present(softwaremanagement_commandexecutor_commanddetails_t * self, bool is_present);
+mal_long_t softwaremanagement_commandexecutor_commanddetails_get_pid(softwaremanagement_commandexecutor_commanddetails_t * self);
+void softwaremanagement_commandexecutor_commanddetails_set_pid(softwaremanagement_commandexecutor_commanddetails_t * self, mal_long_t f_pid);
+bool softwaremanagement_commandexecutor_commanddetails_exitcode_is_present(softwaremanagement_commandexecutor_commanddetails_t * self);
+void softwaremanagement_commandexecutor_commanddetails_exitcode_set_present(softwaremanagement_commandexecutor_commanddetails_t * self, bool is_present);
+mal_integer_t softwaremanagement_commandexecutor_commanddetails_get_exitcode(softwaremanagement_commandexecutor_commanddetails_t * self);
+void softwaremanagement_commandexecutor_commanddetails_set_exitcode(softwaremanagement_commandexecutor_commanddetails_t * self, mal_integer_t f_exitcode);
+
+// default constructor
+softwaremanagement_commandexecutor_commanddetails_t * softwaremanagement_commandexecutor_commanddetails_new(void);
+
+// encoding functions related to transport malbinary
+int softwaremanagement_commandexecutor_commanddetails_add_encoding_length_malbinary(softwaremanagement_commandexecutor_commanddetails_t * self, mal_encoder_t * encoder, void * cursor);
+int softwaremanagement_commandexecutor_commanddetails_encode_malbinary(softwaremanagement_commandexecutor_commanddetails_t * self, mal_encoder_t * encoder, void * cursor);
+int softwaremanagement_commandexecutor_commanddetails_decode_malbinary(softwaremanagement_commandexecutor_commanddetails_t * self, mal_decoder_t * decoder, void * cursor);
+
+// destructor
+void softwaremanagement_commandexecutor_commanddetails_destroy(softwaremanagement_commandexecutor_commanddetails_t ** self_p);
+
+// test function
+void softwaremanagement_commandexecutor_commanddetails_test(bool verbose);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+
+#endif // __SOFTWAREMANAGEMENT_COMMANDEXECUTOR_COMMANDDETAILS_H_INCLUDED__

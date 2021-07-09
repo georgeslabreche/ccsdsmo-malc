@@ -1,0 +1,47 @@
+#ifndef __SOFTWAREMANAGEMENT_APPSLAUNCHER_APPDETAILS_H_INCLUDED__
+#define __SOFTWAREMANAGEMENT_APPSLAUNCHER_APPDETAILS_H_INCLUDED__
+
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
+
+// fields accessors for composite softwaremanagement_appslauncher_appdetails
+mal_identifier_t * softwaremanagement_appslauncher_appdetails_get_name(softwaremanagement_appslauncher_appdetails_t * self);
+void softwaremanagement_appslauncher_appdetails_set_name(softwaremanagement_appslauncher_appdetails_t * self, mal_identifier_t * f_name);
+mal_string_t * softwaremanagement_appslauncher_appdetails_get_description(softwaremanagement_appslauncher_appdetails_t * self);
+void softwaremanagement_appslauncher_appdetails_set_description(softwaremanagement_appslauncher_appdetails_t * self, mal_string_t * f_description);
+mal_string_t * softwaremanagement_appslauncher_appdetails_get_version(softwaremanagement_appslauncher_appdetails_t * self);
+void softwaremanagement_appslauncher_appdetails_set_version(softwaremanagement_appslauncher_appdetails_t * self, mal_string_t * f_version);
+mal_identifier_t * softwaremanagement_appslauncher_appdetails_get_category(softwaremanagement_appslauncher_appdetails_t * self);
+void softwaremanagement_appslauncher_appdetails_set_category(softwaremanagement_appslauncher_appdetails_t * self, mal_identifier_t * f_category);
+mal_boolean_t softwaremanagement_appslauncher_appdetails_get_runatstartup(softwaremanagement_appslauncher_appdetails_t * self);
+void softwaremanagement_appslauncher_appdetails_set_runatstartup(softwaremanagement_appslauncher_appdetails_t * self, mal_boolean_t f_runatstartup);
+mal_boolean_t softwaremanagement_appslauncher_appdetails_get_running(softwaremanagement_appslauncher_appdetails_t * self);
+void softwaremanagement_appslauncher_appdetails_set_running(softwaremanagement_appslauncher_appdetails_t * self, mal_boolean_t f_running);
+mal_string_t * softwaremanagement_appslauncher_appdetails_get_extrainfo(softwaremanagement_appslauncher_appdetails_t * self);
+void softwaremanagement_appslauncher_appdetails_set_extrainfo(softwaremanagement_appslauncher_appdetails_t * self, mal_string_t * f_extrainfo);
+mal_string_t * softwaremanagement_appslauncher_appdetails_get_copyright(softwaremanagement_appslauncher_appdetails_t * self);
+void softwaremanagement_appslauncher_appdetails_set_copyright(softwaremanagement_appslauncher_appdetails_t * self, mal_string_t * f_copyright);
+mal_string_t * softwaremanagement_appslauncher_appdetails_get_runas(softwaremanagement_appslauncher_appdetails_t * self);
+void softwaremanagement_appslauncher_appdetails_set_runas(softwaremanagement_appslauncher_appdetails_t * self, mal_string_t * f_runas);
+
+// default constructor
+softwaremanagement_appslauncher_appdetails_t * softwaremanagement_appslauncher_appdetails_new(void);
+
+// encoding functions related to transport malbinary
+int softwaremanagement_appslauncher_appdetails_add_encoding_length_malbinary(softwaremanagement_appslauncher_appdetails_t * self, mal_encoder_t * encoder, void * cursor);
+int softwaremanagement_appslauncher_appdetails_encode_malbinary(softwaremanagement_appslauncher_appdetails_t * self, mal_encoder_t * encoder, void * cursor);
+int softwaremanagement_appslauncher_appdetails_decode_malbinary(softwaremanagement_appslauncher_appdetails_t * self, mal_decoder_t * decoder, void * cursor);
+
+// destructor
+void softwaremanagement_appslauncher_appdetails_destroy(softwaremanagement_appslauncher_appdetails_t ** self_p);
+
+// test function
+void softwaremanagement_appslauncher_appdetails_test(bool verbose);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+
+#endif // __SOFTWAREMANAGEMENT_APPSLAUNCHER_APPDETAILS_H_INCLUDED__

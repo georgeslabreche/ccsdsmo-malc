@@ -68,6 +68,16 @@ genmake_mal() {
   check
 }
 
+genmake_apps() {
+  cd $PROGDIR/apps/generated_areas;
+  ./genmake $*
+  check
+
+  cd $PROGDIR/apps/demo;
+  ./genmake $*
+  check
+}
+
 genmake_tests() {
   cd $PROGDIR/test/testarea;
   ./genmake $*
@@ -110,6 +120,11 @@ genmake_tests() {
   check
 }
 
+# build and selftest malc libs
 genmake_mal $*
+
+# build and selftest malc test apps
 genmake_tests $*
 
+# build amd selftest malc apps
+genmake_apps $*

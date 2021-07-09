@@ -62,53 +62,53 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
     
-    <class name = "mal_ctx" state = "stable" />
-    <class name = "mal_routing" state = "stable" />
-    <class name = "mal_endpoint" state = "stable" />
-    <class name = "mal_poller" state = "stable" />
-    <class name = "mal_integer_list" state = "stable" />
-    <class name = "mal_uinteger_list" state = "stable" />
-    <class name = "mal_double_list" state = "stable" />
-    <class name = "mal_float_list" state = "stable" />
-    <class name = "mal_long_list" state = "stable" />
-    <class name = "mal_ulong_list" state = "stable" />
-    <class name = "mal_short_list" state = "stable" />
-    <class name = "mal_ushort_list" state = "stable" />
-    <class name = "mal_octet_list" state = "stable" />
-    <class name = "mal_uoctet_list" state = "stable" />
-    <class name = "mal_boolean_list" state = "stable" /> 
-    <class name = "mal_string_list" state = "stable" />
-    <class name = "mal_blob_list" state = "stable" />
-    <class name = "mal_time_list" state = "stable" />
-    <class name = "mal_finetime_list" state = "stable" />
-    <class name = "mal_duration_list" state = "stable" />
-    <class name = "mal_uri_list" state = "stable" />
-    <class name = "mal_interactiontype_list" state = "stable" />
-    <class name = "mal_identifier_list" state = "stable" /> 
-    <class name = "mal_message" state = "stable" />
-    <class name = "mal_entitykey" state = "stable" />
-    <class name = "mal_entitykey_list" state = "stable" />
-    <class name = "mal_entityrequest" state = "stable" />
-    <class name = "mal_entityrequest_list" state = "stable" />
-    <class name = "mal_updateheader" state = "stable" />
-    <class name = "mal_updateheader_list" state = "stable" />
-    <class name = "mal_subscription" state = "stable" />
-    <class name = "mal_subscription_list" state = "stable" />
-    <class name = "mal_element_holder" state = "stable" />
-    <class name = "mal_file" state = "stable" />
-	<class name = "mal_file_list" state = "stable" />
-	<class name = "mal_idbooleanpair" state = "stable" />
-	<class name = "mal_idbooleanpair_list" state = "stable" />
-	<class name = "mal_namedvalue" state = "stable" />
-	<class name = "mal_namedvalue_list" state = "stable" />
-	<class name = "mal_pair" state = "stable" />
-	<class name = "mal_pair_list" state = "stable" />
-	<class name = "mal_sessiontype_list" state = "stable" />
-	<class name = "mal_updatetype_list" state = "stable" />
-	<class name = "mal_qoslevel_list" state = "stable" />
-    <class name = "mal_encoder" state = "stable" />
-    <class name = "mal_decoder" state = "stable" />
-    <class name = "mal" state = "stable" />
+    <class name = "mal_ctx" state = "stable" selftest = "0" />
+    <class name = "mal_routing" state = "stable" selftest = "0" />
+    <class name = "mal_endpoint" state = "stable" selftest = "0" />
+    <class name = "mal_poller" state = "stable" selftest = "0" />
+    <class name = "mal_integer_list" state = "stable" selftest = "0" />
+    <class name = "mal_uinteger_list" state = "stable" selftest = "0" />
+    <class name = "mal_double_list" state = "stable" selftest = "0" />
+    <class name = "mal_float_list" state = "stable" selftest = "0" />
+    <class name = "mal_long_list" state = "stable" selftest = "0" />
+    <class name = "mal_ulong_list" state = "stable" selftest = "0" />
+    <class name = "mal_short_list" state = "stable" selftest = "0" />
+    <class name = "mal_ushort_list" state = "stable" selftest = "0" />
+    <class name = "mal_octet_list" state = "stable" selftest = "0" />
+    <class name = "mal_uoctet_list" state = "stable" selftest = "0" />
+    <class name = "mal_boolean_list" state = "stable" selftest = "0" /> 
+    <class name = "mal_string_list" state = "stable" selftest = "0" />
+    <class name = "mal_blob_list" state = "stable" selftest = "0" />
+    <class name = "mal_time_list" state = "stable" selftest = "0" />
+    <class name = "mal_finetime_list" state = "stable" selftest = "0" />
+    <class name = "mal_duration_list" state = "stable" selftest = "0" />
+    <class name = "mal_uri_list" state = "stable" selftest = "0" />
+    <class name = "mal_interactiontype_list" state = "stable" selftest = "0" />
+    <class name = "mal_identifier_list" state = "stable" selftest = "0" /> 
+    <class name = "mal_message" state = "stable" selftest = "0" />
+    <class name = "mal_entitykey" state = "stable" selftest = "0" />
+    <class name = "mal_entitykey_list" state = "stable" selftest = "0" />
+    <class name = "mal_entityrequest" state = "stable" selftest = "0" />
+    <class name = "mal_entityrequest_list" state = "stable" selftest = "0" />
+    <class name = "mal_updateheader" state = "stable" selftest = "0" />
+    <class name = "mal_updateheader_list" state = "stable" selftest = "0" />
+    <class name = "mal_subscription" state = "stable" selftest = "0" />
+    <class name = "mal_subscription_list" state = "stable" selftest = "0" />
+    <class name = "mal_element_holder" state = "stable" selftest = "0" />
+    <class name = "mal_file" state = "stable" selftest = "0" />
+	<class name = "mal_file_list" state = "stable" selftest = "0" />
+	<class name = "mal_idbooleanpair" state = "stable" selftest = "0" />
+	<class name = "mal_idbooleanpair_list" state = "stable" selftest = "0" />
+	<class name = "mal_namedvalue" state = "stable" selftest = "0" />
+	<class name = "mal_namedvalue_list" state = "stable" selftest = "0" />
+	<class name = "mal_pair" state = "stable" selftest = "0" />
+	<class name = "mal_pair_list" state = "stable" selftest = "0" />
+	<class name = "mal_sessiontype_list" state = "stable" selftest = "0" />
+	<class name = "mal_updatetype_list" state = "stable" selftest = "0" />
+	<class name = "mal_qoslevel_list" state = "stable" selftest = "0" />
+    <class name = "mal_encoder" state = "stable" selftest = "0" />
+    <class name = "mal_decoder" state = "stable" selftest = "0" />
+    <class name = "mal" state = "stable" selftest = "0" />
 
     <!--
         Actors, are build using the simple actor framework from czmq. If the 

@@ -1,0 +1,41 @@
+#ifndef __PF_AUTONOMOUSADCS_REACTIONWHEELPARAMETERS_H_INCLUDED__
+#define __PF_AUTONOMOUSADCS_REACTIONWHEELPARAMETERS_H_INCLUDED__
+
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
+
+// fields accessors for composite pf_autonomousadcs_reactionwheelparameters
+mal_integer_t pf_autonomousadcs_reactionwheelparameters_get_controlmode(pf_autonomousadcs_reactionwheelparameters_t * self);
+void pf_autonomousadcs_reactionwheelparameters_set_controlmode(pf_autonomousadcs_reactionwheelparameters_t * self, mal_integer_t f_controlmode);
+mal_float_t pf_autonomousadcs_reactionwheelparameters_get_maxspeed(pf_autonomousadcs_reactionwheelparameters_t * self);
+void pf_autonomousadcs_reactionwheelparameters_set_maxspeed(pf_autonomousadcs_reactionwheelparameters_t * self, mal_float_t f_maxspeed);
+mal_float_t pf_autonomousadcs_reactionwheelparameters_get_maxtorque(pf_autonomousadcs_reactionwheelparameters_t * self);
+void pf_autonomousadcs_reactionwheelparameters_set_maxtorque(pf_autonomousadcs_reactionwheelparameters_t * self, mal_float_t f_maxtorque);
+mal_float_t pf_autonomousadcs_reactionwheelparameters_get_inertia(pf_autonomousadcs_reactionwheelparameters_t * self);
+void pf_autonomousadcs_reactionwheelparameters_set_inertia(pf_autonomousadcs_reactionwheelparameters_t * self, mal_float_t f_inertia);
+bool pf_autonomousadcs_reactionwheelparameters_motorconst_is_present(pf_autonomousadcs_reactionwheelparameters_t * self);
+void pf_autonomousadcs_reactionwheelparameters_motorconst_set_present(pf_autonomousadcs_reactionwheelparameters_t * self, bool is_present);
+mal_float_t pf_autonomousadcs_reactionwheelparameters_get_motorconst(pf_autonomousadcs_reactionwheelparameters_t * self);
+void pf_autonomousadcs_reactionwheelparameters_set_motorconst(pf_autonomousadcs_reactionwheelparameters_t * self, mal_float_t f_motorconst);
+
+// default constructor
+pf_autonomousadcs_reactionwheelparameters_t * pf_autonomousadcs_reactionwheelparameters_new(void);
+
+// encoding functions related to transport malbinary
+int pf_autonomousadcs_reactionwheelparameters_add_encoding_length_malbinary(pf_autonomousadcs_reactionwheelparameters_t * self, mal_encoder_t * encoder, void * cursor);
+int pf_autonomousadcs_reactionwheelparameters_encode_malbinary(pf_autonomousadcs_reactionwheelparameters_t * self, mal_encoder_t * encoder, void * cursor);
+int pf_autonomousadcs_reactionwheelparameters_decode_malbinary(pf_autonomousadcs_reactionwheelparameters_t * self, mal_decoder_t * decoder, void * cursor);
+
+// destructor
+void pf_autonomousadcs_reactionwheelparameters_destroy(pf_autonomousadcs_reactionwheelparameters_t ** self_p);
+
+// test function
+void pf_autonomousadcs_reactionwheelparameters_test(bool verbose);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+
+#endif // __PF_AUTONOMOUSADCS_REACTIONWHEELPARAMETERS_H_INCLUDED__

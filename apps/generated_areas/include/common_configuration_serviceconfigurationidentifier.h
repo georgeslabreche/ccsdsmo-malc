@@ -1,0 +1,33 @@
+#ifndef __COMMON_CONFIGURATION_SERVICECONFIGURATIONIDENTIFIER_H_INCLUDED__
+#define __COMMON_CONFIGURATION_SERVICECONFIGURATIONIDENTIFIER_H_INCLUDED__
+
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
+
+// fields accessors for composite common_configuration_serviceconfigurationidentifier
+mal_identifier_t * common_configuration_serviceconfigurationidentifier_get_configname(common_configuration_serviceconfigurationidentifier_t * self);
+void common_configuration_serviceconfigurationidentifier_set_configname(common_configuration_serviceconfigurationidentifier_t * self, mal_identifier_t * f_configname);
+common_servicekey_t * common_configuration_serviceconfigurationidentifier_get_servicekey(common_configuration_serviceconfigurationidentifier_t * self);
+void common_configuration_serviceconfigurationidentifier_set_servicekey(common_configuration_serviceconfigurationidentifier_t * self, common_servicekey_t * f_servicekey);
+
+// default constructor
+common_configuration_serviceconfigurationidentifier_t * common_configuration_serviceconfigurationidentifier_new(void);
+
+// encoding functions related to transport malbinary
+int common_configuration_serviceconfigurationidentifier_add_encoding_length_malbinary(common_configuration_serviceconfigurationidentifier_t * self, mal_encoder_t * encoder, void * cursor);
+int common_configuration_serviceconfigurationidentifier_encode_malbinary(common_configuration_serviceconfigurationidentifier_t * self, mal_encoder_t * encoder, void * cursor);
+int common_configuration_serviceconfigurationidentifier_decode_malbinary(common_configuration_serviceconfigurationidentifier_t * self, mal_decoder_t * decoder, void * cursor);
+
+// destructor
+void common_configuration_serviceconfigurationidentifier_destroy(common_configuration_serviceconfigurationidentifier_t ** self_p);
+
+// test function
+void common_configuration_serviceconfigurationidentifier_test(bool verbose);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+
+#endif // __COMMON_CONFIGURATION_SERVICECONFIGURATIONIDENTIFIER_H_INCLUDED__
