@@ -33,3 +33,6 @@
 
 # MacOS Finder Files
 .DS_Store
+
+# Other files
+local

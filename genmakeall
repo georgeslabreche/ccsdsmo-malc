@@ -68,6 +68,12 @@ genmake_mal() {
   check
 }
 
+genmake_apps() {
+  cd $PROGDIR/apps/sandbox;
+  ./genmake $*
+  check
+}
+
 genmake_tests() {
   cd $PROGDIR/test/testarea;
   ./genmake $*
@@ -111,5 +117,7 @@ genmake_tests() {
 }
 
 genmake_mal $*
-genmake_tests $*
+genmake_apps $*
+
+#genmake_tests $*
 

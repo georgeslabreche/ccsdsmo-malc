@@ -1,6 +1,8 @@
 # CCSDS MO MAL C API
 
-This project is an implementation of the [CCSDS MO MAL Standard](https://en.wikipedia.org/wiki/CCSDS_Mission_Operations) in C using [ZeroMQ](zeromq.org) as transport backend.
+This project includes: 
+- An implementation of the [CCSDS MO MAL Standard](https://en.wikipedia.org/wiki/CCSDS_Mission_Operations) in C using [ZeroMQ](zeromq.org) as transport backend.
+- Applications using the MAL C API that have been developed to run onboard the OPS-SAT spacecraft's SEPP/Linux environment.
 
 CCSDS Mission Operation implementations for other languages (e.g. Java) can be found on the [CCSDS MO WebSite](http://ccsdsmo.github.io/)
 
@@ -94,6 +96,12 @@ has to be updated in order to contain the right versions of czmq, and the defini
         repository = ""
         test = "mal_actor_test"
         cmake_name = "MALACTOR">
+    </use>
+
+    <use project = "opssat"
+        repository = ""
+        test = "opssat_test"
+        cmake_name = "OPSSAT">
     </use>
 ```
 
