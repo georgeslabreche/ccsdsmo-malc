@@ -2,7 +2,7 @@
 
 This project includes: 
 - An implementation of the [CCSDS MO MAL Standard](https://en.wikipedia.org/wiki/CCSDS_Mission_Operations) in C using [ZeroMQ](zeromq.org) as transport backend.
-- Applications using the MAL C API that have been developed to run onboard the OPS-SAT spacecraft's SEPP/Linux environment.
+- Applications using the MAL C API, developed to run onboard the OPS-SAT spacecraft's SEPP/Linux environment.
 
 CCSDS Mission Operation implementations for other languages (e.g. Java) can be found on the [CCSDS MO WebSite](http://ccsdsmo.github.io/)
 
@@ -98,10 +98,10 @@ has to be updated in order to contain the right versions of czmq, and the defini
         cmake_name = "MALACTOR">
     </use>
 
-    <use project = "opssat"
+    <use project = "generated_areas"
         repository = ""
-        test = "opssat_test"
-        cmake_name = "OPSSAT">
+        test = "generated_areas_test"
+        cmake_name = "GENERATED_AREAS">
     </use>
 ```
 
@@ -124,7 +124,7 @@ the last line of the genmakeall shell script.
 The genmakeall commands accept multiples targets: 
   - all (default target): generates makefiles, then compiles and installs
   all the modules.
-  - clean: cleans all the generated stuff.
+  - clean: cleans all the generated stuff (alternatively, use `git clean -d -f -x`)
   - gen: generates makefiles.
   - compile: compiles each modules.
   - install: installs the generated libraries and includes.

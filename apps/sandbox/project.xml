@@ -46,7 +46,7 @@
     <use project = "malzmq" />
     <use project = "maltcp" />
     <use project = "malactor" />
-    <use project = "opssat" />
+    <use project = "generated_areas" />
 
     <!-- Header Files
          name := The name the header file to include without file ending
