@@ -16,7 +16,7 @@
     files according to http://rfc.zeromq.org/spec:21.
 -->
 <project
-    name = "sandbox_app"
+    name = "sandbox"
     description = "Sandbox application using MAL C API"
     script = "zproject.gsl"
     email = "georges@tanagraspace.com"
