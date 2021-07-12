@@ -120,5 +120,6 @@
     <class name = "mc_aggregation_aggregationreference_list" />
     <class name = "mc_aggregation_thresholdfilter" />
     <class name = "mc_aggregation_thresholdfilter_list" />
+    <class name = "generated_areas" />
 
 </project>

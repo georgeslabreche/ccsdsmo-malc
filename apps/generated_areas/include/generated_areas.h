@@ -6,4 +6,7 @@
 #include "com.h"
 #include "mc.h"
 
+// test function
+void generated_areas_test(bool verbose);
+
 #endif // __GENERATED_AREAS_H_INCLUDED__

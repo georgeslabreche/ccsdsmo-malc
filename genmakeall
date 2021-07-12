@@ -121,7 +121,7 @@ genmake_tests() {
 }
 
 genmake_mal $*
-#genmake_apps $*
+genmake_apps $*
 
 #genmake_tests $*
 
