@@ -29,13 +29,12 @@ static const char ZLOOP_ENDPOINTS_SOCKET_URI[] = "inproc://zloop.endpoints";
 
 struct _malzmq_ctx_t {
   mal_ctx_t *mal_ctx;
-  zctx_t *zmq_ctx;
   malzmq_mapping_uri_t *mapping_uri;
   char *hostname;
   char *port;
-  void *mal_socket;         // server socket listening to remote mal contexts
-  void *mal_pubsub_socket;  // server socket listening to remote mal contexts
-  void *endpoints_socket;   // inproc connected to endpoints
+  zsock_t *mal_socket;         // server socket listening to remote mal contexts
+  zsock_t *mal_pubsub_socket;  // server socket listening to remote mal contexts
+  zsock_t *endpoints_socket;   // inproc connected to endpoints
   zloop_t *zloop;
   malzmq_header_t *malzmq_header;
   // Private encoder / decoder used for PDU, always varint as the fixed part of the PDU
@@ -360,33 +359,30 @@ malzmq_ctx_t *malzmq_ctx_new(mal_ctx_t *mal_ctx,
 
   clog_debug(malzmq_logger, "malzmq_ctx_new: mal_uri=: %s\n", mal_uri);
 
-  zctx_t *zmq_ctx = zctx_new();
-  self->zmq_ctx = zmq_ctx;
-
   // PTP : bind socket
   mal_uri_t *ptp_uri = get_local_ptp_zmtp_uri(self, mal_uri);
-  void *mal_socket = zsocket_new(zmq_ctx, ZMQ_ROUTER);
+  zsock_t *mal_socket = zsock_new(ZMQ_ROUTER);
   self->mal_socket = mal_socket;
-  zsocket_bind(self->mal_socket, ptp_uri);
+  zsock_bind(self->mal_socket, ptp_uri);
   clog_debug(malzmq_logger, "malzmq_ctx: ptp listening to: %s\n", ptp_uri);
 
   // PS : bind socket
   mal_uri_t *mcast_uri = get_local_mcast_zmtp_uri(self, mal_uri);
   if (mcast_uri != NULL) {
-    void *sub = zsocket_new(zmq_ctx, ZMQ_SUB);
+    zsock_t *sub = zsock_new(ZMQ_SUB);
     assert(sub);
     self->mal_pubsub_socket = sub;
-    zsocket_bind(self->mal_pubsub_socket, mcast_uri);
+    zsock_bind(self->mal_pubsub_socket, mcast_uri);
     clog_debug(malzmq_logger, "malzmq_ctx: mcast bound to: %s / \"%s\"\n", mcast_uri, SUB_NAME);
-    zsocket_set_subscribe(self->mal_pubsub_socket, SUB_NAME);
+    zsock_set_subscribe(self->mal_pubsub_socket, SUB_NAME);
   } else {
     self->mal_pubsub_socket = NULL;
     clog_debug(malzmq_logger, "malzmq_ctx: mcast channel disable\n");
   }
 
-  void *endpoints_socket = zsocket_new(zmq_ctx, ZMQ_ROUTER);
+  zsock_t *endpoints_socket = zsock_new(ZMQ_ROUTER);
   self->endpoints_socket = endpoints_socket;
-  zsocket_bind(endpoints_socket, ZLOOP_ENDPOINTS_SOCKET_URI);
+  zsock_bind(endpoints_socket, ZLOOP_ENDPOINTS_SOCKET_URI);
 
   zloop_t *zloop = zloop_new();
   self->zloop = zloop;
@@ -434,7 +430,7 @@ int malzmq_ctx_stop(void *self) {
   if (mal_ctx->mal_socket != NULL) {
     void* socket = mal_ctx->mal_socket;
     mal_ctx->mal_socket = NULL;
-    zsocket_signal(socket);
+    zsock_signal(socket, 0);
     zmq_close(socket);
 
     clog_debug(malzmq_logger, "malzmq_ctx_stop: close socket.\n");
@@ -443,7 +439,7 @@ int malzmq_ctx_stop(void *self) {
   if (mal_ctx->mal_pubsub_socket != NULL) {
     void* socket = mal_ctx->mal_pubsub_socket;
     mal_ctx->mal_pubsub_socket = NULL;
-    zsocket_signal(socket);
+    zsock_signal(socket, 0);
     zmq_close(socket);
 
     clog_debug(malzmq_logger, "malzmq_ctx_stop: close pubsub.\n");
@@ -506,7 +502,7 @@ int malzmq_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
   malzmq_endpoint_data_t *endpoint_data =
       (malzmq_endpoint_data_t *) mal_endpoint_get_endpoint_data(mal_endpoint);
 
-  void *socket = NULL;
+  zsock_t *socket = NULL;
   if (mcast_uri != NULL) {
     // Needs to use the multicast channel, get the corresponding socket
     socket = zhash_lookup(endpoint_data->remote_socket_table, mcast_uri);
@@ -522,14 +518,14 @@ int malzmq_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
     if (mcast_uri == NULL) {
       socket_uri = ptp_uri;
       clog_debug(malzmq_logger, "malzmq_ctx: open a new PTP socket\n");
-      socket = zsocket_new(malzmq_ctx->zmq_ctx, ZMQ_DEALER);
+      socket = zsock_new(ZMQ_DEALER);
 
       clog_debug(malzmq_logger, "malzmq_ctx: connect to %s\n", socket_uri);
       zmq_connect(socket, socket_uri);
     } else {
       socket_uri = mcast_uri;
       clog_debug(malzmq_logger, "malzmq_ctx: open a new PUBSUB socket\n");
-      socket = zsocket_new(malzmq_ctx->zmq_ctx, ZMQ_PUB);
+      socket = zsock_new(ZMQ_PUB);
 
       int val = 0;
       rc = zmq_setsockopt(socket, ZMQ_LINGER, &val, sizeof(val));
@@ -799,7 +795,7 @@ void *malzmq_ctx_create_endpoint(void *malzmq_ctx, mal_endpoint_t *mal_endpoint)
 
     // Create a socket connected to the zloop to receive
     // MAL messages to be handled by this actor
-    void *zloop_socket = zsocket_new(self->zmq_ctx, ZMQ_DEALER);
+    zsock_t *zloop_socket = zsock_new(ZMQ_DEALER);
 
     // Keep the socket
     endpoint_data->socket = zloop_socket;
@@ -830,7 +826,7 @@ void malzmq_ctx_destroy_endpoint(void *self, void **endpoint_p) {
       void *socket = zhash_first(endpoint->remote_socket_table);
       while (socket) {
         // destroy all registered sockets
-        zsocket_destroy(endpoint->malzmq_ctx->zmq_ctx, socket);
+        zsock_destroy(socket);
         socket = zhash_next(endpoint->remote_socket_table);
       }
       zhash_destroy(&endpoint->remote_socket_table);
