@@ -31,13 +31,12 @@ static const int BACKLOG = 5;
 
 struct _maltcp_ctx_t {
   mal_ctx_t *mal_ctx;
-  zctx_t *zmq_ctx;
   char *hostname;
   char *port;
   char *root_uri;
-  int mal_socket;         // TCP server socket listening to remote mal contexts
-  zhash_t *cnx_table;     // TCP client sockets connected to remote mal contexts, key = short URI
-  void *endpoints_socket; // inproc connected to endpoints
+  int mal_socket;            // TCP server socket listening to remote mal contexts
+  zhash_t *cnx_table;        // TCP client sockets connected to remote mal contexts, key = short URI
+  zsock_t *endpoints_socket; // inproc connected to endpoints
   zloop_t *zloop;
   maltcp_header_t *maltcp_header;
   // Private encoder / decoder used for PDU, always varint as the fixed part of the PDU
@@ -480,9 +479,6 @@ maltcp_ctx_t *maltcp_ctx_new(mal_ctx_t *mal_ctx,
   sprintf((char*) self->root_uri, "%s%s:%s", MALTCP_URI, hostname, port);
   clog_debug(maltcp_logger, "maltcp_ctx_new: root_uri=%s\n", self->root_uri);
 
-  zctx_t *zmq_ctx = zctx_new();
-  self->zmq_ctx = zmq_ctx;
-
   self->cnx_table = zhash_new();
 
   // Creates the TCP listening socket
@@ -497,9 +493,9 @@ maltcp_ctx_t *maltcp_ctx_new(mal_ctx_t *mal_ctx,
   clog_debug(maltcp_logger, "maltcp_ctx: ptp listening to: %s\n", port);
 
   //inproc
-  void *endpoints_socket = zsocket_new(zmq_ctx, ZMQ_ROUTER);
+  zsock_t *endpoints_socket = zsock_new(ZMQ_ROUTER);
   self->endpoints_socket = endpoints_socket;
-  zsocket_bind(endpoints_socket, ZLOOP_ENDPOINTS_SOCKET_URI);
+  zsock_bind(endpoints_socket, ZLOOP_ENDPOINTS_SOCKET_URI);
 
   zloop_t *zloop = zloop_new();
   // TODO (AF): It seems that adding poller from outside of handler is not correctly
@@ -560,9 +556,9 @@ int maltcp_ctx_destroy(void **self_p) {
 
 
     // TODO(AF): zmq_close versus zsocket_destroy
-    zsocket_set_linger(self->endpoints_socket, 0);
-    clog_debug(maltcp_logger, "maltcp_ctx_destroy: linger=%d\n", zsocket_linger(self->endpoints_socket));
-    zsocket_destroy(self->zmq_ctx, self->endpoints_socket);
+    zsock_set_linger(self->endpoints_socket, 0);
+    clog_debug(maltcp_logger, "maltcp_ctx_destroy: linger=%d\n", zsock_linger(self->endpoints_socket));
+    zsock_destroy(&(self->endpoints_socket));
   //  zmq_close(mal_ctx->endpoints_socket);
 
     // Free all structures in hash-table, close socket and destroy mutex.
@@ -587,7 +583,6 @@ int maltcp_ctx_destroy(void **self_p) {
     zloop_destroy(&self->zloop);
 //    zsocket_destroy(self->zmq_ctx, self->endpoints_socket);
 //    zmq_close(self->endpoints_socket);
-    zctx_destroy(&self->zmq_ctx);
 
     free(self);
     *self_p = NULL;
@@ -929,7 +924,7 @@ void *maltcp_ctx_create_endpoint(void *maltcp_ctx, mal_endpoint_t *mal_endpoint)
 
     // Create a socket connected to the zloop to receive
     // MAL messages to be handled by this actor
-    void *zloop_socket = zsocket_new(self->zmq_ctx, ZMQ_DEALER);
+    zsock_t *zloop_socket = zsock_new(ZMQ_DEALER);
 
     // Keep the socket
     endpoint_data->socket = zloop_socket;
