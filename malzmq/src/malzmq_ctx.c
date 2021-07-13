@@ -823,10 +823,10 @@ void malzmq_ctx_destroy_endpoint(void *self, void **endpoint_p) {
 
     //  ... destroy your own state here
     if (endpoint->remote_socket_table) {
-      void *socket = zhash_first(endpoint->remote_socket_table);
+      zsock_t *socket = (zsock_t *)zhash_first(endpoint->remote_socket_table);
       while (socket) {
         // destroy all registered sockets
-        zsock_destroy(socket);
+        zsock_destroy(&socket);
         socket = zhash_next(endpoint->remote_socket_table);
       }
       zhash_destroy(&endpoint->remote_socket_table);
