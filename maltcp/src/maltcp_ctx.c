@@ -934,7 +934,9 @@ void *maltcp_ctx_create_endpoint(void *maltcp_ctx, mal_endpoint_t *mal_endpoint)
 
     // Connect to the zloop
     clog_debug(maltcp_logger, "maltcp_ctx_create_endpoint: connect to the zloop\n");
-    zmq_connect(zloop_socket, ZLOOP_ENDPOINTS_SOCKET_URI);
+    
+    int rc = zsock_connect(zloop_socket, ZLOOP_ENDPOINTS_SOCKET_URI);
+    assert (rc == 0);
 
     clog_debug(maltcp_logger, "maltcp_ctx_create_endpoint: initialized.\n");
   } else {
