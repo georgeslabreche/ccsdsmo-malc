@@ -502,7 +502,7 @@ int malzmq_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
   malzmq_endpoint_data_t *endpoint_data =
       (malzmq_endpoint_data_t *) mal_endpoint_get_endpoint_data(mal_endpoint);
 
-  zsock_t *socket = NULL;
+  void *socket = NULL;
   if (mcast_uri != NULL) {
     // Needs to use the multicast channel, get the corresponding socket
     socket = zhash_lookup(endpoint_data->remote_socket_table, mcast_uri);
@@ -521,7 +521,10 @@ int malzmq_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
       socket = zsock_new(ZMQ_DEALER);
 
       clog_debug(malzmq_logger, "malzmq_ctx: connect to %s\n", socket_uri);
-      zmq_connect(socket, socket_uri);
+
+      rc = zsock_connect((zsock_t *)socket, socket_uri);
+      assert (rc == 0);
+
     } else {
       socket_uri = mcast_uri;
       clog_debug(malzmq_logger, "malzmq_ctx: open a new PUBSUB socket\n");
@@ -532,7 +535,9 @@ int malzmq_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint,
       assert (rc == 0);
 
       clog_debug(malzmq_logger, "malzmq_ctx: connect to %s\n", socket_uri);
-      zmq_connect(socket, socket_uri);
+
+      rc = zsock_connect((zsock_t *)socket, socket_uri);
+      assert (rc == 0);
 
       // Avoid to lost the first message
       zclock_sleep (500);
@@ -805,7 +810,9 @@ void *malzmq_ctx_create_endpoint(void *malzmq_ctx, mal_endpoint_t *mal_endpoint)
 
     // Connect to the zloop
     clog_debug(malzmq_logger, "malzmq_ctx_create_endpoint: connect to the zloop\n");
-    zmq_connect(zloop_socket, ZLOOP_ENDPOINTS_SOCKET_URI);
+    
+    int rc = zsock_connect(zloop_socket, ZLOOP_ENDPOINTS_SOCKET_URI);
+    assert(rc == 0);
 
     clog_debug(malzmq_logger, "malzmq_ctx_create_endpoint: initialized.\n");
   } else {
