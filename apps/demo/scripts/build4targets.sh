@@ -43,7 +43,7 @@ source env.sh
 TARGETS=('rpi')
 
 # List the mal project dependencies.
-MAL_PROJECTS=('util' 'malattributes' 'mal' 'malbinary' 'malsplitbinary' 'malzmq' 'maltcp' 'malactor')
+MAL_PROJECTS=('malutil' 'malattributes' 'mal' 'malbinary' 'malsplitbinary' 'malzmq' 'maltcp' 'malactor')
 
 # Parse the "incremental" parameter if given.
 # For the purposes of this script, an "incremental" build is understood as just rebuilding the app,

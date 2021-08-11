@@ -90,10 +90,10 @@ and the definition of new projects such as 'mal':
 ```xml
     <!-- MAL/C Projects -->
 
-    <use project = "util"
+    <use project = "malutil"
         repository = ""
         test = "clog_test"
-        cmake_name = "UTIL">
+        cmake_name = "MALUTIL">
     </use>
 
     <use project = "malattributes"

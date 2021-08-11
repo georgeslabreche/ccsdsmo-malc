@@ -8,7 +8,7 @@
     <include filename = "license.xml" />
     <version major = "1" minor = "0" patch = "0" />
 
-    <use project = "util" />
+    <use project = "malutil" />
     <use project = "malattributes" />
     <use project = "mal" />
     <use project = "malbinary" />
