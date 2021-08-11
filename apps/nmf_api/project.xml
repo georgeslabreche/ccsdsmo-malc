@@ -1,0 +1,55 @@
+<project
+    name = "nmf_api"
+    description = "NMF API"
+    script = "zproject.gsl"
+    email = "georges@tanagraspace.com"
+    >
+
+    <include filename = "license.xml" />
+    <version major = "1" minor = "0" patch = "0" />
+
+    <!--
+        Current libtool ABI version of your project's shared library.
+        Start at 0:0:0 and see:
+        http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
+        for details on how/when to increment it.
+        If not defined 0:0:0 will be used.
+    -->
+    <abi current = "1" revision = "0" age = "0" />
+
+    <use project = "czmq" />
+    <use project = "malutil" />
+    <use project = "malattributes" />
+    <use project = "mal" />
+    <use project = "malbinary" />
+    <use project = "malsplitbinary" />
+    <use project = "malzmq" />
+    <use project = "maltcp" />
+    <use project = "malactor" />
+    <use project = "generated_areas" />
+
+    <!-- Header Files
+         name := The name the header file to include without file ending
+    <header name = "myproject_prelude" />
+    -->
+
+    <!-- 
+        Classes, if the class header or source file doesn't exist this will
+        generate a skeletons for them.
+        use private = "1" for internal classes
+    <class name = "myclass">Public class description</class>
+    <class name = "someother" private = "1">Private class description</class>
+    -->
+
+    <!-- MO MAL Services-->
+    <!--class name = "com" /-->
+    <!--class name = "common" /-->
+    <class name = "monitor_and_control" />
+    <!--class name = "platform" /-->
+    <!--class name = "software_management" /-->
+    
+    <!-- Targets -->
+    <target name = "rpi" />
+    
+
+</project>
