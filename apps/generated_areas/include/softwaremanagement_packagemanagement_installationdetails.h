@@ -1,0 +1,35 @@
+#ifndef __SOFTWAREMANAGEMENT_PACKAGEMANAGEMENT_INSTALLATIONDETAILS_H_INCLUDED__
+#define __SOFTWAREMANAGEMENT_PACKAGEMANAGEMENT_INSTALLATIONDETAILS_H_INCLUDED__
+
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
+
+// fields accessors for composite softwaremanagement_packagemanagement_installationdetails
+bool softwaremanagement_packagemanagement_installationdetails_installed_is_present(softwaremanagement_packagemanagement_installationdetails_t * self);
+void softwaremanagement_packagemanagement_installationdetails_installed_set_present(softwaremanagement_packagemanagement_installationdetails_t * self, bool is_present);
+mal_boolean_t softwaremanagement_packagemanagement_installationdetails_get_installed(softwaremanagement_packagemanagement_installationdetails_t * self);
+void softwaremanagement_packagemanagement_installationdetails_set_installed(softwaremanagement_packagemanagement_installationdetails_t * self, mal_boolean_t f_installed);
+mal_string_t * softwaremanagement_packagemanagement_installationdetails_get_folderlocation(softwaremanagement_packagemanagement_installationdetails_t * self);
+void softwaremanagement_packagemanagement_installationdetails_set_folderlocation(softwaremanagement_packagemanagement_installationdetails_t * self, mal_string_t * f_folderlocation);
+
+// default constructor
+softwaremanagement_packagemanagement_installationdetails_t * softwaremanagement_packagemanagement_installationdetails_new(void);
+
+// encoding functions related to transport malbinary
+int softwaremanagement_packagemanagement_installationdetails_add_encoding_length_malbinary(softwaremanagement_packagemanagement_installationdetails_t * self, mal_encoder_t * encoder, void * cursor);
+int softwaremanagement_packagemanagement_installationdetails_encode_malbinary(softwaremanagement_packagemanagement_installationdetails_t * self, mal_encoder_t * encoder, void * cursor);
+int softwaremanagement_packagemanagement_installationdetails_decode_malbinary(softwaremanagement_packagemanagement_installationdetails_t * self, mal_decoder_t * decoder, void * cursor);
+
+// destructor
+void softwaremanagement_packagemanagement_installationdetails_destroy(softwaremanagement_packagemanagement_installationdetails_t ** self_p);
+
+// test function
+void softwaremanagement_packagemanagement_installationdetails_test(bool verbose);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+
+#endif // __SOFTWAREMANAGEMENT_PACKAGEMANAGEMENT_INSTALLATIONDETAILS_H_INCLUDED__

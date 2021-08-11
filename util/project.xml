@@ -58,7 +58,7 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
     
-    <class name = "clog" state = "stable" />
+    <class name = "clog" state = "stable" selftest = "0" />
 
     <!--
         Actors, are build using the simple actor framework from czmq. If the 

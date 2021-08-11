@@ -1,0 +1,39 @@
+#ifndef __SOFTWAREMANAGEMENT_PACKAGEMANAGEMENT_PACKAGEDEFINITION_H_INCLUDED__
+#define __SOFTWAREMANAGEMENT_PACKAGEMANAGEMENT_PACKAGEDEFINITION_H_INCLUDED__
+
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
+
+// fields accessors for composite softwaremanagement_packagemanagement_packagedefinition
+mal_identifier_t * softwaremanagement_packagemanagement_packagedefinition_get_name(softwaremanagement_packagemanagement_packagedefinition_t * self);
+void softwaremanagement_packagemanagement_packagedefinition_set_name(softwaremanagement_packagemanagement_packagedefinition_t * self, mal_identifier_t * f_name);
+mal_string_t * softwaremanagement_packagemanagement_packagedefinition_get_description(softwaremanagement_packagemanagement_packagedefinition_t * self);
+void softwaremanagement_packagemanagement_packagedefinition_set_description(softwaremanagement_packagemanagement_packagedefinition_t * self, mal_string_t * f_description);
+mal_identifier_t * softwaremanagement_packagemanagement_packagedefinition_get_category(softwaremanagement_packagemanagement_packagedefinition_t * self);
+void softwaremanagement_packagemanagement_packagedefinition_set_category(softwaremanagement_packagemanagement_packagedefinition_t * self, mal_identifier_t * f_category);
+mal_file_t * softwaremanagement_packagemanagement_packagedefinition_get_path(softwaremanagement_packagemanagement_packagedefinition_t * self);
+void softwaremanagement_packagemanagement_packagedefinition_set_path(softwaremanagement_packagemanagement_packagedefinition_t * self, mal_file_t * f_path);
+mal_string_t * softwaremanagement_packagemanagement_packagedefinition_get_publisher(softwaremanagement_packagemanagement_packagedefinition_t * self);
+void softwaremanagement_packagemanagement_packagedefinition_set_publisher(softwaremanagement_packagemanagement_packagedefinition_t * self, mal_string_t * f_publisher);
+
+// default constructor
+softwaremanagement_packagemanagement_packagedefinition_t * softwaremanagement_packagemanagement_packagedefinition_new(void);
+
+// encoding functions related to transport malbinary
+int softwaremanagement_packagemanagement_packagedefinition_add_encoding_length_malbinary(softwaremanagement_packagemanagement_packagedefinition_t * self, mal_encoder_t * encoder, void * cursor);
+int softwaremanagement_packagemanagement_packagedefinition_encode_malbinary(softwaremanagement_packagemanagement_packagedefinition_t * self, mal_encoder_t * encoder, void * cursor);
+int softwaremanagement_packagemanagement_packagedefinition_decode_malbinary(softwaremanagement_packagemanagement_packagedefinition_t * self, mal_decoder_t * decoder, void * cursor);
+
+// destructor
+void softwaremanagement_packagemanagement_packagedefinition_destroy(softwaremanagement_packagemanagement_packagedefinition_t ** self_p);
+
+// test function
+void softwaremanagement_packagemanagement_packagedefinition_test(bool verbose);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+
+#endif // __SOFTWAREMANAGEMENT_PACKAGEMANAGEMENT_PACKAGEDEFINITION_H_INCLUDED__

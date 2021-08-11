@@ -1,6 +1,9 @@
-# CCSDS MO MAL C API
+# CCSDS MO MAL C Apps for OPS-SAT SEPP/Linux
 
-This project is an implementation of the [CCSDS MO MAL Standard](https://en.wikipedia.org/wiki/CCSDS_Mission_Operations) in C using [ZeroMQ](zeromq.org) as transport backend.
+This project includes: 
+- An implementation of the [CCSDS MO MAL Standard](https://en.wikipedia.org/wiki/CCSDS_Mission_Operations) in C using [ZeroMQ](zeromq.org) as transport backend.
+- Generated MO MAL service areas for the [OPS-SAT](https://opssat1.esoc.esa.int/) spacecraft.
+- Applications using the MAL C API, developed to run onboard the [OPS-SAT](https://opssat1.esoc.esa.int/) spacecraft's SEPP/Linux environment.
 
 CCSDS Mission Operation implementations for other languages (e.g. Java) can be found on the [CCSDS MO WebSite](http://ccsdsmo.github.io/)
 
@@ -12,14 +15,15 @@ In particular:
   - [CCSDS 524.4-R-1, Mission Operations--MAL Binding to ZMTP Transport](https://public.ccsds.org/Lists/CCSDS%205244R1/524x4r1.pdf)
 
 ## ABOUT
-
-The CCSDS MO MAL C API was originally developed for the [CNES](http://cnes.fr), the French Space Agency, by [ScalAgent](http://www.scalagent.com/en/), a french company specialized in distributed technologies. All contributions are welcome.
+- The CCSDS MO MAL C API was originally developed for the [CNES](http://cnes.fr), the French Space Agency, by [ScalAgent](http://www.scalagent.com/en/).
+- The OPS-SAT MO MAL service areas were generated from XML specifications with the [CCSDS MO StubGenerator](https://github.com/georgeslabreche/CCSDS_MO_StubGenerator).
+- The MAL C apps are located in the [apps folder](https://github.com/georgeslabreche/ccsdsmo-malc/tree/opssat/apps), originally developed for [ESA / ESOC](https://www.esa.int/About_Us/ESOC) by [TanagraSpace](https://tanagraspace.com/) in partnership with [VisionSpace](https://www.visionspace.com/).
 
 ## PROJECT DOCUMENTATION
 
-Project documentation is available at http://ccsdsmo.github.io/malc
+CCSDS MO MAL C documentation is available at http://ccsdsmo.github.io/malc
 
-Source code and comments in the source code are in English so you can proably get a good idea of what is goining on by just having a look at the code. A good place to start is the `samples` directory.
+Source code and comments in the source code are in English so you can proably get a good idea of what is goining on by just having a look at the code. A good place to start is the `test` directory for sample MO MAL interactions and in the `apps/demo` directory for a sample OPS-SAT MO MAL C app developed to run on the spacecraft's SEPP/Linux environment.
 
 ## INSTALLATION
 
@@ -27,17 +31,61 @@ Source code and comments in the source code are in English so you can proably ge
 
 The project requires **GSL** version 4.1 to be installed. **GSL** can be found [here](https://github.com/imatix/gsl.git).
 
+### ZeroMQ
+
+The project requires **ZMQ** version 4.0.10 to be installed. The v4.0.10 tag for **ZMQ** can be found [here](https://github.com/zeromq/zeromq4-x/tree/v4.0.10).
+
+Review the [INSTALL](https://github.com/zeromq/zeromq4-x/blob/v4.0.10/INSTALL) documentation. In a nutshell:
+```
+git clone https://github.com/zeromq/zeromq4-x.git
+cd zeromq4-x
+git checkout tags/v4.0.10 -b v4.0.10
+./autogen.sh
+./configure
+make check
+sudo make install
+sudo ldconfig
+```
 
 ### CZMQ
 
-The project requires **CZMQ** version 3.0.2 to be installed. **CZMQ** can be found [here](http://github.com/zeromq/czmq).
+The project requires **CZMQ** version 3.0.2 to be installed. The v3.0.2 tag for **CZMQ* can be found [here](https://github.com/zeromq/czmq/tree/v3.0.2).
+
+
+Review the "Building and Installing" of the [README](https://github.com/zeromq/czmq/blob/v3.0.2/README.md) documentation. In a nutshell:
+```
+git clone https://github.com/zeromq/czmq.git
+cd czmq
+git checkout tags/v3.0.2 -b v3.0.2
+./autogen.sh
+./configure
+make check
+sudo make install
+sudo ldconfig
+```
 
 ### ZPROJECT
 
 The project requires **zproject** to be installed. **zproject** can be found [here](https://github.com/zeromq/zproject).
 
 After installing 'zproject', the file 'zproject_known_projects.xml' (normally located in /usr/local/bin directory)
-has to be updated in order to contain the right versions of czmq, and the definition of new projects such as 'mal':
+has to be updated in order to contain the right versions of libzmq and czmq:
+
+```xml
+    <use project = "libzmq" prefix = "zmq"
+        repository = "https://github.com/zeromq/zeromq4-x"
+        test = "zmq_init"
+        release = "v4.0.10" />
+
+    <use project = "czmq" libname = "libczmq"
+        repository = "https://github.com/zeromq/czmq.git"
+        test = "zctx_test"
+        release = "v3.0.2">
+        <use project = "libzmq" />
+    </use>
+```
+
+and the definition of new projects such as 'mal':
 
 ```xml
     <!-- MAL/C Projects -->
@@ -95,11 +143,13 @@ has to be updated in order to contain the right versions of czmq, and the defini
         test = "mal_actor_test"
         cmake_name = "MALACTOR">
     </use>
+
+    <use project = "generated_areas"
+        repository = ""
+        test = "generated_areas_test"
+        cmake_name = "GENERATED_AREAS">
+    </use>
 ```
-
-### ZEROMQ
-
-Download the current stable version of ZeroMQ (4.1.3) from [here](http://zeromq.org/intro:get-the-software).
 
 ### MAL/C QUICK INSTALLATION
 
@@ -116,7 +166,7 @@ the last line of the genmakeall shell script.
 The genmakeall commands accept multiples targets: 
   - all (default target): generates makefiles, then compiles and installs
   all the modules.
-  - clean: cleans all the generated stuff.
+  - clean: cleans all the generated stuff (alternatively, use `git clean -d -f -x`)
   - gen: generates makefiles.
   - compile: compiles each modules.
   - install: installs the generated libraries and includes.
@@ -179,9 +229,11 @@ depends on:
 
 ```xml
     <use project = "malattributes" />
-    <use project = "malbinary" />
     <use project = "mal" />
+    <use project = "malbinary" />
 ```
+
+**Important:** For cross-compilation to work, as documented [here](apps/demo/README.md), projects must be listed in order of dependence. For instance, in the above example, *mal* depends on *malattributes* so the latter listed prior to the former.
 
 C99 is required.
 

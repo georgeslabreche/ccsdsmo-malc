@@ -1,0 +1,2 @@
+## OPS-SAT MO/MAL Services C Code
+This code was generated using the [CCSDS MO Stub Generator](https://github.com/georgeslabreche/CCSDS_MO_StubGenerator) with the [CNES Stub Generator for MAL C API](https://github.com/CNES/ccsdsmo-malc-stubgenerator) using the [OPS-SAT MO/MAL services XML specifications](https://github.com/georgeslabreche/CCSDS_MO_StubGenerator/tree/opssat/specs).

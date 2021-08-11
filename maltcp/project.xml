@@ -45,6 +45,7 @@
         known projects is maintained in the zproject_known_projects.xml model.
         You need not specify subdependencies if they are implied. -->
     <use project = "czmq" />
+    <use project = "util" />
     <use project = "malattributes" />
     <use project = "mal" />
     <use project = "malbinary" />
@@ -62,9 +63,9 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
     
-    <class name = "maltcp" state = "stable" />
-    <class name = "maltcp_ctx" state = "stable" />
-    <class name = "maltcp_header" state = "stable" />
+    <class name = "maltcp" state = "stable" selftest = "0" />
+    <class name = "maltcp_ctx" state = "stable" selftest = "0" />
+    <class name = "maltcp_header" state = "stable" selftest = "0" />
 
     <!--
         Actors, are build using the simple actor framework from czmq. If the 
