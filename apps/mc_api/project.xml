@@ -45,9 +45,27 @@
     <!--class name = "com" /-->
     <!--class name = "common" /-->
 
-    <!-- Monitor a Control Service -->
-    <class name = "mc_get_value" />
-    <class name = "mc_set_value" /> 
+    <!-- MONITOR AND CONTROL SERVICE -->
+    
+    <!-- The parameter service allows the user to subscribe to parameter value report and optionally be able to set new values. -->
+    <class name = "mc_parameter_get_value">
+        The getValue operation returns the latest received value for a requested parameter.
+        <constructor>
+            Create a new class with the given name.
+            <argument name = "host" type = "string" />
+            <argument name = "port" type = "integer" />
+        </constructor>
+
+        <method name = "consumer actor create">
+            Create a consumer actor.
+            <argument name = "mal_ctx" type = "mal_ctx_t" />
+            <argument name = "provider_uri" type = "mal_uri_t" />
+            <argument name = "encoder" type = "mal_encoder_t" />
+            <argument name = "decoder" type = "mal_decoder_t" />
+        </method>
+
+    </class>
+    <class name = "mc_parameter_set_value" /> 
     
     <!-- Targets -->
     <target name = "rpi" />
