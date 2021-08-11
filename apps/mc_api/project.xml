@@ -1,6 +1,6 @@
 <project
-    name = "nmf_api"
-    description = "NMF API"
+    name = "mc_api"
+    description = "Moonitor and Control Service API"
     script = "zproject.gsl"
     email = "georges@tanagraspace.com"
     >
@@ -44,9 +44,10 @@
     <!-- MO MAL Services-->
     <!--class name = "com" /-->
     <!--class name = "common" /-->
-    <class name = "monitor_and_control" />
-    <!--class name = "platform" /-->
-    <!--class name = "software_management" /-->
+
+    <!-- Monitor a Control Service -->
+    <class name = "mc_get_value" />
+    <class name = "mc_set_value" /> 
     
     <!-- Targets -->
     <target name = "rpi" />

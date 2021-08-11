@@ -1,5 +1,5 @@
 /*  =========================================================================
-    monitor_and_control - class description
+    mc_set_value - class description
 
     The MIT License (MIT)
     =========================================================================
@@ -7,27 +7,27 @@
 
 /*
 @header
-    monitor_and_control -
+    mc_set_value -
 @discuss
 @end
 */
 
-#include "nmf_api_classes.h"
+#include "mc_api_classes.h"
 
 //  Structure of our class
 
-struct _monitor_and_control_t {
+struct _mc_set_value_t {
     int filler;     //  Declare class properties here
 };
 
 
 //  --------------------------------------------------------------------------
-//  Create a new monitor_and_control
+//  Create a new mc_set_value
 
-monitor_and_control_t *
-monitor_and_control_new (void)
+mc_set_value_t *
+mc_set_value_new (void)
 {
-    monitor_and_control_t *self = (monitor_and_control_t *) zmalloc (sizeof (monitor_and_control_t));
+    mc_set_value_t *self = (mc_set_value_t *) zmalloc (sizeof (mc_set_value_t));
     assert (self);
     //  Initialize class properties here
     return self;
@@ -35,14 +35,14 @@ monitor_and_control_new (void)
 
 
 //  --------------------------------------------------------------------------
-//  Destroy the monitor_and_control
+//  Destroy the mc_set_value
 
 void
-monitor_and_control_destroy (monitor_and_control_t **self_p)
+mc_set_value_destroy (mc_set_value_t **self_p)
 {
     assert (self_p);
     if (*self_p) {
-        monitor_and_control_t *self = *self_p;
+        mc_set_value_t *self = *self_p;
         //  Free class properties here
         //  Free object itself
         free (self);
@@ -67,15 +67,15 @@ monitor_and_control_destroy (monitor_and_control_t **self_p)
 #define SELFTEST_DIR_RW "src/selftest-rw"
 
 void
-monitor_and_control_test (bool verbose)
+mc_set_value_test (bool verbose)
 {
-    printf (" * monitor_and_control: ");
+    printf (" * mc_set_value: ");
 
     //  @selftest
     //  Simple create/destroy test
-    monitor_and_control_t *self = monitor_and_control_new ();
+    mc_set_value_t *self = mc_set_value_new ();
     assert (self);
-    monitor_and_control_destroy (&self);
+    mc_set_value_destroy (&self);
     //  @end
     printf ("OK\n");
 }
