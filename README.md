@@ -144,10 +144,18 @@ and the definition of new projects such as 'mal':
         cmake_name = "MALACTOR">
     </use>
 
+    <!-- Library projects that depend on MAL/C projects -->
+
     <use project = "generated_areas"
         repository = ""
         test = "generated_areas_test"
         cmake_name = "GENERATED_AREAS">
+    </use>
+
+    <use project = "nmfapi"
+        repository = ""
+        test = "nmfapi_test"
+        cmake_name = "NMFAPI">
     </use>
 ```
 

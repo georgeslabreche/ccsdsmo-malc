@@ -1,0 +1,41 @@
+<class name = "mc_parameter_list_definition_consumer" selftest="0">
+    The request consumer for the listDefinition operation.
+
+    <constant name = "uri" value = "mc/parameter/listDefinition/consumer" type="string">the consumer URI for the listDefinition operation</constant>
+
+    <constructor>
+        Instanciate a consumer object for the listDefinition operation.
+        <argument name = "provider_uri" c_type = "mal_uri_t *" />
+        
+    </constructor>
+
+    <destructor>
+        The destructor.
+        <argument name = "mal_ctx" c_type = "mal_ctx_t *" />
+    </destructor>
+
+    <method name = "get_field_param_names">
+        Get the param names MAL message field
+        <return c_type = "char **" />
+    </method>
+
+    <method name = "set_field_param_names">
+        Set the param names MAL message field
+        <argument name = "param_names" c_type = "char **" />
+    </method>
+
+    <method name = "get_field_param_size">
+        Get the size of the param names MAL message field
+        <return type = "size" />
+    </method>
+
+    <method name = "set_field_param_size">
+        Set the size of the param names MAL message field
+        <argument name = "param_size" type = "size" />
+    </method>
+
+    <method name = "actor_create">
+        Create the consumer actor.
+        <argument name = "mal_ctx" c_type = "mal_ctx_t *" />
+    </method>
+</class>

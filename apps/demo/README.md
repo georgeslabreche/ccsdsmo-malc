@@ -9,7 +9,7 @@ Invoking the `genmake_tests` function inside the *genmakeall* script can be comm
 
 ```bash
 ./../../genmakeall 
-./src/demo_app -h <ip_address> -p <port_number>
+./src/demo_app -h <host> -p <provider_port> -c <consumer_port>
 ```
 
 ### For the spacecraft
@@ -28,9 +28,9 @@ cd scripts
 Then ssh into SEPP to untar and install the shared libraries and binary:
 
 ```
-tar -xzvf malc_app.tar.gz
+tar -xzvf malc_demo.tar.gz
 ./sepp_install.sh
-./demo_app -h <ip_address> -p <port_number>
+./demo_app -h <host> -p <provider_port> -c <consumer_port>
 ```
 
 ### Cross-compilation
