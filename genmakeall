@@ -35,7 +35,7 @@ if  [ "$#" -ne "0" ]; then
 fi
 
 genmake_mal() {
-  cd $PROGDIR/util;
+  cd $PROGDIR/malutil;
   ./genmake $*
   check
 

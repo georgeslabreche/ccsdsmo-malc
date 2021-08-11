@@ -21,7 +21,7 @@
     email := The email address where to reach you project e.g. mailinglist.
 -->
 <project
-    name = "util"
+    name = "malutil"
     description = "Tools package"
     script = "zproject.gsl"
     email = ""
