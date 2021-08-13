@@ -1,6 +1,6 @@
 <project
-    name = "mc_api"
-    description = "Moonitor and Control Service API"
+    name = "nmf_api"
+    description = "NMF Service API"
     script = "zproject.gsl"
     email = "georges@tanagraspace.com"
     >
@@ -47,25 +47,13 @@
 
     <!-- MONITOR AND CONTROL SERVICE -->
     
-    <!-- The parameter service allows the user to subscribe to parameter value report and optionally be able to set new values. -->
-    <class name = "mc_parameter_get_value">
-        The getValue operation returns the latest received value for a requested parameter.
-        <constructor>
-            Create a new class with the given name.
-            <argument name = "host" type = "string" />
-            <argument name = "port" type = "integer" />
-        </constructor>
-
-        <method name = "consumer actor create">
-            Create a consumer actor.
-            <argument name = "mal_ctx" type = "mal_ctx_t" />
-            <argument name = "provider_uri" type = "mal_uri_t" />
-            <argument name = "encoder" type = "mal_encoder_t" />
-            <argument name = "decoder" type = "mal_decoder_t" />
-        </method>
-
-    </class>
-    <class name = "mc_parameter_set_value" /> 
+    <!-- 
+        The parameter service allows the user to subscribe to parameter 
+        value report and optionally be able to set new values.
+    -->
+    <class name = "mc_parameter_get_value_consumer" selftest = "0" />
+    <class name = "mc_parameter_service" selftest = "0" />
+    <main name = "nmf_api_main">A test main program</main>
     
     <!-- Targets -->
     <target name = "rpi" />
