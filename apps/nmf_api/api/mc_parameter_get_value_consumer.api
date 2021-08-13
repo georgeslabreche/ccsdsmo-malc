@@ -12,9 +12,10 @@
         <argument name = "provider_uri" c_type = "mal_uri_t *" />
     </constructor>
 
-    <constructor>
+    <destructor>
         The destructor.
-    </constructor>
+        <argument name = "mal_ctx" c_type = "mal_ctx_t *" />
+    </destructor>
 
     <method name = "actor_create">
         Create the consumer actor.

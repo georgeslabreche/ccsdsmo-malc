@@ -10,6 +10,10 @@
         <argument name = "consumer_port" type = "string" />
     </constructor>
 
+    <destructor>
+        The destructor.
+    </destructor>
+
     <method name = "get_value">
         <argument name = "param_inst_ids" c_type = "long *" />
     </method>
