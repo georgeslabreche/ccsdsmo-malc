@@ -197,7 +197,7 @@ mc_parameter_get_value_consumer_initialize (void *self, mal_actor_t *mal_actor)
     // The wildcard value of '0' shall be supported and matches all parameters of the provider
     mal_long_list_t *param_inst_ids = mal_long_list_new(1);
     mal_long_t* content = mal_long_list_get_content(param_inst_ids);
-    content[0] = 0;
+    content[0] = 1;
 
     // Create a cursor
     void *cursor = mal_encoder_new_cursor(consumer->encoder);

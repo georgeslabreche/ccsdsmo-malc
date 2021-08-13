@@ -1,8 +1,6 @@
 <class name = "mc_parameter_get_value_consumer">
     The request consumer for the getValue operation.
 
-    <include filename = "../license.xml" />
-
     <constant name = "network_zone" value = "Network Zone" type="string">the consumer actor network zone for the getValue operation</constant>
     <constant name = "session_name_live" value = "LIVE" type="string">the consumer actor session name for the getValue operation</constant>
     <constant name = "uri" value = "mc/parameter/getValue/consumer" type="string">the consumer URI for the getValue operation</constant>

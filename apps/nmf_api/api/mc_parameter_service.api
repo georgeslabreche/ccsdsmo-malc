@@ -1,8 +1,6 @@
 <class name = "mc_parameter_service">
     The parameter service allows the user to subscribe to parameter value report and optionally be able to set new values.
 
-    <include filename = "../license.xml" />
-
     <constructor>
         Instanciate a consumer object for the getValue operation.
         <argument name = "provider_host" type = "string" />
