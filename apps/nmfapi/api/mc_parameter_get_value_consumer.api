@@ -7,16 +7,31 @@
 
     <constructor>
         Instanciate a consumer object for the getValue operation.
+        <argument name = "mal_ctx" c_type = "mal_ctx_t *" />
         <argument name = "provider_uri" c_type = "mal_uri_t *" />
     </constructor>
 
     <destructor>
         The destructor.
-        <argument name = "mal_ctx" c_type = "mal_ctx_t *" />
     </destructor>
 
-    <method name = "actor_create">
-        Create the consumer actor.
-        <argument name = "mal_ctx" c_type = "mal_ctx_t *" />
+    <method name = "get_field_param_inst_ids">
+        Get the param inst ids MAL message field
+        <return c_type = "long *" />
+    </method>
+
+    <method name = "set_field_param_inst_ids">
+        Set the param inst ids MAL message field
+        <argument name = "param_inst_ids" c_type = "long *" />
+    </method>
+
+    <method name = "get_field_param_inst_size">
+        Get the size of the param inst ids MAL message field
+        <return type = "size" />
+    </method>
+
+    <method name = "set_field_param_inst_size">
+        Set the size of the param inst ids MAL message field
+        <argument name = "param_inst_size" type = "size" />
     </method>
 </class>

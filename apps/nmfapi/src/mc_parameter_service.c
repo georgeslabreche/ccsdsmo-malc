@@ -12,16 +12,17 @@
 @end
 */
 
-#include "nmf_api_classes.h"
+#include "nmfapi_classes.h"
 
 //  Structure of our class
 
 struct _mc_parameter_service_t {
-    int filler;     //  Declare class properties here
+    mal_ctx_t *mal_ctx;
+    mal_uri_t *provider_uri;
 };
 
-mal_ctx_t *mal_ctx;
-mc_parameter_get_value_consumer_t *consumer;
+mc_parameter_get_value_consumer_t *get_value_consumer;
+mc_parameter_list_definition_consumer_t *list_definition_consumer;
 
 
 //  --------------------------------------------------------------------------
@@ -35,7 +36,7 @@ mc_parameter_service_new (const char *provider_host, const char *provider_port, 
     //  Initialize class properties here
 
     // Create mal context
-    mal_ctx = mal_ctx_new();
+    self->mal_ctx = mal_ctx_new();
 
     // All the MAL header fields are passed
     maltcp_header_t *maltcp_header = NULL;
@@ -48,35 +49,27 @@ mc_parameter_service_new (const char *provider_host, const char *provider_port, 
     // Connection: bind to server with set port number
     // Listening socket.
     ctx = maltcp_ctx_new(
-        mal_ctx,
-        "192.168.0.118", "1025",
+        self->mal_ctx,
+        //"192.168.132.16", "1025", // SEPP
+        "192.168.0.119", "1025", // LOCAL DEV
         maltcp_header,
         true);
 
     if (!ctx) exit(EXIT_FAILURE);
 
-    //mal_uri_t *provider_uri = mal_ctx_create_uri(mal_ctx, "nanosat-mo-supervisor-Parameter");
-    mal_uri_t *provider_uri = "maltcp://192.168.132.16:1024/nanosat-mo-supervisor-Parameter";
-    printf("demo_app: provider URI: %s\n", provider_uri);
+    //mal_uri_t *provider_uri = mal_ctx_create_uri(self->mal_ctx, "nanosat-mo-supervisor-Parameter");
+    // SEPP
+    //self->provider_uri = "maltcp://192.168.132.16:1024/nanosat-mo-supervisor-Parameter";
+    
+    // LOCAL DEV
+    self->provider_uri = "maltcp://192.168.0.119:1024/nanosat-mo-supervisor-Parameter";
+    printf("demo_app: provider URI: %s\n", self->provider_uri);
 
-    // Create the consumer
-    consumer = mc_parameter_get_value_consumer_new(provider_uri);
+    // Create the consumers
+    get_value_consumer = mc_parameter_get_value_consumer_new(self->mal_ctx, self->provider_uri);
+    list_definition_consumer = mc_parameter_list_definition_consumer_new(self->provider_uri);
 
     return self;
-}
-
-void
-mc_parameter_service_get_value (mc_parameter_service_t *self, long *param_inst_ids)
-{
-
-    // Create the consumer actor with callback functions that:
-    //  1. initialize the MAL request message
-    //  2. encode and send the MAL request message
-    //  3. Decode the MAL response message and print parameters
-    mc_parameter_get_value_consumer_actor_create (consumer, mal_ctx);
-
-    // Start
-    mal_ctx_start(mal_ctx);
 }
 
 
@@ -86,16 +79,19 @@ mc_parameter_service_get_value (mc_parameter_service_t *self, long *param_inst_i
 void
 mc_parameter_service_destroy (mc_parameter_service_t **self_p)
 {
+    printf("mc_parameter_service_destroy\n");
+
     assert (self_p);
     if (*self_p) {
         mc_parameter_service_t *self = *self_p;
         //  Free class properties here
 
-        // Destroy the consumer
-        mc_parameter_get_value_consumer_destroy (&consumer, mal_ctx);
+        // Destroy the consumers
+        mc_parameter_get_value_consumer_destroy (&get_value_consumer);
+        mc_parameter_list_definition_consumer_destroy(&list_definition_consumer, self->mal_ctx);
 
         // Destroy the context
-        mal_ctx_destroy(&mal_ctx);
+        mal_ctx_destroy(&self->mal_ctx);
 
         //  Free object itself
         free (self);
@@ -103,19 +99,64 @@ mc_parameter_service_destroy (mc_parameter_service_t **self_p)
     }
 }
 
+void
+mc_parameter_service_get_values (mc_parameter_service_t *self, long *param_inst_ids, size_t param_inst_size)
+{
+    // Make sure that the getValue consumer has been initialized
+    assert(get_value_consumer);
+
+    // Set the param names MAL message field.
+    mc_parameter_get_value_consumer_set_field_param_inst_ids(get_value_consumer, param_inst_ids);
+
+    // Set the param size MAL message field.
+    mc_parameter_get_value_consumer_set_field_param_inst_size(get_value_consumer, param_inst_size);
+
+    // Start
+    mal_ctx_start(self->mal_ctx);
+}
+
+void
+mc_parameter_service_get_value (mc_parameter_service_t *self, long param_inst_id)
+{
+    long param_inst_ids[1];
+    param_inst_ids[0] = param_inst_id;
+    mc_parameter_service_get_values(self, param_inst_ids, 1);
+
+    // Start
+    mal_ctx_start(self->mal_ctx);
+}
+
+void
+mc_parameter_service_list_definitions (mc_parameter_service_t *self, char **param_names, size_t param_size)
+{
+    // Make sure that the listDefinition consumer has been initialized
+    assert(list_definition_consumer);
+
+    // Set the param names MAL message field.
+    mc_parameter_list_definition_consumer_set_field_param_names(list_definition_consumer, param_names);
+
+    // Set the param size MAL message field.
+    mc_parameter_list_definition_consumer_set_field_param_size(list_definition_consumer, param_size);
+
+    // Create the consumer actor that registers callback functions
+    // TODO: move to constructor?
+    mc_parameter_list_definition_consumer_actor_create(list_definition_consumer, self->mal_ctx);
+
+    // Start the request interaction;
+    mal_ctx_start(self->mal_ctx);
+}
+
+void
+mc_parameter_service_list_definition (mc_parameter_service_t *self, char *param_name)
+{
+    char *param_names[] = {param_name};
+    mc_parameter_service_list_definitions(self, param_names, 1);
+}
+
+
 //  --------------------------------------------------------------------------
 //  Self test of this class
 
-// If your selftest reads SCMed fixture data, please keep it in
-// src/selftest-ro; if your test creates filesystem objects, please
-// do so under src/selftest-rw.
-// The following pattern is suggested for C selftest code:
-//    char *filename = NULL;
-//    filename = zsys_sprintf ("%s/%s", SELFTEST_DIR_RO, "mytemplate.file");
-//    assert (filename);
-//    ... use the "filename" for I/O ...
-//    zstr_free (&filename);
-// This way the same "filename" variable can be reused for many subtests.
 #define SELFTEST_DIR_RO "src/selftest-ro"
 #define SELFTEST_DIR_RW "src/selftest-rw"
 
@@ -123,12 +164,5 @@ void
 mc_parameter_service_test (bool verbose)
 {
     printf (" * mc_parameter_service: ");
-
-    //  @selftest
-    //  Simple create/destroy test
-    //mc_parameter_service_t *self = mc_parameter_service_new ("192.168.132.16", "1024", "192.168.0.118");
-    //assert (self);
-    //mc_parameter_service_destroy (&self);
-    //  @end
     printf ("OK\n");
 }

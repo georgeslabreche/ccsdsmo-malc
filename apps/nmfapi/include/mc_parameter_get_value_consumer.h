@@ -16,32 +16,47 @@ extern "C" {
 //  @warning Please edit the model at "api/mc_parameter_get_value_consumer.api" to make changes.
 //  @interface
 //  This API is a draft, and may change without notice.
-#ifdef NMF_API_BUILD_DRAFT_API
+#ifdef NMFAPI_BUILD_DRAFT_API
 #define MC_PARAMETER_GET_VALUE_CONSUMER_NETWORK_ZONE "Network Zone"  // the consumer actor network zone for the getValue operation
 #define MC_PARAMETER_GET_VALUE_CONSUMER_SESSION_NAME_LIVE "LIVE"  // the consumer actor session name for the getValue operation
 #define MC_PARAMETER_GET_VALUE_CONSUMER_URI "mc/parameter/getValue/consumer"  // the consumer URI for the getValue operation
 
 //  *** Draft method, for development use, may change without warning ***
 //  Instanciate a consumer object for the getValue operation.
-NMF_API_EXPORT mc_parameter_get_value_consumer_t *
-    mc_parameter_get_value_consumer_new (mal_uri_t *provider_uri);
+NMFAPI_EXPORT mc_parameter_get_value_consumer_t *
+    mc_parameter_get_value_consumer_new (mal_ctx_t *mal_ctx, mal_uri_t *provider_uri);
 
 //  *** Draft method, for development use, may change without warning ***
 //  The destructor.
-NMF_API_EXPORT void
-    mc_parameter_get_value_consumer_destroy (mc_parameter_get_value_consumer_t **self_p, mal_ctx_t *mal_ctx);
+NMFAPI_EXPORT void
+    mc_parameter_get_value_consumer_destroy (mc_parameter_get_value_consumer_t **self_p);
 
 //  *** Draft method, for development use, may change without warning ***
-//  Create the consumer actor.
-NMF_API_EXPORT void
-    mc_parameter_get_value_consumer_actor_create (mc_parameter_get_value_consumer_t *self, mal_ctx_t *mal_ctx);
+//  Get the param inst ids MAL message field
+NMFAPI_EXPORT long *
+    mc_parameter_get_value_consumer_get_field_param_inst_ids (mc_parameter_get_value_consumer_t *self);
+
+//  *** Draft method, for development use, may change without warning ***
+//  Set the param inst ids MAL message field
+NMFAPI_EXPORT void
+    mc_parameter_get_value_consumer_set_field_param_inst_ids (mc_parameter_get_value_consumer_t *self, long *param_inst_ids);
+
+//  *** Draft method, for development use, may change without warning ***
+//  Get the size of the param inst ids MAL message field
+NMFAPI_EXPORT size_t
+    mc_parameter_get_value_consumer_get_field_param_inst_size (mc_parameter_get_value_consumer_t *self);
+
+//  *** Draft method, for development use, may change without warning ***
+//  Set the size of the param inst ids MAL message field
+NMFAPI_EXPORT void
+    mc_parameter_get_value_consumer_set_field_param_inst_size (mc_parameter_get_value_consumer_t *self, size_t param_inst_size);
 
 //  *** Draft method, for development use, may change without warning ***
 //  Self test of this class.
-NMF_API_EXPORT void
+NMFAPI_EXPORT void
     mc_parameter_get_value_consumer_test (bool verbose);
 
-#endif // NMF_API_BUILD_DRAFT_API
+#endif // NMFAPI_BUILD_DRAFT_API
 //  @end
 
 #ifdef __cplusplus

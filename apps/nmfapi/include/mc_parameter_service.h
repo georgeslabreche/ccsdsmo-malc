@@ -16,28 +16,45 @@ extern "C" {
 //  @warning Please edit the model at "api/mc_parameter_service.api" to make changes.
 //  @interface
 //  This API is a draft, and may change without notice.
-#ifdef NMF_API_BUILD_DRAFT_API
+#ifdef NMFAPI_BUILD_DRAFT_API
 //  *** Draft method, for development use, may change without warning ***
 //  Instanciate a consumer object for the getValue operation.
-NMF_API_EXPORT mc_parameter_service_t *
+NMFAPI_EXPORT mc_parameter_service_t *
     mc_parameter_service_new (const char *provider_host, const char *provider_port, const char *consumer_port);
 
 //  *** Draft method, for development use, may change without warning ***
 //  The destructor.
-NMF_API_EXPORT void
+NMFAPI_EXPORT void
     mc_parameter_service_destroy (mc_parameter_service_t **self_p);
 
 //  *** Draft method, for development use, may change without warning ***
-//
-NMF_API_EXPORT void
-    mc_parameter_service_get_value (mc_parameter_service_t *self, long *param_inst_ids);
+//  The getValue operation returns the latest received value for the requested parameters.
+NMFAPI_EXPORT void
+    mc_parameter_service_get_values (mc_parameter_service_t *self, long *param_inst_ids, size_t param_inst_size);
+
+//  *** Draft method, for development use, may change without warning ***
+//  The getValue operation returns the latest received value for a requested parameter.
+NMFAPI_EXPORT void
+    mc_parameter_service_get_value (mc_parameter_service_t *self, long param_inst_id);
+
+//  *** Draft method, for development use, may change without warning ***
+//  The listDefinition operation allows a consumer to request the latest object instance identifiers of the ParameterIdentity
+//  and ParameterDefinition objects for the supported parameters of the provider.
+NMFAPI_EXPORT void
+    mc_parameter_service_list_definitions (mc_parameter_service_t *self, char **param_names, size_t size);
+
+//  *** Draft method, for development use, may change without warning ***
+//  The listDefinition operation allows a consumer to request the latest object instance identifiers of the ParameterIdentity
+//  and ParameterDefinition objects for the supported parameters of the provider.
+NMFAPI_EXPORT void
+    mc_parameter_service_list_definition (mc_parameter_service_t *self, char *param_name);
 
 //  *** Draft method, for development use, may change without warning ***
 //  Self test of this class.
-NMF_API_EXPORT void
+NMFAPI_EXPORT void
     mc_parameter_service_test (bool verbose);
 
-#endif // NMF_API_BUILD_DRAFT_API
+#endif // NMFAPI_BUILD_DRAFT_API
 //  @end
 
 #ifdef __cplusplus

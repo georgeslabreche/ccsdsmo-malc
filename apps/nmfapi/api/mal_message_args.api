@@ -1,0 +1,68 @@
+<class name = "mal_message_args">
+    A container for mal message arguments.
+
+    <constant name = "network_zone" value = "Network Zone" type="string">the network zone.</constant>
+    <constant name = "session_name_live" value = "LIVE" type="string">the LIVE session name.</constant>
+
+    <constructor>
+        Instanciate mal message argument.
+        <!--argument name = "authentication_id" c_type = "mal_blob_t *" />
+        <argument name = "qoslevel" c_type = "mal_qoslevel_t" />
+        <argument name = "priority" c_type = "mal_uinteger_t" />
+        <argument name = "domain" c_type = "mal_identifier_list_t *" />
+        <argument name = "network_zone" c_type = "mal_identifier_t *" />
+        <argument name = "session" c_type = "mal_sessiontype_t" />
+        <argument name = "session_name" c_type = "mal_identifier_t *" />
+        <argument name = "encoder" c_type = "mal_encoder_t *" />
+        <argument name = "decoder" c_type = "mal_decoder_t *" /-->
+    </constructor>
+
+    <destructor>
+        The destructor.
+    </destructor>
+
+    <method name = "get_authentication_id">
+        Get the authentication id
+        <return c_type = "mal_blob_t *" />
+    </method>
+
+    <method name = "get_qoslevel">
+        Get the qoslevel
+        <return c_type = "mal_qoslevel_t" />
+    </method>
+
+    <method name = "get_priority">
+        Get the priority
+        <return c_type = "mal_uinteger_t" />
+    </method>
+
+    <method name = "get_domain">
+        Get the domain
+        <return c_type = "mal_identifier_list_t *" />
+    </method>
+
+    <method name = "get_network_zone">
+        Get the network zone
+        <return c_type = "mal_identifier_t *" />
+    </method>
+
+    <method name = "get_session">
+        Get the session
+        <return c_type = "mal_sessiontype_t" />
+    </method>
+
+    <method name = "get_session_name">
+        Get the session name
+        <return c_type = "mal_identifier_t *" />
+    </method>
+
+    <method name = "get_encoder">
+        Get the encoder
+        <return c_type = "mal_encoder_t *" />
+    </method>
+
+    <method name = "get_decoder">
+        Get the decoder
+        <return c_type = "mal_decoder_t *" />
+    </method>
+</class>

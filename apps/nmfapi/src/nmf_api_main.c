@@ -12,31 +12,16 @@
 @end
 */
 
-#include "nmf_api_classes.h"
+#include "nmfapi_classes.h"
 
 int main (int argc, char *argv [])
 {
-    bool verbose = false;
-    int argn;
-    for (argn = 1; argn < argc; argn++) {
-        if (streq (argv [argn], "--help")
-        ||  streq (argv [argn], "-h")) {
-            puts ("nmf_api_main [options] ...");
-            puts ("  --verbose / -v         verbose test output");
-            puts ("  --help / -h            this information");
-            return 0;
-        }
-        else
-        if (streq (argv [argn], "--verbose")
-        ||  streq (argv [argn], "-v"))
-            verbose = true;
-        else {
-            printf ("Unknown option: %s\n", argv [argn]);
-            return 1;
-        }
-    }
-    //  Insert main code here
-    if (verbose)
-        zsys_info ("nmf_api_main - A test main program");
+    mc_parameter_service_t *param_service = mc_parameter_service_new ("192.168.132.16", "1024", "1025");
+    //mc_parameter_service_get_value (param_service, NULL);
+
+    //mc_parameter_service_list_definition (param_service, "*");
+    mc_parameter_service_get_value (param_service, 1);
+    mc_parameter_service_destroy (&param_service);
+    
     return 0;
 }
