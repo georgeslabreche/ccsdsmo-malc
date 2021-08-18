@@ -20,7 +20,7 @@ struct _mc_parameter_get_value_consumer_t {
     mal_ctx_t *mal_ctx;
     mal_uri_t *provider_uri;
     mal_message_args_t *mal_message_args; // TODO: Move to mal_util?
-    mal_actor_t *consumer_actor; // The consumer actor
+    mal_actor_t *actor; // The consumer actor
     long *param_inst_ids;
     size_t param_inst_size;
 };
@@ -28,9 +28,14 @@ struct _mc_parameter_get_value_consumer_t {
 //  --------------------------------------------------------------------------
 //  Declare private functions
 
-int mc_parameter_get_value_consumer_initialize (void *self, mal_actor_t *mal_actor);
-int mc_parameter_get_value_consumer_finalize (void *self, mal_actor_t *mal_actor);
-int mc_parameter_get_value_consumer_response (void *self, mal_ctx_t *mal_ctx,
+int
+mc_parameter_get_value_consumer_initialize (void *self, mal_actor_t *mal_actor);
+
+int
+mc_parameter_get_value_consumer_finalize (void *self, mal_actor_t *mal_actor);
+
+int
+mc_parameter_get_value_consumer_response (void *self, mal_ctx_t *mal_ctx,
     mal_endpoint_t *mal_endpoint, mal_message_t *message);
 
 
@@ -48,15 +53,12 @@ mc_parameter_get_value_consumer_new (mal_ctx_t *mal_ctx, mal_uri_t *provider_uri
     self->provider_uri = provider_uri;
     self->mal_message_args = mal_message_args_new();
 
-
+    //  Initialize consumer actor
     mal_uri_t *consumer_uri = mal_ctx_create_uri(self->mal_ctx, MC_PARAMETER_GET_VALUE_CONSUMER_URI);
-
-    // TODO: Check if actor isn't already initialized.
-    self->consumer_actor = mal_actor_new(
+    self->actor = mal_actor_new(
         self->mal_ctx, consumer_uri, self,
         mc_parameter_get_value_consumer_initialize, mc_parameter_get_value_consumer_finalize);
     
-
     return self;
 }
 
@@ -75,8 +77,8 @@ mc_parameter_get_value_consumer_destroy (mc_parameter_get_value_consumer_t **sel
         //  Free class properties here
         
         // Destroy consumer actor
-        mal_actor_join(self->consumer_actor);
-        mal_actor_destroy(self->mal_ctx, &self->consumer_actor);
+        mal_actor_join(self->actor);
+        mal_actor_destroy(self->mal_ctx, &self->actor);
 
         //  Free object itself
         free (self);
@@ -243,8 +245,7 @@ mc_parameter_get_value_consumer_response (void *self, mal_ctx_t *mal_ctx,
     // Get the MAL message decoder
     mal_decoder_t *decoder = mal_message_args_get_decoder(consumer->mal_message_args);
 
-    void *cursor = mal_decoder_new_cursor(
-        decoder,
+    void *cursor = mal_decoder_new_cursor(decoder,
         mal_message_get_body(message),
         mal_message_get_body_offset(message) + mal_message_get_body_length(message),
         mal_message_get_body_offset(message));
@@ -266,7 +267,7 @@ mc_parameter_get_value_consumer_response (void *self, mal_ctx_t *mal_ctx,
         mal_message_destroy(&message, mal_ctx);
 
         // Cleanup
-        mal_actor_term(consumer->consumer_actor);
+        mal_actor_term(consumer->actor);
 
         return rc;
     }
@@ -280,7 +281,7 @@ mc_parameter_get_value_consumer_response (void *self, mal_ctx_t *mal_ctx,
     //mc_parameter_parametervalue_t param_value;
     //mal_attribute_t value;
 
-    printf("mc_parameter_get_value_consumer: loop\n");
+    printf("mc_parameter_get_value_consumer: loop %d\n", mc_parameter_parametervaluedetails_list_get_element_count(param_value_details));
     for (int i = 0; i < mc_parameter_parametervaluedetails_list_get_element_count(param_value_details); i++)
     {
         param_id = mc_parameter_parametervaluedetails_get_paramid(content[i]);
@@ -336,7 +337,7 @@ mc_parameter_get_value_consumer_response (void *self, mal_ctx_t *mal_ctx,
 
     // Cleanup
     printf("mc_parameter_get_value_consumer: Cleanup\n");
-    mal_actor_term(consumer->consumer_actor);
+    mal_actor_term(consumer->actor);
 
     return rc;
 }

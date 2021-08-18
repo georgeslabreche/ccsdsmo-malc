@@ -1,0 +1,80 @@
+<class name = "sm_appslauncher_list_app_consumer">
+    The request consumer for the listApp operation
+
+    <constant name = "uri" value = "sm/appslauncher/listApp/consumer" type="string">The consumer URI for the listApp operation</constant>
+    <constant name = "max_apps_count" value = "250" type="integer">The maximum number of installed apps</constant>
+
+    <constructor>
+        Create a consumer object for the listApp operation
+        <argument name = "mal_ctx" c_type = "mal_ctx_t *" />
+        <argument name = "provider_uri" c_type = "mal_uri_t *" />
+    </constructor>
+
+    <destructor>
+        The destructor
+    </destructor>
+
+    <method name = "set_log_level">
+        Set the log level
+        <argument name = "level" type="integer" />
+    </method>
+
+    <method name = "get_field_app_names">
+        Get the app names MAL message field
+        <return c_type = "char **" />
+    </method>
+
+    <method name = "set_field_app_names">
+        Set the app names MAL message field
+        <argument name = "app_names" c_type = "char **" />
+    </method>
+
+    <method name = "get_field_app_names_size">
+        Get the size of the app names MAL message field
+        <return type = "size" />
+    </method>
+
+    <method name = "set_field_app_names_size">
+        Set the size of the app names MAL message field
+        <argument name = "app_names_size" type = "size" />
+    </method>
+
+    <method name = "get_field_category">
+        Get the category MAL message field
+        <return c_type = "char *" />
+    </method>
+
+    <method name = "set_field_category">
+        Set the category MAL message field
+        <argument name = "category" c_type = "char *" />
+    </method>
+
+    <method name = "get_response_apps_inst_ids">
+        Get response variable for appsInstIds
+        <return c_type = "long *" />
+    </method>
+
+    <method name = "get_response_apps_running">
+        Get response variable for running apps
+        <return c_type = "bool *" />
+    </method>
+
+    <method name = "get_response_apps_count">
+        Get response variable for number of apps
+        <return c_type = "size_t" />
+    </method>
+
+    <method name = "lock_mutex">
+        Lock the mutex
+        A mutex is used to force a synchronous response despite the request being an asynchronous operation
+    </method>
+
+    <method name = "unlock_mutex">
+        Unlock the mutex
+        A mutex is used to force a synchronous response despite the request being an asynchronous operation
+    </method>
+
+    <method name = "actor_init">
+        Initialize the consumer actor
+    </method>
+</class>

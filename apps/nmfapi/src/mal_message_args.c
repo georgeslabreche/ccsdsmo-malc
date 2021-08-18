@@ -37,8 +37,8 @@ mal_message_args_new (void)
 {
     mal_message_args_t *self = (mal_message_args_t *) zmalloc (sizeof (mal_message_args_t));
     assert (self);
-    //  Initialize class properties here
-
+    
+    // Initialize class properties here
     self->authentication_id = mal_blob_new(0);
     self->qoslevel = MAL_QOSLEVEL_ASSURED;
     self->priority = 4;

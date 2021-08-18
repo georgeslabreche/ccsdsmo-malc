@@ -28,24 +28,24 @@ NMFAPI_EXPORT void
     mc_parameter_service_destroy (mc_parameter_service_t **self_p);
 
 //  *** Draft method, for development use, may change without warning ***
-//  The getValue operation returns the latest received value for the requested parameters.
+//  The getValue operation returns the latest received value for the requested parameters
 NMFAPI_EXPORT void
     mc_parameter_service_get_values (mc_parameter_service_t *self, long *param_inst_ids, size_t param_inst_size);
 
 //  *** Draft method, for development use, may change without warning ***
-//  The getValue operation returns the latest received value for a requested parameter.
+//  The getValue operation returns the latest received value for a requested parameter
 NMFAPI_EXPORT void
     mc_parameter_service_get_value (mc_parameter_service_t *self, long param_inst_id);
 
 //  *** Draft method, for development use, may change without warning ***
 //  The listDefinition operation allows a consumer to request the latest object instance identifiers of the ParameterIdentity
-//  and ParameterDefinition objects for the supported parameters of the provider.
+//  and ParameterDefinition objects for the supported parameters of the provider
 NMFAPI_EXPORT void
     mc_parameter_service_list_definitions (mc_parameter_service_t *self, char **param_names, size_t size);
 
 //  *** Draft method, for development use, may change without warning ***
 //  The listDefinition operation allows a consumer to request the latest object instance identifiers of the ParameterIdentity
-//  and ParameterDefinition objects for the supported parameters of the provider.
+//  and ParameterDefinition objects for the supported parameters of the provider
 NMFAPI_EXPORT void
     mc_parameter_service_list_definition (mc_parameter_service_t *self, char *param_name);
 

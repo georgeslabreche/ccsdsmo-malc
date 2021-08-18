@@ -33,7 +33,7 @@ mc_parameter_service_new (const char *provider_host, const char *provider_port, 
 {
     mc_parameter_service_t *self = (mc_parameter_service_t *) zmalloc (sizeof (mc_parameter_service_t));
     assert (self);
-    //  Initialize class properties here
+    // Initialize class properties here
 
     // Create mal context
     self->mal_ctx = mal_ctx_new();
@@ -84,7 +84,7 @@ mc_parameter_service_destroy (mc_parameter_service_t **self_p)
     assert (self_p);
     if (*self_p) {
         mc_parameter_service_t *self = *self_p;
-        //  Free class properties here
+        // Free class properties here
 
         // Destroy the consumers
         mc_parameter_get_value_consumer_destroy (&get_value_consumer);
@@ -93,7 +93,7 @@ mc_parameter_service_destroy (mc_parameter_service_t **self_p)
         // Destroy the context
         mal_ctx_destroy(&self->mal_ctx);
 
-        //  Free object itself
+        // Free object itself
         free (self);
         *self_p = NULL;
     }
@@ -105,10 +105,10 @@ mc_parameter_service_get_values (mc_parameter_service_t *self, long *param_inst_
     // Make sure that the getValue consumer has been initialized
     assert(get_value_consumer);
 
-    // Set the param names MAL message field.
+    // Set the param names MAL message field
     mc_parameter_get_value_consumer_set_field_param_inst_ids(get_value_consumer, param_inst_ids);
 
-    // Set the param size MAL message field.
+    // Set the param size MAL message field
     mc_parameter_get_value_consumer_set_field_param_inst_size(get_value_consumer, param_inst_size);
 
     // Start

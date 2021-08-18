@@ -1,0 +1,32 @@
+<class name = "sm_appslauncher_service">
+    The Apps Launcher service provides the ability to monitor
+    the execution, run, stop, kill and list applications software on-board of a spacecraft
+
+    <constructor>
+        Instanciate a Apps Launcher service object
+        <argument name = "host" c_type = "char *" />
+        <argument name = "provider_port" c_type = "unsigned int" />
+        <argument name = "consumer_port" c_type = "unsigned int" />
+    </constructor>
+
+    <destructor>
+        The destructor
+    </destructor>
+
+    <method name = "set_log_level">
+        Set the log level
+        <argument name = "level" type = "integer" />
+    </method>
+
+    <method name = "list_app">
+        The listApp operation allows a consumer to request the object instance identifiers
+        of the Apps objects and running status for an app name or for a certain app category
+        <argument name = "app_names" c_type = "char **" />
+        <argument name = "app_names_size" type = "size" />
+        <argument name = "category" c_type = "char *" />
+        <argument name = "response_apps_inst_ids" c_type = "long **" />
+        <argument name = "response_apps_running" c_type = "bool **" />
+        <argument name = "response_apps_count" c_type = "size_t *" />
+    </method>
+    
+</class>

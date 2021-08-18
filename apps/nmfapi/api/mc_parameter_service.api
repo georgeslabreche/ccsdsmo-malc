@@ -1,5 +1,5 @@
 <class name = "mc_parameter_service">
-    The parameter service allows the user to subscribe to parameter value report and optionally be able to set new values.
+    The Parameter Service allows the user to subscribe to parameter value report and optionally be able to set new values.
 
     <constructor>
         Instanciate a consumer object for the getValue operation.
@@ -13,26 +13,26 @@
     </destructor>
 
     <method name = "get_values">
-        The getValue operation returns the latest received value for the requested parameters.
+        The getValue operation returns the latest received value for the requested parameters
         <argument name = "param_inst_ids" c_type = "long *" />
         <argument name = "param_inst_size" type = "size" />
     </method>
 
     <method name = "get_value">
-        The getValue operation returns the latest received value for a requested parameter.
+        The getValue operation returns the latest received value for a requested parameter
         <argument name = "param_inst_id" c_type = "long" />
     </method>
 
     <method name = "list_definitions">
         The listDefinition operation allows a consumer to request the latest object instance identifiers of the ParameterIdentity
-        and ParameterDefinition objects for the supported parameters of the provider.
+        and ParameterDefinition objects for the supported parameters of the provider
         <argument name = "param_names" c_type = "char **" />
         <argument name = "size" type = "size" />
     </method>
 
     <method name = "list_definition">
         The listDefinition operation allows a consumer to request the latest object instance identifiers of the ParameterIdentity
-        and ParameterDefinition objects for the supported parameters of the provider.
+        and ParameterDefinition objects for the supported parameters of the provider
         <argument name = "param_name" c_type = "char *" />
     </method>
 
