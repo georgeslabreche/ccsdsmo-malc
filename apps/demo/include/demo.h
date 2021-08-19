@@ -13,7 +13,4 @@
 
 //  Add your own public definitions here, if you need them
 
-// Consumer actor
-extern mal_actor_t *consumer_actor;
-
 #endif
