@@ -1,12 +1,12 @@
-<class name = "sm_appslauncher_service">
+<class name = "sm_appslauncher_service" selftest="0">
     The Apps Launcher service provides the ability to monitor
     the execution, run, stop, kill and list applications software on-board of a spacecraft
 
     <constructor>
         Instanciate a Apps Launcher service object
         <argument name = "host" c_type = "char *" />
-        <argument name = "provider_port" c_type = "unsigned int" />
-        <argument name = "consumer_port" c_type = "unsigned int" />
+        <argument name = "provider_port" c_type = "char *" />
+        <argument name = "consumer_port" c_type = "char *" />
     </constructor>
 
     <destructor>

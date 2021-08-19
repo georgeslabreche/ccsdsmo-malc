@@ -1,4 +1,4 @@
-<class name = "mc_parameter_get_value_consumer">
+<class name = "mc_parameter_get_value_consumer" selftest="0">
     The request consumer for the getValue operation.
 
     <constant name = "network_zone" value = "Network Zone" type="string">the consumer actor network zone for the getValue operation</constant>

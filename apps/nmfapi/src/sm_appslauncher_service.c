@@ -35,7 +35,7 @@ sm_appslauncher_list_app_consumer_t *list_app_consumer;
 //  Create a new sm_appslauncher_service
 
 sm_appslauncher_service_t *
-sm_appslauncher_service_new (char *host, unsigned int provider_port, unsigned int consumer_port)
+sm_appslauncher_service_new (char *host, char *provider_port, char *consumer_port)
 {
     sm_appslauncher_service_t *self = (sm_appslauncher_service_t *) zmalloc (sizeof (sm_appslauncher_service_t));
     assert (self);
@@ -49,22 +49,15 @@ sm_appslauncher_service_new (char *host, unsigned int provider_port, unsigned in
     maltcp_header_t *maltcp_header = NULL;
     maltcp_header = maltcp_header_new(true, 0, true, NULL, NULL, NULL, NULL);
 
-    // Convert port integers into strings
-    char p_port[6];
-    sprintf(p_port, "%d", provider_port); 
-
-    char c_port[6]; 
-    sprintf(c_port, "%d", consumer_port); 
-
     // Create the provider URI
     void *ctx_provider = NULL;
-    ctx_provider = maltcp_ctx_new(self->mal_ctx, host, p_port, maltcp_header, false);
+    ctx_provider = maltcp_ctx_new(self->mal_ctx, host, provider_port, maltcp_header, false);
     self->provider_uri = mal_ctx_create_uri(self->mal_ctx, "nanosat-mo-supervisor-AppsLauncher");
     clog_debug(sm_appslauncher_service_logger, "sm_appslauncher_service_new: provider URI: %s\n", self->provider_uri);
     
     // Create the listening socket connection: bind to server with set port number
     void *ctx_consumer = NULL;
-    ctx_consumer = maltcp_ctx_new(self->mal_ctx, host, c_port, maltcp_header, false);
+    ctx_consumer = maltcp_ctx_new(self->mal_ctx, host, consumer_port, maltcp_header, false);
 
     if (!ctx_provider || !ctx_consumer) exit(EXIT_FAILURE);
 
@@ -156,17 +149,4 @@ sm_appslauncher_service_list_app (sm_appslauncher_service_t *self, char **app_na
 
     // Unlock the consumer mutex
     sm_appslauncher_list_app_consumer_unlock_mutex(list_app_consumer);
-}
-
-//  --------------------------------------------------------------------------
-//  Self test of this class
-
-#define SELFTEST_DIR_RO "src/selftest-ro"
-#define SELFTEST_DIR_RW "src/selftest-rw"
-
-void
-sm_appslauncher_service_test (bool verbose)
-{
-    printf (" * sm_appslauncher_service: ");
-    printf ("OK\n");
 }

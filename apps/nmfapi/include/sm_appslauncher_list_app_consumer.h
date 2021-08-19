@@ -97,11 +97,6 @@ NMFAPI_EXPORT void
 NMFAPI_EXPORT void
     sm_appslauncher_list_app_consumer_actor_init (sm_appslauncher_list_app_consumer_t *self);
 
-//  *** Draft method, for development use, may change without warning ***
-//  Self test of this class.
-NMFAPI_EXPORT void
-    sm_appslauncher_list_app_consumer_test (bool verbose);
-
 #endif // NMFAPI_BUILD_DRAFT_API
 //  @end
 

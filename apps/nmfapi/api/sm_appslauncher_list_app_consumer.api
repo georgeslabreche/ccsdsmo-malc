@@ -1,4 +1,4 @@
-<class name = "sm_appslauncher_list_app_consumer">
+<class name = "sm_appslauncher_list_app_consumer" selftest="0">
     The request consumer for the listApp operation
 
     <constant name = "uri" value = "sm/appslauncher/listApp/consumer" type="string">The consumer URI for the listApp operation</constant>

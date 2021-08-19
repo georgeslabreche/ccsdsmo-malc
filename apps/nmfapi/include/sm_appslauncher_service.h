@@ -1,5 +1,6 @@
 /*  =========================================================================
-    sm_appslauncher_service - The Apps Launcher service provides the ability to monitor the execution, run, stop, kill and list applications software on-board of a spacecraft
+    sm_appslauncher_service - The Apps Launcher service provides the ability to monitor
+the execution, run, stop, kill and list applications software on-board of a spacecraft
 
     The MIT License (MIT)
     =========================================================================
@@ -20,7 +21,7 @@ extern "C" {
 //  *** Draft method, for development use, may change without warning ***
 //  Instanciate a Apps Launcher service object
 NMFAPI_EXPORT sm_appslauncher_service_t *
-    sm_appslauncher_service_new (char *host, unsigned int provider_port, unsigned int consumer_port);
+    sm_appslauncher_service_new (char *host, char *provider_port, char *consumer_port);
 
 //  *** Draft method, for development use, may change without warning ***
 //  The destructor
@@ -37,11 +38,6 @@ NMFAPI_EXPORT void
 //  of the Apps objects and running status for an app name or for a certain app category
 NMFAPI_EXPORT void
     sm_appslauncher_service_list_app (sm_appslauncher_service_t *self, char **app_names, size_t app_names_size, char *category, long **response_apps_inst_ids, bool **response_apps_running, size_t *response_apps_count);
-
-//  *** Draft method, for development use, may change without warning ***
-//  Self test of this class.
-NMFAPI_EXPORT void
-    sm_appslauncher_service_test (bool verbose);
 
 #endif // NMFAPI_BUILD_DRAFT_API
 //  @end

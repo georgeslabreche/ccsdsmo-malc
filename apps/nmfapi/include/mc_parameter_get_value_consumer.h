@@ -51,11 +51,6 @@ NMFAPI_EXPORT size_t
 NMFAPI_EXPORT void
     mc_parameter_get_value_consumer_set_field_param_inst_size (mc_parameter_get_value_consumer_t *self, size_t param_inst_size);
 
-//  *** Draft method, for development use, may change without warning ***
-//  Self test of this class.
-NMFAPI_EXPORT void
-    mc_parameter_get_value_consumer_test (bool verbose);
-
 #endif // NMFAPI_BUILD_DRAFT_API
 //  @end
 

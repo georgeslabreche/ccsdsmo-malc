@@ -54,11 +54,6 @@ NMFAPI_EXPORT void
 NMFAPI_EXPORT void
     mc_parameter_list_definition_consumer_actor_create (mc_parameter_list_definition_consumer_t *self, mal_ctx_t *mal_ctx);
 
-//  *** Draft method, for development use, may change without warning ***
-//  Self test of this class.
-NMFAPI_EXPORT void
-    mc_parameter_list_definition_consumer_test (bool verbose);
-
 #endif // NMFAPI_BUILD_DRAFT_API
 //  @end
 

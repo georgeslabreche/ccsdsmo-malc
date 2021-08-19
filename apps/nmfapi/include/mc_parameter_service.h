@@ -1,5 +1,5 @@
 /*  =========================================================================
-    mc_parameter_service - The parameter service allows the user to subscribe to parameter value report and optionally be able to set new values.
+    mc_parameter_service - The Parameter Service allows the user to subscribe to parameter value report and optionally be able to set new values.
 
     The MIT License (MIT)
     =========================================================================
@@ -48,11 +48,6 @@ NMFAPI_EXPORT void
 //  and ParameterDefinition objects for the supported parameters of the provider
 NMFAPI_EXPORT void
     mc_parameter_service_list_definition (mc_parameter_service_t *self, char *param_name);
-
-//  *** Draft method, for development use, may change without warning ***
-//  Self test of this class.
-NMFAPI_EXPORT void
-    mc_parameter_service_test (bool verbose);
 
 #endif // NMFAPI_BUILD_DRAFT_API
 //  @end

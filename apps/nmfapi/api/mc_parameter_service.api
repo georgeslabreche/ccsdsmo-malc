@@ -1,4 +1,4 @@
-<class name = "mc_parameter_service">
+<class name = "mc_parameter_service" selftest="0">
     The Parameter Service allows the user to subscribe to parameter value report and optionally be able to set new values.
 
     <constructor>

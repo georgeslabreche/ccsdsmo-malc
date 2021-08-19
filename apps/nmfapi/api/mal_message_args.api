@@ -1,4 +1,4 @@
-<class name = "mal_message_args">
+<class name = "mal_message_args" selftest="0">
     A container for mal message arguments.
 
     <constant name = "network_zone" value = "Network Zone" type="string">the network zone.</constant>

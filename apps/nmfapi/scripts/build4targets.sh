@@ -17,11 +17,11 @@
 # However, these mal projects have blank values set as their git repository urls.
 # This results in a cross-compilation build.sh file with invalid git clone commands — e.g.:
 #
-#       git clone --quiet --depth 1  malattributes
+# git clone --quiet --depth 1  malattributes
 #
 # Instead of something like this:
 #
-#       git clone --quiet --depth 1 -b v1.2.0 https://github.com/georgeslabreche/malattributes.git malattributes
+# git clone --quiet --depth 1 -b v1.2.0 https://github.com/georgeslabreche/malattributes.git malattributes
 #
 # This can't be resolved unless we create dedicated git repositories for each mal project.
 # It doesn't seem like zproject supports setting a file system path for a project directory instead of a
@@ -44,6 +44,9 @@ TARGETS=('rpi')
 
 # List the mal project dependencies.
 MAL_PROJECTS=('malutil' 'malattributes' 'mal' 'malbinary' 'malsplitbinary' 'malzmq' 'maltcp' 'malactor')
+
+# List the apps project dependencies.
+APPS_PROJECTS=('generated_areas')
 
 # Parse the "incremental" parameter if given.
 # For the purposes of this script, an "incremental" build is understood as just rebuilding the app,
@@ -100,11 +103,18 @@ do
             sed -i "s/git clone --quiet --depth 1  ${proj}$/mkdir ${proj} \&\& cp -R ..\/..\/..\/..\/..\/${proj}\/{generate.sh,genmake,include,license.xml,project.xml,src} ${proj}\/ \&\& cd ${proj} \&\& .\/generate.sh/g" builds/${target}/build.sh
         done
 
-        # Do the same for the generated areas project.
-        proj="generated_areas"
-        echo "Preparing the '${proj}' dependency."
-        cd ../${proj} && git clean -d -f -x && cd ../${PROJECT_NAME}
-        sed -i "s/git clone --quiet --depth 1  ${proj}$/mkdir ${proj} \&\& cp -R  ..\/..\/..\/..\/..\/apps\/${proj}\/{generate.sh,genmake,include,license.xml,project.xml,src} ${proj}\/ \&\& cd ${proj} \&\& .\/generate.sh/g" builds/${target}/build.sh
+        # Do the same for the apps project dependencies.
+        for proj in "${APPS_PROJECTS[@]}"
+        do
+            # Some verbosity.
+            echo "Preparing the '${proj}' dependency."
+
+            # Remove all generated files before copying the project into builds/${target}/tmp-deps
+            cd ../${proj} && git clean -d -f -x && cd ../${PROJECT_NAME}
+
+            # Replace the git clone commands with rsync commands.
+            sed -i "s/git clone --quiet --depth 1  ${proj}$/mkdir ${proj} \&\& cp -R  ..\/..\/..\/..\/..\/apps\/${proj}\/{generate.sh,genmake,include,license.xml,project.xml,src} ${proj}\/ \&\& cd ${proj} \&\& .\/generate.sh/g" builds/${target}/build.sh
+        done
 
         # Build the app using the Rasberry Pi cross-compilation script.
         cd builds/${target}
@@ -117,13 +127,16 @@ do
         fi
 
         # Display file info of the output libraries to check that they were correctly built for the target environment.
+        # Do this for the MAL libraries
         for proj in "${MAL_PROJECTS[@]}"
         do
             file tmp/lib/lib${proj}*
         done
 
-        # Do the same for generated areas.
-        proj="generated_areas"
-        file tmp/lib/lib${proj}*
+        # Also do it for the Apps libraries.
+        for proj in "${APPS_PROJECTS[@]}"
+        do
+            file tmp/lib/lib${proj}*
+        done
     fi
 done

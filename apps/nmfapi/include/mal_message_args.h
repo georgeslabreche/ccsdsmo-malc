@@ -75,11 +75,6 @@ NMFAPI_EXPORT mal_encoder_t *
 NMFAPI_EXPORT mal_decoder_t *
     mal_message_args_get_decoder (mal_message_args_t *self);
 
-//  *** Draft method, for development use, may change without warning ***
-//  Self test of this class.
-NMFAPI_EXPORT void
-    mal_message_args_test (bool verbose);
-
 #endif // NMFAPI_BUILD_DRAFT_API
 //  @end
 
