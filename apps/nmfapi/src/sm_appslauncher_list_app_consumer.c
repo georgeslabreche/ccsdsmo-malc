@@ -25,7 +25,7 @@ clog_logger_t sm_appslauncher_list_app_consumer_logger = CLOG_DEBUG_LEVEL;
 struct _sm_appslauncher_list_app_consumer_t {
     mal_ctx_t *mal_ctx;
     mal_uri_t *provider_uri;
-    mal_message_args_t *mal_message_args;   // TODO: Move to mal_util?
+    //mal_message_args_t *mal_message_args;   // TODO: Move to mal_util?
     mal_actor_t *actor;                     // The consumer actor
     char **app_names;
     size_t app_names_size;
@@ -64,7 +64,7 @@ sm_appslauncher_list_app_consumer_new (mal_ctx_t *mal_ctx, mal_uri_t *provider_u
     //  Initialize class properties here
     self->mal_ctx = mal_ctx;
     self->provider_uri = provider_uri;
-    self->mal_message_args = mal_message_args_new();
+    //self->mal_message_args = mal_message_args_new();
 
     return self;
 }
@@ -254,8 +254,8 @@ sm_appslauncher_list_app_consumer_initialize (void *self, mal_actor_t *mal_actor
     // The category field contains the category identifier to filter on
     mal_identifier_t *category = mal_identifier_new(consumer->category);
 
-    // Get the encoder
-    mal_encoder_t *encoder = mal_message_args_get_encoder(consumer->mal_message_args);
+    // Create the encoder
+    mal_encoder_t *encoder = malbinary_encoder_new(false);
 
     // Create a cursor
     void *cursor = mal_encoder_new_cursor(encoder);
@@ -302,6 +302,7 @@ sm_appslauncher_list_app_consumer_initialize (void *self, mal_actor_t *mal_actor
 
     // Build the MAL Message that will contain the field
     clog_debug(sm_appslauncher_list_app_consumer_logger, "sm_appslauncher_list_app_consumer_initialize: new MAL message\n");
+    /**
     mal_message_t *message = mal_message_new(
         mal_message_args_get_authentication_id(consumer->mal_message_args),
         mal_message_args_get_qoslevel(consumer->mal_message_args),
@@ -311,7 +312,8 @@ sm_appslauncher_list_app_consumer_initialize (void *self, mal_actor_t *mal_actor
         mal_message_args_get_session(consumer->mal_message_args),
         mal_message_args_get_session_name(consumer->mal_message_args),
         mal_encoder_cursor_get_length(encoder, cursor));
-
+    **/
+    mal_message_t *message = nmfapi_util_create_mal_message_request(encoder, cursor);
 
     // Initialize the MAL encoder cursor
     mal_encoder_cursor_init(
@@ -416,8 +418,8 @@ sm_appslauncher_list_app_consumer_response (void *self, mal_ctx_t *mal_ctx,
     // Cast self to consumer type
     sm_appslauncher_list_app_consumer_t *consumer = (sm_appslauncher_list_app_consumer_t *) self;
 
-    // Get the MAL message decoder
-    mal_decoder_t *decoder = mal_message_args_get_decoder(consumer->mal_message_args);
+    // Create the MAL message decoder
+    mal_decoder_t *decoder = malbinary_decoder_new(false);
 
     // Create cursor
     void *cursor = mal_decoder_new_cursor(

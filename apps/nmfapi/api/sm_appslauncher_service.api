@@ -4,7 +4,7 @@
 
     <constructor>
         Instanciate a Apps Launcher service object
-        <argument name = "host" c_type = "char *" />
+        <argument name = "hostname" c_type = "char *" />
         <argument name = "provider_port" c_type = "char *" />
         <argument name = "consumer_port" c_type = "char *" />
     </constructor>

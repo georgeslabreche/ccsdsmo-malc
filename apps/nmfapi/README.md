@@ -29,6 +29,6 @@ cd scripts
 Then ssh into SEPP to untar and install the shared libraries and binary:
 
 ```
-tar -xzvf malc_nmf_api.tar.gz
+tar -xzvf malc_nmfapi.tar.gz
 ./sepp_install.sh
 ```

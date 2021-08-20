@@ -127,16 +127,6 @@ do
         fi
 
         # Display file info of the output libraries to check that they were correctly built for the target environment.
-        # Do this for the MAL libraries
-        for proj in "${MAL_PROJECTS[@]}"
-        do
-            file tmp/lib/lib${proj}*
-        done
-
-        # Also do it for the Apps libraries.
-        for proj in "${APPS_PROJECTS[@]}"
-        do
-            file tmp/lib/lib${proj}*
-        done
+        file tmp/lib/lib*
     fi
 done

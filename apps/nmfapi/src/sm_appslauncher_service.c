@@ -13,7 +13,7 @@
 @discuss
 @end
 */
-
+#include <string.h>
 #include "nmfapi_classes.h"
 
 // Mutex
@@ -31,35 +31,36 @@ struct _sm_appslauncher_service_t {
 // The consumers
 sm_appslauncher_list_app_consumer_t *list_app_consumer;
 
+
 //  --------------------------------------------------------------------------
 //  Create a new sm_appslauncher_service
 
 sm_appslauncher_service_t *
-sm_appslauncher_service_new (char *host, char *provider_port, char *consumer_port)
+sm_appslauncher_service_new (char *hostname, char *provider_port, char *consumer_port)
 {
     sm_appslauncher_service_t *self = (sm_appslauncher_service_t *) zmalloc (sizeof (sm_appslauncher_service_t));
     assert (self);
 
     // Initialize class properties here
 
-    // Create mal context
+    // Create provider URI
+    char *provider_id = "nanosat-mo-supervisor-AppsLauncher";
+    self->provider_uri = nmfapi_util_create_uri(MALTCP_URI, hostname, provider_port, provider_id);
+    clog_debug(sm_appslauncher_service_logger, "sm_appslauncher_service_new: provider URI: %s\n", self->provider_uri);
+
+    // Create consumer context
     self->mal_ctx = mal_ctx_new();
 
     // Create mal tcp header: all the MAL header fields are passed
     maltcp_header_t *maltcp_header = NULL;
     maltcp_header = maltcp_header_new(true, 0, true, NULL, NULL, NULL, NULL);
-
-    // Create the provider URI
-    void *ctx_provider = NULL;
-    ctx_provider = maltcp_ctx_new(self->mal_ctx, host, provider_port, maltcp_header, false);
-    self->provider_uri = mal_ctx_create_uri(self->mal_ctx, "nanosat-mo-supervisor-AppsLauncher");
-    clog_debug(sm_appslauncher_service_logger, "sm_appslauncher_service_new: provider URI: %s\n", self->provider_uri);
     
-    // Create the listening socket connection: bind to server with set port number
+    // Create the consumer listening socket: bind to server with the consumer port number
     void *ctx_consumer = NULL;
-    ctx_consumer = maltcp_ctx_new(self->mal_ctx, host, consumer_port, maltcp_header, false);
+    ctx_consumer = maltcp_ctx_new(self->mal_ctx, hostname, consumer_port, maltcp_header, false);
 
-    if (!ctx_provider || !ctx_consumer) exit(EXIT_FAILURE);
+    // Check consumer context
+    if (!ctx_consumer) exit(EXIT_FAILURE);
 
     // Create the consumers
     list_app_consumer = sm_appslauncher_list_app_consumer_new(self->mal_ctx, self->provider_uri);
@@ -85,11 +86,12 @@ sm_appslauncher_service_destroy (sm_appslauncher_service_t **self_p)
         // Destroy the consumers
         sm_appslauncher_list_app_consumer_destroy (&list_app_consumer);
 
-        // Destroy the context
+        // Destroy the consumer context
         mal_ctx_destroy(&self->mal_ctx);
 
         // Free object itself
         free (self);
+
         *self_p = NULL;
     }
 }

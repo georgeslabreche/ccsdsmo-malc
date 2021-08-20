@@ -56,6 +56,9 @@
     <!-- The Gateway API from which we access all NMF service APIs -->
     <class name = "nmf_api" />
 
+    <!-- Util class -->
+    <class name = "nmf_api_util" selftest = "0" />
+
     <!-- MONITOR AND CONTROL (MC) -->
     <!-- MC: Parameter Service -->
     <class name = "mc_parameter_service" selftest = "0" />

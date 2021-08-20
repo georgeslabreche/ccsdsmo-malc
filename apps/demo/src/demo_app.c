@@ -28,7 +28,7 @@ int main (int argc, char *argv [])
         if (streq (argv [argn], "--help")
         ||  streq (argv [argn], "-?")) {
             puts ("demo_app [options] ...");
-            puts ("  --host  / -h        host");
+            puts ("  --host  / -h        hostname");
             puts ("  --pport / -p        provider port");
             puts ("  --cport / -p        consumer port");
             puts ("  --help  / -?        this information");
