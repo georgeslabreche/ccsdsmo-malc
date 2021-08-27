@@ -1,5 +1,5 @@
 <class name = "mc_parameter_get_value_consumer" selftest="0">
-    The request consumer for the getValue operation.
+    The request consumer for the getValue operation
 
     <constant name = "uri" value = "mc/parameter/getValue/consumer" type="string">the consumer URI for the getValue operation</constant>
 
@@ -9,29 +9,43 @@
         <argument name = "provider_uri" c_type = "mal_uri_t *" />
     </constructor>
 
+    <!--
+        Deallocation functions
+    -->
+
     <destructor>
         The destructor
     </destructor>
 
-    <method name = "get_field_param_inst_ids">
-        Get the param inst ids MAL message field
-        <return c_type = "long *" />
+    <method name = "response_clear">
+        Clear the response variables
     </method>
 
-    <method name = "set_field_param_inst_ids">
-        Set the param inst ids MAL message field
-        <argument name = "param_inst_ids" c_type = "long *" />
+    <!--
+        Mutex operators
+    -->
+
+    <method name = "mutex_lock">
+        Lock the mutex
+        A mutex is used to force a synchronous response despite the request being an asynchronous operation
     </method>
 
-    <method name = "get_field_param_inst_ids_size">
-        Get the size of the param inst ids MAL message field
-        <return type = "size" />
+    <method name = "mutex_unlock">
+        Unlock the mutex
+        A mutex is used to force a synchronous response despite the request being an asynchronous operation
     </method>
 
-    <method name = "set_field_param_inst_ids_size">
-        Set the size of the param inst ids MAL message field
-        <argument name = "param_inst_ids_size" type = "size" />
+    <!--
+        MAL actor function
+    -->
+    
+    <method name = "actor_init">
+        Create and initialize the actor
     </method>
+
+    <!-- 
+        Getters for response variables
+    -->
 
     <method name = "get_response_mal_attributes">
         Get response variable for the MAL attributes
@@ -53,17 +67,28 @@
         <return type = "integer" />
     </method>
 
-    <method name = "mutex_lock">
-        Lock the mutex
-        A mutex is used to force a synchronous response despite the request being an asynchronous operation
+    <!--
+        Getters and Setters for class variables
+    -->
+
+    <method name = "get_field_param_inst_ids">
+        Get the param inst ids MAL message field
+        <return c_type = "long *" />
     </method>
 
-    <method name = "mutex_unlock">
-        Unlock the mutex
-        A mutex is used to force a synchronous response despite the request being an asynchronous operation
+    <method name = "set_field_param_inst_ids">
+        Set the param inst ids MAL message field
+        <argument name = "param_inst_ids" c_type = "long *" />
     </method>
 
-    <method name = "actor_init">
-        Create and initialize the actor
+    <method name = "get_field_param_inst_ids_size">
+        Get the size of the param inst ids MAL message field
+        <return type = "size" />
     </method>
+
+    <method name = "set_field_param_inst_ids_size">
+        Set the size of the param inst ids MAL message field
+        <argument name = "param_inst_ids_size" type = "size" />
+    </method>
+
 </class>

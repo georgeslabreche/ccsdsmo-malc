@@ -14,13 +14,24 @@
 
 #include "nmfapi_classes.h"
 
-// Mutex
-pthread_mutex_t mc_parameter_get_value_consumer_mutex;
 
-// The class logger
+//  --------------------------------------------------------------------------
+//  Logging
+
+//  The class logger
 clog_logger_t mc_parameter_get_value_consumer_logger = CLOG_DEBUG_LEVEL;
 
+//  Set the log level
+void
+mc_parameter_get_value_consumer_set_log_level (int level)
+{
+    mc_parameter_get_value_consumer_logger = level;
+}
+
+
+//  --------------------------------------------------------------------------
 //  Structure of our class
+
 struct _mc_parameter_get_value_consumer_t {
     mal_ctx_t *mal_ctx;
     mal_uri_t *provider_uri;
@@ -32,6 +43,13 @@ struct _mc_parameter_get_value_consumer_t {
     size_t response_mal_attributes_count;
     int response_error_code;
 };
+
+
+//  --------------------------------------------------------------------------
+//  Mutex
+
+pthread_mutex_t mc_parameter_get_value_consumer_mutex;
+
 
 //  --------------------------------------------------------------------------
 //  Declare private functions
@@ -93,15 +111,69 @@ mc_parameter_get_value_consumer_destroy (mc_parameter_get_value_consumer_t **sel
     }
 }
 
-//  --------------------------------------------------------------------------
-//  Getters and Setters
 
-//  Set the log level
+//  --------------------------------------------------------------------------
+//  Clear the response variables
+
 void
-mc_parameter_get_value_consumer_set_log_level (int level)
+mc_parameter_get_value_consumer_response_clear (mc_parameter_get_value_consumer_t *self)
 {
-    mc_parameter_get_value_consumer_logger = level;
+    // Log debug
+    clog_debug(mc_parameter_get_value_consumer_logger, "mc_parameter_get_value_consumer_response_clear()\n");
+
+    if (self)
+    {
+        if (self->response_mal_attributes_count > 0)
+        {
+            // Reset attributes count to zero
+            self->response_mal_attributes_count = 0;
+
+            // Clear MAL attributes
+            free(self->response_mal_attributes);
+            self->response_mal_attributes = NULL;
+
+            // Clear MAL attributes tags
+            free(self->response_mal_attributes_tags);
+            self->response_mal_attributes_tags = NULL;
+        }
+    }
 }
+
+//  --------------------------------------------------------------------------
+// Thread operation for mutex locking and unlocking
+
+//  Lock the mutex
+//  A mutex is used to force a synchronous response despite the request being an asynchronous operation
+void
+mc_parameter_get_value_consumer_mutex_lock (mc_parameter_get_value_consumer_t *self)
+{
+    pthread_mutex_lock(&mc_parameter_get_value_consumer_mutex);
+}
+
+
+//  Unlock the mutex
+//  A mutex is used to force a synchronous response despite the request being an asynchronous operation
+void
+mc_parameter_get_value_consumer_mutex_unlock (mc_parameter_get_value_consumer_t *self)
+{
+    pthread_mutex_unlock(&mc_parameter_get_value_consumer_mutex);
+}
+
+
+//  --------------------------------------------------------------------------
+//  Create and initialize the actor
+
+void
+mc_parameter_get_value_consumer_actor_init (mc_parameter_get_value_consumer_t *self)
+{
+    mal_uri_t *consumer_uri = mal_ctx_create_uri(self->mal_ctx, MC_PARAMETER_GET_VALUE_CONSUMER_URI);
+    self->actor = mal_actor_new(self->mal_ctx, consumer_uri, self,
+        mc_parameter_get_value_consumer_initialize, mc_parameter_get_value_consumer_finalize);
+}
+
+
+//  --------------------------------------------------------------------------
+//  Getters and Setters for the class variables
 
 long *
 mc_parameter_get_value_consumer_get_field_param_inst_ids (mc_parameter_get_value_consumer_t *self)
@@ -159,40 +231,11 @@ mc_parameter_get_value_consumer_get_response_error_code (mc_parameter_get_value_
     return self->response_error_code;
 }
 
-//  --------------------------------------------------------------------------
-// Thread operation for mutex locking and unlocking
-
-//  Lock the mutex
-//  A mutex is used to force a synchronous response despite the request being an asynchronous operation
-void
-mc_parameter_get_value_consumer_mutex_lock (mc_parameter_get_value_consumer_t *self)
-{
-    pthread_mutex_lock(&mc_parameter_get_value_consumer_mutex);
-}
-
-//  Unlock the mutex
-//  A mutex is used to force a synchronous response despite the request being an asynchronous operation
-void
-mc_parameter_get_value_consumer_mutex_unlock (mc_parameter_get_value_consumer_t *self)
-{
-    pthread_mutex_unlock(&mc_parameter_get_value_consumer_mutex);
-}
-
 
 //  --------------------------------------------------------------------------
-//  Create and initialize the actor
-void
-mc_parameter_get_value_consumer_actor_init (mc_parameter_get_value_consumer_t *self)
-{
-    mal_uri_t *consumer_uri = mal_ctx_create_uri(self->mal_ctx, MC_PARAMETER_GET_VALUE_CONSUMER_URI);
-    self->actor = mal_actor_new(self->mal_ctx, consumer_uri, self,
-        mc_parameter_get_value_consumer_initialize, mc_parameter_get_value_consumer_finalize);
-}
+//  Private functions
 
-
-//  --------------------------------------------------------------------------
 //  The consumer initialization function
-
 int
 mc_parameter_get_value_consumer_initialize (void *self, mal_actor_t *mal_actor)
 {
@@ -334,9 +377,7 @@ mc_parameter_get_value_consumer_initialize (void *self, mal_actor_t *mal_actor)
 }
 
 
-//  --------------------------------------------------------------------------
 //  The consumer finalization function
-
 int
 mc_parameter_get_value_consumer_finalize (void *self, mal_actor_t *mal_actor)
 {
@@ -361,17 +402,7 @@ mc_parameter_get_value_consumer_finalize (void *self, mal_actor_t *mal_actor)
 }
 
 
-//  --------------------------------------------------------------------------
-//  The interaction's response function
-
-
-/**
-union mal_attribute_t
-gettit(mc_parameter_parametervalue_t *parametervalue)
-{
-    return parametervalue->f_rawvalue;
-}*/
-
+//  The consumer response function
 int
 mc_parameter_get_value_consumer_response (void *self, mal_ctx_t *mal_ctx,
     mal_endpoint_t *mal_endpoint, mal_message_t *message)
@@ -436,7 +467,11 @@ mc_parameter_get_value_consumer_response (void *self, mal_ctx_t *mal_ctx,
     consumer->response_mal_attributes = (union mal_attribute_t *) calloc(consumer->response_mal_attributes_count, sizeof(union mal_attribute_t));
     if (!consumer->response_mal_attributes && (consumer->response_mal_attributes_count > 0))
     {
-        // TODO destroy MAL attributes list
+        // Log error
+        clog_error(mc_parameter_get_value_consumer_logger, "mc_parameter_get_value_consumer_response: memory allocation error for response mal attributes\n");
+
+        // Destroy consumer's response MAL attributes
+        mc_parameter_get_value_consumer_response_clear(consumer);
 
         // Destroy the content object
         mc_parameter_parametervaluedetails_destroy(content);
@@ -450,11 +485,14 @@ mc_parameter_get_value_consumer_response (void *self, mal_ctx_t *mal_ctx,
     consumer->response_mal_attributes_tags = (unsigned char *) calloc(consumer->response_mal_attributes_count, sizeof(unsigned char));
     if (!consumer->response_mal_attributes_tags && (consumer->response_mal_attributes_count > 0))
     {
-        // TODO destroy MAL attributes tags list
+        // Log error
+        clog_error(mc_parameter_get_value_consumer_logger, "mc_parameter_get_value_consumer_response: memory allocation error for response mal attributes tags\n");
+
+        // Destroy consumer's response MAL attributes and MAL attributes tags
+        mc_parameter_get_value_consumer_response_clear(consumer);
 
         // Destroy the content object
         mc_parameter_parametervaluedetails_destroy(content);
-
 
         // Set and return the error code
         consumer->response_error_code = -1;

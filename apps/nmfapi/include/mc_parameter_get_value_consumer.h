@@ -30,24 +30,26 @@ NMFAPI_EXPORT void
     mc_parameter_get_value_consumer_destroy (mc_parameter_get_value_consumer_t **self_p);
 
 //  *** Draft method, for development use, may change without warning ***
-//  Get the param inst ids MAL message field
-NMFAPI_EXPORT long *
-    mc_parameter_get_value_consumer_get_field_param_inst_ids (mc_parameter_get_value_consumer_t *self);
-
-//  *** Draft method, for development use, may change without warning ***
-//  Set the param inst ids MAL message field
+//  Clear the response variables
 NMFAPI_EXPORT void
-    mc_parameter_get_value_consumer_set_field_param_inst_ids (mc_parameter_get_value_consumer_t *self, long *param_inst_ids);
+    mc_parameter_get_value_consumer_response_clear (mc_parameter_get_value_consumer_t *self);
 
 //  *** Draft method, for development use, may change without warning ***
-//  Get the size of the param inst ids MAL message field
-NMFAPI_EXPORT size_t
-    mc_parameter_get_value_consumer_get_field_param_inst_ids_size (mc_parameter_get_value_consumer_t *self);
-
-//  *** Draft method, for development use, may change without warning ***
-//  Set the size of the param inst ids MAL message field
+//  Lock the mutex
+//  A mutex is used to force a synchronous response despite the request being an asynchronous operation
 NMFAPI_EXPORT void
-    mc_parameter_get_value_consumer_set_field_param_inst_ids_size (mc_parameter_get_value_consumer_t *self, size_t param_inst_ids_size);
+    mc_parameter_get_value_consumer_mutex_lock (mc_parameter_get_value_consumer_t *self);
+
+//  *** Draft method, for development use, may change without warning ***
+//  Unlock the mutex
+//  A mutex is used to force a synchronous response despite the request being an asynchronous operation
+NMFAPI_EXPORT void
+    mc_parameter_get_value_consumer_mutex_unlock (mc_parameter_get_value_consumer_t *self);
+
+//  *** Draft method, for development use, may change without warning ***
+//  Create and initialize the actor
+NMFAPI_EXPORT void
+    mc_parameter_get_value_consumer_actor_init (mc_parameter_get_value_consumer_t *self);
 
 //  *** Draft method, for development use, may change without warning ***
 //  Get response variable for the MAL attributes
@@ -70,21 +72,24 @@ NMFAPI_EXPORT int
     mc_parameter_get_value_consumer_get_response_error_code (mc_parameter_get_value_consumer_t *self);
 
 //  *** Draft method, for development use, may change without warning ***
-//  Lock the mutex
-//  A mutex is used to force a synchronous response despite the request being an asynchronous operation
-NMFAPI_EXPORT void
-    mc_parameter_get_value_consumer_mutex_lock (mc_parameter_get_value_consumer_t *self);
+//  Get the param inst ids MAL message field
+NMFAPI_EXPORT long *
+    mc_parameter_get_value_consumer_get_field_param_inst_ids (mc_parameter_get_value_consumer_t *self);
 
 //  *** Draft method, for development use, may change without warning ***
-//  Unlock the mutex
-//  A mutex is used to force a synchronous response despite the request being an asynchronous operation
+//  Set the param inst ids MAL message field
 NMFAPI_EXPORT void
-    mc_parameter_get_value_consumer_mutex_unlock (mc_parameter_get_value_consumer_t *self);
+    mc_parameter_get_value_consumer_set_field_param_inst_ids (mc_parameter_get_value_consumer_t *self, long *param_inst_ids);
 
 //  *** Draft method, for development use, may change without warning ***
-//  Create and initialize the actor
+//  Get the size of the param inst ids MAL message field
+NMFAPI_EXPORT size_t
+    mc_parameter_get_value_consumer_get_field_param_inst_ids_size (mc_parameter_get_value_consumer_t *self);
+
+//  *** Draft method, for development use, may change without warning ***
+//  Set the size of the param inst ids MAL message field
 NMFAPI_EXPORT void
-    mc_parameter_get_value_consumer_actor_init (mc_parameter_get_value_consumer_t *self);
+    mc_parameter_get_value_consumer_set_field_param_inst_ids_size (mc_parameter_get_value_consumer_t *self, size_t param_inst_ids_size);
 
 #endif // NMFAPI_BUILD_DRAFT_API
 //  @end
