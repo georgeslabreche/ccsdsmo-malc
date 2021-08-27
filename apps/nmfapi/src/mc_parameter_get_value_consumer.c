@@ -99,6 +99,9 @@ mc_parameter_get_value_consumer_destroy (mc_parameter_get_value_consumer_t **sel
 
         //  Free class properties here
 
+        // Clear response variables
+        mc_parameter_get_value_consumer_response_clear(self);
+
         // Make sure the actor thread object is terminated before destroying it
         mal_actor_join(self->actor);
 
