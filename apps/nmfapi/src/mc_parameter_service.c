@@ -234,7 +234,18 @@ mc_parameter_service_get_value (mc_parameter_service_t *self, long param_inst_id
             "mc_parameter_service_get_value: retrieved unexpected element count, expected %d but was %d\n",
             1, response_mal_attributes_count);
 
-        // TODO: Destroy the MAL attributes?
+        // If multiple attribute were returned: destroy them all
+        // Unlikely to happen but implemented for good measure
+        if(response_mal_attributes && response_mal_attributes_tags)
+        {
+            for(int i = 0; i < response_mal_attributes_count; i++)
+            {
+                if(response_mal_attributes_tags[i])
+                {
+                    mal_attribute_destroy(&response_mal_attributes[i], response_mal_attributes_tags[i]);
+                }
+            }
+        }
 
         // Set the return code to an error value
         rc = -1;
