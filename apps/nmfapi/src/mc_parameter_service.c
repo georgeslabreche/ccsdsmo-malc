@@ -148,10 +148,6 @@ mc_parameter_service_get_values (mc_parameter_service_t *self, long *param_inst_
     // Create the getValue consumer
     get_value_consumer = mc_parameter_get_value_consumer_new(self->mal_ctx, self->provider_uri);
 
-    // Lock the consumer mutex
-    // Use this mutex mechanism to force an synchronous response on an asynchronous request response mechanism
-    //mc_parameter_get_value_consumer_mutex_lock(get_value_consumer);
-
     // Set the param names MAL message field
     mc_parameter_get_value_consumer_set_field_param_inst_ids(get_value_consumer, param_inst_ids);
 
@@ -254,8 +250,48 @@ mc_parameter_service_get_value (mc_parameter_service_t *self, long param_inst_id
 int
 mc_parameter_service_get_value_blob (mc_parameter_service_t *self, long param_inst_id, char **content, size_t *content_length)
 {
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_blob()\n");
+
     // The return code
     int rc = 0;
+
+    // The response variables
+    union mal_attribute_t response_mal_attribute;
+    unsigned char response_mal_attribute_tag;
+
+    // Execute the getValue request interaction
+    rc = mc_parameter_service_get_value(self, param_inst_id, &response_mal_attribute, &response_mal_attribute_tag);
+    
+    // Error check
+    if(rc < 0)
+    {
+        // Return error code
+        return rc;
+    }
+    
+    // Check that tag is expected value
+    if(response_mal_attribute_tag == MAL_BLOB_ATTRIBUTE_TAG)
+    {
+        *content = mal_blob_get_content(response_mal_attribute.blob_value);
+        *content_length = mal_blob_get_length(response_mal_attribute.blob_value);
+    }
+    else
+    {
+        // Log error
+        clog_error(mc_parameter_service_logger,
+            "mc_parameter_service_get_value_blob: retrieved unexpected tag value, expected %d but was %d\n",
+            MAL_BLOB_ATTRIBUTE_TAG, response_mal_attribute_tag);
+
+        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // String objects are attributes of type: Blob, Identifier, String, and URI
+        mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
+        
+        // Set the return code to an error value
+        rc = -1;
+    }
+
+    // Return the return code
     return rc;
 }
 
@@ -264,8 +300,48 @@ mc_parameter_service_get_value_blob (mc_parameter_service_t *self, long param_in
 int
 mc_parameter_service_get_value_boolean (mc_parameter_service_t *self, long param_inst_id, bool *value)
 {
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_boolean()\n");
+
     // The return code
     int rc = 0;
+
+    // The response variables
+    union mal_attribute_t response_mal_attribute;
+    unsigned char response_mal_attribute_tag;
+
+    // Execute the getValue request interaction
+    rc = mc_parameter_service_get_value(self, param_inst_id, &response_mal_attribute, &response_mal_attribute_tag);
+    
+    // Error check
+    if(rc < 0)
+    {
+        // Return error code
+        return rc;
+    }
+    
+    // Check that tag is expected value
+    if(response_mal_attribute_tag == MAL_BOOLEAN_ATTRIBUTE_TAG)
+    {
+        // Set the response value
+        *value = response_mal_attribute.boolean_value;
+    }
+    else
+    {
+        // Log error
+        clog_error(mc_parameter_service_logger,
+            "mc_parameter_service_get_value_boolean: retrieved unexpected tag value, expected %d but was %d\n",
+            MAL_BOOLEAN_ATTRIBUTE_TAG, response_mal_attribute_tag);
+
+        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // String objects are attributes of type: Blob, Identifier, String, and URI
+        mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
+        
+        // Set the return code to an error value
+        rc = -1;
+    }
+
+    // Return the return code
     return rc;
 }
 
@@ -274,8 +350,48 @@ mc_parameter_service_get_value_boolean (mc_parameter_service_t *self, long param
 int
 mc_parameter_service_get_value_duration (mc_parameter_service_t *self, long param_inst_id, double *value)
 {
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_duration()\n");
+
     // The return code
     int rc = 0;
+
+    // The response variables
+    union mal_attribute_t response_mal_attribute;
+    unsigned char response_mal_attribute_tag;
+
+    // Execute the getValue request interaction
+    rc = mc_parameter_service_get_value(self, param_inst_id, &response_mal_attribute, &response_mal_attribute_tag);
+    
+    // Error check
+    if(rc < 0)
+    {
+        // Return error code
+        return rc;
+    }
+    
+    // Check that tag is expected value
+    if(response_mal_attribute_tag == MAL_DURATION_ATTRIBUTE_TAG)
+    {
+        // Set the response value
+        *value = response_mal_attribute.duration_value;
+    }
+    else
+    {
+        // Log error
+        clog_error(mc_parameter_service_logger,
+            "mc_parameter_service_get_value_duration: retrieved unexpected tag value, expected %d but was %d\n",
+            MAL_DURATION_ATTRIBUTE_TAG, response_mal_attribute_tag);
+
+        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // String objects are attributes of type: Blob, Identifier, String, and URI
+        mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
+        
+        // Set the return code to an error value
+        rc = -1;
+    }
+
+    // Return the return code
     return rc;
 }
 
@@ -334,8 +450,48 @@ mc_parameter_service_get_value_float (mc_parameter_service_t *self, long param_i
 int
 mc_parameter_service_get_value_double (mc_parameter_service_t *self, long param_inst_id, double *value)
 {
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_double()\n");
+
     // The return code
     int rc = 0;
+
+    // The response variables
+    union mal_attribute_t response_mal_attribute;
+    unsigned char response_mal_attribute_tag;
+
+    // Execute the getValue request interaction
+    rc = mc_parameter_service_get_value(self, param_inst_id, &response_mal_attribute, &response_mal_attribute_tag);
+    
+    // Error check
+    if(rc < 0)
+    {
+        // Return error code
+        return rc;
+    }
+    
+    // Check that tag is expected value
+    if(response_mal_attribute_tag == MAL_DOUBLE_ATTRIBUTE_TAG)
+    {
+        // Set the response value
+        *value = response_mal_attribute.double_value;
+    }
+    else
+    {
+        // Log error
+        clog_error(mc_parameter_service_logger,
+            "mc_parameter_service_get_value_double: retrieved unexpected tag value, expected %d but was %d\n",
+            MAL_DOUBLE_ATTRIBUTE_TAG, response_mal_attribute_tag);
+
+        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // String objects are attributes of type: Blob, Identifier, String, and URI
+        mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
+        
+        // Set the return code to an error value
+        rc = -1;
+    }
+
+    // Return the return code
     return rc;
 }
 
@@ -344,8 +500,48 @@ mc_parameter_service_get_value_double (mc_parameter_service_t *self, long param_
 int
 mc_parameter_service_get_value_identifier (mc_parameter_service_t *self, long param_inst_id, char **value)
 {
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_identifier()\n");
+
     // The return code
     int rc = 0;
+
+    // The response variables
+    union mal_attribute_t response_mal_attribute;
+    unsigned char response_mal_attribute_tag;
+
+    // Execute the getValue request interaction
+    rc = mc_parameter_service_get_value(self, param_inst_id, &response_mal_attribute, &response_mal_attribute_tag);
+    
+    // Error check
+    if(rc < 0)
+    {
+        // Return error code
+        return rc;
+    }
+    
+    // Check that tag is expected value
+    if(response_mal_attribute_tag == MAL_IDENTIFIER_ATTRIBUTE_TAG)
+    {
+        // Set the response value
+        *value = response_mal_attribute.identifier_value;
+    }
+    else
+    {
+        // Log error
+        clog_error(mc_parameter_service_logger,
+            "mc_parameter_service_get_value_identifier: retrieved unexpected tag value, expected %d but was %d\n",
+            MAL_IDENTIFIER_ATTRIBUTE_TAG, response_mal_attribute_tag);
+
+        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // String objects are attributes of type: Blob, Identifier, String, and URI
+        mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
+        
+        // Set the return code to an error value
+        rc = -1;
+    }
+
+    // Return the return code
     return rc;
 }
 
@@ -354,8 +550,48 @@ mc_parameter_service_get_value_identifier (mc_parameter_service_t *self, long pa
 int
 mc_parameter_service_get_value_octet (mc_parameter_service_t *self, long param_inst_id, char *value)
 {
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_octet()\n");
+
     // The return code
     int rc = 0;
+
+    // The response variables
+    union mal_attribute_t response_mal_attribute;
+    unsigned char response_mal_attribute_tag;
+
+    // Execute the getValue request interaction
+    rc = mc_parameter_service_get_value(self, param_inst_id, &response_mal_attribute, &response_mal_attribute_tag);
+    
+    // Error check
+    if(rc < 0)
+    {
+        // Return error code
+        return rc;
+    }
+    
+    // Check that tag is expected value
+    if(response_mal_attribute_tag == MAL_OCTET_ATTRIBUTE_TAG)
+    {
+        // Set the response value
+        *value = response_mal_attribute.octet_value;
+    }
+    else
+    {
+        // Log error
+        clog_error(mc_parameter_service_logger,
+            "mc_parameter_service_get_value_octet: retrieved unexpected tag value, expected %d but was %d\n",
+            MAL_OCTET_ATTRIBUTE_TAG, response_mal_attribute_tag);
+
+        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // String objects are attributes of type: Blob, Identifier, String, and URI
+        mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
+        
+        // Set the return code to an error value
+        rc = -1;
+    }
+
+    // Return the return code
     return rc;
 }
 
@@ -364,8 +600,48 @@ mc_parameter_service_get_value_octet (mc_parameter_service_t *self, long param_i
 int
 mc_parameter_service_get_value_uoctet (mc_parameter_service_t *self, long param_inst_id, unsigned char *value)
 {
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_uoctet()\n");
+
     // The return code
     int rc = 0;
+
+    // The response variables
+    union mal_attribute_t response_mal_attribute;
+    unsigned char response_mal_attribute_tag;
+
+    // Execute the getValue request interaction
+    rc = mc_parameter_service_get_value(self, param_inst_id, &response_mal_attribute, &response_mal_attribute_tag);
+    
+    // Error check
+    if(rc < 0)
+    {
+        // Return error code
+        return rc;
+    }
+    
+    // Check that tag is expected value
+    if(response_mal_attribute_tag == MAL_UOCTET_ATTRIBUTE_TAG)
+    {
+        // Set the response value
+        *value = response_mal_attribute.uoctet_value;
+    }
+    else
+    {
+        // Log error
+        clog_error(mc_parameter_service_logger,
+            "mc_parameter_service_get_value_uoctet: retrieved unexpected tag value, expected %d but was %d\n",
+            MAL_UOCTET_ATTRIBUTE_TAG, response_mal_attribute_tag);
+
+        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // String objects are attributes of type: Blob, Identifier, String, and URI
+        mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
+        
+        // Set the return code to an error value
+        rc = -1;
+    }
+
+    // Return the return code
     return rc;
 }
 
@@ -374,8 +650,48 @@ mc_parameter_service_get_value_uoctet (mc_parameter_service_t *self, long param_
 int
 mc_parameter_service_get_value_short (mc_parameter_service_t *self, long param_inst_id, short *value)
 {
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_short()\n");
+
     // The return code
     int rc = 0;
+
+    // The response variables
+    union mal_attribute_t response_mal_attribute;
+    unsigned char response_mal_attribute_tag;
+
+    // Execute the getValue request interaction
+    rc = mc_parameter_service_get_value(self, param_inst_id, &response_mal_attribute, &response_mal_attribute_tag);
+    
+    // Error check
+    if(rc < 0)
+    {
+        // Return error code
+        return rc;
+    }
+    
+    // Check that tag is expected value
+    if(response_mal_attribute_tag == MAL_SHORT_ATTRIBUTE_TAG)
+    {
+        // Set the response value
+        *value = response_mal_attribute.short_value;
+    }
+    else
+    {
+        // Log error
+        clog_error(mc_parameter_service_logger,
+            "mc_parameter_service_get_value_short: retrieved unexpected tag value, expected %d but was %d\n",
+            MAL_SHORT_ATTRIBUTE_TAG, response_mal_attribute_tag);
+
+        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // String objects are attributes of type: Blob, Identifier, String, and URI
+        mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
+        
+        // Set the return code to an error value
+        rc = -1;
+    }
+
+    // Return the return code
     return rc;
 }
 
@@ -384,8 +700,48 @@ mc_parameter_service_get_value_short (mc_parameter_service_t *self, long param_i
 int
 mc_parameter_service_get_value_ushort (mc_parameter_service_t *self, long param_inst_id, unsigned short *value)
 {
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_ushort()\n");
+
     // The return code
     int rc = 0;
+
+    // The response variables
+    union mal_attribute_t response_mal_attribute;
+    unsigned char response_mal_attribute_tag;
+
+    // Execute the getValue request interaction
+    rc = mc_parameter_service_get_value(self, param_inst_id, &response_mal_attribute, &response_mal_attribute_tag);
+    
+    // Error check
+    if(rc < 0)
+    {
+        // Return error code
+        return rc;
+    }
+    
+    // Check that tag is expected value
+    if(response_mal_attribute_tag == MAL_USHORT_ATTRIBUTE_TAG)
+    {
+        // Set the response value
+        *value = response_mal_attribute.ushort_value;
+    }
+    else
+    {
+        // Log error
+        clog_error(mc_parameter_service_logger,
+            "mc_parameter_service_get_value_ushort: retrieved unexpected tag value, expected %d but was %d\n",
+            MAL_USHORT_ATTRIBUTE_TAG, response_mal_attribute_tag);
+
+        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // String objects are attributes of type: Blob, Identifier, String, and URI
+        mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
+        
+        // Set the return code to an error value
+        rc = -1;
+    }
+
+    // Return the return code
     return rc;
 }
 
@@ -394,8 +750,48 @@ mc_parameter_service_get_value_ushort (mc_parameter_service_t *self, long param_
 int
 mc_parameter_service_get_value_integer (mc_parameter_service_t *self, long param_inst_id, int *value)
 {
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_integer()\n");
+
     // The return code
     int rc = 0;
+
+    // The response variables
+    union mal_attribute_t response_mal_attribute;
+    unsigned char response_mal_attribute_tag;
+
+    // Execute the getValue request interaction
+    rc = mc_parameter_service_get_value(self, param_inst_id, &response_mal_attribute, &response_mal_attribute_tag);
+    
+    // Error check
+    if(rc < 0)
+    {
+        // Return error code
+        return rc;
+    }
+    
+    // Check that tag is expected value
+    if(response_mal_attribute_tag == MAL_INTEGER_ATTRIBUTE_TAG)
+    {
+        // Set the response value
+        *value = response_mal_attribute.integer_value;
+    }
+    else
+    {
+        // Log error
+        clog_error(mc_parameter_service_logger,
+            "mc_parameter_service_get_value_integer: retrieved unexpected tag value, expected %d but was %d\n",
+            MAL_INTEGER_ATTRIBUTE_TAG, response_mal_attribute_tag);
+
+        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // String objects are attributes of type: Blob, Identifier, String, and URI
+        mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
+        
+        // Set the return code to an error value
+        rc = -1;
+    }
+
+    // Return the return code
     return rc;
 }
 
@@ -414,8 +810,48 @@ mc_parameter_service_get_value_uinteger (mc_parameter_service_t *self, long para
 int
 mc_parameter_service_get_value_long (mc_parameter_service_t *self, long param_inst_id, long *value)
 {
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_long()\n");
+
     // The return code
     int rc = 0;
+
+    // The response variables
+    union mal_attribute_t response_mal_attribute;
+    unsigned char response_mal_attribute_tag;
+
+    // Execute the getValue request interaction
+    rc = mc_parameter_service_get_value(self, param_inst_id, &response_mal_attribute, &response_mal_attribute_tag);
+    
+    // Error check
+    if(rc < 0)
+    {
+        // Return error code
+        return rc;
+    }
+    
+    // Check that tag is expected value
+    if(response_mal_attribute_tag == MAL_LONG_ATTRIBUTE_TAG)
+    {
+        // Set the response value
+        *value = response_mal_attribute.long_value;
+    }
+    else
+    {
+        // Log error
+        clog_error(mc_parameter_service_logger,
+            "mc_parameter_service_get_value_long: retrieved unexpected tag value, expected %d but was %d\n",
+            MAL_LONG_ATTRIBUTE_TAG, response_mal_attribute_tag);
+
+        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // String objects are attributes of type: Blob, Identifier, String, and URI
+        mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
+        
+        // Set the return code to an error value
+        rc = -1;
+    }
+
+    // Return the return code
     return rc;
 }
 
@@ -424,8 +860,48 @@ mc_parameter_service_get_value_long (mc_parameter_service_t *self, long param_in
 int
 mc_parameter_service_get_value_ulong (mc_parameter_service_t *self, long param_inst_id, unsigned long *value)
 {
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_ulong()\n");
+
     // The return code
     int rc = 0;
+
+    // The response variables
+    union mal_attribute_t response_mal_attribute;
+    unsigned char response_mal_attribute_tag;
+
+    // Execute the getValue request interaction
+    rc = mc_parameter_service_get_value(self, param_inst_id, &response_mal_attribute, &response_mal_attribute_tag);
+    
+    // Error check
+    if(rc < 0)
+    {
+        // Return error code
+        return rc;
+    }
+    
+    // Check that tag is expected value
+    if(response_mal_attribute_tag == MAL_ULONG_ATTRIBUTE_TAG)
+    {
+        // Set the response value
+        *value = response_mal_attribute.ulong_value;
+    }
+    else
+    {
+        // Log error
+        clog_error(mc_parameter_service_logger,
+            "mc_parameter_service_get_value_ulong: retrieved unexpected tag value, expected %d but was %d\n",
+            MAL_ULONG_ATTRIBUTE_TAG, response_mal_attribute_tag);
+
+        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // String objects are attributes of type: Blob, Identifier, String, and URI
+        mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
+        
+        // Set the return code to an error value
+        rc = -1;
+    }
+
+    // Return the return code
     return rc;
 }
 
@@ -492,8 +968,48 @@ mc_parameter_service_get_value_string (mc_parameter_service_t *self, long param_
 int
 mc_parameter_service_get_value_time (mc_parameter_service_t *self, long param_inst_id, unsigned long *value)
 {
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_time()\n");
+
     // The return code
     int rc = 0;
+
+    // The response variables
+    union mal_attribute_t response_mal_attribute;
+    unsigned char response_mal_attribute_tag;
+
+    // Execute the getValue request interaction
+    rc = mc_parameter_service_get_value(self, param_inst_id, &response_mal_attribute, &response_mal_attribute_tag);
+    
+    // Error check
+    if(rc < 0)
+    {
+        // Return error code
+        return rc;
+    }
+    
+    // Check that tag is expected value
+    if(response_mal_attribute_tag == MAL_TIME_ATTRIBUTE_TAG)
+    {
+        // Set the response value
+        *value = response_mal_attribute.time_value;
+    }
+    else
+    {
+        // Log error
+        clog_error(mc_parameter_service_logger,
+            "mc_parameter_service_get_value_time: retrieved unexpected tag value, expected %d but was %d\n",
+            MAL_TIME_ATTRIBUTE_TAG, response_mal_attribute_tag);
+
+        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // String objects are attributes of type: Blob, Identifier, String, and URI
+        mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
+        
+        // Set the return code to an error value
+        rc = -1;
+    }
+
+    // Return the return code
     return rc;
 }
 
@@ -502,8 +1018,48 @@ mc_parameter_service_get_value_time (mc_parameter_service_t *self, long param_in
 int
 mc_parameter_service_get_value_finetime (mc_parameter_service_t *self, long param_inst_id, unsigned long *value)
 {
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_finetime()\n");
+
     // The return code
     int rc = 0;
+
+    // The response variables
+    union mal_attribute_t response_mal_attribute;
+    unsigned char response_mal_attribute_tag;
+
+    // Execute the getValue request interaction
+    rc = mc_parameter_service_get_value(self, param_inst_id, &response_mal_attribute, &response_mal_attribute_tag);
+    
+    // Error check
+    if(rc < 0)
+    {
+        // Return error code
+        return rc;
+    }
+    
+    // Check that tag is expected value
+    if(response_mal_attribute_tag == MAL_FINETIME_ATTRIBUTE_TAG)
+    {
+        // Set the response value
+        *value = response_mal_attribute.finetime_value;
+    }
+    else
+    {
+        // Log error
+        clog_error(mc_parameter_service_logger,
+            "mc_parameter_service_get_value_finetime: retrieved unexpected tag value, expected %d but was %d\n",
+            MAL_FINETIME_ATTRIBUTE_TAG, response_mal_attribute_tag);
+
+        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // String objects are attributes of type: Blob, Identifier, String, and URI
+        mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
+        
+        // Set the return code to an error value
+        rc = -1;
+    }
+
+    // Return the return code
     return rc;
 }
 
@@ -512,8 +1068,48 @@ mc_parameter_service_get_value_finetime (mc_parameter_service_t *self, long para
 int
 mc_parameter_service_get_value_uri (mc_parameter_service_t *self, long param_inst_id, char **value)
 {
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_uri()\n");
+
     // The return code
     int rc = 0;
+
+    // The response variables
+    union mal_attribute_t response_mal_attribute;
+    unsigned char response_mal_attribute_tag;
+
+    // Execute the getValue request interaction
+    rc = mc_parameter_service_get_value(self, param_inst_id, &response_mal_attribute, &response_mal_attribute_tag);
+    
+    // Error check
+    if(rc < 0)
+    {
+        // Return error code
+        return rc;
+    }
+    
+    // Check that tag is expected value
+    if(response_mal_attribute_tag == MAL_URI_ATTRIBUTE_TAG)
+    {
+        // Set the response value
+        *value = response_mal_attribute.uri_value;
+    }
+    else
+    {
+        // Log error
+        clog_error(mc_parameter_service_logger,
+            "mc_parameter_service_get_value_uri: retrieved unexpected tag value, expected %d but was %d\n",
+            MAL_URI_ATTRIBUTE_TAG, response_mal_attribute_tag);
+
+        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // String objects are attributes of type: Blob, Identifier, String, and URI
+        mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
+        
+        // Set the return code to an error value
+        rc = -1;
+    }
+
+    // Return the return code
     return rc;
 }
 
