@@ -25,8 +25,7 @@ clog_logger_t sm_appslauncher_list_app_consumer_logger = CLOG_DEBUG_LEVEL;
 struct _sm_appslauncher_list_app_consumer_t {
     mal_ctx_t *mal_ctx;
     mal_uri_t *provider_uri;
-    //mal_message_args_t *mal_message_args;   // TODO: Move to mal_util?
-    mal_actor_t *actor;                     // The consumer actor
+    mal_actor_t *actor;
     char **app_names;
     size_t app_names_size;
     char *category;
@@ -64,7 +63,6 @@ sm_appslauncher_list_app_consumer_new (mal_ctx_t *mal_ctx, mal_uri_t *provider_u
     //  Initialize class properties here
     self->mal_ctx = mal_ctx;
     self->provider_uri = provider_uri;
-    //self->mal_message_args = mal_message_args_new();
 
     return self;
 }
@@ -82,6 +80,7 @@ sm_appslauncher_list_app_consumer_destroy (sm_appslauncher_list_app_consumer_t *
     assert (self_p);
     if (*self_p) {
         sm_appslauncher_list_app_consumer_t *self = *self_p;
+
         //  Free class properties here
 
         // Destroy consumer actor
@@ -147,6 +146,7 @@ sm_appslauncher_list_app_consumer_set_field_category (sm_appslauncher_list_app_c
     self->category = category;
 }
 
+
 //  --------------------------------------------------------------------------
 //  Getters for response variables
 
@@ -171,13 +171,14 @@ sm_appslauncher_list_app_consumer_get_response_apps_count (sm_appslauncher_list_
     return self->response_apps_count;
 }
 
+
 //  --------------------------------------------------------------------------
 // Thread operation for mutex locking and unlocking
 
 //  Lock the mutex
 //  A mutex is used to force a synchronous response despite the request being an asynchronous operation
 void
-sm_appslauncher_list_app_consumer_lock_mutex (sm_appslauncher_list_app_consumer_t *self)
+sm_appslauncher_list_app_consumer_mutex_lock (sm_appslauncher_list_app_consumer_t *self)
 {
     pthread_mutex_lock(&sm_appslauncher_list_app_consumer_mutex);
 }
@@ -185,13 +186,15 @@ sm_appslauncher_list_app_consumer_lock_mutex (sm_appslauncher_list_app_consumer_
 //  Unlock the mutex
 //  A mutex is used to force a synchronous response despite the request being an asynchronous operation
 void
-sm_appslauncher_list_app_consumer_unlock_mutex (sm_appslauncher_list_app_consumer_t *self)
+sm_appslauncher_list_app_consumer_mutex_unlock (sm_appslauncher_list_app_consumer_t *self)
 {
     pthread_mutex_unlock(&sm_appslauncher_list_app_consumer_mutex);
 }
 
+
 //  --------------------------------------------------------------------------
 //  Initialize the consumer actor
+
 void
 sm_appslauncher_list_app_consumer_actor_init (sm_appslauncher_list_app_consumer_t *self)
 {
@@ -227,6 +230,7 @@ sm_appslauncher_list_app_consumer_initialize (void *self, mal_actor_t *mal_actor
         SOFTWAREMANAGEMENT_APPSLAUNCHER_LISTAPP_OPERATION_NUMBER,
         sm_appslauncher_list_app_consumer_response);
 
+    // Check for error
     if(rc < 0)
     {
         // Log error
@@ -238,15 +242,11 @@ sm_appslauncher_list_app_consumer_initialize (void *self, mal_actor_t *mal_actor
     // Cast self to consumer type
     sm_appslauncher_list_app_consumer_t *consumer = (sm_appslauncher_list_app_consumer_t *) self;
 
-    // Initiate a request interaction
-    mal_uri_t *provider_uri = consumer->provider_uri;
-    clog_debug(sm_appslauncher_list_app_consumer_logger, "sm_appslauncher_list_app_consumer_initialize: provider URI: %s\n", provider_uri);
-
     // The appNames field contains a list of application names
     mal_identifier_list_t *app_names = mal_identifier_list_new(consumer->app_names_size);
     mal_identifier_t **content = mal_identifier_list_get_content(app_names);
 
-    for(unsigned int i = 0; i < consumer->app_names_size; i++)
+    for(size_t i = 0; i < consumer->app_names_size; i++)
     {
         content[i] = mal_identifier_new(consumer->app_names[i]);
     }
@@ -262,8 +262,7 @@ sm_appslauncher_list_app_consumer_initialize (void *self, mal_actor_t *mal_actor
 
     // Add encoding length for the appNames field
     clog_debug(sm_appslauncher_list_app_consumer_logger, "sm_appslauncher_list_app_consumer_initialize: add_encoding_length_0 appNames\n");
-    rc = softwaremanagement_appslauncher_listapp_request_add_encoding_length_0(
-        encoder, app_names, cursor);
+    rc = softwaremanagement_appslauncher_listapp_request_add_encoding_length_0(encoder, app_names, cursor);
 
     if (rc < 0)
     {
@@ -282,8 +281,7 @@ sm_appslauncher_list_app_consumer_initialize (void *self, mal_actor_t *mal_actor
 
     // Add encoding length for the category field
     clog_debug(sm_appslauncher_list_app_consumer_logger, "sm_appslauncher_list_app_consumer_initialize: add_encoding_length_1 category\n");
-    rc = softwaremanagement_appslauncher_listapp_request_add_encoding_length_1(
-        encoder, category, cursor);
+    rc = softwaremanagement_appslauncher_listapp_request_add_encoding_length_1(encoder, category, cursor);
 
     if (rc < 0)
     {
@@ -302,17 +300,6 @@ sm_appslauncher_list_app_consumer_initialize (void *self, mal_actor_t *mal_actor
 
     // Build the MAL Message that will contain the field
     clog_debug(sm_appslauncher_list_app_consumer_logger, "sm_appslauncher_list_app_consumer_initialize: new MAL message\n");
-    /**
-    mal_message_t *message = mal_message_new(
-        mal_message_args_get_authentication_id(consumer->mal_message_args),
-        mal_message_args_get_qoslevel(consumer->mal_message_args),
-        mal_message_args_get_priority(consumer->mal_message_args),
-        mal_message_args_get_domain(consumer->mal_message_args),
-        mal_message_args_get_network_zone(consumer->mal_message_args),
-        mal_message_args_get_session(consumer->mal_message_args),
-        mal_message_args_get_session_name(consumer->mal_message_args),
-        mal_encoder_cursor_get_length(encoder, cursor));
-    **/
     mal_message_t *message = nmfapi_util_create_mal_message_request(encoder, cursor);
 
     // Initialize the MAL encoder cursor
@@ -322,10 +309,9 @@ sm_appslauncher_list_app_consumer_initialize (void *self, mal_actor_t *mal_actor
         mal_encoder_cursor_get_length(encoder, cursor),
         mal_message_get_body_offset(message));
 
-    // Encode the appNames parameter
+    // Encode the appNames field
     clog_debug(sm_appslauncher_list_app_consumer_logger, "sm_appslauncher_list_app_consumer_initialize: encode_0 appNames\n");
-    rc = softwaremanagement_appslauncher_listapp_request_encode_0(
-        cursor, encoder, app_names);
+    rc = softwaremanagement_appslauncher_listapp_request_encode_0(cursor, encoder, app_names);
     mal_encoder_cursor_assert(encoder, cursor);
 
     if (rc < 0)
@@ -343,7 +329,7 @@ sm_appslauncher_list_app_consumer_initialize (void *self, mal_actor_t *mal_actor
         return rc;
     }
 
-    // Encode the category parameter
+    // Encode the category field
     clog_debug(sm_appslauncher_list_app_consumer_logger, "sm_appslauncher_list_app_consumer_initialize: encode_1 category\n");
     rc = softwaremanagement_appslauncher_listapp_request_encode_1(
         cursor, encoder, category);
@@ -368,9 +354,9 @@ sm_appslauncher_list_app_consumer_initialize (void *self, mal_actor_t *mal_actor
     mal_encoder_cursor_destroy(encoder, cursor);
 
     // Send the request message
-    clog_debug(sm_appslauncher_list_app_consumer_logger, "sm_appslauncher_list_app_consumer_initialize: listapp request message\n");
+    clog_debug(sm_appslauncher_list_app_consumer_logger, "sm_appslauncher_list_app_consumer_initialize: send listApp request message\n");
     rc = softwaremanagement_appslauncher_listapp_request(
-        mal_actor_get_mal_endpoint(mal_actor), message, provider_uri);
+        mal_actor_get_mal_endpoint(mal_actor), message, consumer->provider_uri);
 
     if (rc < 0)
     {
@@ -422,8 +408,7 @@ sm_appslauncher_list_app_consumer_response (void *self, mal_ctx_t *mal_ctx,
     mal_decoder_t *decoder = malbinary_decoder_new(false);
 
     // Create cursor
-    void *cursor = mal_decoder_new_cursor(
-        decoder,
+    void *cursor = mal_decoder_new_cursor(decoder,
         mal_message_get_body(message),
         mal_message_get_body_offset(message) + mal_message_get_body_length(message),
         mal_message_get_body_offset(message));
@@ -513,7 +498,7 @@ sm_appslauncher_list_app_consumer_response (void *self, mal_ctx_t *mal_ctx,
 
     // The apps_inst_ids object is a mal_long_list_t that will be destroyed so we cannot point to its address
     // Copy the content into the dedicated class property
-    for(int i = 0; i < consumer->response_apps_count; i++)
+    for(size_t i = 0; i < consumer->response_apps_count; i++)
     {
         consumer->response_apps_inst_ids[i] = apps_inst_ids_content[i];
     }
@@ -523,7 +508,7 @@ sm_appslauncher_list_app_consumer_response (void *self, mal_ctx_t *mal_ctx,
 
     // The running object is a mal_boolean_list_t object that will be destroyed so we cannot point to its address
     // Copy the content into the dedicated class property
-    for(int i = 0; i < consumer->response_apps_count; i++)
+    for(size_t i = 0; i < consumer->response_apps_count; i++)
     {
         consumer->response_apps_running[i] = apps_running_content[i];
     }
@@ -542,20 +527,8 @@ sm_appslauncher_list_app_consumer_response (void *self, mal_ctx_t *mal_ctx,
     mal_actor_term(consumer->actor);
 
     // Release the mutex
-    sm_appslauncher_list_app_consumer_unlock_mutex(consumer);
+    // This mutex was locked in the service class when invoking the list_app function
+    sm_appslauncher_list_app_consumer_mutex_unlock(consumer);
 
     return rc;
-}
-
-//  --------------------------------------------------------------------------
-//  Self test of this class
-
-#define SELFTEST_DIR_RO "src/selftest-ro"
-#define SELFTEST_DIR_RW "src/selftest-rw"
-
-void
-sm_appslauncher_list_app_consumer_test (bool verbose)
-{
-    printf (" * sm_appslauncher_list_app_consumer: ");
-    printf ("OK\n");
 }

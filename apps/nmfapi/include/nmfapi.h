@@ -11,4 +11,10 @@
 //  Include the project library file
 #include "nmfapi_library.h"
 
+void
+mc_parameter_service_set_log_level (int level);
+
+void
+mc_parameter_get_value_consumer_set_log_level (int level);
+
 #endif

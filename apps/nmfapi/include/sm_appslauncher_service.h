@@ -19,7 +19,7 @@ extern "C" {
 //  This API is a draft, and may change without notice.
 #ifdef NMFAPI_BUILD_DRAFT_API
 //  *** Draft method, for development use, may change without warning ***
-//  Instanciate a Apps Launcher service object
+//  Create a Apps Launcher service object
 NMFAPI_EXPORT sm_appslauncher_service_t *
     sm_appslauncher_service_new (char *hostname, char *provider_port, char *consumer_port);
 

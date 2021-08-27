@@ -1,11 +1,12 @@
 <class name = "mc_parameter_service" selftest="0">
-    The Parameter Service allows the user to subscribe to parameter value report and optionally be able to set new values.
+    The Parameter service allows the user to subscribe to parameter value report
+    and optionally be able to set new values
 
     <constructor>
-        Instanciate a consumer object for the getValue operation.
-        <argument name = "provider_host" type = "string" />
-        <argument name = "provider_port" type = "string" />
-        <argument name = "consumer_port" type = "string" />
+        Create a Parameter service object
+        <argument name = "hostname" c_type = "char *" />
+        <argument name = "provider_port" c_type = "char *" />
+        <argument name = "consumer_port" c_type = "char *" />
     </constructor>
 
     <destructor>
@@ -15,26 +16,178 @@
     <method name = "get_values">
         The getValue operation returns the latest received value for the requested parameters
         <argument name = "param_inst_ids" c_type = "long *" />
-        <argument name = "param_inst_size" type = "size" />
+        <argument name = "param_inst_ids_size" type = "size" />
+        <argument name = "response_mal_attributes" c_type = "union mal_attribute_t **" />
+        <argument name = "response_mal_attributes_tags" c_type = "unsigned char **" />
+        <argument name = "response_mal_attributes_count" c_type = "size_t *" />
+        <return type = "integer" />
     </method>
 
     <method name = "get_value">
         The getValue operation returns the latest received value for a requested parameter
         <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "response_mal_attribute" c_type = "union mal_attribute_t *" />
+        <argument name = "response_mal_attribute_tag" c_type = "unsigned char *" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "get_value_blob">
+        The getValue operation returns the latest received value for a requested parameter
+        Sets the requested value with the expectation that it is of type MAL Blob
+        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "content" c_type = "char **" />
+        <argument name = "content_length" c_type = "size_t *" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "get_value_boolean">
+        The getValue operation returns the latest received value for a requested parameter
+        Sets the requested value with the expectation that it is of type MAL Boolean
+        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "value" c_type = "bool *" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "get_value_duration">
+        The getValue operation returns the latest received value for a requested parameter
+        Sets the requested value with the expectation that it is of type MAL Duration
+        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "value" c_type = "double *" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "get_value_float">
+        The getValue operation returns the latest received value for a requested parameter
+        Sets the requested value with the expectation that it is of type MAL Float
+        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "value" c_type = "float *" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "get_value_double">
+        The getValue operation returns the latest received value for a requested parameter
+        Sets the requested value with the expectation that it is of type MAL Double
+        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "value" c_type = "double *" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "get_value_identifier">
+        The getValue operation returns the latest received value for a requested parameter
+        Sets the requested value with the expectation that it is of type MAL Identifer
+        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "value" c_type = "char **" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "get_value_octet">
+        The getValue operation returns the latest received value for a requested parameter
+        Sets the requested value with the expectation that it is of type MAL Octet
+        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "value" c_type = "char *" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "get_value_uoctet">
+        The getValue operation returns the latest received value for a requested parameter
+        Sets the requested value with the expectation that it is of type MAL UOctet
+        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "value" c_type = "unsigned char *" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "get_value_short">
+        The getValue operation returns the latest received value for a requested parameter
+        Sets the requested value with the expectation that it is of type MAL Short
+        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "value" c_type = "short *" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "get_value_ushort">
+        The getValue operation returns the latest received value for a requested parameter
+        Sets the requested value with the expectation that it is of type MAL UShort
+        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "value" c_type = "unsigned short *" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "get_value_integer">
+        The getValue operation returns the latest received value for a requested parameter
+        Sets the requested value with the expectation that it is of type MAL Integer
+        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "value" c_type = "int *" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "get_value_uinteger">
+        The getValue operation returns the latest received value for a requested parameter
+        Sets the requested value with the expectation that it is of type MAL UInteger
+        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "value" c_type = "unsigned int *" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "get_value_long">
+        The getValue operation returns the latest received value for a requested parameter
+        Sets the requested value with the expectation that it is of type MAL Long
+        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "value" c_type = "long *" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "get_value_ulong">
+        The getValue operation returns the latest received value for a requested parameter
+        Sets the requested value with the expectation that it is of type MAL ULong
+        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "value" c_type = "unsigned long *" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "get_value_string">
+        The getValue operation returns the latest received value for a requested parameter
+        Sets the requested value with the expectation that it is of type MAL String
+        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "value" c_type = "char **" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "get_value_time">
+        The getValue operation returns the latest received value for a requested parameter
+        Sets the requested value with the expectation that it is of type MAL Time
+        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "value" c_type = "unsigned long *" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "get_value_finetime">
+        The getValue operation returns the latest received value for a requested parameter
+        Sets the requested value with the expectation that it is of type MAL Finetime
+        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "value" c_type = "unsigned long *" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "get_value_uri">
+        The getValue operation returns the latest received value for a requested parameter
+        Sets the requested value with the expectation that it is of type MAL URI
+        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "value" c_type = "char **" />
+        <return type = "integer" />
     </method>
 
     <method name = "list_definitions">
-        The listDefinition operation allows a consumer to request the latest object instance identifiers of the ParameterIdentity
-        and ParameterDefinition objects for the supported parameters of the provider
+        The listDefinition operation allows a consumer to request the latest object instance identifiers
+        of the ParameterIdentity and ParameterDefinition objects for the supported parameters of the provider
         <argument name = "param_names" c_type = "char **" />
         <argument name = "size" type = "size" />
+        <return type = "integer" />
     </method>
 
     <method name = "list_definition">
-        The listDefinition operation allows a consumer to request the latest object instance identifiers of the ParameterIdentity
-        and ParameterDefinition objects for the supported parameters of the provider
+        The listDefinition operation allows a consumer to request the latest object instance identifiers
+        of the ParameterIdentity and ParameterDefinition objects for the supported parameters of the provider
         <argument name = "param_name" c_type = "char *" />
+        <return type = "integer" />
     </method>
-
-    
 </class>

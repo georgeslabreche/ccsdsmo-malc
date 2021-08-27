@@ -16,9 +16,6 @@
 #include <string.h>
 #include "nmfapi_classes.h"
 
-// Mutex
-pthread_mutex_t request_mutex;
-
 // The class logger
 clog_logger_t sm_appslauncher_service_logger = CLOG_DEBUG_LEVEL;
 
@@ -122,7 +119,7 @@ sm_appslauncher_service_list_app (sm_appslauncher_service_t *self, char **app_na
 
     // Lock the consumer mutex
     // Use this mutex mechanism to force an synchronous response on an asynchronous request response mechanism
-    sm_appslauncher_list_app_consumer_lock_mutex(list_app_consumer);
+    sm_appslauncher_list_app_consumer_mutex_lock(list_app_consumer);
 
     // Set the app names MAL message field
     sm_appslauncher_list_app_consumer_set_field_app_names(list_app_consumer, app_names);
@@ -142,7 +139,7 @@ sm_appslauncher_service_list_app (sm_appslauncher_service_t *self, char **app_na
     // Lock the consumer mutex which has already been locked at the beginning of this function
     // The initial mutex lock will only be released after the request response callback function has finished executing
     // We do this so that the response variables can be set and return synchronously
-    sm_appslauncher_list_app_consumer_lock_mutex(list_app_consumer);
+    sm_appslauncher_list_app_consumer_mutex_lock(list_app_consumer);
 
     // Set the response pointers
     *response_apps_inst_ids = sm_appslauncher_list_app_consumer_get_response_apps_inst_ids(list_app_consumer);
@@ -150,5 +147,5 @@ sm_appslauncher_service_list_app (sm_appslauncher_service_t *self, char **app_na
     *response_apps_count = sm_appslauncher_list_app_consumer_get_response_apps_count(list_app_consumer);
 
     // Unlock the consumer mutex
-    sm_appslauncher_list_app_consumer_unlock_mutex(list_app_consumer);
+    sm_appslauncher_list_app_consumer_mutex_unlock(list_app_consumer);
 }

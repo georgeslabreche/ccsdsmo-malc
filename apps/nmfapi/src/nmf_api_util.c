@@ -15,7 +15,7 @@
 #include "nmfapi_classes.h"
 
 mal_uri_t *
-nmfapi_util_create_uri(const char* protocol, char *hostname, char *port, char *id)
+nmfapi_util_create_uri(const char* protocol, const char *hostname, const char *port, const char *id)
 {
     // Calculate length of URI
     size_t uri_length = strlen(protocol);
@@ -77,7 +77,6 @@ nmfapi_util_create_mal_message_request(mal_encoder_t *encoder, void *cursor)
     mal_identifier_t *network_zone = mal_identifier_new("Network Zone");
     mal_sessiontype_t session = MAL_SESSIONTYPE_LIVE;
     mal_identifier_t *session_name = mal_identifier_new("LIVE");
-    
 
     mal_message_t *message = mal_message_new(authentication_id, qoslevel,
         priority, domain, network_zone, session, session_name,

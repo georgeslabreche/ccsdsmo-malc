@@ -84,13 +84,13 @@ NMFAPI_EXPORT size_t
 //  Lock the mutex
 //  A mutex is used to force a synchronous response despite the request being an asynchronous operation
 NMFAPI_EXPORT void
-    sm_appslauncher_list_app_consumer_lock_mutex (sm_appslauncher_list_app_consumer_t *self);
+    sm_appslauncher_list_app_consumer_mutex_lock (sm_appslauncher_list_app_consumer_t *self);
 
 //  *** Draft method, for development use, may change without warning ***
 //  Unlock the mutex
 //  A mutex is used to force a synchronous response despite the request being an asynchronous operation
 NMFAPI_EXPORT void
-    sm_appslauncher_list_app_consumer_unlock_mutex (sm_appslauncher_list_app_consumer_t *self);
+    sm_appslauncher_list_app_consumer_mutex_unlock (sm_appslauncher_list_app_consumer_t *self);
 
 //  *** Draft method, for development use, may change without warning ***
 //  Initialize the consumer actor

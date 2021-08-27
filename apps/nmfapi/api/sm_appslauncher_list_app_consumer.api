@@ -64,12 +64,12 @@
         <return c_type = "size_t" />
     </method>
 
-    <method name = "lock_mutex">
+    <method name = "mutex_lock">
         Lock the mutex
         A mutex is used to force a synchronous response despite the request being an asynchronous operation
     </method>
 
-    <method name = "unlock_mutex">
+    <method name = "mutex_unlock">
         Unlock the mutex
         A mutex is used to force a synchronous response despite the request being an asynchronous operation
     </method>

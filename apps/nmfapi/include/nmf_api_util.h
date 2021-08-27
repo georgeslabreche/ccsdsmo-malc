@@ -13,7 +13,7 @@ extern "C" {
 #endif
 
 // Create a URI string
-mal_uri_t *nmfapi_util_create_uri(const char* protocol, char *hostname, char *port, char *id);
+mal_uri_t *nmfapi_util_create_uri(const char* protocol, const char *hostname, const char *port, const char *id);
 
 // Create a mal message for a request transaction
 mal_message_t *nmfapi_util_create_mal_message_request(mal_encoder_t *encoder, void *cursor);
