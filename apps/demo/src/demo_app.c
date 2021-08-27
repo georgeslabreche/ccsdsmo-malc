@@ -22,10 +22,20 @@
 
 #include "demo_classes.h"
 
-int demo_appslauncher_service_list_app(char *hostname, char *provider_port, char *consumer_port);
+//  --------------------------------------------------------------------------
+//  Demonstrate the listApp operation
+int
+demo_appslauncher_service_list_app(char *hostname, char *provider_port, char *consumer_port);
 
-int demo_parameter_service_get_values(char *hostname, char *provider_port, char *consumer_port);
-int demo_parameter_service_get_value(char *hostname, char *provider_port, char *consumer_port);
+//  --------------------------------------------------------------------------
+//  Demonstrate the getValue operation with multiple parameters in a single request
+int
+demo_parameter_service_get_values(char *hostname, char *provider_port, char *consumer_port);
+
+//  --------------------------------------------------------------------------
+//  Demonstrate the getValue operation with one parameter per request
+int
+demo_parameter_service_get_value(char *hostname, char *provider_port, char *consumer_port);
 
 int main (int argc, char *argv [])
 {
@@ -96,6 +106,10 @@ int main (int argc, char *argv [])
 
     return 0;
 }
+
+
+//  --------------------------------------------------------------------------
+//  Demonstrate the listApp operation
 
 int
 demo_appslauncher_service_list_app(char *hostname, char *provider_port, char *consumer_port)
@@ -224,11 +238,11 @@ demo_parameter_service_get_values(char *hostname, char *provider_port, char *con
                 break;
 
             case MAL_OCTET_ATTRIBUTE_TAG:
-                printf("Param #%ld is a Octet: %o\n", param_id, attr.octet_value);
+                printf("Param #%ld is a Octet: %c\n", param_id, attr.octet_value);
                 break;
 
             case MAL_UOCTET_ATTRIBUTE_TAG:
-                printf("Param #%ld is a UOctet: %o\n", param_id, attr.uoctet_value);
+                printf("Param #%ld is a UOctet: %u\n", param_id, attr.uoctet_value);
                 break;
 
             case MAL_SHORT_ATTRIBUTE_TAG:
