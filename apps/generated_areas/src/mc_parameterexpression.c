@@ -52,6 +52,14 @@ void mc_parameterexpression_value_set_attribute_tag(mc_parameterexpression_t * s
 {
   self->f_value_attribute_tag = attribute_tag;
 }
+union mal_attribute_t mc_parameterexpression_get_value(mc_parameterexpression_t * self)
+{
+  return self->f_value;
+}
+void mc_parameterexpression_set_value(mc_parameterexpression_t * self, union mal_attribute_t f_value)
+{
+  self->f_value = f_value;
+}
 
 // default constructor
 mc_parameterexpression_t * mc_parameterexpression_new(void)

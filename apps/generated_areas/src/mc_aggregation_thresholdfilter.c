@@ -26,6 +26,14 @@ void mc_aggregation_thresholdfilter_thresholdvalue_set_attribute_tag(mc_aggregat
 {
   self->f_thresholdvalue_attribute_tag = attribute_tag;
 }
+union mal_attribute_t mc_aggregation_thresholdfilter_get_thresholdvalue(mc_aggregation_thresholdfilter_t * self)
+{
+  return self->f_thresholdvalue;
+}
+void mc_aggregation_thresholdfilter_set_thresholdvalue(mc_aggregation_thresholdfilter_t * self, union mal_attribute_t f_thresholdvalue)
+{
+  self->f_thresholdvalue = f_thresholdvalue;
+}
 mal_boolean_t mc_aggregation_thresholdfilter_get_useconverted(mc_aggregation_thresholdfilter_t * self)
 {
   return self->f_useconverted;

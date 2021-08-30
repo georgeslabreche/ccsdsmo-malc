@@ -15,6 +15,8 @@ bool com_archive_compositefilter_fieldvalue_is_present(com_archive_compositefilt
 void com_archive_compositefilter_fieldvalue_set_present(com_archive_compositefilter_t * self, bool is_present);
 unsigned char com_archive_compositefilter_fieldvalue_get_attribute_tag(com_archive_compositefilter_t * self);
 void com_archive_compositefilter_fieldvalue_set_attribute_tag(com_archive_compositefilter_t * self, unsigned char attribute_tag);
+union mal_attribute_t com_archive_compositefilter_get_fieldvalue(com_archive_compositefilter_t * self);
+void com_archive_compositefilter_set_fieldvalue(com_archive_compositefilter_t * self, union mal_attribute_t f_fieldvalue);
 
 // default constructor
 com_archive_compositefilter_t * com_archive_compositefilter_new(void);

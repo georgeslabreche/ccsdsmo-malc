@@ -100,6 +100,14 @@ void mc_check_limitcheckdefinition_lowerlimit_set_attribute_tag(mc_check_limitch
 {
   self->f_lowerlimit_attribute_tag = attribute_tag;
 }
+union mal_attribute_t mc_check_limitcheckdefinition_get_lowerlimit(mc_check_limitcheckdefinition_t * self)
+{
+  return self->f_lowerlimit;
+}
+void mc_check_limitcheckdefinition_set_lowerlimit(mc_check_limitcheckdefinition_t * self, union mal_attribute_t f_lowerlimit)
+{
+  self->f_lowerlimit = f_lowerlimit;
+}
 bool mc_check_limitcheckdefinition_upperlimit_is_present(mc_check_limitcheckdefinition_t * self)
 {
   return self->f_upperlimit_is_present;
@@ -115,6 +123,14 @@ unsigned char mc_check_limitcheckdefinition_upperlimit_get_attribute_tag(mc_chec
 void mc_check_limitcheckdefinition_upperlimit_set_attribute_tag(mc_check_limitcheckdefinition_t * self, unsigned char attribute_tag)
 {
   self->f_upperlimit_attribute_tag = attribute_tag;
+}
+union mal_attribute_t mc_check_limitcheckdefinition_get_upperlimit(mc_check_limitcheckdefinition_t * self)
+{
+  return self->f_upperlimit;
+}
+void mc_check_limitcheckdefinition_set_upperlimit(mc_check_limitcheckdefinition_t * self, union mal_attribute_t f_upperlimit)
+{
+  self->f_upperlimit = f_upperlimit;
 }
 
 // default constructor

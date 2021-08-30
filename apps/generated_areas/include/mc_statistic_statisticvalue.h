@@ -25,6 +25,8 @@ bool mc_statistic_statisticvalue_value_is_present(mc_statistic_statisticvalue_t 
 void mc_statistic_statisticvalue_value_set_present(mc_statistic_statisticvalue_t * self, bool is_present);
 unsigned char mc_statistic_statisticvalue_value_get_attribute_tag(mc_statistic_statisticvalue_t * self);
 void mc_statistic_statisticvalue_value_set_attribute_tag(mc_statistic_statisticvalue_t * self, unsigned char attribute_tag);
+union mal_attribute_t mc_statistic_statisticvalue_get_value(mc_statistic_statisticvalue_t * self);
+void mc_statistic_statisticvalue_set_value(mc_statistic_statisticvalue_t * self, union mal_attribute_t f_value);
 mal_uinteger_t mc_statistic_statisticvalue_get_samplecount(mc_statistic_statisticvalue_t * self);
 void mc_statistic_statisticvalue_set_samplecount(mc_statistic_statisticvalue_t * self, mal_uinteger_t f_samplecount);
 

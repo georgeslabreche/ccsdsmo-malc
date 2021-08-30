@@ -13,10 +13,14 @@ bool mc_parameter_parametervalue_rawvalue_is_present(mc_parameter_parametervalue
 void mc_parameter_parametervalue_rawvalue_set_present(mc_parameter_parametervalue_t * self, bool is_present);
 unsigned char mc_parameter_parametervalue_rawvalue_get_attribute_tag(mc_parameter_parametervalue_t * self);
 void mc_parameter_parametervalue_rawvalue_set_attribute_tag(mc_parameter_parametervalue_t * self, unsigned char attribute_tag);
+union mal_attribute_t mc_parameter_parametervalue_get_rawvalue(mc_parameter_parametervalue_t * self);
+void mc_parameter_parametervalue_set_rawvalue(mc_parameter_parametervalue_t * self, union mal_attribute_t f_rawvalue);
 bool mc_parameter_parametervalue_convertedvalue_is_present(mc_parameter_parametervalue_t * self);
 void mc_parameter_parametervalue_convertedvalue_set_present(mc_parameter_parametervalue_t * self, bool is_present);
 unsigned char mc_parameter_parametervalue_convertedvalue_get_attribute_tag(mc_parameter_parametervalue_t * self);
 void mc_parameter_parametervalue_convertedvalue_set_attribute_tag(mc_parameter_parametervalue_t * self, unsigned char attribute_tag);
+union mal_attribute_t mc_parameter_parametervalue_get_convertedvalue(mc_parameter_parametervalue_t * self);
+void mc_parameter_parametervalue_set_convertedvalue(mc_parameter_parametervalue_t * self, union mal_attribute_t f_convertedvalue);
 
 // default constructor
 mc_parameter_parametervalue_t * mc_parameter_parametervalue_new(void);

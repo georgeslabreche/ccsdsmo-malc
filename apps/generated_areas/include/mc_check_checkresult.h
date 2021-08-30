@@ -19,6 +19,8 @@ bool mc_check_checkresult_checkedvalue_is_present(mc_check_checkresult_t * self)
 void mc_check_checkresult_checkedvalue_set_present(mc_check_checkresult_t * self, bool is_present);
 unsigned char mc_check_checkresult_checkedvalue_get_attribute_tag(mc_check_checkresult_t * self);
 void mc_check_checkresult_checkedvalue_set_attribute_tag(mc_check_checkresult_t * self, unsigned char attribute_tag);
+union mal_attribute_t mc_check_checkresult_get_checkedvalue(mc_check_checkresult_t * self);
+void mc_check_checkresult_set_checkedvalue(mc_check_checkresult_t * self, union mal_attribute_t f_checkedvalue);
 
 // default constructor
 mc_check_checkresult_t * mc_check_checkresult_new(void);

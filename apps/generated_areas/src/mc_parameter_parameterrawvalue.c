@@ -34,6 +34,14 @@ void mc_parameter_parameterrawvalue_rawvalue_set_attribute_tag(mc_parameter_para
 {
   self->f_rawvalue_attribute_tag = attribute_tag;
 }
+union mal_attribute_t mc_parameter_parameterrawvalue_get_rawvalue(mc_parameter_parameterrawvalue_t * self)
+{
+  return self->f_rawvalue;
+}
+void mc_parameter_parameterrawvalue_set_rawvalue(mc_parameter_parameterrawvalue_t * self, union mal_attribute_t f_rawvalue)
+{
+  self->f_rawvalue = f_rawvalue;
+}
 
 // default constructor
 mc_parameter_parameterrawvalue_t * mc_parameter_parameterrawvalue_new(void)

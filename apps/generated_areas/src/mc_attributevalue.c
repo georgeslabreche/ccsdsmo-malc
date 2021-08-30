@@ -16,6 +16,14 @@ void mc_attributevalue_value_set_attribute_tag(mc_attributevalue_t * self, unsig
 {
   self->f_value_attribute_tag = attribute_tag;
 }
+union mal_attribute_t mc_attributevalue_get_value(mc_attributevalue_t * self)
+{
+  return self->f_value;
+}
+void mc_attributevalue_set_value(mc_attributevalue_t * self, union mal_attribute_t f_value)
+{
+  self->f_value = f_value;
+}
 
 // default constructor
 mc_attributevalue_t * mc_attributevalue_new(void)

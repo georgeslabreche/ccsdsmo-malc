@@ -9,6 +9,8 @@ extern "C" {
 // fields accessors for composite mc_attributevalue
 unsigned char mc_attributevalue_value_get_attribute_tag(mc_attributevalue_t * self);
 void mc_attributevalue_value_set_attribute_tag(mc_attributevalue_t * self, unsigned char attribute_tag);
+union mal_attribute_t mc_attributevalue_get_value(mc_attributevalue_t * self);
+void mc_attributevalue_set_value(mc_attributevalue_t * self, union mal_attribute_t f_value);
 
 // default constructor
 mc_attributevalue_t * mc_attributevalue_new(void);
