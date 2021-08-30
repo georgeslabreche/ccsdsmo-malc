@@ -73,6 +73,10 @@ mc_parameter_service_destroy (mc_parameter_service_t **self_p)
         // Destroy the getValue consumer
         if(get_value_consumer)
         {
+            // Clear the response variables
+            mc_parameter_get_value_consumer_response_clear(&get_value_consumer);
+
+            // Destroy the consumer
             mc_parameter_get_value_consumer_destroy(&get_value_consumer);
         }
         

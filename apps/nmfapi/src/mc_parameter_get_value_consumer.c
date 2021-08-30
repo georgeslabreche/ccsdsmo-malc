@@ -99,8 +99,10 @@ mc_parameter_get_value_consumer_destroy (mc_parameter_get_value_consumer_t **sel
 
         //  Free class properties here
 
-        // Clear response variables
-        mc_parameter_get_value_consumer_response_clear(self);
+        // We do not clear the response variables here (i.e. invoke mc_parameter_get_value_consumer_response_clear)
+        // This is because we still want those variables to be available to the client even after the 
+        // mc_parameter_service's mc_parameter_service_get_values function is done executing.
+        // The reponse variables will be cleared when invoking mc_parameter_service's destructor.
 
         // Make sure the actor thread object is terminated before destroying it
         mal_actor_join(self->actor);
@@ -428,10 +430,12 @@ mc_parameter_get_value_consumer_response (void *self, mal_ctx_t *mal_ctx,
         mal_message_get_body_offset(message));
 
     // Log the offset
-    clog_debug(mc_parameter_get_value_consumer_logger, "mc_parameter_get_value_consumer_response: offset=%d\n", mal_message_get_body_offset(message));
+    clog_debug(mc_parameter_get_value_consumer_logger, 
+        "mc_parameter_get_value_consumer_response: offset=%d\n", mal_message_get_body_offset(message));
 
     // Decode the response
-    clog_debug(mc_parameter_get_value_consumer_logger, "mc_parameter_get_value_consumer_response: decode_0 paramValDetails\n");
+    clog_debug(mc_parameter_get_value_consumer_logger, 
+        "mc_parameter_get_value_consumer_response: decode_0 paramValDetails\n");
     mc_parameter_parametervaluedetails_list_t *param_value_details;
     rc = mc_parameter_getvalue_request_response_decode_0(cursor, decoder, &param_value_details);
     mal_decoder_cursor_assert(decoder, cursor);
@@ -439,7 +443,8 @@ mc_parameter_get_value_consumer_response (void *self, mal_ctx_t *mal_ctx,
     if (rc < 0)
     {
         // Log error
-        clog_error(mc_parameter_get_value_consumer_logger, "mc_parameter_get_value_consumer_response: error decode_0 paramValDetails\n");
+        clog_error(mc_parameter_get_value_consumer_logger,
+            "mc_parameter_get_value_consumer_response: error decode_0 paramValDetails\n");
 
         // Destroy
         mal_decoder_cursor_destroy(decoder, cursor);
@@ -471,7 +476,8 @@ mc_parameter_get_value_consumer_response (void *self, mal_ctx_t *mal_ctx,
     if (!consumer->response_mal_attributes && (consumer->response_mal_attributes_count > 0))
     {
         // Log error
-        clog_error(mc_parameter_get_value_consumer_logger, "mc_parameter_get_value_consumer_response: memory allocation error for response mal attributes\n");
+        clog_error(mc_parameter_get_value_consumer_logger,
+            "mc_parameter_get_value_consumer_response: memory allocation error for response mal attributes\n");
 
         // Destroy consumer's response MAL attributes
         mc_parameter_get_value_consumer_response_clear(consumer);
@@ -489,7 +495,8 @@ mc_parameter_get_value_consumer_response (void *self, mal_ctx_t *mal_ctx,
     if (!consumer->response_mal_attributes_tags && (consumer->response_mal_attributes_count > 0))
     {
         // Log error
-        clog_error(mc_parameter_get_value_consumer_logger, "mc_parameter_get_value_consumer_response: memory allocation error for response mal attributes tags\n");
+        clog_error(mc_parameter_get_value_consumer_logger,
+            "mc_parameter_get_value_consumer_response: memory allocation error for response mal attributes tags\n");
 
         // Destroy consumer's response MAL attributes and MAL attributes tags
         mc_parameter_get_value_consumer_response_clear(consumer);
@@ -548,7 +555,8 @@ mc_parameter_get_value_consumer_response (void *self, mal_ctx_t *mal_ctx,
         else
         {
             // Log error and exit function with error code
-            clog_error(mc_parameter_get_value_consumer_logger, "mc_parameter_get_value_consumer_response: encountered null content\n");
+            clog_error(mc_parameter_get_value_consumer_logger,
+                "mc_parameter_get_value_consumer_response: encountered null content\n");
             rc = -1;
             break;
         }
@@ -558,7 +566,8 @@ mc_parameter_get_value_consumer_response (void *self, mal_ctx_t *mal_ctx,
     consumer->response_error_code = rc;
 
     // Cleanup
-    clog_debug(mc_parameter_get_value_consumer_logger, "mc_parameter_get_value_consumer_response: cleanup\n");
+    clog_debug(mc_parameter_get_value_consumer_logger,
+        "mc_parameter_get_value_consumer_response: cleanup\n");
 
     // Only destroy the mc_parameter_parametervaluedetails_t object if it was initialized
     if(content)
