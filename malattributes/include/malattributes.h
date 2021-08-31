@@ -48,8 +48,8 @@ extern "C" {
 #include <stdbool.h>
 
 #define MALATTRIBUTES_VERSION_MAJOR 1
-#define MALATTRIBUTES_VERSION_MINOR 0
-#define MALATTRIBUTES_VERSION_PATCH 0
+#define MALATTRIBUTES_VERSION_MINOR 2
+#define MALATTRIBUTES_VERSION_PATCH 1
 
 #define MALATTRIBUTES_MAKE_VERSION(major, minor, patch) \
     ((major) * 10000 + (minor) * 100 + (patch))
