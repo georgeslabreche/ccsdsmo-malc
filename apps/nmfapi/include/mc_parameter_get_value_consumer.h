@@ -20,7 +20,7 @@ extern "C" {
 #define MC_PARAMETER_GET_VALUE_CONSUMER_URI "mc/parameter/getValue/consumer"  // the consumer URI for the getValue operation
 
 //  *** Draft method, for development use, may change without warning ***
-//  Instanciate a consumer object for the getValue operation.
+//  Instanciate a consumer object for the getValue operation
 NMFAPI_EXPORT mc_parameter_get_value_consumer_t *
     mc_parameter_get_value_consumer_new (mal_ctx_t *mal_ctx, mal_uri_t *provider_uri);
 
@@ -54,17 +54,17 @@ NMFAPI_EXPORT void
 //  *** Draft method, for development use, may change without warning ***
 //  Get response variable for the MAL attributes
 NMFAPI_EXPORT union mal_attribute_t *
-    mc_parameter_get_value_consumer_get_response_mal_attributes (mc_parameter_get_value_consumer_t *self);
+    mc_parameter_get_value_consumer_get_response_mal_attribute_list (mc_parameter_get_value_consumer_t *self);
 
 //  *** Draft method, for development use, may change without warning ***
 //  Get response variable for the MAL attributes tags
 NMFAPI_EXPORT unsigned char *
-    mc_parameter_get_value_consumer_get_response_mal_attributes_tags (mc_parameter_get_value_consumer_t *self);
+    mc_parameter_get_value_consumer_get_response_mal_attribute_tag_list (mc_parameter_get_value_consumer_t *self);
 
 //  *** Draft method, for development use, may change without warning ***
 //  Get response variable for number of MAL attributes
 NMFAPI_EXPORT size_t
-    mc_parameter_get_value_consumer_get_response_mal_attributes_count (mc_parameter_get_value_consumer_t *self);
+    mc_parameter_get_value_consumer_get_response_element_count (mc_parameter_get_value_consumer_t *self);
 
 //  *** Draft method, for development use, may change without warning ***
 //  Get error code from processing the response
@@ -74,22 +74,22 @@ NMFAPI_EXPORT int
 //  *** Draft method, for development use, may change without warning ***
 //  Get the param inst ids MAL message field
 NMFAPI_EXPORT long *
-    mc_parameter_get_value_consumer_get_field_param_inst_ids (mc_parameter_get_value_consumer_t *self);
+    mc_parameter_get_value_consumer_get_field_param_inst_id_list (mc_parameter_get_value_consumer_t *self);
 
 //  *** Draft method, for development use, may change without warning ***
 //  Set the param inst ids MAL message field
 NMFAPI_EXPORT void
-    mc_parameter_get_value_consumer_set_field_param_inst_ids (mc_parameter_get_value_consumer_t *self, long *param_inst_ids);
+    mc_parameter_get_value_consumer_set_field_param_inst_id_list (mc_parameter_get_value_consumer_t *self, long *param_inst_id_list);
 
 //  *** Draft method, for development use, may change without warning ***
 //  Get the size of the param inst ids MAL message field
 NMFAPI_EXPORT size_t
-    mc_parameter_get_value_consumer_get_field_param_inst_ids_size (mc_parameter_get_value_consumer_t *self);
+    mc_parameter_get_value_consumer_get_field_param_inst_id_list_size (mc_parameter_get_value_consumer_t *self);
 
 //  *** Draft method, for development use, may change without warning ***
 //  Set the size of the param inst ids MAL message field
 NMFAPI_EXPORT void
-    mc_parameter_get_value_consumer_set_field_param_inst_ids_size (mc_parameter_get_value_consumer_t *self, size_t param_inst_ids_size);
+    mc_parameter_get_value_consumer_set_field_param_inst_id_list_size (mc_parameter_get_value_consumer_t *self, size_t param_inst_id_list_size);
 
 #endif // NMFAPI_BUILD_DRAFT_API
 //  @end

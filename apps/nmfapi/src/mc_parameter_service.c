@@ -265,9 +265,9 @@ mc_parameter_service_get_definition (mc_parameter_service_t *self, char *param_n
 //  The getValue operation returns the latest received value for the requested parameters
 
 int
-mc_parameter_service_get_values (mc_parameter_service_t *self, long *param_inst_ids, size_t param_inst_ids_size,
-    union mal_attribute_t **response_mal_attributes, unsigned char **response_mal_attributes_tags,
-    size_t *response_mal_attributes_count)
+mc_parameter_service_get_values (mc_parameter_service_t *self, long *param_inst_id_list, size_t param_inst_id_list_size,
+    union mal_attribute_t **response_mal_attribute_list, unsigned char **response_mal_attribute_tag_list,
+    size_t *response_element_count)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_values()\n");
@@ -282,10 +282,10 @@ mc_parameter_service_get_values (mc_parameter_service_t *self, long *param_inst_
     get_value_consumer = mc_parameter_get_value_consumer_new(self->mal_ctx, self->provider_uri);
 
     // Set the param names MAL message field
-    mc_parameter_get_value_consumer_set_field_param_inst_ids(get_value_consumer, param_inst_ids);
+    mc_parameter_get_value_consumer_set_field_param_inst_id_list(get_value_consumer, param_inst_id_list);
 
     // Set the param size MAL message field
-    mc_parameter_get_value_consumer_set_field_param_inst_ids_size(get_value_consumer, param_inst_ids_size);
+    mc_parameter_get_value_consumer_set_field_param_inst_id_list_size(get_value_consumer, param_inst_id_list_size);
 
     // Create and initialize the consumer actor
     mc_parameter_get_value_consumer_actor_init(get_value_consumer);
@@ -299,9 +299,9 @@ mc_parameter_service_get_values (mc_parameter_service_t *self, long *param_inst_
     mc_parameter_get_value_consumer_mutex_lock(get_value_consumer);
 
     // Set the response pointers
-    *response_mal_attributes = mc_parameter_get_value_consumer_get_response_mal_attributes(get_value_consumer);
-    *response_mal_attributes_tags = mc_parameter_get_value_consumer_get_response_mal_attributes_tags(get_value_consumer);
-    *response_mal_attributes_count = mc_parameter_get_value_consumer_get_response_mal_attributes_count(get_value_consumer);
+    *response_mal_attribute_list = mc_parameter_get_value_consumer_get_response_mal_attribute_list(get_value_consumer);
+    *response_mal_attribute_tag_list = mc_parameter_get_value_consumer_get_response_mal_attribute_tag_list(get_value_consumer);
+    *response_element_count = mc_parameter_get_value_consumer_get_response_element_count(get_value_consumer);
 
     // Set the return code as the error code of the consumer response
     rc = mc_parameter_get_value_consumer_get_response_error_code(get_value_consumer);
@@ -334,16 +334,16 @@ mc_parameter_service_get_value (mc_parameter_service_t *self, long param_inst_id
     int rc = 0;
 
     // Create long list with single element
-    long param_inst_ids[] = {param_inst_id};
+    long param_inst_id_list[] = {param_inst_id};
 
     // The response pointers and element count variable
-    union mal_attribute_t *response_mal_attributes;
-    unsigned char *response_mal_attributes_tags;
-    size_t response_mal_attributes_count;
+    union mal_attribute_t *response_mal_attribute_list;
+    unsigned char *response_mal_attribute_tag_list;
+    size_t response_element_count;
 
     // Invoke the get_values function
-    rc = mc_parameter_service_get_values(self, param_inst_ids, 1,
-        &response_mal_attributes, &response_mal_attributes_tags, &response_mal_attributes_count);
+    rc = mc_parameter_service_get_values(self, param_inst_id_list, 1,
+        &response_mal_attribute_list, &response_mal_attribute_tag_list, &response_element_count);
 
     if (rc < 0)
     {
@@ -355,27 +355,27 @@ mc_parameter_service_get_value (mc_parameter_service_t *self, long param_inst_id
     }
 
     // Check that element count is as expected
-    if(response_mal_attributes_count == 1)
+    if(response_element_count == 1)
     {
-        *response_mal_attribute = response_mal_attributes[0];
-        *response_mal_attribute_tag = *response_mal_attributes_tags;
+        *response_mal_attribute = response_mal_attribute_list[0];
+        *response_mal_attribute_tag = *response_mal_attribute_tag_list;
     }
     else
     {
         // Log the error
         clog_error(mc_parameter_service_logger, 
             "mc_parameter_service_get_value: retrieved unexpected element count, expected %d but was %d\n",
-            1, response_mal_attributes_count);
+            1, response_element_count);
 
         // If multiple attribute were returned: destroy them all
         // Unlikely to happen but implemented for good measure
-        if(response_mal_attributes && response_mal_attributes_tags)
+        if(response_mal_attribute_list && response_mal_attribute_tag_list)
         {
-            for(int i = 0; i < response_mal_attributes_count; i++)
+            for(int i = 0; i < response_element_count; i++)
             {
-                if(response_mal_attributes_tags[i])
+                if(response_mal_attribute_tag_list[i])
                 {
-                    mal_attribute_destroy(&response_mal_attributes[i], response_mal_attributes_tags[i]);
+                    mal_attribute_destroy(&response_mal_attribute_list[i], response_mal_attribute_tag_list[i]);
                 }
             }
         }

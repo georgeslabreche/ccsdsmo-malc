@@ -35,11 +35,11 @@
 
     <method name = "get_values">
         The getValue operation returns the latest received value for the requested parameters
-        <argument name = "param_inst_ids" c_type = "long *" />
-        <argument name = "param_inst_ids_size" type = "size" />
-        <argument name = "response_mal_attributes" c_type = "union mal_attribute_t **" />
-        <argument name = "response_mal_attributes_tags" c_type = "unsigned char **" />
-        <argument name = "response_mal_attributes_count" c_type = "size_t *" />
+        <argument name = "param_inst_id_list" c_type = "long *" />
+        <argument name = "param_inst_id_list_size" type = "size" />
+        <argument name = "response_mal_attribute_list" c_type = "union mal_attribute_t **" />
+        <argument name = "response_mal_attribute_tag_list" c_type = "unsigned char **" />
+        <argument name = "response_mal_element_count" c_type = "size_t *" />
         <return type = "integer" />
     </method>
 

@@ -42,7 +42,7 @@ NMFAPI_EXPORT int
 //  *** Draft method, for development use, may change without warning ***
 //  The getValue operation returns the latest received value for the requested parameters
 NMFAPI_EXPORT int
-    mc_parameter_service_get_values (mc_parameter_service_t *self, long *param_inst_ids, size_t param_inst_ids_size, union mal_attribute_t **response_mal_attributes, unsigned char **response_mal_attributes_tags, size_t *response_mal_attributes_count);
+    mc_parameter_service_get_values (mc_parameter_service_t *self, long *param_inst_id_list, size_t param_inst_id_list_size, union mal_attribute_t **response_mal_attribute_list, unsigned char **response_mal_attribute_tag_list, size_t *response_mal_element_count);
 
 //  *** Draft method, for development use, may change without warning ***
 //  The getValue operation returns the latest received value for a requested parameter
