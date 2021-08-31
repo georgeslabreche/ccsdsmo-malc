@@ -167,6 +167,7 @@ mc_parameter_list_definition_consumer_mutex_unlock (mc_parameter_list_definition
 
 //  --------------------------------------------------------------------------
 //  Create and initialize the actor
+
 void
 mc_parameter_list_definition_consumer_actor_init (mc_parameter_list_definition_consumer_t *self)
 {
@@ -281,7 +282,7 @@ mc_parameter_list_definition_consumer_initialize (void *self, mal_actor_t *mal_a
     mal_identifier_t **content = mal_identifier_list_get_content(param_name_mal_id_list);
 
     // Construct the message content
-    for(int i = 0; i < consumer->param_name_list_size; i++)
+    for(size_t i = 0; i < consumer->param_name_list_size; i++)
     {
         content[i] = mal_identifier_new(consumer->param_name_list[i]);
     }
@@ -445,7 +446,7 @@ mc_parameter_list_definition_consumer_response (void *self, mal_ctx_t *mal_ctx,
         clog_error(mc_parameter_list_definition_consumer_logger,
             "mc_parameter_list_definition_consumer_response: error decode_0 for objInstIds\n");
     }
-    else // No error, process response object
+    else // No error, allocate memory for response lists
     {
         // Set response variable for element count
         consumer->response_element_count = mc_objectinstancepair_list_get_element_count(object_instance_pair_list);

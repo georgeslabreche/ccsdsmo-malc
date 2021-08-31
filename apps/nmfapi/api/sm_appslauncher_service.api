@@ -13,20 +13,17 @@
         The destructor
     </destructor>
 
-    <method name = "set_log_level">
-        Set the log level
-        <argument name = "level" type = "integer" />
-    </method>
-
     <method name = "list_app">
         The listApp operation allows a consumer to request the object instance identifiers
         of the Apps objects and running status for an app name or for a certain app category
-        <argument name = "app_names" c_type = "char **" />
-        <argument name = "app_names_size" type = "size" />
+        <argument name = "app_name_list" c_type = "char **" />
+        <argument name = "app_name_list_size" type = "size" />
         <argument name = "category" c_type = "char *" />
-        <argument name = "response_apps_inst_ids" c_type = "long **" />
-        <argument name = "response_apps_running" c_type = "bool **" />
-        <argument name = "response_apps_count" c_type = "size_t *" />
+        <argument name = "response_apps_inst_id_list" c_type = "long **" />
+        <argument name = "response_apps_inst_running_list" c_type = "bool **" />
+        <argument name = "response_element_count" c_type = "size_t *" />
+
+        <return type = "integer" />
     </method>
     
 </class>

@@ -104,7 +104,7 @@ mc_parameter_service_destroy (mc_parameter_service_t **self_p)
             mc_parameter_get_value_consumer_destroy(&get_value_consumer);
         }
         
-        // Destroy the getValue context
+        // Destroy the context
         if(self->mal_ctx)
         {
             mal_ctx_destroy(&self->mal_ctx);
