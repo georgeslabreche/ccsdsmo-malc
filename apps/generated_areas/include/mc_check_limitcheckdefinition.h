@@ -27,10 +27,14 @@ bool mc_check_limitcheckdefinition_lowerlimit_is_present(mc_check_limitcheckdefi
 void mc_check_limitcheckdefinition_lowerlimit_set_present(mc_check_limitcheckdefinition_t * self, bool is_present);
 unsigned char mc_check_limitcheckdefinition_lowerlimit_get_attribute_tag(mc_check_limitcheckdefinition_t * self);
 void mc_check_limitcheckdefinition_lowerlimit_set_attribute_tag(mc_check_limitcheckdefinition_t * self, unsigned char attribute_tag);
+union mal_attribute_t mc_check_limitcheckdefinition_get_lowerlimit(mc_check_limitcheckdefinition_t * self);
+void mc_check_limitcheckdefinition_set_lowerlimit(mc_check_limitcheckdefinition_t * self, union mal_attribute_t f_lowerlimit);
 bool mc_check_limitcheckdefinition_upperlimit_is_present(mc_check_limitcheckdefinition_t * self);
 void mc_check_limitcheckdefinition_upperlimit_set_present(mc_check_limitcheckdefinition_t * self, bool is_present);
 unsigned char mc_check_limitcheckdefinition_upperlimit_get_attribute_tag(mc_check_limitcheckdefinition_t * self);
 void mc_check_limitcheckdefinition_upperlimit_set_attribute_tag(mc_check_limitcheckdefinition_t * self, unsigned char attribute_tag);
+union mal_attribute_t mc_check_limitcheckdefinition_get_upperlimit(mc_check_limitcheckdefinition_t * self);
+void mc_check_limitcheckdefinition_set_upperlimit(mc_check_limitcheckdefinition_t * self, union mal_attribute_t f_upperlimit);
 
 // default constructor
 mc_check_limitcheckdefinition_t * mc_check_limitcheckdefinition_new(void);

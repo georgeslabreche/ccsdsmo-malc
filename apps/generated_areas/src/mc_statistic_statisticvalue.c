@@ -89,6 +89,14 @@ void mc_statistic_statisticvalue_value_set_attribute_tag(mc_statistic_statisticv
 {
   self->f_value_attribute_tag = attribute_tag;
 }
+union mal_attribute_t mc_statistic_statisticvalue_get_value(mc_statistic_statisticvalue_t * self)
+{
+  return self->f_value;
+}
+void mc_statistic_statisticvalue_set_value(mc_statistic_statisticvalue_t * self, union mal_attribute_t f_value)
+{
+  self->f_value = f_value;
+}
 mal_uinteger_t mc_statistic_statisticvalue_get_samplecount(mc_statistic_statisticvalue_t * self)
 {
   return self->f_samplecount;

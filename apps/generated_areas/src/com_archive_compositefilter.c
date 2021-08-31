@@ -43,6 +43,14 @@ void com_archive_compositefilter_fieldvalue_set_attribute_tag(com_archive_compos
 {
   self->f_fieldvalue_attribute_tag = attribute_tag;
 }
+union mal_attribute_t com_archive_compositefilter_get_fieldvalue(com_archive_compositefilter_t * self)
+{
+  return self->f_fieldvalue;
+}
+void com_archive_compositefilter_set_fieldvalue(com_archive_compositefilter_t * self, union mal_attribute_t f_fieldvalue)
+{
+  self->f_fieldvalue = f_fieldvalue;
+}
 
 // default constructor
 com_archive_compositefilter_t * com_archive_compositefilter_new(void)

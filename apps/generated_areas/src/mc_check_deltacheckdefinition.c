@@ -118,6 +118,14 @@ void mc_check_deltacheckdefinition_lowerthreshold_set_attribute_tag(mc_check_del
 {
   self->f_lowerthreshold_attribute_tag = attribute_tag;
 }
+union mal_attribute_t mc_check_deltacheckdefinition_get_lowerthreshold(mc_check_deltacheckdefinition_t * self)
+{
+  return self->f_lowerthreshold;
+}
+void mc_check_deltacheckdefinition_set_lowerthreshold(mc_check_deltacheckdefinition_t * self, union mal_attribute_t f_lowerthreshold)
+{
+  self->f_lowerthreshold = f_lowerthreshold;
+}
 bool mc_check_deltacheckdefinition_upperthreshold_is_present(mc_check_deltacheckdefinition_t * self)
 {
   return self->f_upperthreshold_is_present;
@@ -133,6 +141,14 @@ unsigned char mc_check_deltacheckdefinition_upperthreshold_get_attribute_tag(mc_
 void mc_check_deltacheckdefinition_upperthreshold_set_attribute_tag(mc_check_deltacheckdefinition_t * self, unsigned char attribute_tag)
 {
   self->f_upperthreshold_attribute_tag = attribute_tag;
+}
+union mal_attribute_t mc_check_deltacheckdefinition_get_upperthreshold(mc_check_deltacheckdefinition_t * self)
+{
+  return self->f_upperthreshold;
+}
+void mc_check_deltacheckdefinition_set_upperthreshold(mc_check_deltacheckdefinition_t * self, union mal_attribute_t f_upperthreshold)
+{
+  self->f_upperthreshold = f_upperthreshold;
 }
 
 // default constructor

@@ -17,6 +17,8 @@ bool mc_parameterexpression_value_is_present(mc_parameterexpression_t * self);
 void mc_parameterexpression_value_set_present(mc_parameterexpression_t * self, bool is_present);
 unsigned char mc_parameterexpression_value_get_attribute_tag(mc_parameterexpression_t * self);
 void mc_parameterexpression_value_set_attribute_tag(mc_parameterexpression_t * self, unsigned char attribute_tag);
+union mal_attribute_t mc_parameterexpression_get_value(mc_parameterexpression_t * self);
+void mc_parameterexpression_set_value(mc_parameterexpression_t * self, union mal_attribute_t f_value);
 
 // default constructor
 mc_parameterexpression_t * mc_parameterexpression_new(void);

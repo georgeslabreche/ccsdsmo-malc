@@ -37,6 +37,14 @@ void mc_parameter_parametervalue_rawvalue_set_attribute_tag(mc_parameter_paramet
 {
   self->f_rawvalue_attribute_tag = attribute_tag;
 }
+union mal_attribute_t mc_parameter_parametervalue_get_rawvalue(mc_parameter_parametervalue_t * self)
+{
+  return self->f_rawvalue;
+}
+void mc_parameter_parametervalue_set_rawvalue(mc_parameter_parametervalue_t * self, union mal_attribute_t f_rawvalue)
+{
+  self->f_rawvalue = f_rawvalue;
+}
 bool mc_parameter_parametervalue_convertedvalue_is_present(mc_parameter_parametervalue_t * self)
 {
   return self->f_convertedvalue_is_present;
@@ -52,6 +60,14 @@ unsigned char mc_parameter_parametervalue_convertedvalue_get_attribute_tag(mc_pa
 void mc_parameter_parametervalue_convertedvalue_set_attribute_tag(mc_parameter_parametervalue_t * self, unsigned char attribute_tag)
 {
   self->f_convertedvalue_attribute_tag = attribute_tag;
+}
+union mal_attribute_t mc_parameter_parametervalue_get_convertedvalue(mc_parameter_parametervalue_t * self)
+{
+  return self->f_convertedvalue;
+}
+void mc_parameter_parametervalue_set_convertedvalue(mc_parameter_parametervalue_t * self, union mal_attribute_t f_convertedvalue)
+{
+  self->f_convertedvalue = f_convertedvalue;
 }
 
 // default constructor

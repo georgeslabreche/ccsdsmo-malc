@@ -61,6 +61,14 @@ void mc_check_checkresult_checkedvalue_set_attribute_tag(mc_check_checkresult_t 
 {
   self->f_checkedvalue_attribute_tag = attribute_tag;
 }
+union mal_attribute_t mc_check_checkresult_get_checkedvalue(mc_check_checkresult_t * self)
+{
+  return self->f_checkedvalue;
+}
+void mc_check_checkresult_set_checkedvalue(mc_check_checkresult_t * self, union mal_attribute_t f_checkedvalue)
+{
+  self->f_checkedvalue = f_checkedvalue;
+}
 
 // default constructor
 mc_check_checkresult_t * mc_check_checkresult_new(void)
