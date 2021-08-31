@@ -41,20 +41,8 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
 
-    <!-- MO MAL Services-->
-    <!--class name = "com" /-->
-    <!--class name = "common" /-->
-
-    <!-- MONITOR AND CONTROL SERVICE -->
-    
-    <!-- 
-        The parameter service allows the user to subscribe to parameter 
-        value report and optionally be able to set new values.
-    -->
-    <class name = "mal_message_args" selftest = "0" />
-
     <!-- The Gateway API from which we access all NMF service APIs -->
-    <class name = "nmf_api" />
+    <class name = "nmf_api" selftest = "0" />
 
     <!-- Util class -->
     <class name = "nmf_api_util" selftest = "0" />
@@ -70,8 +58,6 @@
     <class name = "sm_appslauncher_service" selftest = "0" />
     <class name = "sm_appslauncher_list_app_consumer" selftest = "0" />
 
-    <!--main name = "nmf_api_main">A test main program</main-->
-    
     <!-- Targets -->
     <target name = "rpi" />
     

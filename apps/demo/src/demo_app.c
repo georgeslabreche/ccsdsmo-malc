@@ -22,20 +22,33 @@
 
 #include "demo_classes.h"
 
+
 //  --------------------------------------------------------------------------
+//  Declare the demonstration functions
+
 //  Demonstrate the listApp operation
 int
 demo_appslauncher_service_list_app(char *hostname, char *provider_port, char *consumer_port);
 
-//  --------------------------------------------------------------------------
+//  Demonstrate the listDefinition operation with multiple parameters in a single request
+int
+demo_parameter_service_list_definition(char *hostname, char *provider_port, char *consumer_port);
+
+//  Demonstrate the listDefinition operation with one parameter per request
+int
+demo_parameter_service_get_definition(char *hostname, char *provider_port, char *consumer_port);
+
 //  Demonstrate the getValue operation with multiple parameters in a single request
 int
 demo_parameter_service_get_values(char *hostname, char *provider_port, char *consumer_port);
 
-//  --------------------------------------------------------------------------
 //  Demonstrate the getValue operation with one parameter per request
 int
 demo_parameter_service_get_value(char *hostname, char *provider_port, char *consumer_port);
+
+
+//  --------------------------------------------------------------------------
+//  The main program function
 
 int main (int argc, char *argv [])
 {
@@ -93,10 +106,17 @@ int main (int argc, char *argv [])
     // Set log levels
     maltcp_set_log_level(log_level);
     mc_parameter_service_set_log_level(log_level);
+    mc_parameter_list_definition_consumer_set_log_level(log_level);
     mc_parameter_get_value_consumer_set_log_level(log_level);
 
     // Demonstrate the listApp operation
     //demo_appslauncher_service_list_app(argv[argv_index_host], argv[argv_index_pport], argv[argv_index_cport]);
+
+    // Demonstrate the listDefinition operation with multiple parameters in a single request
+    demo_parameter_service_list_definition(argv[argv_index_host], argv[argv_index_pport], argv[argv_index_cport]);
+
+    // Demonstrate the listDefinition operation with one parameter per request
+    demo_parameter_service_get_definition(argv[argv_index_host], argv[argv_index_pport], argv[argv_index_cport]);
 
     // Demonstrate the getValue operation with multiple parameters in a single request
     demo_parameter_service_get_values(argv[argv_index_host], argv[argv_index_pport], argv[argv_index_cport]);
@@ -144,6 +164,137 @@ demo_appslauncher_service_list_app(char *hostname, char *provider_port, char *co
 
 
 //  --------------------------------------------------------------------------
+//  Demonstrate the listDefinition operation with multiple parameters in a single request
+
+int
+demo_parameter_service_list_definition(char *hostname, char *provider_port, char *consumer_port)
+{
+    // Verbosity
+    printf("\n\nDemonstrate the listDefinition operation with multiple parameters in a single request:\n\n");
+
+    // The response error code
+    int rc;
+
+    // Create the Parameter service
+    mc_parameter_service_t *parameter_service = mc_parameter_service_new(hostname, provider_port, consumer_port);
+
+    // Build the param names request field
+    char *param_name_list[] = {
+        "OSVersion",            // Version of the OS            1
+        "attitudeQuatA",        // Quaternion                   3
+        "attitudeQuatB",        // Quaternion                   4
+        "attitudeQuatC",        // Quaternion                   5
+        "attitudeQuatD",        // Quaternion                   6
+        "CADC0884",             // I_PD1_THETA                891
+        "CADC0886",             // I_PD2_THETA                893
+        "CADC0888",             // I_PD3_THETA                895
+        "CADC0890",             // I_PD4_THETA                897
+        "CADC0892",             // I_PD5_THETA                899
+        "CADC0894"              // I_PD6_THETA                901
+    };
+
+    // Calculate size of array
+    size_t param_name_list_size = sizeof(param_name_list) / sizeof(param_name_list[0]);
+
+    // Response variable pointers and element count
+    long *response_identity_id_list;
+    long *response_definition_id_list;
+    size_t response_element_count;
+
+    // Send the listDefinition request with the response variable pointers
+    rc = mc_parameter_service_list_definition(parameter_service, param_name_list, param_name_list_size,
+        &response_identity_id_list, &response_definition_id_list, &response_element_count);
+
+    // Error check
+    if(rc < 0)
+    {
+        // Print error message
+        printf("Error requesting list definition\n");
+
+        // Destroy the service
+        mc_parameter_service_destroy(&parameter_service);
+
+        // Return the error code
+        return rc;
+    }
+
+    // Print values for fetched parameters
+    for(size_t i = 0; i < response_element_count; i++)
+    {
+        printf("Param %s has identity id %ld and definition id %ld\n",
+        param_name_list[i], response_identity_id_list[i], response_definition_id_list[i]);
+    }
+
+    // Destroy the service
+    mc_parameter_service_destroy(&parameter_service);
+
+    return 0;
+}
+
+
+//  --------------------------------------------------------------------------
+//  Demonstrate the listDefinition operation with one parameter per request
+
+int
+demo_parameter_service_get_definition(char *hostname, char *provider_port, char *consumer_port)
+{
+    // Verbosity
+    printf("\n\nDemonstrate the listDefinition operation with one parameter per request:\n\n");
+
+    // The response error code
+    int rc;
+
+    // Create the Parameter service
+    mc_parameter_service_t *parameter_service = mc_parameter_service_new(hostname, provider_port, consumer_port);
+
+    // A list of parameter names, each will be requested individually instead of in bulk as in demo_parameter_service_list_definition
+    char *param_name_list[] = {
+        "OSVersion",            // Version of the OS            1
+        "attitudeQuatA",        // Quaternion                   3
+        "attitudeQuatB",        // Quaternion                   4
+        "attitudeQuatC",        // Quaternion                   5
+        "attitudeQuatD",        // Quaternion                   6
+        "CADC0884",             // I_PD1_THETA                891
+        "CADC0886",             // I_PD2_THETA                893
+        "CADC0888",             // I_PD3_THETA                895
+        "CADC0890",             // I_PD4_THETA                897
+        "CADC0892",             // I_PD5_THETA                899
+        "CADC0894"              // I_PD6_THETA                901
+    };
+
+    // Calculate size of array
+    size_t param_name_list_size = sizeof(param_name_list) / sizeof(param_name_list[0]);
+
+    // Response variable pointers and element count
+    long response_identity_id;
+    long response_definition_id;
+
+    for(size_t i = 0; i < param_name_list_size; i++)
+    {
+        // Send the listDefinition request for a single parameter
+        rc = mc_parameter_service_get_definition(parameter_service, param_name_list[i], &response_identity_id, &response_definition_id);
+
+        // Error Checking
+        if(rc != 0)
+        {
+            printf("Error requesting list definition for param %s: \n", param_name_list[i]);
+        }
+        else // No errors
+        {
+            // Print response result
+            printf("Param %s has identity id %ld and definition id %ld\n",
+                param_name_list[i], response_identity_id, response_definition_id);
+        }
+    }
+
+    // Destroy the service
+    mc_parameter_service_destroy(&parameter_service);
+
+    return 0;
+}
+
+
+//  --------------------------------------------------------------------------
 //  Demonstrate the getValue operation with multiple parameters in a single request
 
 int
@@ -176,6 +327,7 @@ demo_parameter_service_get_values(char *hostname, char *provider_port, char *con
     // Calculate size of array
     size_t param_inst_ids_size = sizeof(param_inst_ids) / sizeof(param_inst_ids[0]);
 
+    // Response variable pointers and element count
     union mal_attribute_t *response_mal_attributes;
     unsigned char *response_mal_attributes_tags;
     size_t response_mal_attributes_count;
@@ -188,7 +340,7 @@ demo_parameter_service_get_values(char *hostname, char *provider_port, char *con
     if(rc < 0)
     {
         // Print error message
-        printf("Error fetching parameter values\n");
+        printf("Error requesting parameter values\n");
 
         // Destroy the service
         mc_parameter_service_destroy(&parameter_service);
@@ -203,7 +355,7 @@ demo_parameter_service_get_values(char *hostname, char *provider_port, char *con
     union mal_attribute_t attr;
 
     // Print values for fetched parameters
-    for(int i = 0; i < response_mal_attributes_count; i++)
+    for(size_t i = 0; i < response_mal_attributes_count; i++)
     {
         // Set the fetched attribute variables
         param_id = param_inst_ids[i];
@@ -319,7 +471,7 @@ demo_parameter_service_get_value(char *hostname, char *provider_port, char *cons
     // Error check
     if(rc < 0)
     {
-        printf("Error fetching parameter: OS Version\n");
+        printf("Error requesting parameter: OS Version\n");
     }
     else
     {
@@ -347,7 +499,7 @@ demo_parameter_service_get_value(char *hostname, char *provider_port, char *cons
     // Error check
     if(rc < 0)
     {
-        printf("Error fetching parameter: OS Version\n");
+        printf("Error requesting parameter: OS Version\n");
     }
     else
     {
@@ -374,7 +526,7 @@ demo_parameter_service_get_value(char *hostname, char *provider_port, char *cons
 
     if(rc != 0)
     {
-        printf("Error fetching parameters: Quaterions\n");
+        printf("Error requesting parameter: Quaterions\n");
     }
     else
     {
