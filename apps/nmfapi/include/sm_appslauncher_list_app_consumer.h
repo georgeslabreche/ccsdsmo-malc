@@ -18,7 +18,6 @@ extern "C" {
 //  This API is a draft, and may change without notice.
 #ifdef NMFAPI_BUILD_DRAFT_API
 #define SM_APPSLAUNCHER_LIST_APP_CONSUMER_URI "sm/appslauncher/listApp/consumer"  // The consumer URI for the listApp operation
-#define SM_APPSLAUNCHER_LIST_APP_CONSUMER_MAX_APPS_COUNT 250  // The maximum number of installed apps
 
 //  *** Draft method, for development use, may change without warning ***
 //  Create a consumer object for the listApp operation
@@ -31,54 +30,9 @@ NMFAPI_EXPORT void
     sm_appslauncher_list_app_consumer_destroy (sm_appslauncher_list_app_consumer_t **self_p);
 
 //  *** Draft method, for development use, may change without warning ***
-//  Set the log level
+//  Clear the response variables
 NMFAPI_EXPORT void
-    sm_appslauncher_list_app_consumer_set_log_level (sm_appslauncher_list_app_consumer_t *self, int level);
-
-//  *** Draft method, for development use, may change without warning ***
-//  Get the app names MAL message field
-NMFAPI_EXPORT char **
-    sm_appslauncher_list_app_consumer_get_field_app_names (sm_appslauncher_list_app_consumer_t *self);
-
-//  *** Draft method, for development use, may change without warning ***
-//  Set the app names MAL message field
-NMFAPI_EXPORT void
-    sm_appslauncher_list_app_consumer_set_field_app_names (sm_appslauncher_list_app_consumer_t *self, char **app_names);
-
-//  *** Draft method, for development use, may change without warning ***
-//  Get the size of the app names MAL message field
-NMFAPI_EXPORT size_t
-    sm_appslauncher_list_app_consumer_get_field_app_names_size (sm_appslauncher_list_app_consumer_t *self);
-
-//  *** Draft method, for development use, may change without warning ***
-//  Set the size of the app names MAL message field
-NMFAPI_EXPORT void
-    sm_appslauncher_list_app_consumer_set_field_app_names_size (sm_appslauncher_list_app_consumer_t *self, size_t app_names_size);
-
-//  *** Draft method, for development use, may change without warning ***
-//  Get the category MAL message field
-NMFAPI_EXPORT char *
-    sm_appslauncher_list_app_consumer_get_field_category (sm_appslauncher_list_app_consumer_t *self);
-
-//  *** Draft method, for development use, may change without warning ***
-//  Set the category MAL message field
-NMFAPI_EXPORT void
-    sm_appslauncher_list_app_consumer_set_field_category (sm_appslauncher_list_app_consumer_t *self, char *category);
-
-//  *** Draft method, for development use, may change without warning ***
-//  Get response variable for appsInstIds
-NMFAPI_EXPORT long *
-    sm_appslauncher_list_app_consumer_get_response_apps_inst_ids (sm_appslauncher_list_app_consumer_t *self);
-
-//  *** Draft method, for development use, may change without warning ***
-//  Get response variable for running apps
-NMFAPI_EXPORT bool *
-    sm_appslauncher_list_app_consumer_get_response_apps_running (sm_appslauncher_list_app_consumer_t *self);
-
-//  *** Draft method, for development use, may change without warning ***
-//  Get response variable for number of apps
-NMFAPI_EXPORT size_t
-    sm_appslauncher_list_app_consumer_get_response_apps_count (sm_appslauncher_list_app_consumer_t *self);
+    sm_appslauncher_list_app_consumer_response_clear (sm_appslauncher_list_app_consumer_t *self);
 
 //  *** Draft method, for development use, may change without warning ***
 //  Lock the mutex
@@ -93,9 +47,59 @@ NMFAPI_EXPORT void
     sm_appslauncher_list_app_consumer_mutex_unlock (sm_appslauncher_list_app_consumer_t *self);
 
 //  *** Draft method, for development use, may change without warning ***
-//  Initialize the consumer actor
+//  Create and initialize the actor
 NMFAPI_EXPORT void
     sm_appslauncher_list_app_consumer_actor_init (sm_appslauncher_list_app_consumer_t *self);
+
+//  *** Draft method, for development use, may change without warning ***
+//  Get response variable for appsInstIds
+NMFAPI_EXPORT long *
+    sm_appslauncher_list_app_consumer_get_response_apps_inst_id_list (sm_appslauncher_list_app_consumer_t *self);
+
+//  *** Draft method, for development use, may change without warning ***
+//  Get response variable for running apps
+NMFAPI_EXPORT bool *
+    sm_appslauncher_list_app_consumer_get_response_apps_inst_running_list (sm_appslauncher_list_app_consumer_t *self);
+
+//  *** Draft method, for development use, may change without warning ***
+//  Get response variable for number of apps
+NMFAPI_EXPORT size_t
+    sm_appslauncher_list_app_consumer_get_response_element_count (sm_appslauncher_list_app_consumer_t *self);
+
+//  *** Draft method, for development use, may change without warning ***
+//  Get error code from processing the response
+NMFAPI_EXPORT int
+    sm_appslauncher_list_app_consumer_get_response_error_code (sm_appslauncher_list_app_consumer_t *self);
+
+//  *** Draft method, for development use, may change without warning ***
+//  Get the app names MAL message field
+NMFAPI_EXPORT char **
+    sm_appslauncher_list_app_consumer_get_field_app_name_list (sm_appslauncher_list_app_consumer_t *self);
+
+//  *** Draft method, for development use, may change without warning ***
+//  Set the app names MAL message field
+NMFAPI_EXPORT void
+    sm_appslauncher_list_app_consumer_set_field_app_name_list (sm_appslauncher_list_app_consumer_t *self, char **app_name_list);
+
+//  *** Draft method, for development use, may change without warning ***
+//  Get the size of the app names MAL message field
+NMFAPI_EXPORT size_t
+    sm_appslauncher_list_app_consumer_get_field_app_name_list_size (sm_appslauncher_list_app_consumer_t *self);
+
+//  *** Draft method, for development use, may change without warning ***
+//  Set the size of the app names MAL message field
+NMFAPI_EXPORT void
+    sm_appslauncher_list_app_consumer_set_field_app_name_list_size (sm_appslauncher_list_app_consumer_t *self, size_t app_name_list_size);
+
+//  *** Draft method, for development use, may change without warning ***
+//  Get the category MAL message field
+NMFAPI_EXPORT char *
+    sm_appslauncher_list_app_consumer_get_field_category (sm_appslauncher_list_app_consumer_t *self);
+
+//  *** Draft method, for development use, may change without warning ***
+//  Set the category MAL message field
+NMFAPI_EXPORT void
+    sm_appslauncher_list_app_consumer_set_field_category (sm_appslauncher_list_app_consumer_t *self, char *category);
 
 #endif // NMFAPI_BUILD_DRAFT_API
 //  @end

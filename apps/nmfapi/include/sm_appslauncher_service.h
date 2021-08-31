@@ -29,15 +29,10 @@ NMFAPI_EXPORT void
     sm_appslauncher_service_destroy (sm_appslauncher_service_t **self_p);
 
 //  *** Draft method, for development use, may change without warning ***
-//  Set the log level
-NMFAPI_EXPORT void
-    sm_appslauncher_service_set_log_level (sm_appslauncher_service_t *self, int level);
-
-//  *** Draft method, for development use, may change without warning ***
 //  The listApp operation allows a consumer to request the object instance identifiers
 //  of the Apps objects and running status for an app name or for a certain app category
-NMFAPI_EXPORT void
-    sm_appslauncher_service_list_app (sm_appslauncher_service_t *self, char **app_names, size_t app_names_size, char *category, long **response_apps_inst_ids, bool **response_apps_running, size_t *response_apps_count);
+NMFAPI_EXPORT int
+    sm_appslauncher_service_list_app (sm_appslauncher_service_t *self, char **app_name_list, size_t app_name_list_size, char *category, long **response_apps_inst_id_list, bool **response_apps_inst_running_list, size_t *response_element_count);
 
 #endif // NMFAPI_BUILD_DRAFT_API
 //  @end

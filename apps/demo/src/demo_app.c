@@ -48,7 +48,7 @@ demo_parameter_service_get_value(char *hostname, char *provider_port, char *cons
 
 
 //  --------------------------------------------------------------------------
-//  The main program function
+//  The main program function for this demonstration app
 
 int main (int argc, char *argv [])
 {
@@ -61,7 +61,10 @@ int main (int argc, char *argv [])
     // Only log errors by default
     int log_level = CLOG_ERROR_LEVEL;
 
-    // Process command arguments
+
+    // --------------------------------------------------------------------------
+    // Parse the command arguments
+
     int argn;
     for (argn = 1; argn < argc; argn++) {
         if (streq (argv [argn], "--help")
@@ -103,14 +106,28 @@ int main (int argc, char *argv [])
         return 1;
     }
 
-    // Set log levels
+
+    // --------------------------------------------------------------------------
+    // Set the log levels
+
+    // MAL TCP log level
     maltcp_set_log_level(log_level);
+
+    // AppsLauncher service log level
+    sm_appslauncher_service_set_log_level(log_level);
+    sm_appslauncher_list_app_consumer_set_log_level(log_level);
+
+    // Parameter service log levels
     mc_parameter_service_set_log_level(log_level);
     mc_parameter_list_definition_consumer_set_log_level(log_level);
     mc_parameter_get_value_consumer_set_log_level(log_level);
 
+
+    // --------------------------------------------------------------------------
+    // Invoke the demonstration functions
+
     // Demonstrate the listApp operation
-    //demo_appslauncher_service_list_app(argv[argv_index_host], argv[argv_index_pport], argv[argv_index_cport]);
+    demo_appslauncher_service_list_app(argv[argv_index_host], argv[argv_index_pport], argv[argv_index_cport]);
 
     // Demonstrate the listDefinition operation with multiple parameters in a single request
     demo_parameter_service_list_definition(argv[argv_index_host], argv[argv_index_pport], argv[argv_index_cport]);
@@ -124,6 +141,12 @@ int main (int argc, char *argv [])
     // Demonstrate the getValue operation with one parameter per request
     demo_parameter_service_get_value(argv[argv_index_host], argv[argv_index_pport], argv[argv_index_cport]);
 
+
+    // --------------------------------------------------------------------------
+    // Demonstration completed
+
+    printf("\n\nDemonstration completed.\n\n");
+
     return 0;
 }
 
@@ -134,26 +157,32 @@ int main (int argc, char *argv [])
 int
 demo_appslauncher_service_list_app(char *hostname, char *provider_port, char *consumer_port)
 {
+    // Verbosity
+    printf("\n\nDemonstrate the listApp operation:\n\n");
+
     // Create the AppsLauncher service
     sm_appslauncher_service_t *appslauncher_service = sm_appslauncher_service_new(hostname, provider_port, consumer_port);
 
     // Request parameters
-    char *app_names[] = {"*"};
+    char *app_name_list[] = {"*"};
     char *category = "*";
+
+    // Calculate size of app_name_list array
+    size_t app_name_list_size = sizeof(app_name_list) / sizeof(app_name_list[0]);
     
     // Request response variables
-    long *response_apps_ids;
-    bool *response_apps_running;
-    size_t response_apps_count;
+    long *response_apps_inst_id_list;
+    bool *response_apps_inst_running_list;
+    size_t response_element_count;
 
     // Send the listApp request with the response variable pointers
-    sm_appslauncher_service_list_app(appslauncher_service, app_names, 1, category,
-        &response_apps_ids, &response_apps_running, &response_apps_count);
+    sm_appslauncher_service_list_app(appslauncher_service, app_name_list, app_name_list_size, category,
+        &response_apps_inst_id_list, &response_apps_inst_running_list, &response_element_count);
 
     // Print the request's response variable values
-    for(size_t i = 0; i < response_apps_count; i++)
+    for(size_t i = 0; i < response_element_count; i++)
     {
-        printf("App #%ld running status is %d\n", response_apps_ids[i], response_apps_running[i]);
+        printf("App #%ld running status is %d\n", response_apps_inst_id_list[i], response_apps_inst_running_list[i]);
     }
 
     // Destroy the service
@@ -222,7 +251,7 @@ demo_parameter_service_list_definition(char *hostname, char *provider_port, char
     for(size_t i = 0; i < response_element_count; i++)
     {
         printf("Param %s has identity id %ld and definition id %ld\n",
-        param_name_list[i], response_identity_id_list[i], response_definition_id_list[i]);
+            param_name_list[i], response_identity_id_list[i], response_definition_id_list[i]);
     }
 
     // Destroy the service

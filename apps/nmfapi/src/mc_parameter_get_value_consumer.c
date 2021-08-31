@@ -452,7 +452,7 @@ mc_parameter_get_value_consumer_response (void *self, mal_ctx_t *mal_ctx,
         clog_error(mc_parameter_get_value_consumer_logger,
             "mc_parameter_get_value_consumer_response: error decode_0 for paramValDetails\n");
     }
-    else
+    else // No error, allocate memory for response lists
     {
         // Get element count
         consumer->response_element_count = mc_parameter_parametervaluedetails_list_get_element_count(param_value_details);
