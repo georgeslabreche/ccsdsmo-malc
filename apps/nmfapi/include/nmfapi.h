@@ -1,16 +1,20 @@
 /*  =========================================================================
-    demo - Demo application using MAL C API
+    nmfapi - NMF Service API
 
     The MIT License (MIT)
     =========================================================================
 */
 
-#ifndef DEMO_H_H_INCLUDED
-#define DEMO_H_H_INCLUDED
+#ifndef NMFAPI_H_H_INCLUDED
+#define NMFAPI_H_H_INCLUDED
 
 //  Include the project library file
-#include "demo_library.h"
+#include "nmfapi_library.h"
 
-//  Add your own public definitions here, if you need them
+void
+mc_parameter_service_set_log_level (int level);
+
+void
+mc_parameter_get_value_consumer_set_log_level (int level);
 
 #endif

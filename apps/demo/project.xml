@@ -49,6 +49,7 @@
     <use project = "maltcp" />
     <use project = "malactor" />
     <use project = "generated_areas" />
+    <use project = "nmfapi"/>
 
     <!-- Header Files
          name := The name the header file to include without file ending
@@ -63,8 +64,8 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
 
-    <class name = "demo_app_consumer" selftest = "0" />
-    <main name = "demo_app">Demo App Main</main>
+    <class name = "demo_app_utils" selftest = "0" />
+    <main name = "demo_app">Demo App</main>
     
     <!-- Targets -->
     <target name = "rpi" />

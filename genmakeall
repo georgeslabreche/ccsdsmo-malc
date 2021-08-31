@@ -73,6 +73,10 @@ genmake_apps() {
   ./genmake $*
   check
 
+  cd $PROGDIR/apps/nmfapi;
+  ./genmake $*
+  check
+
   cd $PROGDIR/apps/demo;
   ./genmake $*
   check

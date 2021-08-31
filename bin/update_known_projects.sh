@@ -12,7 +12,7 @@ useproject() {
 " "$XML" || exit
 }
 
-useproject "util" "clog_test" "UTIL"
+useproject "malutil" "clog_test" "UTIL"
 useproject "malattributes" "mal_string_test" "MALATTRIBUTES"
 useproject "mal" "mal_ctx_test" "MAL"
 useproject "malbinary" "malbinary_encoder_test" "MALBINARY"
@@ -22,3 +22,4 @@ useproject "maltcp" "maltcp_ctx_test" "MALTCP"
 useproject "testarea" "testarea_testservice_testcomposite_test" "TESTAREA"
 useproject "malactor" "mal_actor_test" "MALACTOR"
 useproject "generated_areas" "generated_areas_test" "GENERATED_AREAS"
+useproject "nmfapi" "nmf_api_test" "NMFAPI"
