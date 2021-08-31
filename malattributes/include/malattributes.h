@@ -120,6 +120,16 @@ typedef double mal_duration_t;
 #define MAL_FINETIME_LIST_SHORT_FORM 0x1000001FFFFEFL
 #define MAL_URI_LIST_SHORT_FORM 0x1000001FFFFEEL
 
+// There's a difference between attribute short form values and tag values that seems to be mixed up in the NanoSat MO Framework (NMF).
+// Some responses to a request interaction includes the attribute types' short form values which are then decoded as if they were tag values.
+// The decoding in question happens in the malbinary project's malbinary_decoder_decode_attribute function.
+// It could be that NMF is MAL response messages includes the attribute short form values instead of the tag values.
+// As a workaround, defining this macro name will increment all tag values by one thus decoding them as short form values instead of tags.
+//
+// See section 5.2.1. of document CCSDS 524.2-R-1 or the GitHub Issue discussed here: https://github.com/CNES/ccsdsmo-malc/issues/56
+// This is a workaround and by no means a permanent fix.
+#define MAL_ATTRIBUTES_NMF_TAG_HOTFIX 1
+
 //  Public API classes
 #include "mal_blob.h"
 #include "mal_string.h"
