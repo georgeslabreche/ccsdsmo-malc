@@ -16,10 +16,24 @@
 
 #include "nmfapi_classes.h"
 
+
+//  --------------------------------------------------------------------------
+//  Logging
+
 // The class loggerp
 clog_logger_t mc_parameter_service_logger = CLOG_DEBUG_LEVEL;
 
+//  Set the log level
+void
+mc_parameter_service_set_log_level (int level)
+{
+    mc_parameter_service_logger = level;
+}
+
+
+//  --------------------------------------------------------------------------
 //  Structure of our class
+
 struct _mc_parameter_service_t {
     char *hostname;
     char *provider_port;
@@ -30,7 +44,7 @@ struct _mc_parameter_service_t {
 
 // The consumers
 mc_parameter_get_value_consumer_t *get_value_consumer;
-//mc_parameter_list_definition_consumer_t *list_definition_consumer;
+mc_parameter_list_definition_consumer_t *list_definition_consumer;
 
 
 //  --------------------------------------------------------------------------
@@ -70,11 +84,21 @@ mc_parameter_service_destroy (mc_parameter_service_t **self_p)
 
         // Free class properties here
 
-        // Destroy the getValue consumer
-        if(get_value_consumer)
+        // Destroy the listDefinition consumer
+        if(list_definition_consumer) // FIXME: will response be cleared because consumer gets destroyed in mc_parameter_service_list_definition?
         {
             // Clear the response variables
-            mc_parameter_get_value_consumer_response_clear(&get_value_consumer);
+            mc_parameter_list_definition_consumer_response_clear(list_definition_consumer);
+
+            // Destroy the consumer
+            mc_parameter_list_definition_consumer_destroy(&list_definition_consumer);
+        }
+
+        // Destroy the getValue consumer
+        if(get_value_consumer) // FIXME: will response be cleared because consumer gets destroyed in mc_parameter_service_get_values?
+        {
+            // Clear the response variables
+            mc_parameter_get_value_consumer_response_clear(get_value_consumer);
 
             // Destroy the consumer
             mc_parameter_get_value_consumer_destroy(&get_value_consumer);
@@ -122,13 +146,118 @@ mc_parameter_service_consumer_ctx_create (mc_parameter_service_t *self)
 
 
 //  --------------------------------------------------------------------------
-//  Getters and Setters
+//  The listDefinition operation allows a consumer to request the latest object instance identifiers
+//  of the ParameterIdentity and ParameterDefinition objects for the supported parameters of the provider
 
-//  Set the log level
-void
-mc_parameter_service_set_log_level (int level)
+int
+mc_parameter_service_list_definition (mc_parameter_service_t *self, char **param_name_list, size_t param_name_list_size,
+    long **response_identity_id_list, long **response_definition_id_list, size_t *response_element_count)
 {
-    mc_parameter_service_logger = level;
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_list_definition()\n");
+
+    // The return code
+    int rc;
+
+    // Create the consumer context / listening socket
+    mc_parameter_service_consumer_ctx_create(self);
+
+    // Create the getValue consumer
+    list_definition_consumer = mc_parameter_list_definition_consumer_new(self->mal_ctx, self->provider_uri);
+
+    // Set the param names MAL message field.
+    mc_parameter_list_definition_consumer_set_field_param_name_list(list_definition_consumer, param_name_list);
+
+    // Set the param size MAL message field.
+    mc_parameter_list_definition_consumer_set_field_param_name_list_size(list_definition_consumer, param_name_list_size);
+
+    // Create and initialize the consumer actor
+    mc_parameter_list_definition_consumer_actor_init(list_definition_consumer);
+
+    // Start the request response listener
+    mal_ctx_start(self->mal_ctx);
+
+    // Lock the consumer mutex which has already been locked at the beginning of this function
+    // The initial mutex lock will only be released after the request finalize function has finished executing
+    // We do this so that the response variables can be set and return synchronously
+    mc_parameter_list_definition_consumer_mutex_lock(list_definition_consumer);
+
+    // Set the response pointers
+    *response_identity_id_list = mc_parameter_list_definition_consumer_get_response_identity_id_list(list_definition_consumer);
+    *response_definition_id_list = mc_parameter_list_definition_consumer_get_response_definition_id_list(list_definition_consumer);
+    *response_element_count = mc_parameter_list_definition_consumer_get_response_element_count(list_definition_consumer);
+
+    // Set the return code as the error code of the consumer response
+    rc = mc_parameter_list_definition_consumer_get_response_error_code(list_definition_consumer);
+
+    // Unlock the consumer mutex
+    mc_parameter_list_definition_consumer_mutex_unlock(list_definition_consumer);
+
+    // Destroy the getValue consumer
+    mc_parameter_list_definition_consumer_destroy(&list_definition_consumer);
+
+    // Destroy the consumer context / listening socket
+    mal_ctx_destroy(&self->mal_ctx);
+
+    // Return the return code
+    return rc;
+}
+
+
+//  --------------------------------------------------------------------------
+//  The listDefinition operation allows a consumer to request the latest object instance identifiers
+//  of the ParameterIdentity and ParameterDefinition objects for the supported parameters of the provider
+
+int
+mc_parameter_service_get_definition (mc_parameter_service_t *self, char *param_name, long *response_identity_id, long *response_definition_id)
+{
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_definition()\n");
+
+    // The return code
+    int rc;
+
+    // Create long list with single element
+    char *param_name_list[] = {param_name};
+
+    // The response pointers and element count variable
+    long *response_identity_id_list;
+    long *response_definition_id_list;
+    size_t response_element_count;
+
+    // Invoke the list_definitions list
+    rc = mc_parameter_service_list_definition (self, param_name_list, 1,
+        &response_identity_id_list, &response_definition_id_list, &response_element_count);
+
+    // error check
+    if (rc < 0)
+    {
+        // Log the error
+        clog_error(mc_parameter_service_logger, "mc_parameter_service_get_definition: error requesting listDefinition\n");
+
+        // Return error code
+        return rc;
+    }
+
+    // Check that element count is as expected
+    if(response_element_count == 1)
+    {
+        *response_identity_id = response_identity_id_list[0];
+        *response_definition_id = response_definition_id_list[0];
+    }
+    else
+    {
+        // Log the error
+        clog_error(mc_parameter_service_logger, 
+            "mc_parameter_service_get_definition: retrieved unexpected element count, expected %d but was %d\n",
+            1, response_element_count);
+        
+        // Set the return code to an error value
+        rc = -1;
+    }
+
+    // Return the return code
+    return rc;
 }
 
 
@@ -219,7 +348,7 @@ mc_parameter_service_get_value (mc_parameter_service_t *self, long param_inst_id
     if (rc < 0)
     {
         // Log the error
-        clog_error(mc_parameter_service_logger, "mc_parameter_service_get_value: error while fetching value\n");
+        clog_error(mc_parameter_service_logger, "mc_parameter_service_get_value: error requestion getValue\n");
 
         // Return error code
         return rc;
@@ -1127,43 +1256,3 @@ mc_parameter_service_get_value_uri (mc_parameter_service_t *self, long param_ins
     // Return the return code
     return rc;
 }
-
-
-//  --------------------------------------------------------------------------
-//  The listDefinition operation allows a consumer to request the latest object instance identifiers
-//  of the ParameterIdentity and ParameterDefinition objects for the supported parameters of the provider
-
-#if 0
-int
-mc_parameter_service_list_definitions (mc_parameter_service_t *self, char **param_names, size_t param_size)
-{
-    // Make sure that the listDefinition consumer has been initialized
-    assert(list_definition_consumer);
-
-    // Set the param names MAL message field.
-    mc_parameter_list_definition_consumer_set_field_param_names(list_definition_consumer, param_names);
-
-    // Set the param size MAL message field.
-    mc_parameter_list_definition_consumer_set_field_param_size(list_definition_consumer, param_size);
-
-    // Create the consumer actor that registers callback functions
-    // TODO: move to constructor?
-    mc_parameter_list_definition_consumer_actor_create(list_definition_consumer, self->mal_ctx);
-
-    // Start the request interaction;
-    mal_ctx_start(self->mal_ctx);
-}
-
-
-
-//  --------------------------------------------------------------------------
-//  The listDefinition operation allows a consumer to request the latest object instance identifiers
-//  of the ParameterIdentity and ParameterDefinition objects for the supported parameters of the provider
-
-int
-mc_parameter_service_list_definition (mc_parameter_service_t *self, char *param_name)
-{
-    char *param_names[] = {param_name};
-    mc_parameter_service_list_definitions(self, param_names, 1);
-}
-#endif

@@ -28,6 +28,18 @@ NMFAPI_EXPORT void
     mc_parameter_service_destroy (mc_parameter_service_t **self_p);
 
 //  *** Draft method, for development use, may change without warning ***
+//  The listDefinition operation allows a consumer to request the latest object instance identifiers
+//  of the ParameterIdentity and ParameterDefinition objects for the supported parameters of the provider
+NMFAPI_EXPORT int
+    mc_parameter_service_list_definition (mc_parameter_service_t *self, char **param_name_list, size_t param_name_list_size, long **response_identity_id_list, long **response_definition_id_list, size_t *response_element_count);
+
+//  *** Draft method, for development use, may change without warning ***
+//  The listDefinition operation allows a consumer to request the latest object instance identifiers
+//  of the ParameterIdentity and ParameterDefinition objects for the supported parameters of the provider
+NMFAPI_EXPORT int
+    mc_parameter_service_get_definition (mc_parameter_service_t *self, char *param_name, long *response_identity_id, long *response_definition_id);
+
+//  *** Draft method, for development use, may change without warning ***
 //  The getValue operation returns the latest received value for the requested parameters
 NMFAPI_EXPORT int
     mc_parameter_service_get_values (mc_parameter_service_t *self, long *param_inst_ids, size_t param_inst_ids_size, union mal_attribute_t **response_mal_attributes, unsigned char **response_mal_attributes_tags, size_t *response_mal_attributes_count);
@@ -144,18 +156,6 @@ NMFAPI_EXPORT int
 //  Sets the requested value with the expectation that it is of type MAL URI
 NMFAPI_EXPORT int
     mc_parameter_service_get_value_uri (mc_parameter_service_t *self, long param_inst_id, char **value);
-
-//  *** Draft method, for development use, may change without warning ***
-//  The listDefinition operation allows a consumer to request the latest object instance identifiers
-//  of the ParameterIdentity and ParameterDefinition objects for the supported parameters of the provider
-NMFAPI_EXPORT int
-    mc_parameter_service_list_definitions (mc_parameter_service_t *self, char **param_names, size_t size);
-
-//  *** Draft method, for development use, may change without warning ***
-//  The listDefinition operation allows a consumer to request the latest object instance identifiers
-//  of the ParameterIdentity and ParameterDefinition objects for the supported parameters of the provider
-NMFAPI_EXPORT int
-    mc_parameter_service_list_definition (mc_parameter_service_t *self, char *param_name);
 
 #endif // NMFAPI_BUILD_DRAFT_API
 //  @end

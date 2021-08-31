@@ -14,53 +14,101 @@
 
 #include "nmfapi_classes.h"
 
+
+//  --------------------------------------------------------------------------
+//  Logging
+
+//  The class logger
+clog_logger_t mc_parameter_list_definition_consumer_logger = CLOG_DEBUG_LEVEL;
+
+//  Set the log level
+void
+mc_parameter_list_definition_consumer_set_log_level (int level)
+{
+    mc_parameter_list_definition_consumer_logger = level;
+}
+
+
+//  --------------------------------------------------------------------------
 //  Structure of our class
 
 struct _mc_parameter_list_definition_consumer_t {
+    mal_ctx_t *mal_ctx;
     mal_uri_t *provider_uri;
-    mal_message_args_t *mal_message_args; // TODO: Move to mal_util?
-    mal_actor_t *consumer_actor; // The consumer actor
-    char **param_names;
-    size_t param_size;
+    mal_actor_t *actor;
+    char **param_name_list;
+    size_t param_name_list_size;
+    long *response_identity_id_list;
+    long *response_definition_id_list;
+    size_t response_element_count;
+    int response_error_code;
 };
+
+
+//  --------------------------------------------------------------------------
+//  Mutex
+
+pthread_mutex_t mc_parameter_list_definition_consumer_mutex;
+
+
+//  --------------------------------------------------------------------------
+//  Declare private functions
+
+int
+mc_parameter_list_definition_consumer_initialize (void *self, mal_actor_t *mal_actor);
+
+int
+mc_parameter_list_definition_consumer_finalize (void *self, mal_actor_t *mal_actor);
+
+int
+mc_parameter_list_definition_consumer_response (void *self, mal_ctx_t *mal_ctx,
+    mal_endpoint_t *mal_endpoint, mal_message_t *message);
+
 
 //  --------------------------------------------------------------------------
 //  Create a new mc_parameter_list_definition_consumer
 
 mc_parameter_list_definition_consumer_t *
-mc_parameter_list_definition_consumer_new (mal_uri_t *provider_uri)
+mc_parameter_list_definition_consumer_new (mal_ctx_t *mal_ctx, mal_uri_t *provider_uri)
 {
+    // Log debug
+    clog_debug(mc_parameter_list_definition_consumer_logger, "mc_parameter_list_definition_consumer_new()\n");
+
     mc_parameter_list_definition_consumer_t *self = (mc_parameter_list_definition_consumer_t *) zmalloc (sizeof (mc_parameter_list_definition_consumer_t));
     assert (self);
 
     //  Initialize class properties here
+    self->mal_ctx = mal_ctx;
     self->provider_uri = provider_uri;
-    self->mal_message_args = mal_message_args_new();
 
     return self;
 }
+
 
 //  --------------------------------------------------------------------------
 //  Destroy the mc_parameter_list_definition_consumer
 
 void
-mc_parameter_list_definition_consumer_destroy (mc_parameter_list_definition_consumer_t **self_p, mal_ctx_t *mal_ctx)
+mc_parameter_list_definition_consumer_destroy (mc_parameter_list_definition_consumer_t **self_p)
 {
+    clog_debug(mc_parameter_list_definition_consumer_logger, "mc_parameter_list_definition_consumer_destroy()\n");
+
     assert (self_p);
     if (*self_p) {
         mc_parameter_list_definition_consumer_t *self = *self_p;
         
         //  Free class properties here
 
-        // Destroy mal message args
-        mal_message_args_destroy(&self->mal_message_args);
+        // We do not invoke the clear response variables function here (i.e. mc_parameter_list_definition_consumer_response_clear)
+        // This is because we still want those variables to be available to the client even after the 
+        // mc_parameter_service's mc_parameter_service_get_values function is done executing.
+        // The reponse variables will be cleared when invoking mc_parameter_service's destructor.
 
-        // Destroy consumer actor (if it was created)
-        if(self->consumer_actor)
-        {
-            mal_actor_join(self->consumer_actor);
-            mal_actor_destroy(mal_ctx, &self->consumer_actor);
-        }
+        // Make sure the actor thread object is terminated before destroying it
+        mal_actor_join(self->actor);
+
+        // Destroy the actor object
+        mal_actor_destroy(self->mal_ctx, &self->actor);
 
         //  Free object itself
         free (self);
@@ -68,95 +116,142 @@ mc_parameter_list_definition_consumer_destroy (mc_parameter_list_definition_cons
     }
 }
 
-char **
-mc_parameter_list_definition_consumer_get_field_param_names (mc_parameter_list_definition_consumer_t *self)
+
+//  --------------------------------------------------------------------------
+//  Clear the response variables
+
+void
+mc_parameter_list_definition_consumer_response_clear (mc_parameter_list_definition_consumer_t *self)
 {
-    return self->param_names;
+    // Log debug
+    clog_debug(mc_parameter_list_definition_consumer_logger, "mc_parameter_list_definition_consumer_response_clear()\n");
+
+    if (self)
+    {
+        if (self->response_element_count > 0)
+        {
+            // Reset element count to zero
+            self->response_element_count = 0;
+
+            // Clear identity ids
+            free(self->response_identity_id_list);
+            self->response_identity_id_list = NULL;
+
+            // Clear definition ids
+            free(self->response_definition_id_list);
+            self->response_definition_id_list = NULL;
+        }
+    }
+}
+
+
+//  --------------------------------------------------------------------------
+// Thread operation for mutex locking and unlocking
+
+//  Lock the mutex
+//  A mutex is used to force a synchronous response despite the request being an asynchronous operation
+void
+mc_parameter_list_definition_consumer_mutex_lock (mc_parameter_list_definition_consumer_t *self)
+{
+    pthread_mutex_lock(&mc_parameter_list_definition_consumer_mutex);
+}
+
+//  Unlock the mutex
+//  A mutex is used to force a synchronous response despite the request being an asynchronous operation
+void
+mc_parameter_list_definition_consumer_mutex_unlock (mc_parameter_list_definition_consumer_t *self)
+{
+    pthread_mutex_unlock(&mc_parameter_list_definition_consumer_mutex);
+}
+
+
+//  --------------------------------------------------------------------------
+//  Create and initialize the actor
+void
+mc_parameter_list_definition_consumer_actor_init (mc_parameter_list_definition_consumer_t *self)
+{
+    mal_uri_t *consumer_uri = mal_ctx_create_uri(self->mal_ctx, MC_PARAMETER_LIST_DEFINITION_CONSUMER_URI);
+    self->actor = mal_actor_new(self->mal_ctx, consumer_uri, self,
+        mc_parameter_list_definition_consumer_initialize, mc_parameter_list_definition_consumer_finalize);
+}
+
+//  --------------------------------------------------------------------------
+//  Getters and Setters for the class variables
+
+char **
+mc_parameter_list_definition_consumer_get_field_param_name_list (mc_parameter_list_definition_consumer_t *self)
+{
+    return self->param_name_list;
 }
 
 void
-mc_parameter_list_definition_consumer_set_field_param_names (mc_parameter_list_definition_consumer_t *self, char **param_names)
+mc_parameter_list_definition_consumer_set_field_param_name_list (mc_parameter_list_definition_consumer_t *self, char **param_name_list)
 {
-    self->param_names = param_names;
+    self->param_name_list = param_name_list;
 }
 
 size_t
-mc_parameter_list_definition_consumer_get_field_param_size (mc_parameter_list_definition_consumer_t *self)
+mc_parameter_list_definition_consumer_get_field_param_name_list_size (mc_parameter_list_definition_consumer_t *self)
 {
-    return self->param_size;
+    return self->param_name_list_size;
 }
 
 void
-mc_parameter_list_definition_consumer_set_field_param_size (mc_parameter_list_definition_consumer_t *self, size_t param_size)
+mc_parameter_list_definition_consumer_set_field_param_name_list_size (mc_parameter_list_definition_consumer_t *self, size_t param_name_list_size)
 {
-    self->param_size = param_size;
+    self->param_name_list_size = param_name_list_size;
 }
 
+
+//  --------------------------------------------------------------------------
+//  Getters for response variables
+
+//  Get response variable for the identity ids
+long *
+mc_parameter_list_definition_consumer_get_response_identity_id_list (mc_parameter_list_definition_consumer_t *self)
+{
+    return self->response_identity_id_list;
+}
+
+//  Get response variable for the definition ids
+long *
+mc_parameter_list_definition_consumer_get_response_definition_id_list (mc_parameter_list_definition_consumer_t *self)
+{
+    return self->response_definition_id_list;
+}
+
+//  Get response variable for number elements
+size_t
+mc_parameter_list_definition_consumer_get_response_element_count (mc_parameter_list_definition_consumer_t *self)
+{
+    return self->response_element_count;
+}
+
+//  Get error code from processing the response
 int
-mc_parameter_list_definition_consumer_response (void *self, mal_ctx_t *mal_ctx,
-    mal_endpoint_t *mal_endpoint, mal_message_t *message)
+mc_parameter_list_definition_consumer_get_response_error_code (mc_parameter_list_definition_consumer_t *self)
 {
-    printf("mc_parameter_list_definition_consumer_response\n");
-
-    // The response code
-    int rc = 0;
-
-    // Cast to consumer type
-    mc_parameter_list_definition_consumer_t *consumer = (mc_parameter_list_definition_consumer_t *) self;
-
-    // Get the MAL message decoder
-    mal_decoder_t *decoder = mal_message_args_get_decoder(consumer->mal_message_args);
-
-    void *cursor = mal_decoder_new_cursor(decoder,
-        mal_message_get_body(message),
-        mal_message_get_body_offset(message) + mal_message_get_body_length(message),
-        mal_message_get_body_offset(message));
-
-    printf("mc_parameter_list_definition_consumer_response: offset=%d\n", mal_message_get_body_offset(message));
-
-    // Decode the response field
-    // The response shall contain a list of matching ParameterIdentity and ParameterDefinition object instance identifier pairs
-    // The returned list shall maintain the same order as the submitted list unless the wildcard value was included in the request
-    printf("mc_parameter_list_definition_consumer_response: decode objInstIds\n");
-
-    mc_objectinstancepair_list_t *object_instance_pair_list;
-    rc = mc_parameter_listdefinition_request_response_decode_0(cursor, decoder, &object_instance_pair_list);
-    mal_decoder_cursor_assert(decoder, cursor);
-
-    if (rc < 0)
-    {
-        // Destroy
-        mal_decoder_cursor_destroy(decoder, cursor);
-        mc_objectinstancepair_list_destroy(&object_instance_pair_list);
-        mal_message_destroy(&message, mal_ctx);
-
-        // Cleanup
-        mal_actor_term(consumer->consumer_actor);
-
-        return rc;
-    }
-
-    printf("mc_parameter_list_definition_consumer_response: get objInstIds content\n");
-    mc_objectinstancepair_t **content = mc_objectinstancepair_list_get_content(object_instance_pair_list);
-
-    mal_long_t obj_identity_instance_id;
-    mal_long_t obj_def_instance_id;
-    for (int i = 0; i < mc_objectinstancepair_list_get_element_count(object_instance_pair_list); i++)
-    {
-        obj_identity_instance_id = mc_objectinstancepair_get_objidentityinstanceid(content[i]);
-        obj_def_instance_id = mc_objectinstancepair_get_objdefinstanceid(content[i]);
-
-        printf("(%ld, %ld), \n", obj_identity_instance_id, obj_def_instance_id);
-    }
-
-    return rc;
+    return self->response_error_code;
 }
 
+
+//  --------------------------------------------------------------------------
+//  Private functions
+
+//  The consumer initialization function
 int
 mc_parameter_list_definition_consumer_initialize (void *self, mal_actor_t *mal_actor)
 {
-    // Initiate a request interaction
-    printf("mc_parameter_list_definition_consumer_initialize()\n");
+    // Log debug
+    clog_debug(mc_parameter_list_definition_consumer_logger, "mc_parameter_list_definition_consumer_initialize()\n");
+
+    // Cast self to consumer type
+    mc_parameter_list_definition_consumer_t *consumer = (mc_parameter_list_definition_consumer_t *) self;
+
+    // Lock the consumer mutex
+    // Use this mutex mechanism to force an synchronous response on an asynchronous request response mechanism
+    // The mutex will be unlocked at the end of the finalize function
+    mc_parameter_list_definition_consumer_mutex_lock(consumer);
 
     // The response code
     int rc = 0;
@@ -170,51 +265,59 @@ mc_parameter_list_definition_consumer_initialize (void *self, mal_actor_t *mal_a
         MC_PARAMETER_LISTDEFINITION_OPERATION_NUMBER,
         mc_parameter_list_definition_consumer_response);
 
-    mc_parameter_list_definition_consumer_t *consumer = (mc_parameter_list_definition_consumer_t *) self;
-    printf("mc_parameter_list_definition_consumer: provider URI: %s\n", consumer->provider_uri);
+    // Check for error
+    if(rc < 0)
+    {
+        // Log error and return error code
+        clog_error(mc_parameter_list_definition_consumer_logger,
+            "mc_parameter_list_definition_consumer_initialize: error register consumer request handler\n");
 
+        // Return the error code
+        return rc;
+    }
 
     // Build the request field
-    mal_identifier_list_t *param_name_mal_id_list = mal_identifier_list_new(consumer->param_size);
-    mal_identifier_t **param_names_content = mal_identifier_list_get_content(param_name_mal_id_list);
+    mal_identifier_list_t *param_name_mal_id_list = mal_identifier_list_new(consumer->param_name_list_size);
+    mal_identifier_t **content = mal_identifier_list_get_content(param_name_mal_id_list);
 
-    for(int i = 0; i < consumer->param_size; i++)
+    // Construct the message content
+    for(int i = 0; i < consumer->param_name_list_size; i++)
     {
-        param_names_content[i] = mal_identifier_new(consumer->param_names[i]);
+        content[i] = mal_identifier_new(consumer->param_name_list[i]);
     }
 
     // Get the encoder
-    mal_encoder_t *encoder = mal_message_args_get_encoder(consumer->mal_message_args);
+    mal_encoder_t *encoder = malbinary_encoder_new(false);
 
     // Create a cursor
     void *cursor = mal_encoder_new_cursor(encoder);
 
     // Add encoding length for the field
-    printf("mc_parameter_list_definition_consumer: encoding_length_0 for paramNames\n");
+    clog_debug(mc_parameter_list_definition_consumer_logger,
+        "mc_parameter_list_definition_consumer_initialize: encoding_length_0 for paramNames\n");
+
     rc = mc_parameter_listdefinition_request_add_encoding_length_0(encoder, param_name_mal_id_list, cursor);
 
     if (rc < 0)
     {
+        // Log error
+        clog_error(mc_parameter_list_definition_consumer_logger,
+            "mc_parameter_list_definition_consumer_initialize: error encoding_length_0 for paramNames\n");
+
         // Destroy the MAL encoder cursor
         mal_encoder_cursor_destroy(encoder, cursor);
 
-        // Desstroy the field
+        // Destroy the field
         mal_identifier_list_destroy(&param_name_mal_id_list);
 
         return rc;
     }
 
     // Build the MAL Message that will contain the field
-    printf("mc_parameter_list_definition_consumer: new MAL message\n");
-    mal_message_t *message = mal_message_new(
-        mal_message_args_get_authentication_id(consumer->mal_message_args),
-        mal_message_args_get_qoslevel(consumer->mal_message_args),
-        mal_message_args_get_priority(consumer->mal_message_args),
-        mal_message_args_get_domain(consumer->mal_message_args),
-        mal_message_args_get_network_zone(consumer->mal_message_args),
-        mal_message_args_get_session(consumer->mal_message_args),
-        mal_message_args_get_session_name(consumer->mal_message_args),
-        mal_encoder_cursor_get_length(encoder, cursor));
+    clog_debug(mc_parameter_list_definition_consumer_logger,
+        "mc_parameter_list_definition_consumer_initialize: new MAL message\n");
+
+    mal_message_t *message = nmfapi_util_create_mal_message_request(encoder, cursor);
 
     // Initialize the MAL encoder cursor
     mal_encoder_cursor_init(
@@ -224,59 +327,200 @@ mc_parameter_list_definition_consumer_initialize (void *self, mal_actor_t *mal_a
         mal_message_get_body_offset(message));
 
     // Encode the request field
-    printf("mc_parameter_list_definition_consumer: encode 0 for paramNames\n");
-    rc = mc_parameter_listdefinition_request_encode_0(
-        cursor, encoder, param_name_mal_id_list);
-    
-    // Assert cursor
+    clog_debug(mc_parameter_list_definition_consumer_logger,
+        "mc_parameter_list_definition_consumer_initialize: encode_0 for paramNames\n");
+
+    rc = mc_parameter_listdefinition_request_encode_0(cursor, encoder, param_name_mal_id_list);
     mal_encoder_cursor_assert(encoder, cursor);
+
+    if (rc < 0)
+    {
+        // Log error
+        clog_error(mc_parameter_list_definition_consumer_logger,
+            "mc_parameter_list_definition_consumer_initialize: error encode_0 for paramNames\n");
+
+        // Destroy the MAL encoder cursor
+        mal_encoder_cursor_destroy(encoder, cursor);
+
+        // Destroy the field
+        mal_identifier_list_destroy(&param_name_mal_id_list);
+
+        return rc;
+    }
 
     // Destroy the MAL encoder cursor
     mal_encoder_cursor_destroy(encoder, cursor);
 
     // Send the request message
-    mc_parameter_getvalue_request(
+    clog_debug(mc_parameter_list_definition_consumer_logger,
+        "mc_parameter_list_definition_consumer_initialize: send getValue request message\n");
+
+    rc = mc_parameter_listdefinition_request(
         mal_actor_get_mal_endpoint(mal_actor), message, consumer->provider_uri);
+
+    if (rc < 0)
+    {
+        // Log error
+        clog_error(mc_parameter_list_definition_consumer_logger,
+            "mc_parameter_list_definition_consumer_initialize: error listDefinition request\n");
+    }
 
     // Destroy the field
     mal_identifier_list_destroy(&param_name_mal_id_list);
 
+    // Return the return code
     return rc;
 }
 
+
+//  The consumer finalization function
 int
 mc_parameter_list_definition_consumer_finalize (void *self, mal_actor_t *mal_actor)
 {
+    // Log debug
+    clog_debug(mc_parameter_list_definition_consumer_logger, "mc_parameter_list_definition_consumer_finalize()\n");
+
     // The response code
     int rc = 0;
 
+    // Cast consumer type
+    mc_parameter_list_definition_consumer_t *consumer = (mc_parameter_list_definition_consumer_t *) self;
+
+    // Stop the listening socket
     mal_ctx_t* mal_ctx = mal_actor_get_mal_ctx(mal_actor);
     mal_ctx_stop(mal_ctx);
+   
+    // Unlock the mutex
+    mc_parameter_list_definition_consumer_mutex_unlock(consumer);
 
+    // Return the return code
     return rc;
 }
 
 
-void
-mc_parameter_list_definition_consumer_actor_create (mc_parameter_list_definition_consumer_t *self, mal_ctx_t *mal_ctx)
+//  The consumer response function
+int
+mc_parameter_list_definition_consumer_response (void *self, mal_ctx_t *mal_ctx,
+    mal_endpoint_t *mal_endpoint, mal_message_t *message)
 {
-    mal_uri_t *consumer_uri = mal_ctx_create_uri(mal_ctx, MC_PARAMETER_LIST_DEFINITION_CONSUMER_URI);
+    // Log debug
+    clog_debug(mc_parameter_list_definition_consumer_logger, "mc_parameter_list_definition_consumer_response()\n");
 
-    self->consumer_actor = mal_actor_new(
-        mal_ctx, consumer_uri, self,
-        mc_parameter_list_definition_consumer_initialize, mc_parameter_list_definition_consumer_finalize);
-}
+    // The response fields
+    mc_objectinstancepair_t **content;
+    mc_objectinstancepair_list_t *object_instance_pair_list;
 
+    // Cast consumer type
+    mc_parameter_list_definition_consumer_t *consumer = (mc_parameter_list_definition_consumer_t *) self;
 
-//  --------------------------------------------------------------------------
-//  Self test of this class
+    // Initialize the response error code to no error
+    consumer->response_error_code = 0;
 
-#define SELFTEST_DIR_RO "src/selftest-ro"
-#define SELFTEST_DIR_RW "src/selftest-rw"
+    // Get the MAL message decoder
+    mal_decoder_t *decoder = malbinary_decoder_new(false);
 
-void
-mc_parameter_list_definition_consumer_test (bool verbose)
-{
-    printf (" * mc_parameter_list_definition_consumer: ");
-    printf ("OK\n");
+    void *cursor = mal_decoder_new_cursor(decoder,
+        mal_message_get_body(message),
+        mal_message_get_body_offset(message) + mal_message_get_body_length(message),
+        mal_message_get_body_offset(message));
+
+    // Log the offset
+    clog_debug(mc_parameter_list_definition_consumer_logger, 
+        "mc_parameter_list_definition_consumer_response: offset=%d\n", mal_message_get_body_offset(message));
+
+    // Decode the response
+    clog_debug(mc_parameter_list_definition_consumer_logger, 
+        "mc_parameter_list_definition_consumer_response: decode_0 for objInstIds\n");
+    
+    consumer->response_error_code = mc_parameter_listdefinition_request_response_decode_0(cursor, decoder, &object_instance_pair_list);
+    mal_decoder_cursor_assert(decoder, cursor);
+
+    // Destroy the MAL decoder cursor
+    mal_decoder_cursor_destroy(decoder, cursor);
+
+    // Check for errors
+    if (consumer->response_error_code != 0)
+    {
+        // Log error
+        clog_error(mc_parameter_list_definition_consumer_logger,
+            "mc_parameter_list_definition_consumer_response: error decode_0 for objInstIds\n");
+    }
+    else // No error, process response object
+    {
+        // Set response variable for element count
+        consumer->response_element_count = mc_objectinstancepair_list_get_element_count(object_instance_pair_list);
+
+        // Allocate memory for the identity ids response
+        consumer->response_identity_id_list = (long *) calloc(consumer->response_element_count, sizeof(long));
+        if (!consumer->response_identity_id_list && (consumer->response_element_count > 0))
+        {
+            // Log error
+            clog_error(mc_parameter_list_definition_consumer_logger,
+                "mc_parameter_list_definition_consumer_response: memory allocation error for response identity ids\n");
+
+            // Destroy consumer's response MAL attributes
+            mc_parameter_list_definition_consumer_response_clear(consumer);
+
+            // Set and return the error code
+            consumer->response_error_code = -1;
+        }
+
+        // Allocate memory for the definition ids response
+        consumer->response_definition_id_list = (long *) calloc(consumer->response_element_count, sizeof(long));
+        if (!consumer->response_definition_id_list && (consumer->response_element_count > 0))
+        {
+            // Log error
+            clog_error(mc_parameter_list_definition_consumer_logger,
+                "mc_parameter_list_definition_consumer_response: memory allocation error for response definition ids\n");
+
+            // Destroy consumer's response MAL attributes
+            mc_parameter_list_definition_consumer_response_clear(consumer);
+
+            // Set and return the error code
+            consumer->response_error_code = -1;
+        }
+
+    }
+
+    // Set response variables if no errors so far
+    if(consumer->response_error_code == 0)
+    {
+        // Get content of the response
+        content = mc_objectinstancepair_list_get_content(object_instance_pair_list);
+
+        // Set response variables
+        for (size_t i = 0; i < consumer->response_element_count; i++)
+        {
+            consumer->response_identity_id_list[i] = mc_objectinstancepair_get_objidentityinstanceid(content[i]);
+            consumer->response_definition_id_list[i] = mc_objectinstancepair_get_objdefinstanceid(content[i]);
+        }
+    }
+
+    // Cleanup
+    clog_debug(mc_parameter_list_definition_consumer_logger,
+        "mc_parameter_list_definition_consumer_response: cleanup\n");
+
+    // Only destroy the mc_objectinstancepair object if it was initialized
+    if(content)
+    {
+        mc_objectinstancepair_destroy(content);
+    }
+
+    // Destroy fields
+    if(object_instance_pair_list)
+    {
+        mc_objectinstancepair_list_destroy(&object_instance_pair_list);
+    }
+    
+    // Destroy MAL message
+    if(message)
+    {
+        mal_message_destroy(&message, mal_ctx);
+    }
+
+    // Terminating the actor thread will trigger the finalize function
+    mal_actor_term(consumer->actor);
+
+    // Return error code
+    return consumer->response_error_code;
 }
