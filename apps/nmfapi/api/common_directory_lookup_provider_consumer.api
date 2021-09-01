@@ -1,0 +1,70 @@
+<class name = "common_directory_lookup_provider_consumer" selftest="0">
+    The request consumer for the lookupProvider operation
+
+    <constant name = "uri" value = "common/directory/consumer/lookupProvider" type="string">The consumer URI for the lookupProvider operation</constant>
+
+    <constructor>
+        Instanciate a consumer object for the lookupProvider operation
+        <argument name = "mal_ctx" c_type = "mal_ctx_t *" />
+        <argument name = "provider_uri" c_type = "mal_uri_t *" />
+    </constructor>
+
+    <!--
+        Deallocation functions
+    -->
+
+    <destructor>
+        The destructor
+    </destructor>
+
+    <!--
+        Mutex operators
+    -->
+
+    <method name = "mutex_lock">
+        Lock the mutex
+        A mutex is used to force a synchronous response despite the request being an asynchronous operation
+    </method>
+
+    <method name = "mutex_unlock">
+        Unlock the mutex
+        A mutex is used to force a synchronous response despite the request being an asynchronous operation
+    </method>
+
+    <!--
+        MAL actor function
+    -->
+    
+    <method name = "actor_init">
+        Create and initialize the actor
+    </method>
+
+    <!-- 
+        Getters for response variables
+    -->
+
+    <method name = "get_response_provider_summary_list">
+        Get response variable for the provider summary
+        <return c_type = "common_directory_providersummary_list_t *" />
+    </method>
+
+    <method name = "get_response_error_code">
+        Get error code from processing the response
+        <return type = "integer" />
+    </method>
+
+    <!--
+        Getters and Setters for class variables
+    -->
+
+    <method name = "get_field_service_filter">
+        Get the service filter MAL message field
+        <return c_type = "common_directory_servicefilter_t *" />
+    </method>
+
+    <method name = "set_field_service_filter">
+        Set the service filter MAL message field
+        <argument name = "service_filter" c_type = "common_directory_servicefilter_t *" />
+    </method>
+
+</class>

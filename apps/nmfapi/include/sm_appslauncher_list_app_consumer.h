@@ -17,7 +17,7 @@ extern "C" {
 //  @interface
 //  This API is a draft, and may change without notice.
 #ifdef NMFAPI_BUILD_DRAFT_API
-#define SM_APPSLAUNCHER_LIST_APP_CONSUMER_URI "sm/appslauncher/listApp/consumer"  // The consumer URI for the listApp operation
+#define SM_APPSLAUNCHER_LIST_APP_CONSUMER_URI "sm/appslauncher/consumer/listApp"  // The consumer URI for the listApp operation
 
 //  *** Draft method, for development use, may change without warning ***
 //  Create a consumer object for the listApp operation

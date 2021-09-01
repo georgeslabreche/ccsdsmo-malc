@@ -1,7 +1,7 @@
 <class name = "mc_parameter_get_value_consumer" selftest="0">
     The request consumer for the getValue operation
 
-    <constant name = "uri" value = "mc/parameter/getValue/consumer" type="string">the consumer URI for the getValue operation</constant>
+    <constant name = "uri" value = "mc/parameter/consumer/getValue" type="string">The consumer URI for the getValue operation</constant>
 
     <constructor>
         Instanciate a consumer object for the getValue operation

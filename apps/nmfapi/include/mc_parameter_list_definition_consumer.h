@@ -17,7 +17,7 @@ extern "C" {
 //  @interface
 //  This API is a draft, and may change without notice.
 #ifdef NMFAPI_BUILD_DRAFT_API
-#define MC_PARAMETER_LIST_DEFINITION_CONSUMER_URI "mc/parameter/listDefinition/consumer"  // the consumer URI for the listDefinition operation
+#define MC_PARAMETER_LIST_DEFINITION_CONSUMER_URI "mc/parameter/consumer/listDefinition"  // The consumer URI for the listDefinition operation
 
 //  *** Draft method, for development use, may change without warning ***
 //  Instanciate a consumer object for the listDefinition operation

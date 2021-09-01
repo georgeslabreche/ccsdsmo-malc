@@ -47,6 +47,11 @@
     <!-- Util class -->
     <class name = "nmf_api_util" selftest = "0" />
 
+    <!-- COMMON -->
+    <!-- Common: Directory Service -->
+    <class name = "common_directory_service" selftest = "0" />
+    <class name = "common_directory_lookup_provider_consumer" selftest = "0" />
+
     <!-- MONITOR AND CONTROL (MC) -->
     <!-- MC: Parameter Service -->
     <class name = "mc_parameter_service" selftest = "0" />
