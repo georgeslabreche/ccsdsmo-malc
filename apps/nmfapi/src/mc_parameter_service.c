@@ -20,7 +20,7 @@
 //  --------------------------------------------------------------------------
 //  Logging
 
-// The class loggerp
+// The class logger
 clog_logger_t mc_parameter_service_logger = CLOG_DEBUG_LEVEL;
 
 //  Set the log level

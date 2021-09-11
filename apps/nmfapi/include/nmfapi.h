@@ -13,9 +13,15 @@
 
 
 //  --------------------------------------------------------------------------
-//  Declare the Directory service log level setters
+//  Declare the NMF Gateway API log level setter
 void
+nmf_api_set_log_level (int level);
 
+
+//  --------------------------------------------------------------------------
+//  Declare the Directory service log level setters
+
+void
 common_directory_service_set_log_level (int level);
 
 void

@@ -28,27 +28,34 @@
 
 //  Demonstrate the lookupProvider operation
 int
-demo_directory_service_lookup_provider(char *hostname, char *provider_port, char *consumer_port);
+demo_directory_service_lookup_provider();
 
 //  Demonstrate the listApp operation
 int
-demo_appslauncher_service_list_app(char *hostname, char *provider_port, char *consumer_port);
+demo_appslauncher_service_list_app();
 
 //  Demonstrate the listDefinition operation with multiple parameters in a single request
 int
-demo_parameter_service_list_definition(char *hostname, char *provider_port, char *consumer_port);
+demo_parameter_service_list_definition();
 
 //  Demonstrate the listDefinition operation with one parameter per request
 int
-demo_parameter_service_get_definition(char *hostname, char *provider_port, char *consumer_port);
+demo_parameter_service_get_definition();
 
 //  Demonstrate the getValue operation with multiple parameters in a single request
 int
-demo_parameter_service_get_values(char *hostname, char *provider_port, char *consumer_port);
+demo_parameter_service_get_values();
 
 //  Demonstrate the getValue operation with one parameter per request
 int
-demo_parameter_service_get_value(char *hostname, char *provider_port, char *consumer_port);
+demo_parameter_service_get_value();
+
+
+//  --------------------------------------------------------------------------
+//  Declare global variables
+
+// The Gateway API object to access all services
+nmf_api_t *nmf_api;
 
 
 //  --------------------------------------------------------------------------
@@ -117,9 +124,12 @@ int main (int argc, char *argv [])
     // MAL TCP log level
     maltcp_set_log_level(log_level);
 
-    // FIXME: Common service log level
-    //common_directory_service_set_log_level(log_level);
-    //common_directory_lookup_provider_consumer_set_log_level(log_level);
+    // Gateway API log level
+    nmf_api_set_log_level(log_level);
+
+    // Common service log level
+    common_directory_service_set_log_level(log_level);
+    common_directory_lookup_provider_consumer_set_log_level(log_level);
 
     // AppsLauncher service log level
     sm_appslauncher_service_set_log_level(log_level);
@@ -132,26 +142,40 @@ int main (int argc, char *argv [])
 
 
     // --------------------------------------------------------------------------
+    // Initialize the Gateway API object to access NMF services
+
+    nmf_api = nmf_api_new(argv[argv_index_host], argv[argv_index_pport], argv[argv_index_cport]);
+
+
+    // --------------------------------------------------------------------------
     // Invoke the demonstration functions
     
     // FIXME: Demonstrate the lookupProvider operation
-    //        See: https://github.com/tanagraspace/ccsdsmo-malc-sepp-apps/issues/29
-    // demo_directory_service_lookup_provider(argv[argv_index_host], argv[argv_index_pport], argv[argv_index_cport]);
+    //        See Issue #29: https://github.com/tanagraspace/ccsdsmo-malc-sepp-apps/issues/29
+    // demo_directory_service_lookup_provider();
 
     // Demonstrate the listApp operation
-    demo_appslauncher_service_list_app(argv[argv_index_host], argv[argv_index_pport], argv[argv_index_cport]);
+    demo_appslauncher_service_list_app();
 
     // Demonstrate the listDefinition operation with multiple parameters in a single request
-    demo_parameter_service_list_definition(argv[argv_index_host], argv[argv_index_pport], argv[argv_index_cport]);
+    demo_parameter_service_list_definition();
 
     // Demonstrate the listDefinition operation with one parameter per request
-    demo_parameter_service_get_definition(argv[argv_index_host], argv[argv_index_pport], argv[argv_index_cport]);
+    demo_parameter_service_get_definition();
 
     // Demonstrate the getValue operation with multiple parameters in a single request
-    demo_parameter_service_get_values(argv[argv_index_host], argv[argv_index_pport], argv[argv_index_cport]);
+    demo_parameter_service_get_values();
 
     // Demonstrate the getValue operation with one parameter per request
-    demo_parameter_service_get_value(argv[argv_index_host], argv[argv_index_pport], argv[argv_index_cport]);
+    demo_parameter_service_get_value();
+
+
+    // --------------------------------------------------------------------------
+    // Destroy
+
+    // Destoying the API gateway object also destroys all service objects
+    nmf_api_destroy(&nmf_api);
+
 
     // --------------------------------------------------------------------------
     // Demonstration completed
@@ -165,13 +189,13 @@ int main (int argc, char *argv [])
 //  --------------------------------------------------------------------------
 //  Demonstrate the lookupProvider operation
 int
-demo_directory_service_lookup_provider(char *hostname, char *provider_port, char *consumer_port)
+demo_directory_service_lookup_provider()
 {
     // Verbosity
     printf("\n\nDemonstrate the lookupProvider operation:\n\n");
 
     // Create the Directory service
-    common_directory_service_t *directory_service = common_directory_service_new(hostname, provider_port, consumer_port);
+    common_directory_service_t *directory_service = nmf_api_get_common_directory_service(nmf_api);
 
     // Request response variables
     long *response_provider_id_list;
@@ -182,9 +206,6 @@ demo_directory_service_lookup_provider(char *hostname, char *provider_port, char
     common_directory_service_lookup_provider_all_uri (directory_service,
         &response_provider_id_list, &response_provider_uri_list, &response_element_count);
 
-    // Destroy the service
-    common_directory_service_destroy(&directory_service);
-
     return 0;
 }
 
@@ -193,13 +214,13 @@ demo_directory_service_lookup_provider(char *hostname, char *provider_port, char
 //  Demonstrate the listApp operation
 
 int
-demo_appslauncher_service_list_app(char *hostname, char *provider_port, char *consumer_port)
+demo_appslauncher_service_list_app()
 {
     // Verbosity
     printf("\n\nDemonstrate the listApp operation:\n\n");
 
     // Create the AppsLauncher service
-    sm_appslauncher_service_t *appslauncher_service = sm_appslauncher_service_new(hostname, provider_port, consumer_port);
+    sm_appslauncher_service_t *appslauncher_service = nmf_api_get_sm_appslauncher_service(nmf_api);
 
     // Request parameters
     char *app_name_list[] = {"*"};
@@ -223,9 +244,6 @@ demo_appslauncher_service_list_app(char *hostname, char *provider_port, char *co
         printf("App #%ld running status is %d\n", response_apps_inst_id_list[i], response_apps_inst_running_list[i]);
     }
 
-    // Destroy the service
-    sm_appslauncher_service_destroy(&appslauncher_service);
-
     // TODO: Destroy the response variables?
 
     return 0;
@@ -236,7 +254,7 @@ demo_appslauncher_service_list_app(char *hostname, char *provider_port, char *co
 //  Demonstrate the listDefinition operation with multiple parameters in a single request
 
 int
-demo_parameter_service_list_definition(char *hostname, char *provider_port, char *consumer_port)
+demo_parameter_service_list_definition()
 {
     // Verbosity
     printf("\n\nDemonstrate the listDefinition operation with multiple parameters in a single request:\n\n");
@@ -245,7 +263,7 @@ demo_parameter_service_list_definition(char *hostname, char *provider_port, char
     int rc;
 
     // Create the Parameter service
-    mc_parameter_service_t *parameter_service = mc_parameter_service_new(hostname, provider_port, consumer_port);
+    mc_parameter_service_t *parameter_service = nmf_api_get_mc_parameter_service(nmf_api);
 
     // Build the param names request field
     char *param_name_list[] = {
@@ -294,9 +312,6 @@ demo_parameter_service_list_definition(char *hostname, char *provider_port, char
             param_name_list[i], response_identity_id_list[i], response_definition_id_list[i]);
     }
 
-    // Destroy the service
-    mc_parameter_service_destroy(&parameter_service);
-
     // TODO: Destroy the response variables?
 
     return 0;
@@ -307,7 +322,7 @@ demo_parameter_service_list_definition(char *hostname, char *provider_port, char
 //  Demonstrate the listDefinition operation with one parameter per request
 
 int
-demo_parameter_service_get_definition(char *hostname, char *provider_port, char *consumer_port)
+demo_parameter_service_get_definition()
 {
     // Verbosity
     printf("\n\nDemonstrate the listDefinition operation with one parameter per request:\n\n");
@@ -316,7 +331,7 @@ demo_parameter_service_get_definition(char *hostname, char *provider_port, char 
     int rc;
 
     // Create the Parameter service
-    mc_parameter_service_t *parameter_service = mc_parameter_service_new(hostname, provider_port, consumer_port);
+    mc_parameter_service_t *parameter_service = nmf_api_get_mc_parameter_service(nmf_api);
 
     // A list of parameter names, each will be requested individually instead of in bulk as in demo_parameter_service_list_definition
     char *param_name_list[] = {
@@ -358,9 +373,6 @@ demo_parameter_service_get_definition(char *hostname, char *provider_port, char 
         }
     }
 
-    // Destroy the service
-    mc_parameter_service_destroy(&parameter_service);
-
     return 0;
 }
 
@@ -369,7 +381,7 @@ demo_parameter_service_get_definition(char *hostname, char *provider_port, char 
 //  Demonstrate the getValue operation with multiple parameters in a single request
 
 int
-demo_parameter_service_get_values(char *hostname, char *provider_port, char *consumer_port)
+demo_parameter_service_get_values()
 {
     // Verbosity
     printf("\n\nDemonstrate the getValue operation with multiple parameters in a single request:\n\n");
@@ -378,7 +390,7 @@ demo_parameter_service_get_values(char *hostname, char *provider_port, char *con
     int rc;
 
     // Create the Parameter service
-    mc_parameter_service_t *parameter_service = mc_parameter_service_new(hostname, provider_port, consumer_port);
+    mc_parameter_service_t *parameter_service = nmf_api_get_mc_parameter_service(nmf_api);
 
     // Request parameters
     long param_inst_ids[] = {
@@ -504,9 +516,6 @@ demo_parameter_service_get_values(char *hostname, char *provider_port, char *con
         mal_attribute_destroy(&attr, tag);
     }
 
-    // Destroy the service
-    mc_parameter_service_destroy(&parameter_service);
-
     // TODO: Destroy the response variables?
 
     return 0;
@@ -517,7 +526,7 @@ demo_parameter_service_get_values(char *hostname, char *provider_port, char *con
 //  Demonstrate the getValue operation with one parameter per request
 
 int
-demo_parameter_service_get_value(char *hostname, char *provider_port, char *consumer_port)
+demo_parameter_service_get_value()
 {
     // Verbosity
     printf("\n\nDemonstrate the getValue operation with one parameter per request:\n\n");
@@ -528,7 +537,7 @@ demo_parameter_service_get_value(char *hostname, char *provider_port, char *cons
     // --------------------------------------------------------------------------
     // Create the Parameter service
 
-    mc_parameter_service_t *parameter_service = mc_parameter_service_new(hostname, provider_port, consumer_port);
+    mc_parameter_service_t *parameter_service = nmf_api_get_mc_parameter_service(nmf_api);
 
 
     // --------------------------------------------------------------------------
@@ -606,12 +615,6 @@ demo_parameter_service_get_value(char *hostname, char *provider_port, char *cons
         // Print the quaternion float values
         printf("Quaternions (q1, q2, q3, q4) = (%f, %f, %f, %f)\n", q1, q2, q3, q4);
     }
-
-
-    // --------------------------------------------------------------------------
-    // Destroy the service
-
-    mc_parameter_service_destroy(&parameter_service);
 
     // TODO: Destroy the response variables?
 
