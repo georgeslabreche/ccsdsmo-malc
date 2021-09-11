@@ -41,8 +41,9 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
 
-    <!-- The Gateway API from which we access all NMF service APIs -->
-    <class name = "nmf_api" selftest = "0" />
+    <!-- GATEWAY -->
+    <!-- The Gateway API from which we access all implemented NMF services -->
+    <class name = "nmf_api" />
 
     <!-- Util class -->
     <class name = "nmf_api_util" selftest = "0" />
