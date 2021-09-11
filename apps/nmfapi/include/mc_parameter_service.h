@@ -23,7 +23,7 @@ NMFAPI_EXPORT mc_parameter_service_t *
     mc_parameter_service_new (char *hostname, char *provider_port, char *consumer_port);
 
 //  *** Draft method, for development use, may change without warning ***
-//  The destructor.
+//  The destructor
 NMFAPI_EXPORT void
     mc_parameter_service_destroy (mc_parameter_service_t **self_p);
 

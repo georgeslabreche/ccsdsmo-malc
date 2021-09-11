@@ -1,7 +1,7 @@
 <class name = "mc_parameter_list_definition_consumer" selftest="0">
     The request consumer for the listDefinition operation
 
-    <constant name = "uri" value = "mc/parameter/listDefinition/consumer" type="string">the consumer URI for the listDefinition operation</constant>
+    <constant name = "uri" value = "mc/parameter/consumer/listDefinition" type="string">The consumer URI for the listDefinition operation</constant>
 
     <constructor>
         Instanciate a consumer object for the listDefinition operation

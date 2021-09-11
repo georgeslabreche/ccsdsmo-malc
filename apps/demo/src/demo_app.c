@@ -26,6 +26,10 @@
 //  --------------------------------------------------------------------------
 //  Declare the demonstration functions
 
+//  Demonstrate the lookupProvider operation
+int
+demo_directory_service_lookup_provider(char *hostname, char *provider_port, char *consumer_port);
+
 //  Demonstrate the listApp operation
 int
 demo_appslauncher_service_list_app(char *hostname, char *provider_port, char *consumer_port);
@@ -113,6 +117,10 @@ int main (int argc, char *argv [])
     // MAL TCP log level
     maltcp_set_log_level(log_level);
 
+    // FIXME: Common service log level
+    //common_directory_service_set_log_level(log_level);
+    //common_directory_lookup_provider_consumer_set_log_level(log_level);
+
     // AppsLauncher service log level
     sm_appslauncher_service_set_log_level(log_level);
     sm_appslauncher_list_app_consumer_set_log_level(log_level);
@@ -125,6 +133,10 @@ int main (int argc, char *argv [])
 
     // --------------------------------------------------------------------------
     // Invoke the demonstration functions
+    
+    // FIXME: Demonstrate the lookupProvider operation
+    //        See: https://github.com/tanagraspace/ccsdsmo-malc-sepp-apps/issues/29
+    // demo_directory_service_lookup_provider(argv[argv_index_host], argv[argv_index_pport], argv[argv_index_cport]);
 
     // Demonstrate the listApp operation
     demo_appslauncher_service_list_app(argv[argv_index_host], argv[argv_index_pport], argv[argv_index_cport]);
@@ -141,11 +153,37 @@ int main (int argc, char *argv [])
     // Demonstrate the getValue operation with one parameter per request
     demo_parameter_service_get_value(argv[argv_index_host], argv[argv_index_pport], argv[argv_index_cport]);
 
-
     // --------------------------------------------------------------------------
     // Demonstration completed
 
     printf("\n\nDemonstration completed.\n\n");
+
+    return 0;
+}
+
+
+//  --------------------------------------------------------------------------
+//  Demonstrate the lookupProvider operation
+int
+demo_directory_service_lookup_provider(char *hostname, char *provider_port, char *consumer_port)
+{
+    // Verbosity
+    printf("\n\nDemonstrate the lookupProvider operation:\n\n");
+
+    // Create the Directory service
+    common_directory_service_t *directory_service = common_directory_service_new(hostname, provider_port, consumer_port);
+
+    // Request response variables
+    long *response_provider_id_list;
+    char **response_provider_uri_list;
+    size_t response_element_count;
+
+    // Send the lookupProvider request with the response variable pointers
+    common_directory_service_lookup_provider_all_uri (directory_service,
+        &response_provider_id_list, &response_provider_uri_list, &response_element_count);
+
+    // Destroy the service
+    common_directory_service_destroy(&directory_service);
 
     return 0;
 }
@@ -187,6 +225,8 @@ demo_appslauncher_service_list_app(char *hostname, char *provider_port, char *co
 
     // Destroy the service
     sm_appslauncher_service_destroy(&appslauncher_service);
+
+    // TODO: Destroy the response variables?
 
     return 0;
 }
@@ -256,6 +296,8 @@ demo_parameter_service_list_definition(char *hostname, char *provider_port, char
 
     // Destroy the service
     mc_parameter_service_destroy(&parameter_service);
+
+    // TODO: Destroy the response variables?
 
     return 0;
 }
@@ -465,6 +507,8 @@ demo_parameter_service_get_values(char *hostname, char *provider_port, char *con
     // Destroy the service
     mc_parameter_service_destroy(&parameter_service);
 
+    // TODO: Destroy the response variables?
+
     return 0;
 }
 
@@ -568,6 +612,8 @@ demo_parameter_service_get_value(char *hostname, char *provider_port, char *cons
     // Destroy the service
 
     mc_parameter_service_destroy(&parameter_service);
+
+    // TODO: Destroy the response variables?
 
     return 0;
 }

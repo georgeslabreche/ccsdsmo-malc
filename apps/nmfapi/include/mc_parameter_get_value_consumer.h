@@ -17,7 +17,7 @@ extern "C" {
 //  @interface
 //  This API is a draft, and may change without notice.
 #ifdef NMFAPI_BUILD_DRAFT_API
-#define MC_PARAMETER_GET_VALUE_CONSUMER_URI "mc/parameter/getValue/consumer"  // the consumer URI for the getValue operation
+#define MC_PARAMETER_GET_VALUE_CONSUMER_URI "mc/parameter/consumer/getValue"  // The consumer URI for the getValue operation
 
 //  *** Draft method, for development use, may change without warning ***
 //  Instanciate a consumer object for the getValue operation

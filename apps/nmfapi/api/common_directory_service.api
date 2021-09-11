@@ -1,0 +1,40 @@
+<class name = "common_directory_service" selftest="0">
+    The Directory service allows service providers to publish information about which services
+    they provide and consumersto discover service provider address and capability information
+
+    <constructor>
+        Create a Directory service object
+        <argument name = "hostname" c_type = "char *" />
+        <argument name = "provider_port" c_type = "char *" />
+        <argument name = "consumer_port" c_type = "char *" />
+    </constructor>
+
+    <destructor>
+        The destructor
+    </destructor>
+
+    <method name = "lookup_provider">
+        The lookup operation allows a service consumer to query the directory service to return a list of
+        service providers that match the requested criteria. If no match is found, then an empty list is returned
+        <argument name = "service_filter" c_type = "common_directory_servicefilter_t *" />
+        <argument name = "response_provider_summary_list" c_type = "common_directory_providersummary_list_t *" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "lookup_provider_all">
+        The lookup operation allows a service consumer to query the directory service to return a list of
+        service providers that match the requested criteria. If no match is found, then an empty list is returned
+        <argument name = "response_provider_summary_list" c_type = "common_directory_providersummary_list_t *" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "lookup_provider_all_uri">
+        The lookup operation allows a service consumer to query the directory service to return a list of
+        service providers that match the requested criteria. If no match is found, then an empty list is returned
+        <argument name = "response_provider_id_list" c_type = "long **" />
+        <argument name = "response_provider_uri_list" c_type = "char ***" />
+        <argument name = "response_element_count" c_type = "size_t *" />
+        <return type = "integer" />
+    </method>
+
+</class>

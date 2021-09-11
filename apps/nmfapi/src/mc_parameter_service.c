@@ -76,6 +76,7 @@ mc_parameter_service_new (char *hostname, char *provider_port, char *consumer_po
 void
 mc_parameter_service_destroy (mc_parameter_service_t **self_p)
 {
+    // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_destroy()\n");
 
     assert (self_p);
@@ -124,6 +125,7 @@ mc_parameter_service_destroy (mc_parameter_service_t **self_p)
 void
 mc_parameter_service_consumer_ctx_create (mc_parameter_service_t *self)
 {
+    // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_consumer_ctx_create()\n");
 
     if(!self->mal_ctx)

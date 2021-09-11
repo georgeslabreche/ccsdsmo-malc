@@ -299,6 +299,7 @@ mc_parameter_list_definition_consumer_initialize (void *self, mal_actor_t *mal_a
 
     rc = mc_parameter_listdefinition_request_add_encoding_length_0(encoder, param_name_mal_id_list, cursor);
 
+    // Error check
     if (rc < 0)
     {
         // Log error
@@ -334,6 +335,7 @@ mc_parameter_list_definition_consumer_initialize (void *self, mal_actor_t *mal_a
     rc = mc_parameter_listdefinition_request_encode_0(cursor, encoder, param_name_mal_id_list);
     mal_encoder_cursor_assert(encoder, cursor);
 
+    // Error check
     if (rc < 0)
     {
         // Log error
@@ -359,11 +361,12 @@ mc_parameter_list_definition_consumer_initialize (void *self, mal_actor_t *mal_a
     rc = mc_parameter_listdefinition_request(
         mal_actor_get_mal_endpoint(mal_actor), message, consumer->provider_uri);
 
+    // Error check
     if (rc < 0)
     {
         // Log error
         clog_error(mc_parameter_list_definition_consumer_logger,
-            "mc_parameter_list_definition_consumer_initialize: error listDefinition request\n");
+            "mc_parameter_list_definition_consumer_initialize: error sending listDefinition request\n");
     }
 
     // Destroy the field

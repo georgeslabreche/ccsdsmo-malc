@@ -77,7 +77,7 @@ mc_parameter_get_value_consumer_new (mal_ctx_t *mal_ctx, mal_uri_t *provider_uri
     mc_parameter_get_value_consumer_t *self = (mc_parameter_get_value_consumer_t *) zmalloc (sizeof (mc_parameter_get_value_consumer_t));
     assert (self);
     
-    //  Initialize class properties here
+    // Initialize class properties here
     self->mal_ctx = mal_ctx;
     self->provider_uri = provider_uri;
 
@@ -91,6 +91,7 @@ mc_parameter_get_value_consumer_new (mal_ctx_t *mal_ctx, mal_uri_t *provider_uri
 void
 mc_parameter_get_value_consumer_destroy (mc_parameter_get_value_consumer_t **self_p)
 {
+    // Log debug
     clog_debug(mc_parameter_get_value_consumer_logger, "mc_parameter_get_value_consumer_destroy()\n");
 
     assert (self_p);
@@ -144,6 +145,7 @@ mc_parameter_get_value_consumer_response_clear (mc_parameter_get_value_consumer_
     }
 }
 
+
 //  --------------------------------------------------------------------------
 // Thread operation for mutex locking and unlocking
 
@@ -154,7 +156,6 @@ mc_parameter_get_value_consumer_mutex_lock (mc_parameter_get_value_consumer_t *s
 {
     pthread_mutex_lock(&mc_parameter_get_value_consumer_mutex);
 }
-
 
 //  Unlock the mutex
 //  A mutex is used to force a synchronous response despite the request being an asynchronous operation
@@ -305,6 +306,7 @@ mc_parameter_get_value_consumer_initialize (void *self, mal_actor_t *mal_actor)
 
     rc = mc_parameter_getvalue_request_add_encoding_length_0(encoder, param_inst_id_list, cursor);
 
+    // Error check
     if (rc < 0)
     {
         // Log error
@@ -340,6 +342,7 @@ mc_parameter_get_value_consumer_initialize (void *self, mal_actor_t *mal_actor)
     rc = mc_parameter_getvalue_request_encode_0(cursor, encoder, param_inst_id_list);
     mal_encoder_cursor_assert(encoder, cursor);
 
+    // Error check
     if (rc < 0)
     {
         // Log error
@@ -365,11 +368,12 @@ mc_parameter_get_value_consumer_initialize (void *self, mal_actor_t *mal_actor)
     rc = mc_parameter_getvalue_request(
         mal_actor_get_mal_endpoint(mal_actor), message, consumer->provider_uri);
 
+    // Error check
     if (rc < 0)
     {
         // Log error
         clog_error(mc_parameter_get_value_consumer_logger,
-            "mc_parameter_get_value_consumer_initialize: error getValue request\n");
+            "mc_parameter_get_value_consumer_initialize: error sending getValue request\n");
     }
 
     // Destroy the field

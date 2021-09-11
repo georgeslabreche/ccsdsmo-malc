@@ -10,7 +10,7 @@
     </constructor>
 
     <destructor>
-        The destructor.
+        The destructor
     </destructor>
 
     <method name = "list_definition">
