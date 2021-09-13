@@ -370,7 +370,7 @@ sm_appslauncher_list_app_consumer_initialize (void *self, mal_actor_t *mal_actor
     clog_debug(sm_appslauncher_list_app_consumer_logger,
         "sm_appslauncher_list_app_consumer_initialize: new MAL message\n");
 
-    mal_message_t *message = nmfapi_util_create_mal_message_request(encoder, cursor);
+    mal_message_t *message = nmfapi_util_create_mal_message(encoder, cursor);
 
     // Initialize the MAL encoder cursor
     mal_encoder_cursor_init(

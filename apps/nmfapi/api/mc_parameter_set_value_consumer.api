@@ -1,11 +1,11 @@
-<class name = "mc_parameter_get_value_consumer" selftest="0">
-    The request consumer for the getValue operation
-    The getValue operation returns the latest received value for a requested parameter
+<class name = "mc_parameter_set_value_consumer" selftest="0">
+    The submit consumer for the setValue operation
+    The setValue operation allows a consumer to set the raw value for one or more parameters
 
-    <constant name = "uri" value = "mc/parameter/consumer/getValue" type="string">The consumer URI for the getValue operation</constant>
+    <constant name = "uri" value = "mc/parameter/consumer/setValue" type="string">The consumer URI for the setValue operation</constant>
 
     <constructor>
-        Instanciate a consumer object for the getValue operation
+        Instanciate a consumer object for the setValue operation
         <argument name = "mal_ctx" c_type = "mal_ctx_t *" />
         <argument name = "provider_uri" c_type = "mal_uri_t *" />
     </constructor>
@@ -17,10 +17,6 @@
     <destructor>
         The destructor
     </destructor>
-
-    <method name = "response_clear">
-        Clear the response variables
-    </method>
 
     <!--
         Mutex operators
@@ -48,21 +44,6 @@
         Getters for response variables
     -->
 
-    <method name = "get_response_mal_attribute_list">
-        Get response variable for the MAL attributes
-        <return c_type = "union mal_attribute_t *" />
-    </method>
-
-    <method name = "get_response_mal_attribute_tag_list">
-        Get response variable for the MAL attributes tags
-        <return c_type = "unsigned char *" />
-    </method>
-
-    <method name = "get_response_element_count">
-        Get response variable for number of MAL attributes
-        <return type = "size" />
-    </method>
-
     <method name = "get_response_error_code">
         Get error code from processing the response
         <return type = "integer" />
@@ -82,14 +63,34 @@
         <argument name = "param_inst_id_list" c_type = "long *" />
     </method>
 
-    <method name = "get_field_param_inst_id_list_size">
-        Get the size of the param inst ids MAL message field
+    <method name = "get_field_param_tag_list">
+        Get the param tags MAL message field
+        <return c_type = "unsigned char*" />
+    </method>
+
+    <method name = "set_field_param_tag_list">
+        Set the param tags MAL message field
+        <argument name = "param_tag_list" c_type = "unsigned char *" />
+    </method>
+
+    <method name = "get_field_param_value_list">
+        Get the param values MAL message field
+        <return c_type = "char **" />
+    </method>
+
+    <method name = "set_field_param_value_list">
+        Set the param values MAL message field
+        <argument name = "param_value_list" c_type = "char **" />
+    </method>
+
+    <method name = "get_field_param_list_size">
+        Get the number of params MAL message field
         <return type = "size" />
     </method>
 
-    <method name = "set_field_param_inst_id_list_size">
-        Set the size of the param inst ids MAL message field
-        <argument name = "param_inst_id_list_size" type = "size" />
+    <method name = "set_field_param_list_size">
+        Set the number of params MAL message field
+        <argument name = "param_list_size" type = "size" />
     </method>
 
 </class>

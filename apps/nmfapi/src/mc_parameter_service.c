@@ -44,6 +44,7 @@ struct _mc_parameter_service_t {
 
 // The consumers
 mc_parameter_get_value_consumer_t *get_value_consumer;
+mc_parameter_set_value_consumer_t *set_value_consumer;
 mc_parameter_list_definition_consumer_t *list_definition_consumer;
 
 
@@ -96,13 +97,20 @@ mc_parameter_service_destroy (mc_parameter_service_t **self_p)
         }
 
         // Destroy the getValue consumer
-        if(get_value_consumer) // FIXME: will response be cleared because consumer gets destroyed in mc_parameter_service_get_values?
+        if(get_value_consumer) // FIXME: will response be cleared because consumer gets destroyed in mc_parameter_service_get_value_list?
         {
             // Clear the response variables
             mc_parameter_get_value_consumer_response_clear(get_value_consumer);
 
             // Destroy the consumer
             mc_parameter_get_value_consumer_destroy(&get_value_consumer);
+        }
+
+        // Destroy the getValue consumer
+        if(set_value_consumer) // FIXME: will response be cleared because consumer gets destroyed in mc_parameter_service_get_value_list?
+        {
+            // Destroy the consumer
+            mc_parameter_set_value_consumer_destroy(&set_value_consumer);
         }
         
         // Destroy the context
@@ -235,15 +243,15 @@ mc_parameter_service_get_definition (mc_parameter_service_t *self, char *param_n
 
 
 //  --------------------------------------------------------------------------
-//  The getValue operation returns the latest received value for the requested parameters
+//  The getValue operation functions return the latest received value for the requested parameters
 
 int
-mc_parameter_service_get_values (mc_parameter_service_t *self, long *param_inst_id_list, size_t param_inst_id_list_size,
+mc_parameter_service_get_value_list (mc_parameter_service_t *self, long *param_inst_id_list, size_t param_inst_id_list_size,
     union mal_attribute_t **response_mal_attribute_list, unsigned char **response_mal_attribute_tag_list,
     size_t *response_element_count)
 {
     // Log debug
-    clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_values()\n");
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_list()\n");
 
     // The return code
     int rc;
@@ -292,10 +300,7 @@ mc_parameter_service_get_values (mc_parameter_service_t *self, long *param_inst_
     return rc;
 }
 
-
-//  --------------------------------------------------------------------------
 //  The getValue operation returns the latest received value for the requested parameters
-
 int
 mc_parameter_service_get_value (mc_parameter_service_t *self, long param_inst_id,
     union mal_attribute_t *response_mal_attribute, unsigned char *response_mal_attribute_tag)
@@ -315,7 +320,7 @@ mc_parameter_service_get_value (mc_parameter_service_t *self, long param_inst_id
     size_t response_element_count;
 
     // Invoke the get_values function
-    rc = mc_parameter_service_get_values(self, param_inst_id_list, 1,
+    rc = mc_parameter_service_get_value_list(self, param_inst_id_list, 1,
         &response_mal_attribute_list, &response_mal_attribute_tag_list, &response_element_count);
 
     if (rc < 0)
@@ -361,9 +366,6 @@ mc_parameter_service_get_value (mc_parameter_service_t *self, long param_inst_id
     return rc;
 }
 
-
-//  The getValue operation returns the latest received value for a requested parameter
-//  Sets the requested value with the expectation that it is of type MAL Blob
 int
 mc_parameter_service_get_value_blob (mc_parameter_service_t *self, long param_inst_id, char **content, size_t *content_length)
 {
@@ -412,8 +414,6 @@ mc_parameter_service_get_value_blob (mc_parameter_service_t *self, long param_in
     return rc;
 }
 
-//  The getValue operation returns the latest received value for a requested parameter
-//  Sets the requested value with the expectation that it is of type MAL Boolean
 int
 mc_parameter_service_get_value_boolean (mc_parameter_service_t *self, long param_inst_id, bool *value)
 {
@@ -462,8 +462,6 @@ mc_parameter_service_get_value_boolean (mc_parameter_service_t *self, long param
     return rc;
 }
 
-//  The getValue operation returns the latest received value for a requested parameter
-//  Sets the requested value with the expectation that it is of type MAL Duration
 int
 mc_parameter_service_get_value_duration (mc_parameter_service_t *self, long param_inst_id, double *value)
 {
@@ -512,8 +510,6 @@ mc_parameter_service_get_value_duration (mc_parameter_service_t *self, long para
     return rc;
 }
 
-//  The getValue operation returns the latest received value for a requested parameter
-//  Sets the requested value with the expectation that it is of type MAL Float
 int
 mc_parameter_service_get_value_float (mc_parameter_service_t *self, long param_inst_id, float *value)
 {
@@ -562,8 +558,6 @@ mc_parameter_service_get_value_float (mc_parameter_service_t *self, long param_i
     return rc;
 }
 
-//  The getValue operation returns the latest received value for a requested parameter
-//  Sets the requested value with the expectation that it is of type MAL Double
 int
 mc_parameter_service_get_value_double (mc_parameter_service_t *self, long param_inst_id, double *value)
 {
@@ -612,8 +606,6 @@ mc_parameter_service_get_value_double (mc_parameter_service_t *self, long param_
     return rc;
 }
 
-//  The getValue operation returns the latest received value for a requested parameter
-//  Sets the requested value with the expectation that it is of type MAL Identifer
 int
 mc_parameter_service_get_value_identifier (mc_parameter_service_t *self, long param_inst_id, char **value)
 {
@@ -662,8 +654,6 @@ mc_parameter_service_get_value_identifier (mc_parameter_service_t *self, long pa
     return rc;
 }
 
-//  The getValue operation returns the latest received value for a requested parameter
-//  Sets the requested value with the expectation that it is of type MAL Octet
 int
 mc_parameter_service_get_value_octet (mc_parameter_service_t *self, long param_inst_id, char *value)
 {
@@ -712,8 +702,6 @@ mc_parameter_service_get_value_octet (mc_parameter_service_t *self, long param_i
     return rc;
 }
 
-//  The getValue operation returns the latest received value for a requested parameter
-//  Sets the requested value with the expectation that it is of type MAL UOctet
 int
 mc_parameter_service_get_value_uoctet (mc_parameter_service_t *self, long param_inst_id, unsigned char *value)
 {
@@ -762,8 +750,6 @@ mc_parameter_service_get_value_uoctet (mc_parameter_service_t *self, long param_
     return rc;
 }
 
-//  The getValue operation returns the latest received value for a requested parameter
-//  Sets the requested value with the expectation that it is of type MAL Short
 int
 mc_parameter_service_get_value_short (mc_parameter_service_t *self, long param_inst_id, short *value)
 {
@@ -812,8 +798,6 @@ mc_parameter_service_get_value_short (mc_parameter_service_t *self, long param_i
     return rc;
 }
 
-//  The getValue operation returns the latest received value for a requested parameter
-//  Sets the requested value with the expectation that it is of type MAL UShort
 int
 mc_parameter_service_get_value_ushort (mc_parameter_service_t *self, long param_inst_id, unsigned short *value)
 {
@@ -862,8 +846,6 @@ mc_parameter_service_get_value_ushort (mc_parameter_service_t *self, long param_
     return rc;
 }
 
-//  The getValue operation returns the latest received value for a requested parameter
-//  Sets the requested value with the expectation that it is of type MAL Integer
 int
 mc_parameter_service_get_value_integer (mc_parameter_service_t *self, long param_inst_id, int *value)
 {
@@ -912,18 +894,54 @@ mc_parameter_service_get_value_integer (mc_parameter_service_t *self, long param
     return rc;
 }
 
-//  The getValue operation returns the latest received value for a requested parameter
-//  Sets the requested value with the expectation that it is of type MAL UInteger
 int
 mc_parameter_service_get_value_uinteger (mc_parameter_service_t *self, long param_inst_id, unsigned int *value)
 {
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_uinteger()\n");
+
     // The return code
     int rc = 0;
+
+    // The response variables
+    union mal_attribute_t response_mal_attribute;
+    unsigned char response_mal_attribute_tag;
+
+    // Execute the getValue request interaction
+    rc = mc_parameter_service_get_value(self, param_inst_id, &response_mal_attribute, &response_mal_attribute_tag);
+    
+    // Error check
+    if(rc < 0)
+    {
+        // Return error code
+        return rc;
+    }
+    
+    // Check that tag is expected value
+    if(response_mal_attribute_tag == MAL_UINTEGER_ATTRIBUTE_TAG)
+    {
+        // Set the response value
+        *value = response_mal_attribute.uinteger_value;
+    }
+    else
+    {
+        // Log error
+        clog_error(mc_parameter_service_logger,
+            "mc_parameter_service_get_value_uinteger: retrieved unexpected tag value, expected %d but was %d\n",
+            MAL_UINTEGER_ATTRIBUTE_TAG, response_mal_attribute_tag);
+
+        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // String objects are attributes of type: Blob, Identifier, String, and URI
+        mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
+        
+        // Set the return code to an error value
+        rc = -1;
+    }
+
+    // Return the return code
     return rc;
 }
 
-//  The getValue operation returns the latest received value for a requested parameter
-//  Sets the requested value with the expectation that it is of type MAL Long
 int
 mc_parameter_service_get_value_long (mc_parameter_service_t *self, long param_inst_id, long *value)
 {
@@ -972,8 +990,6 @@ mc_parameter_service_get_value_long (mc_parameter_service_t *self, long param_in
     return rc;
 }
 
-//  The getValue operation returns the latest received value for a requested parameter
-//  Sets the requested value with the expectation that it is of type MAL ULong
 int
 mc_parameter_service_get_value_ulong (mc_parameter_service_t *self, long param_inst_id, unsigned long *value)
 {
@@ -1022,8 +1038,6 @@ mc_parameter_service_get_value_ulong (mc_parameter_service_t *self, long param_i
     return rc;
 }
 
-//  The getValue operation returns the latest received value for a requested parameter
-//  Sets the requested value with the expectation that it is of type MAL String
 int
 mc_parameter_service_get_value_string (mc_parameter_service_t *self, long param_inst_id, char **value)
 {
@@ -1080,8 +1094,6 @@ mc_parameter_service_get_value_string (mc_parameter_service_t *self, long param_
     return rc;
 }
 
-//  The getValue operation returns the latest received value for a requested parameter
-//  Sets the requested value with the expectation that it is of type MAL Time
 int
 mc_parameter_service_get_value_time (mc_parameter_service_t *self, long param_inst_id, unsigned long *value)
 {
@@ -1130,8 +1142,6 @@ mc_parameter_service_get_value_time (mc_parameter_service_t *self, long param_in
     return rc;
 }
 
-//  The getValue operation returns the latest received value for a requested parameter
-//  Sets the requested value with the expectation that it is of type MAL Finetime
 int
 mc_parameter_service_get_value_finetime (mc_parameter_service_t *self, long param_inst_id, unsigned long *value)
 {
@@ -1180,8 +1190,6 @@ mc_parameter_service_get_value_finetime (mc_parameter_service_t *self, long para
     return rc;
 }
 
-//  The getValue operation returns the latest received value for a requested parameter
-//  Sets the requested value with the expectation that it is of type MAL URI
 int
 mc_parameter_service_get_value_uri (mc_parameter_service_t *self, long param_inst_id, char **value)
 {
@@ -1228,4 +1236,95 @@ mc_parameter_service_get_value_uri (mc_parameter_service_t *self, long param_ins
 
     // Return the return code
     return rc;
+}
+
+
+//  --------------------------------------------------------------------------
+//  The setValue operation functions allows setting the raw value for one or more parameters
+
+int
+mc_parameter_service_set_value_list (mc_parameter_service_t *self, long *param_inst_id_list, unsigned char *param_tag_list, char **param_value_list, size_t param_list_size)
+{
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_set_value_list()\n");
+
+    // The return code
+    int rc = 0;
+
+    // Initialize the consumer context / listening socket
+    nmfapi_util_init_maltcp_ctx(self->hostname, self->consumer_port, &self->mal_ctx);
+
+    // Create the setValue consumer
+    set_value_consumer = mc_parameter_set_value_consumer_new(self->mal_ctx, self->provider_uri);
+
+    // Set the MAL message param fields
+    mc_parameter_set_value_consumer_set_field_param_inst_id_list(set_value_consumer, param_inst_id_list);
+    mc_parameter_set_value_consumer_set_field_param_tag_list(set_value_consumer, param_tag_list);
+    mc_parameter_set_value_consumer_set_field_param_value_list(set_value_consumer, param_value_list);
+    mc_parameter_set_value_consumer_set_field_param_list_size(set_value_consumer, param_list_size);
+
+     // Create and initialize the consumer actor
+    mc_parameter_set_value_consumer_actor_init(set_value_consumer);
+
+    // Start the submit response listener
+    mal_ctx_start(self->mal_ctx);
+
+    // Lock the consumer mutex which has already been locked at the beginning of this function
+    // The initial mutex lock will only be released after the request finalize function has finished executing
+    // We do this so that the response variables can be set and return synchronously
+    mc_parameter_set_value_consumer_mutex_lock(set_value_consumer);
+
+    // Set the return code as the error code of the consumer response
+    rc = mc_parameter_set_value_consumer_get_response_error_code(set_value_consumer);
+
+    // Unlock the consumer mutex
+    mc_parameter_set_value_consumer_mutex_unlock(set_value_consumer);
+
+    // Destroy the setValue consumer
+    mc_parameter_set_value_consumer_destroy(&set_value_consumer);
+
+    // Destroy the consumer context / listening socket
+    mal_ctx_destroy(&self->mal_ctx);
+
+    // Return the return code
+    return rc;
+}
+
+int
+mc_parameter_service_set_value (mc_parameter_service_t *self, long param_inst_id, unsigned char param_tag, char *param_value)
+{
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_set_value()\n");
+
+    // The return code
+    int rc = 0;
+
+    // Create param inst id long list with single element
+    long param_inst_id_list[] = {param_inst_id};
+
+    // Create param attribute tag string list with single element
+    unsigned char param_tag_list[] = {param_tag};
+
+    // Create param raw value string list with single element
+    char *param_value_list[] = {param_value};
+
+    // Invole the set value list function with list parameters that only have one element
+    rc = mc_parameter_service_set_value_list(self, param_inst_id_list, param_tag_list, param_value_list, 1);
+
+    // Return the return code
+    return rc;
+}
+
+int
+mc_parameter_service_set_value_blob (mc_parameter_service_t *self, long param_inst_id, char *param_content, size_t param_content_length)
+{
+    
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_set_value_blob()\n");
+
+    // TODO: Implement
+    clog_error(mc_parameter_service_logger, "mc_parameter_service_set_value_blob: Not yet implemented\n");
+
+    // Return the return code
+    return -1;
 }

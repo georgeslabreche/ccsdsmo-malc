@@ -68,7 +68,7 @@ nmfapi_util_create_uri(const char* protocol, const char *hostname, const char *p
 
 
 mal_message_t *
-nmfapi_util_create_mal_message_request(mal_encoder_t *encoder, void *cursor)
+nmfapi_util_create_mal_message(mal_encoder_t *encoder, void *cursor)
 {
     mal_blob_t *authentication_id = mal_blob_new(0);
     mal_qoslevel_t qoslevel = MAL_QOSLEVEL_ASSURED;
@@ -108,5 +108,132 @@ nmfapi_util_init_maltcp_ctx(char *hostname, char *port, mal_ctx_t **mal_ctx)
     }
 
     // Return no-error code
+    return 0;
+}
+
+
+int
+nmfapi_util_init_mal_attribute(char *raw_value, unsigned char tag, union mal_attribute_t *attribute)
+{
+    // Set the attribute value according to the given tag
+    switch(tag)
+    {
+        case MAL_IDENTIFIER_ATTRIBUTE_TAG:
+            attribute->identifier_value = mal_identifier_new(raw_value);
+            break;
+
+        case MAL_STRING_ATTRIBUTE_TAG:
+            attribute->string_value = mal_string_new(raw_value);
+            break;
+
+        case MAL_URI_ATTRIBUTE_TAG:
+            attribute->uri_value = mal_uri_new(raw_value);
+            break;
+
+        case MAL_BOOLEAN_ATTRIBUTE_TAG:
+            // type: bool
+            if( strcmp(raw_value, "true") == 0 ||
+                strcmp(raw_value, "True") == 0 ||
+                strcmp(raw_value, "TRUE") == 0 ||
+                strcmp(raw_value, "t") == 0 ||
+                strcmp(raw_value, "T") == 0 ||
+                strcmp(raw_value, "1") == 0)
+            {
+                attribute->boolean_value = true;
+            }
+            else
+            {
+                attribute->boolean_value = false;
+            }
+            break;
+
+        case MAL_FLOAT_ATTRIBUTE_TAG:
+            // type: float
+            attribute->float_value = atof(raw_value);
+            break;
+
+        case MAL_DOUBLE_ATTRIBUTE_TAG:
+            // type: double
+            attribute->double_value = strtod(raw_value, NULL);
+            break;
+
+        case MAL_OCTET_ATTRIBUTE_TAG:
+            // type: char
+
+            // Error checking, expecting single character
+            if(strlen(raw_value) == 1)
+            {
+                attribute->octet_value = raw_value[0];
+            }
+            else
+            {
+                return -1;
+            }
+
+            break;
+
+        case MAL_UOCTET_ATTRIBUTE_TAG:
+            // type: unsigned char
+
+            // Error checking, expecting single character
+            if(strlen(raw_value) == 1)
+            {
+                attribute->uoctet_value = raw_value[0];
+            }
+            else
+            {
+                return -1;
+            }
+
+            break;
+
+        case MAL_SHORT_ATTRIBUTE_TAG:
+            // type: short
+            // FIXME: No error checking when using atoi
+            attribute->short_value = atoi(raw_value);
+            break;
+
+        case MAL_USHORT_ATTRIBUTE_TAG:
+            // type: unsigned short
+            // FIXME: No error checking when using atoi
+            attribute->ushort_value = atoi(raw_value);
+            break;
+
+        case MAL_INTEGER_ATTRIBUTE_TAG:
+            // type: int
+            attribute->integer_value = atoi(raw_value);
+            break;
+
+        case MAL_UINTEGER_ATTRIBUTE_TAG:
+            // type: unsigned int
+            attribute->uinteger_value = strtoul(raw_value, 0L, 10);
+            break;
+
+        case MAL_LONG_ATTRIBUTE_TAG:
+            // type: long
+            attribute->long_value = strtol(raw_value, 0L, 10);
+            break;
+
+        case MAL_ULONG_ATTRIBUTE_TAG:
+            // type: unsigned long
+            attribute->ulong_value = strtoul(raw_value, 0L, 10);
+            break;
+
+        case MAL_TIME_ATTRIBUTE_TAG:
+            // type: unsigned long
+            attribute->time_value = strtoul(raw_value, 0L, 10);
+            break;
+
+        case MAL_FINETIME_ATTRIBUTE_TAG:
+            // type: unsigned long
+            attribute->finetime_value = strtoul(raw_value, 0L, 10);
+            break;
+
+        default:
+            // Unsupported tag
+            // Not supporting Blob tag for attribute value of type mal_blot_t struct
+            return -1;
+    }
+
     return 0;
 }

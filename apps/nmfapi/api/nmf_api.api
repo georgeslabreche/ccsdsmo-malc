@@ -1,0 +1,30 @@
+<class name = "nmf_api">
+    The gateway API initializes the service objects and implements service accessors
+
+    <constructor>
+        Create a Gateway API object
+        <argument name = "hostname" c_type = "char *" />
+        <argument name = "provider_port" c_type = "char *" />
+        <argument name = "consumer_port" c_type = "char *" />
+    </constructor>
+
+    <destructor>
+        The destructor
+    </destructor>
+
+    <method name = "get_common_directory_service">
+        Get the Common Directory service
+        <return c_type = "common_directory_service_t *" />
+    </method>
+
+    <method name = "get_sm_appslauncher_service">
+        Get the AppsLauncher service
+        <return c_type = "sm_appslauncher_service_t *" />
+    </method>
+
+    <method name = "get_mc_parameter_service">
+        Get the Parameter service
+        <return c_type = "mc_parameter_service_t *" />
+    </method>
+
+</class>
