@@ -106,35 +106,6 @@ sm_appslauncher_service_destroy (sm_appslauncher_service_t **self_p)
 
 
 //  --------------------------------------------------------------------------
-//  Private functions
-
-//  Create the consumer context
-void
-sm_appslauncher_service_consumer_ctx_create (sm_appslauncher_service_t *self)
-{
-    clog_debug(sm_appslauncher_service_logger, "sm_appslauncher_service_consumer_ctx_create()\n");
-
-    if(!self->mal_ctx)
-    {
-        // Create context
-        self->mal_ctx = mal_ctx_new();
-    
-        // Create mal tcp header: all the MAL header fields are passed
-        maltcp_header_t *maltcp_header = NULL;
-        maltcp_header = maltcp_header_new(true, 0, true, NULL, NULL, NULL, NULL);
-        
-        // Create the consumer listening socket: bind to server with the consumer port number
-        void *ctx_consumer = NULL;
-        ctx_consumer = maltcp_ctx_new(self->mal_ctx, self->hostname, self->consumer_port, maltcp_header, false);
-
-        // Check consumer context
-        if (!ctx_consumer) exit(EXIT_FAILURE);
-    }
-}
-
-
-
-//  --------------------------------------------------------------------------
 //  The listApp operation allows a consumer to request the object instance identifiers of the Apps objects
 //  and running status for an app name or for a certain app category
 
@@ -147,8 +118,8 @@ sm_appslauncher_service_list_app (sm_appslauncher_service_t *self, char **app_na
     // The return code
     int rc;
 
-    // Create the consumer context / listening socket
-    sm_appslauncher_service_consumer_ctx_create(self);
+    // Initialize the consumer context / listening socket
+    nmfapi_util_init_maltcp_ctx(self->hostname, self->consumer_port, &self->mal_ctx);
 
     // Create the listApp consumer
     list_app_consumer = sm_appslauncher_list_app_consumer_new(self->mal_ctx, self->provider_uri);

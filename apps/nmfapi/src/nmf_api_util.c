@@ -85,3 +85,28 @@ nmfapi_util_create_mal_message_request(mal_encoder_t *encoder, void *cursor)
     return message;
 }
 
+
+int
+nmfapi_util_init_maltcp_ctx(char *hostname, char *port, mal_ctx_t **mal_ctx)
+{
+    // Create context
+    *mal_ctx = mal_ctx_new();
+
+    // Create mal tcp header: all the MAL header fields are passed
+    maltcp_header_t *maltcp_header = NULL;
+    maltcp_header = maltcp_header_new(true, 0, true, NULL, NULL, NULL, NULL);
+    
+    // Create the consumer listening socket: bind to server with the consumer port number
+    maltcp_ctx_t *maltcp_ctx = NULL;
+    maltcp_ctx = maltcp_ctx_new(*mal_ctx, hostname, port, maltcp_header, false);
+
+    // Check consumer context
+    if (!maltcp_ctx)
+    {
+        // Return error code in case of error
+        return -1;
+    }
+
+    // Return no-error code
+    return 0;
+}

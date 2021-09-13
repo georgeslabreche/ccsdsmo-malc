@@ -104,34 +104,6 @@ common_directory_service_destroy (common_directory_service_t **self_p)
 
 
 //  --------------------------------------------------------------------------
-//  Private functions
-
-//  Create the consumer context
-void
-common_directory_service_consumer_ctx_create (common_directory_service_t *self)
-{
-    // Log debug
-    clog_debug(common_directory_service_logger, "common_directory_service_consumer_ctx_create()\n");
-
-    if(!self->mal_ctx)
-    {
-        // Create context
-        self->mal_ctx = mal_ctx_new();
-    
-        // Create mal tcp header: all the MAL header fields are passed
-        maltcp_header_t *maltcp_header = NULL;
-        maltcp_header = maltcp_header_new(true, 0, true, NULL, NULL, NULL, NULL);
-        
-        // Create the consumer listening socket: bind to server with the consumer port number
-        void *ctx_consumer = NULL;
-        ctx_consumer = maltcp_ctx_new(self->mal_ctx, self->hostname, self->consumer_port, maltcp_header, false);
-
-        // Check consumer context
-        if (!ctx_consumer) exit(EXIT_FAILURE);
-    }
-}
-
-//  --------------------------------------------------------------------------
 //  The lookup operation allows a service consumer to query the directory service to return a list of
 //  service providers that match the requested criteria. If no match is found, then an empty list is returned
 
@@ -146,8 +118,8 @@ common_directory_service_lookup_provider (common_directory_service_t *self,
     // The return code
     int rc;
 
-    // Create the consumer context / listening socket
-    common_directory_service_consumer_ctx_create(self);
+    // Initialize the consumer context / listening socket
+    nmfapi_util_init_maltcp_ctx(self->hostname, self->consumer_port, &self->mal_ctx);
 
     // Create the lookupProvider consumer
     lookup_provider_consumer = common_directory_lookup_provider_consumer_new(self->mal_ctx, self->provider_uri);
