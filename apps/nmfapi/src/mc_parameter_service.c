@@ -119,35 +119,6 @@ mc_parameter_service_destroy (mc_parameter_service_t **self_p)
 
 
 //  --------------------------------------------------------------------------
-//  Private functions
-
-//  Create the consumer context
-void
-mc_parameter_service_consumer_ctx_create (mc_parameter_service_t *self)
-{
-    // Log debug
-    clog_debug(mc_parameter_service_logger, "mc_parameter_service_consumer_ctx_create()\n");
-
-    if(!self->mal_ctx)
-    {
-        // Create context
-        self->mal_ctx = mal_ctx_new();
-    
-        // Create mal tcp header: all the MAL header fields are passed
-        maltcp_header_t *maltcp_header = NULL;
-        maltcp_header = maltcp_header_new(true, 0, true, NULL, NULL, NULL, NULL);
-        
-        // Create the consumer listening socket: bind to server with the consumer port number
-        void *ctx_consumer = NULL;
-        ctx_consumer = maltcp_ctx_new(self->mal_ctx, self->hostname, self->consumer_port, maltcp_header, false);
-
-        // Check consumer context
-        if (!ctx_consumer) exit(EXIT_FAILURE);
-    }
-}
-
-
-//  --------------------------------------------------------------------------
 //  The listDefinition operation allows a consumer to request the latest object instance identifiers
 //  of the ParameterIdentity and ParameterDefinition objects for the supported parameters of the provider
 
@@ -161,8 +132,8 @@ mc_parameter_service_list_definition (mc_parameter_service_t *self, char **param
     // The return code
     int rc;
 
-    // Create the consumer context / listening socket
-    mc_parameter_service_consumer_ctx_create(self);
+    // Initialize the consumer context / listening socket
+    nmfapi_util_init_maltcp_ctx(self->hostname, self->consumer_port, &self->mal_ctx);
 
     // Create the getValue consumer
     list_definition_consumer = mc_parameter_list_definition_consumer_new(self->mal_ctx, self->provider_uri);
@@ -277,8 +248,8 @@ mc_parameter_service_get_values (mc_parameter_service_t *self, long *param_inst_
     // The return code
     int rc;
 
-    // Create the consumer context / listening socket
-    mc_parameter_service_consumer_ctx_create(self);
+    // Initialize the consumer context / listening socket
+    nmfapi_util_init_maltcp_ctx(self->hostname, self->consumer_port, &self->mal_ctx);
 
     // Create the getValue consumer
     get_value_consumer = mc_parameter_get_value_consumer_new(self->mal_ctx, self->provider_uri);
