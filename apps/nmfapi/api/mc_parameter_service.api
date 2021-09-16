@@ -13,6 +13,10 @@
         The destructor
     </destructor>
 
+    <!--
+        Methods for the listDefinition operation
+    -->
+
     <method name = "list_definition">
         The listDefinition operation allows a consumer to request the latest object instance identifiers
         of the ParameterIdentity and ParameterDefinition objects for the supported parameters of the provider
@@ -33,7 +37,11 @@
         <return type = "integer" />
     </method>
 
-    <method name = "get_values">
+    <!--
+        Methods for the getValue operation
+    -->
+
+    <method name = "get_value_list">
         The getValue operation returns the latest received value for the requested parameters
         <argument name = "param_inst_id_list" c_type = "long *" />
         <argument name = "param_inst_id_list_size" type = "size" />
@@ -193,6 +201,36 @@
         Sets the requested value with the expectation that it is of type MAL URI
         <argument name = "param_inst_id" c_type = "long" />
         <argument name = "value" c_type = "char **" />
+        <return type = "integer" />
+    </method>
+
+    <!--
+        Methods for the setValue operation
+    -->
+
+    <method name = "set_value_list">
+        The setValue operation allows a consumer to set the raw value for one or more parameters
+        <argument name = "param_inst_id_list" c_type = "long *" />
+        <argument name = "param_tag_list" c_type = "unsigned char *" />
+        <argument name = "param_value_list" c_type = "char **" />
+        <argument name = "param_list_size" type = "size" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "set_value">
+        The setValue operation allows a consumer to set the raw value for one or more parameters
+        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "param_tag" c_type = "unsigned char" />
+        <argument name = "param_value" c_type = "char *" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "set_value_blob">
+        The setValue operation allows a consumer to set the raw value for one or more parameters
+        Takes value argument in predefined type with the expectation that the parameter is of type MAL Blob
+        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "param_content" c_type = "char *" />
+        <argument name = "param_content_length" c_type = "size_t" />
         <return type = "integer" />
     </method>
 

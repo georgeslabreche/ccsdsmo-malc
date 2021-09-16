@@ -42,7 +42,7 @@ NMFAPI_EXPORT int
 //  *** Draft method, for development use, may change without warning ***
 //  The getValue operation returns the latest received value for the requested parameters
 NMFAPI_EXPORT int
-    mc_parameter_service_get_values (mc_parameter_service_t *self, long *param_inst_id_list, size_t param_inst_id_list_size, union mal_attribute_t **response_mal_attribute_list, unsigned char **response_mal_attribute_tag_list, size_t *response_mal_element_count);
+    mc_parameter_service_get_value_list (mc_parameter_service_t *self, long *param_inst_id_list, size_t param_inst_id_list_size, union mal_attribute_t **response_mal_attribute_list, unsigned char **response_mal_attribute_tag_list, size_t *response_mal_element_count);
 
 //  *** Draft method, for development use, may change without warning ***
 //  The getValue operation returns the latest received value for a requested parameter
@@ -156,6 +156,22 @@ NMFAPI_EXPORT int
 //  Sets the requested value with the expectation that it is of type MAL URI
 NMFAPI_EXPORT int
     mc_parameter_service_get_value_uri (mc_parameter_service_t *self, long param_inst_id, char **value);
+
+//  *** Draft method, for development use, may change without warning ***
+//  The setValue operation allows a consumer to set the raw value for one or more parameters
+NMFAPI_EXPORT int
+    mc_parameter_service_set_value_list (mc_parameter_service_t *self, long *param_inst_id_list, unsigned char *param_tag_list, char **param_value_list, size_t param_list_size);
+
+//  *** Draft method, for development use, may change without warning ***
+//  The setValue operation allows a consumer to set the raw value for one or more parameters
+NMFAPI_EXPORT int
+    mc_parameter_service_set_value (mc_parameter_service_t *self, long param_inst_id, unsigned char param_tag, char *param_value);
+
+//  *** Draft method, for development use, may change without warning ***
+//  The setValue operation allows a consumer to set the raw value for one or more parameters
+//  Takes value argument in predefined type with the expectation that the parameter is of type MAL Blob
+NMFAPI_EXPORT int
+    mc_parameter_service_set_value_blob (mc_parameter_service_t *self, long param_inst_id, char *param_content, size_t param_content_length);
 
 #endif // NMFAPI_BUILD_DRAFT_API
 //  @end

@@ -26,29 +26,33 @@
 //  --------------------------------------------------------------------------
 //  Declare the demonstration functions
 
-//  Demonstrate the lookupProvider operation
+//  Demonstrate the lookupProvider request interaction
 int
 demo_directory_service_lookup_provider();
 
-//  Demonstrate the listApp operation
+//  Demonstrate the listApp operation request interaction
 int
 demo_appslauncher_service_list_app();
 
-//  Demonstrate the listDefinition operation with multiple parameters in a single request
+//  Demonstrate the listDefinition operation with multiple parameters in a single request interaction
 int
 demo_parameter_service_list_definition();
 
-//  Demonstrate the listDefinition operation with one parameter per request
+//  Demonstrate the listDefinition operation with one parameter per request interaction
 int
 demo_parameter_service_get_definition();
 
-//  Demonstrate the getValue operation with multiple parameters in a single request
+//  Demonstrate the getValue operation with multiple parameters in a single request interaction
 int
-demo_parameter_service_get_values();
+demo_parameter_service_get_value_list();
 
-//  Demonstrate the getValue operation with one parameter per request
+//  Demonstrate the getValue operation with one parameter per request interaction
 int
 demo_parameter_service_get_value();
+
+//  Demonstrate the setValue operation with one parameter per submit interaction
+int
+demo_parameter_service_set_value();
 
 
 //  --------------------------------------------------------------------------
@@ -140,6 +144,8 @@ int main (int argc, char *argv [])
     mc_parameter_list_definition_consumer_set_log_level(log_level);
     mc_parameter_get_value_consumer_set_log_level(log_level);
 
+    // TODO: uncomment
+    mc_parameter_set_value_consumer_set_log_level(log_level);
 
     // --------------------------------------------------------------------------
     // Initialize the Gateway API object to access NMF services
@@ -157,17 +163,20 @@ int main (int argc, char *argv [])
     // Demonstrate the listApp operation
     demo_appslauncher_service_list_app();
 
-    // Demonstrate the listDefinition operation with multiple parameters in a single request
+    // Demonstrate the listDefinition operation with multiple parameters in a single request interaction
     demo_parameter_service_list_definition();
 
-    // Demonstrate the listDefinition operation with one parameter per request
+    // Demonstrate the listDefinition operation with one parameter per request interaction
     demo_parameter_service_get_definition();
 
-    // Demonstrate the getValue operation with multiple parameters in a single request
-    demo_parameter_service_get_values();
+    // Demonstrate the getValue operation with multiple parameters in a single request interaction
+    demo_parameter_service_get_value_list();
 
-    // Demonstrate the getValue operation with one parameter per request
+    // Demonstrate the getValue operation with one parameter per request interaction
     demo_parameter_service_get_value();
+
+    // Demonstrate the setValue operation with one parameter per submit interaction
+    demo_parameter_service_set_value();
 
 
     // --------------------------------------------------------------------------
@@ -187,12 +196,12 @@ int main (int argc, char *argv [])
 
 
 //  --------------------------------------------------------------------------
-//  Demonstrate the lookupProvider operation
+//  Demonstrate the lookupProvider request interaction
 int
 demo_directory_service_lookup_provider()
 {
     // Verbosity
-    printf("\n\nDemonstrate the lookupProvider operation:\n\n");
+    printf("\n\nDemonstrate the lookupProvider request interaction:\n\n");
 
     // Create the Directory service
     common_directory_service_t *directory_service = nmf_api_get_common_directory_service(nmf_api);
@@ -211,13 +220,13 @@ demo_directory_service_lookup_provider()
 
 
 //  --------------------------------------------------------------------------
-//  Demonstrate the listApp operation
+//  Demonstrate the listApp requestion interaction
 
 int
 demo_appslauncher_service_list_app()
 {
     // Verbosity
-    printf("\n\nDemonstrate the listApp operation:\n\n");
+    printf("\n\nDemonstrate the listApp request interaction:\n\n");
 
     // Create the AppsLauncher service
     sm_appslauncher_service_t *appslauncher_service = nmf_api_get_sm_appslauncher_service(nmf_api);
@@ -251,13 +260,13 @@ demo_appslauncher_service_list_app()
 
 
 //  --------------------------------------------------------------------------
-//  Demonstrate the listDefinition operation with multiple parameters in a single request
+//  Demonstrate the listDefinition operation with multiple parameters in a single request interaction
 
 int
 demo_parameter_service_list_definition()
 {
     // Verbosity
-    printf("\n\nDemonstrate the listDefinition operation with multiple parameters in a single request:\n\n");
+    printf("\n\nDemonstrate the listDefinition operation with multiple parameters in a single request interaction:\n\n");
 
     // The response error code
     int rc;
@@ -319,13 +328,13 @@ demo_parameter_service_list_definition()
 
 
 //  --------------------------------------------------------------------------
-//  Demonstrate the listDefinition operation with one parameter per request
+//  Demonstrate the listDefinition operation with one parameter per request interaction
 
 int
 demo_parameter_service_get_definition()
 {
     // Verbosity
-    printf("\n\nDemonstrate the listDefinition operation with one parameter per request:\n\n");
+    printf("\n\nDemonstrate the listDefinition operation with one parameter per request interaction:\n\n");
 
     // The response error code
     int rc;
@@ -381,10 +390,10 @@ demo_parameter_service_get_definition()
 //  Demonstrate the getValue operation with multiple parameters in a single request
 
 int
-demo_parameter_service_get_values()
+demo_parameter_service_get_value_list()
 {
     // Verbosity
-    printf("\n\nDemonstrate the getValue operation with multiple parameters in a single request:\n\n");
+    printf("\n\nDemonstrate the getValue operation with multiple parameters in a single request interaction:\n\n");
 
     // The response error code
     int rc;
@@ -416,7 +425,7 @@ demo_parameter_service_get_values()
     size_t response_mal_attributes_count;
 
     // Send the getValue request with the response variable pointers
-    rc = mc_parameter_service_get_values(parameter_service, param_inst_ids, param_inst_ids_size,
+    rc = mc_parameter_service_get_value_list(parameter_service, param_inst_ids, param_inst_ids_size,
         &response_mal_attributes, &response_mal_attributes_tags, &response_mal_attributes_count);
 
     // Error check
@@ -523,13 +532,13 @@ demo_parameter_service_get_values()
 
 
 //  --------------------------------------------------------------------------
-//  Demonstrate the getValue operation with one parameter per request
+//  Demonstrate the getValue operation with one parameter per request interaction
 
 int
 demo_parameter_service_get_value()
 {
     // Verbosity
-    printf("\n\nDemonstrate the getValue operation with one parameter per request:\n\n");
+    printf("\n\nDemonstrate the getValue operation with one parameter per request interaction:\n\n");
 
     // The response error code
     int rc;
@@ -575,7 +584,7 @@ demo_parameter_service_get_value()
     // Pointer to the string response variable
     char *os_version;
 
-    // Send the getValue requests with the string pointer to be set
+    // Send the getValue request with the string pointer to be set
     rc = mc_parameter_service_get_value_string(parameter_service, 1, &os_version);
 
     // Error check
@@ -617,6 +626,88 @@ demo_parameter_service_get_value()
     }
 
     // TODO: Destroy the response variables?
+
+    return 0;
+}
+
+
+//  --------------------------------------------------------------------------
+//  Demonstrate the setValue operation with one parameter per submit interaction
+//  FIXME: 
+//      - This demonstration will print an error message because the OSVersion parameter is read-only
+//      - Need to update this demonstration to set a parameter value that is not read-only
+int
+demo_parameter_service_set_value()
+{
+    // Verbosity
+    printf("\n\nDemonstrate the setValue operation with one parameter per submit interaction:\n\n");
+
+    // The response error code
+    int rc;
+
+    // Create the Parameter service
+    mc_parameter_service_t *parameter_service = nmf_api_get_mc_parameter_service(nmf_api);
+
+    // --------------------------------------------------------------------------
+    // Demonstrating getting, setting, and then getting again a String parameter (the OSVersion parameter)
+    
+    long param_id_osversion = 1;
+
+    // STEP 1: The getValue request interaction will fetch the OSVersion param value
+
+    // Pointer to the string response variable
+    char *os_version;
+
+    // Send the getValue request with the string pointer to be set
+    rc = mc_parameter_service_get_value_string(parameter_service, param_id_osversion, &os_version);
+
+    // Error check
+    if(rc < 0)
+    {
+        printf("Error requesting parameter: OS Version\n");
+    }
+    else
+    {
+        // Print the fetched parameter
+        printf("OS Version: %s\n", os_version);
+    }
+
+    // Don't forget to destroy the string object
+    if(os_version)
+    {
+        mal_string_destroy(&os_version);
+    }
+
+    // STEP 2: The setValue request interaction will set the OSVersion param value
+    rc = mc_parameter_service_set_value(parameter_service, param_id_osversion, MAL_STRING_ATTRIBUTE_TAG, "New OSVersion via the setValue operation");
+
+    // STEP 3: The getValue request interaction should fetch the value of the OSVersion param value
+    if(rc == 0)
+    {
+        // Send the getValue request with the string pointer to be set
+        rc = mc_parameter_service_get_value_string(parameter_service, param_id_osversion, &os_version);
+
+        // Error check
+        if(rc < 0)
+        {
+            printf("Error requesting parameter: OS Version\n");
+        }
+        else
+        {
+            // Print the fetched parameter
+            printf("New OS Version: %s\n", os_version);
+        }
+
+        // Don't forget to destroy the string object
+        if(os_version)
+        {
+            mal_string_destroy(&os_version);
+        }
+    }
+    else
+    {
+        printf("Error setting parameter: OS Version\n");
+    }
 
     return 0;
 }

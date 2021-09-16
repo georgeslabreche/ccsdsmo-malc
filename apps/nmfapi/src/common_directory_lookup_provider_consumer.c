@@ -246,6 +246,7 @@ common_directory_lookup_provider_consumer_initialize (void *self, mal_actor_t *m
         // Destroy the MAL encoder cursor
         mal_encoder_cursor_destroy(encoder, cursor);
 
+        // Return the error code
         return rc;
     }
 
@@ -253,7 +254,7 @@ common_directory_lookup_provider_consumer_initialize (void *self, mal_actor_t *m
     clog_debug(common_directory_lookup_provider_consumer_logger,
         "common_directory_lookup_provider_consumer_initialize: new MAL message\n");
 
-    mal_message_t *message = nmfapi_util_create_mal_message_request(encoder, cursor);
+    mal_message_t *message = nmfapi_util_create_mal_message(encoder, cursor);
 
     // Initialize the MAL encoder cursor
     mal_encoder_cursor_init(
@@ -279,6 +280,7 @@ common_directory_lookup_provider_consumer_initialize (void *self, mal_actor_t *m
         // Destroy the MAL encoder cursor
         mal_encoder_cursor_destroy(encoder, cursor);
 
+        // Return the error code
         return rc;
     }
 
@@ -297,7 +299,7 @@ common_directory_lookup_provider_consumer_initialize (void *self, mal_actor_t *m
     {
         // Log error
         clog_error(common_directory_lookup_provider_consumer_logger,
-            "common_directory_lookup_provider_consumer_initialize: error sending lookupProvider request\n");
+            "common_directory_lookup_provider_consumer_initialize: error sending lookupProvider request message\n");
     }
 
     // Return the return code

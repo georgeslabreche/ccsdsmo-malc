@@ -7,7 +7,8 @@
 
 /*
 @header
-    mc_parameter_get_value_consumer - The request consumer for the getValue operation.
+    mc_parameter_get_value_consumer - The request consumer for the getValue operation
+    The getValue operation returns the latest received value for a requested parameter
 @discuss
 @end
 */
@@ -319,6 +320,7 @@ mc_parameter_get_value_consumer_initialize (void *self, mal_actor_t *mal_actor)
         // Destroy the field
         mal_long_list_destroy(&param_inst_id_list);
 
+        // Return the error code
         return rc;
     }
 
@@ -326,7 +328,7 @@ mc_parameter_get_value_consumer_initialize (void *self, mal_actor_t *mal_actor)
     clog_debug(mc_parameter_get_value_consumer_logger,
         "mc_parameter_get_value_consumer_initialize: new MAL message\n");
 
-    mal_message_t *message = nmfapi_util_create_mal_message_request(encoder, cursor);
+    mal_message_t *message = nmfapi_util_create_mal_message(encoder, cursor);
 
     // Initialize the MAL encoder cursor
     mal_encoder_cursor_init(
@@ -355,6 +357,7 @@ mc_parameter_get_value_consumer_initialize (void *self, mal_actor_t *mal_actor)
         // Destroy the field
         mal_long_list_destroy(&param_inst_id_list);
 
+        // Return the error code
         return rc;
     }
 
@@ -373,7 +376,7 @@ mc_parameter_get_value_consumer_initialize (void *self, mal_actor_t *mal_actor)
     {
         // Log error
         clog_error(mc_parameter_get_value_consumer_logger,
-            "mc_parameter_get_value_consumer_initialize: error sending getValue request\n");
+            "mc_parameter_get_value_consumer_initialize: error sending getValue request message\n");
     }
 
     // Destroy the field

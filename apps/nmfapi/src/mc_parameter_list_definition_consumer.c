@@ -312,6 +312,7 @@ mc_parameter_list_definition_consumer_initialize (void *self, mal_actor_t *mal_a
         // Destroy the field
         mal_identifier_list_destroy(&param_name_mal_id_list);
 
+        // Return the error code
         return rc;
     }
 
@@ -319,7 +320,7 @@ mc_parameter_list_definition_consumer_initialize (void *self, mal_actor_t *mal_a
     clog_debug(mc_parameter_list_definition_consumer_logger,
         "mc_parameter_list_definition_consumer_initialize: new MAL message\n");
 
-    mal_message_t *message = nmfapi_util_create_mal_message_request(encoder, cursor);
+    mal_message_t *message = nmfapi_util_create_mal_message(encoder, cursor);
 
     // Initialize the MAL encoder cursor
     mal_encoder_cursor_init(
@@ -348,6 +349,7 @@ mc_parameter_list_definition_consumer_initialize (void *self, mal_actor_t *mal_a
         // Destroy the field
         mal_identifier_list_destroy(&param_name_mal_id_list);
 
+        // Return the error code
         return rc;
     }
 
@@ -366,7 +368,7 @@ mc_parameter_list_definition_consumer_initialize (void *self, mal_actor_t *mal_a
     {
         // Log error
         clog_error(mc_parameter_list_definition_consumer_logger,
-            "mc_parameter_list_definition_consumer_initialize: error sending listDefinition request\n");
+            "mc_parameter_list_definition_consumer_initialize: error sending listDefinition request message\n");
     }
 
     // Destroy the field
