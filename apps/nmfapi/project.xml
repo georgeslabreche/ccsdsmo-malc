@@ -51,19 +51,19 @@
     <!-- COMMON -->
     <!-- Common: Directory Service -->
     <class name = "common_directory_service" selftest = "0" />
-    <class name = "common_directory_lookup_provider_consumer" selftest = "0" />
+    <class name = "common_directory_lookupprovider_consumer" selftest = "0" />
 
     <!-- MONITOR AND CONTROL (MC) -->
     <!-- MC: Parameter Service -->
     <class name = "mc_parameter_service" selftest = "0" />
-    <class name = "mc_parameter_get_value_consumer" selftest = "0" />
-    <class name = "mc_parameter_set_value_consumer" selftest = "0" />
-    <class name = "mc_parameter_list_definition_consumer" selftest = "0" />
+    <class name = "mc_parameter_getvalue_consumer" selftest = "0" />
+    <class name = "mc_parameter_setvalue_consumer" selftest = "0" />
+    <class name = "mc_parameter_listdefinition_consumer" selftest = "0" />
 
     <!-- SOFTWARE MANAGEMENT (SM) -->
     <!-- SM: Apps Launcher Service -->
     <class name = "sm_appslauncher_service" selftest = "0" />
-    <class name = "sm_appslauncher_list_app_consumer" selftest = "0" />
+    <class name = "sm_appslauncher_listapp_consumer" selftest = "0" />
 
     <!-- Targets -->
     <target name = "rpi" />

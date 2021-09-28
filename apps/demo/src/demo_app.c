@@ -133,19 +133,19 @@ int main (int argc, char *argv [])
 
     // Common service log level
     common_directory_service_set_log_level(log_level);
-    common_directory_lookup_provider_consumer_set_log_level(log_level);
+    common_directory_lookupprovider_consumer_set_log_level(log_level);
 
     // AppsLauncher service log level
     sm_appslauncher_service_set_log_level(log_level);
-    sm_appslauncher_list_app_consumer_set_log_level(log_level);
+    sm_appslauncher_listapp_consumer_set_log_level(log_level);
 
     // Parameter service log levels
     mc_parameter_service_set_log_level(log_level);
-    mc_parameter_list_definition_consumer_set_log_level(log_level);
-    mc_parameter_get_value_consumer_set_log_level(log_level);
+    mc_parameter_listdefinition_consumer_set_log_level(log_level);
+    mc_parameter_getvalue_consumer_set_log_level(log_level);
 
     // TODO: uncomment
-    mc_parameter_set_value_consumer_set_log_level(log_level);
+    mc_parameter_setvalue_consumer_set_log_level(log_level);
 
     // --------------------------------------------------------------------------
     // Initialize the Gateway API object to access NMF services

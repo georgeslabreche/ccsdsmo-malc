@@ -1,10 +1,10 @@
-<class name = "sm_appslauncher_list_app_consumer" selftest="0">
-    The request consumer for the listApp operation
+<class name = "mc_parameter_listdefinition_consumer" selftest="0">
+    The request consumer for the listDefinition operation
 
-    <constant name = "uri" value = "sm/appslauncher/consumer/listApp" type="string">The consumer URI for the listApp operation</constant>
+    <constant name = "uri" value = "mc/parameter/consumer/listDefinition" type="string">The consumer URI for the listDefinition operation</constant>
 
     <constructor>
-        Create a consumer object for the listApp operation
+        Instanciate a consumer object for the listDefinition operation
         <argument name = "mal_ctx" c_type = "mal_ctx_t *" />
         <argument name = "provider_uri" c_type = "mal_uri_t *" />
     </constructor>
@@ -38,7 +38,7 @@
     <!--
         MAL actor function
     -->
-
+    
     <method name = "actor_init">
         Create and initialize the actor
     </method>
@@ -46,19 +46,18 @@
     <!-- 
         Getters for response variables
     -->
-
-    <method name = "get_response_apps_inst_id_list">
-        Get response variable for appsInstIds
+    <method name = "get_response_identity_id_list">
+        Get response variable for the identity ids
         <return c_type = "long *" />
     </method>
 
-    <method name = "get_response_apps_inst_running_list">
-        Get response variable for running apps
-        <return c_type = "bool *" />
+    <method name = "get_response_definition_id_list">
+        Get response variable for the definition ids
+        <return c_type = "long *" />
     </method>
 
     <method name = "get_response_element_count">
-        Get response variable for number of apps
+        Get response variable for number elements
         <return type = "size" />
     </method>
 
@@ -71,34 +70,24 @@
         Getters and Setters for class variables
     -->
 
-    <method name = "get_field_app_name_list">
-        Get the app names MAL message field
+    <method name = "get_field_param_name_list">
+        Get the param names MAL message field
         <return c_type = "char **" />
     </method>
 
-    <method name = "set_field_app_name_list">
-        Set the app names MAL message field
-        <argument name = "app_name_list" c_type = "char **" />
+    <method name = "set_field_param_name_list">
+        Set the param names MAL message field
+        <argument name = "param_names" c_type = "char **" />
     </method>
 
-    <method name = "get_field_app_name_list_size">
-        Get the size of the app names MAL message field
+    <method name = "get_field_param_name_list_size">
+        Get the size of the param names MAL message field
         <return type = "size" />
     </method>
 
-    <method name = "set_field_app_name_list_size">
-        Set the size of the app names MAL message field
-        <argument name = "app_name_list_size" type = "size" />
-    </method>
-
-    <method name = "get_field_category">
-        Get the category MAL message field
-        <return c_type = "char *" />
-    </method>
-
-    <method name = "set_field_category">
-        Set the category MAL message field
-        <argument name = "category" c_type = "char *" />
+    <method name = "set_field_param_name_list_size">
+        Set the size of the param names MAL message field
+        <argument name = "param_names_size" type = "size" />
     </method>
 
 </class>

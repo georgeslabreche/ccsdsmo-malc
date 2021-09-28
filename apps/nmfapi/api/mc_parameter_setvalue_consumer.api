@@ -1,4 +1,4 @@
-<class name = "mc_parameter_set_value_consumer" selftest="0">
+<class name = "mc_parameter_setvalue_consumer" selftest="0">
     The submit consumer for the setValue operation
     The setValue operation allows a consumer to set the raw value for one or more parameters
 

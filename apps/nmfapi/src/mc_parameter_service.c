@@ -43,9 +43,9 @@ struct _mc_parameter_service_t {
 };
 
 // The consumers
-mc_parameter_get_value_consumer_t *get_value_consumer;
-mc_parameter_set_value_consumer_t *set_value_consumer;
-mc_parameter_list_definition_consumer_t *list_definition_consumer;
+mc_parameter_getvalue_consumer_t *getvalue_consumer;
+mc_parameter_setvalue_consumer_t *setvalue_consumer;
+mc_parameter_listdefinition_consumer_t *listdefinition_consumer;
 
 
 //  --------------------------------------------------------------------------
@@ -87,30 +87,30 @@ mc_parameter_service_destroy (mc_parameter_service_t **self_p)
         // Free class properties here
 
         // Destroy the listDefinition consumer
-        if(list_definition_consumer) // FIXME: will response be cleared because consumer gets destroyed in mc_parameter_service_list_definition?
+        if(listdefinition_consumer) // FIXME: will response be cleared because consumer gets destroyed in mc_parameter_service_list_definition?
         {
             // Clear the response variables
-            mc_parameter_list_definition_consumer_response_clear(list_definition_consumer);
+            mc_parameter_listdefinition_consumer_response_clear(listdefinition_consumer);
 
             // Destroy the consumer
-            mc_parameter_list_definition_consumer_destroy(&list_definition_consumer);
+            mc_parameter_listdefinition_consumer_destroy(&listdefinition_consumer);
         }
 
         // Destroy the getValue consumer
-        if(get_value_consumer) // FIXME: will response be cleared because consumer gets destroyed in mc_parameter_service_get_value_list?
+        if(getvalue_consumer) // FIXME: will response be cleared because consumer gets destroyed in mc_parameter_service_get_value_list?
         {
             // Clear the response variables
-            mc_parameter_get_value_consumer_response_clear(get_value_consumer);
+            mc_parameter_getvalue_consumer_response_clear(getvalue_consumer);
 
             // Destroy the consumer
-            mc_parameter_get_value_consumer_destroy(&get_value_consumer);
+            mc_parameter_getvalue_consumer_destroy(&getvalue_consumer);
         }
 
         // Destroy the getValue consumer
-        if(set_value_consumer) // FIXME: will response be cleared because consumer gets destroyed in mc_parameter_service_get_value_list?
+        if(setvalue_consumer) // FIXME: will response be cleared because consumer gets destroyed in mc_parameter_service_get_value_list?
         {
             // Destroy the consumer
-            mc_parameter_set_value_consumer_destroy(&set_value_consumer);
+            mc_parameter_setvalue_consumer_destroy(&setvalue_consumer);
         }
         
         // Destroy the context
@@ -144,16 +144,16 @@ mc_parameter_service_list_definition (mc_parameter_service_t *self, char **param
     nmfapi_util_init_maltcp_ctx(self->hostname, self->consumer_port, &self->mal_ctx);
 
     // Create the getValue consumer
-    list_definition_consumer = mc_parameter_list_definition_consumer_new(self->mal_ctx, self->provider_uri);
+    listdefinition_consumer = mc_parameter_listdefinition_consumer_new(self->mal_ctx, self->provider_uri);
 
     // Set the param names MAL message field.
-    mc_parameter_list_definition_consumer_set_field_param_name_list(list_definition_consumer, param_name_list);
+    mc_parameter_listdefinition_consumer_set_field_param_name_list(listdefinition_consumer, param_name_list);
 
     // Set the param size MAL message field.
-    mc_parameter_list_definition_consumer_set_field_param_name_list_size(list_definition_consumer, param_name_list_size);
+    mc_parameter_listdefinition_consumer_set_field_param_name_list_size(listdefinition_consumer, param_name_list_size);
 
     // Create and initialize the consumer actor
-    mc_parameter_list_definition_consumer_actor_init(list_definition_consumer);
+    mc_parameter_listdefinition_consumer_actor_init(listdefinition_consumer);
 
     // Start the request response listener
     mal_ctx_start(self->mal_ctx);
@@ -161,21 +161,21 @@ mc_parameter_service_list_definition (mc_parameter_service_t *self, char **param
     // Lock the consumer mutex which has already been locked at the beginning of this function
     // The initial mutex lock will only be released after the request finalize function has finished executing
     // We do this so that the response variables can be set and return synchronously
-    mc_parameter_list_definition_consumer_mutex_lock(list_definition_consumer);
+    mc_parameter_listdefinition_consumer_mutex_lock(listdefinition_consumer);
 
     // Set the response pointers
-    *response_identity_id_list = mc_parameter_list_definition_consumer_get_response_identity_id_list(list_definition_consumer);
-    *response_definition_id_list = mc_parameter_list_definition_consumer_get_response_definition_id_list(list_definition_consumer);
-    *response_element_count = mc_parameter_list_definition_consumer_get_response_element_count(list_definition_consumer);
+    *response_identity_id_list = mc_parameter_listdefinition_consumer_get_response_identity_id_list(listdefinition_consumer);
+    *response_definition_id_list = mc_parameter_listdefinition_consumer_get_response_definition_id_list(listdefinition_consumer);
+    *response_element_count = mc_parameter_listdefinition_consumer_get_response_element_count(listdefinition_consumer);
 
     // Set the return code as the error code of the consumer response
-    rc = mc_parameter_list_definition_consumer_get_response_error_code(list_definition_consumer);
+    rc = mc_parameter_listdefinition_consumer_get_response_error_code(listdefinition_consumer);
 
     // Unlock the consumer mutex
-    mc_parameter_list_definition_consumer_mutex_unlock(list_definition_consumer);
+    mc_parameter_listdefinition_consumer_mutex_unlock(listdefinition_consumer);
 
     // Destroy the getValue consumer
-    mc_parameter_list_definition_consumer_destroy(&list_definition_consumer);
+    mc_parameter_listdefinition_consumer_destroy(&listdefinition_consumer);
 
     // Destroy the consumer context / listening socket
     mal_ctx_destroy(&self->mal_ctx);
@@ -260,16 +260,16 @@ mc_parameter_service_get_value_list (mc_parameter_service_t *self, long *param_i
     nmfapi_util_init_maltcp_ctx(self->hostname, self->consumer_port, &self->mal_ctx);
 
     // Create the getValue consumer
-    get_value_consumer = mc_parameter_get_value_consumer_new(self->mal_ctx, self->provider_uri);
+    getvalue_consumer = mc_parameter_getvalue_consumer_new(self->mal_ctx, self->provider_uri);
 
     // Set the param names MAL message field
-    mc_parameter_get_value_consumer_set_field_param_inst_id_list(get_value_consumer, param_inst_id_list);
+    mc_parameter_getvalue_consumer_set_field_param_inst_id_list(getvalue_consumer, param_inst_id_list);
 
     // Set the param size MAL message field
-    mc_parameter_get_value_consumer_set_field_param_inst_id_list_size(get_value_consumer, param_inst_id_list_size);
+    mc_parameter_getvalue_consumer_set_field_param_inst_id_list_size(getvalue_consumer, param_inst_id_list_size);
 
     // Create and initialize the consumer actor
-    mc_parameter_get_value_consumer_actor_init(get_value_consumer);
+    mc_parameter_getvalue_consumer_actor_init(getvalue_consumer);
 
     // Start the request response listener
     mal_ctx_start(self->mal_ctx);
@@ -277,21 +277,21 @@ mc_parameter_service_get_value_list (mc_parameter_service_t *self, long *param_i
     // Lock the consumer mutex which has already been locked at the beginning of this function
     // The initial mutex lock will only be released after the request finalize function has finished executing
     // We do this so that the response variables can be set and return synchronously
-    mc_parameter_get_value_consumer_mutex_lock(get_value_consumer);
+    mc_parameter_getvalue_consumer_mutex_lock(getvalue_consumer);
 
     // Set the response pointers
-    *response_mal_attribute_list = mc_parameter_get_value_consumer_get_response_mal_attribute_list(get_value_consumer);
-    *response_mal_attribute_tag_list = mc_parameter_get_value_consumer_get_response_mal_attribute_tag_list(get_value_consumer);
-    *response_element_count = mc_parameter_get_value_consumer_get_response_element_count(get_value_consumer);
+    *response_mal_attribute_list = mc_parameter_getvalue_consumer_get_response_mal_attribute_list(getvalue_consumer);
+    *response_mal_attribute_tag_list = mc_parameter_getvalue_consumer_get_response_mal_attribute_tag_list(getvalue_consumer);
+    *response_element_count = mc_parameter_getvalue_consumer_get_response_element_count(getvalue_consumer);
 
     // Set the return code as the error code of the consumer response
-    rc = mc_parameter_get_value_consumer_get_response_error_code(get_value_consumer);
+    rc = mc_parameter_getvalue_consumer_get_response_error_code(getvalue_consumer);
 
     // Unlock the consumer mutex
-    mc_parameter_get_value_consumer_mutex_unlock(get_value_consumer);
+    mc_parameter_getvalue_consumer_mutex_unlock(getvalue_consumer);
 
     // Destroy the getValue consumer
-    mc_parameter_get_value_consumer_destroy(&get_value_consumer);
+    mc_parameter_getvalue_consumer_destroy(&getvalue_consumer);
 
     // Destroy the consumer context / listening socket
     mal_ctx_destroy(&self->mal_ctx);
@@ -1255,16 +1255,16 @@ mc_parameter_service_set_value_list (mc_parameter_service_t *self, long *param_i
     nmfapi_util_init_maltcp_ctx(self->hostname, self->consumer_port, &self->mal_ctx);
 
     // Create the setValue consumer
-    set_value_consumer = mc_parameter_set_value_consumer_new(self->mal_ctx, self->provider_uri);
+    setvalue_consumer = mc_parameter_setvalue_consumer_new(self->mal_ctx, self->provider_uri);
 
     // Set the MAL message param fields
-    mc_parameter_set_value_consumer_set_field_param_inst_id_list(set_value_consumer, param_inst_id_list);
-    mc_parameter_set_value_consumer_set_field_param_tag_list(set_value_consumer, param_tag_list);
-    mc_parameter_set_value_consumer_set_field_param_value_list(set_value_consumer, param_value_list);
-    mc_parameter_set_value_consumer_set_field_param_list_size(set_value_consumer, param_list_size);
+    mc_parameter_setvalue_consumer_set_field_param_inst_id_list(setvalue_consumer, param_inst_id_list);
+    mc_parameter_setvalue_consumer_set_field_param_tag_list(setvalue_consumer, param_tag_list);
+    mc_parameter_setvalue_consumer_set_field_param_value_list(setvalue_consumer, param_value_list);
+    mc_parameter_setvalue_consumer_set_field_param_list_size(setvalue_consumer, param_list_size);
 
      // Create and initialize the consumer actor
-    mc_parameter_set_value_consumer_actor_init(set_value_consumer);
+    mc_parameter_setvalue_consumer_actor_init(setvalue_consumer);
 
     // Start the submit response listener
     mal_ctx_start(self->mal_ctx);
@@ -1272,16 +1272,16 @@ mc_parameter_service_set_value_list (mc_parameter_service_t *self, long *param_i
     // Lock the consumer mutex which has already been locked at the beginning of this function
     // The initial mutex lock will only be released after the request finalize function has finished executing
     // We do this so that the response variables can be set and return synchronously
-    mc_parameter_set_value_consumer_mutex_lock(set_value_consumer);
+    mc_parameter_setvalue_consumer_mutex_lock(setvalue_consumer);
 
     // Set the return code as the error code of the consumer response
-    rc = mc_parameter_set_value_consumer_get_response_error_code(set_value_consumer);
+    rc = mc_parameter_setvalue_consumer_get_response_error_code(setvalue_consumer);
 
     // Unlock the consumer mutex
-    mc_parameter_set_value_consumer_mutex_unlock(set_value_consumer);
+    mc_parameter_setvalue_consumer_mutex_unlock(setvalue_consumer);
 
     // Destroy the setValue consumer
-    mc_parameter_set_value_consumer_destroy(&set_value_consumer);
+    mc_parameter_setvalue_consumer_destroy(&setvalue_consumer);
 
     // Destroy the consumer context / listening socket
     mal_ctx_destroy(&self->mal_ctx);

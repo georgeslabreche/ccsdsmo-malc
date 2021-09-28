@@ -1,4 +1,4 @@
-<class name = "common_directory_lookup_provider_consumer" selftest="0">
+<class name = "common_directory_lookupprovider_consumer" selftest="0">
     The request consumer for the lookupProvider operation
 
     <constant name = "uri" value = "common/directory/consumer/lookupProvider" type="string">The consumer URI for the lookupProvider operation</constant>

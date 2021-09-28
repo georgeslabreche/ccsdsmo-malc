@@ -42,7 +42,7 @@ struct _sm_appslauncher_service_t {
 };
 
 // The consumers
-sm_appslauncher_list_app_consumer_t *list_app_consumer;
+sm_appslauncher_listapp_consumer_t *listapp_consumer;
 
 
 //  --------------------------------------------------------------------------
@@ -83,13 +83,13 @@ sm_appslauncher_service_destroy (sm_appslauncher_service_t **self_p)
         // Free class properties here
 
         // Destroy the listApp consumer
-        if(list_app_consumer) // FIXME: will response be cleared because consumer gets destroyed in sm_appslauncher_service_list_app?
+        if(listapp_consumer) // FIXME: will response be cleared because consumer gets destroyed in sm_appslauncher_service_list_app?
         {
             // Clear the response variables
-            sm_appslauncher_list_app_consumer_response_clear(list_app_consumer);
+            sm_appslauncher_listapp_consumer_response_clear(listapp_consumer);
 
             // Destroy the consumer
-            sm_appslauncher_list_app_consumer_destroy(&list_app_consumer);
+            sm_appslauncher_listapp_consumer_destroy(&listapp_consumer);
         }
 
         // Destroy the context
@@ -122,19 +122,19 @@ sm_appslauncher_service_list_app (sm_appslauncher_service_t *self, char **app_na
     nmfapi_util_init_maltcp_ctx(self->hostname, self->consumer_port, &self->mal_ctx);
 
     // Create the listApp consumer
-    list_app_consumer = sm_appslauncher_list_app_consumer_new(self->mal_ctx, self->provider_uri);
+    listapp_consumer = sm_appslauncher_listapp_consumer_new(self->mal_ctx, self->provider_uri);
 
     // Set the app names MAL message field
-    sm_appslauncher_list_app_consumer_set_field_app_name_list(list_app_consumer, app_name_list);
+    sm_appslauncher_listapp_consumer_set_field_app_name_list(listapp_consumer, app_name_list);
 
     // Set the app names sie MAL message field
-    sm_appslauncher_list_app_consumer_set_field_app_name_list_size(list_app_consumer, app_name_list_size);
+    sm_appslauncher_listapp_consumer_set_field_app_name_list_size(listapp_consumer, app_name_list_size);
 
     // Set the category MAL message field
-    sm_appslauncher_list_app_consumer_set_field_category(list_app_consumer, category);
+    sm_appslauncher_listapp_consumer_set_field_category(listapp_consumer, category);
 
     // Initialize the consumer actor
-    sm_appslauncher_list_app_consumer_actor_init(list_app_consumer);
+    sm_appslauncher_listapp_consumer_actor_init(listapp_consumer);
 
     // Start
     mal_ctx_start(self->mal_ctx);
@@ -142,21 +142,21 @@ sm_appslauncher_service_list_app (sm_appslauncher_service_t *self, char **app_na
     // Lock the consumer mutex which has already been locked at the beginning of this function
     // The initial mutex lock will only be released after the request response callback function has finished executing
     // We do this so that the response variables can be set and return synchronously
-    sm_appslauncher_list_app_consumer_mutex_lock(list_app_consumer);
+    sm_appslauncher_listapp_consumer_mutex_lock(listapp_consumer);
 
     // Set the response pointers
-    *response_apps_inst_id_list = sm_appslauncher_list_app_consumer_get_response_apps_inst_id_list(list_app_consumer);
-    *response_apps_inst_running_list = sm_appslauncher_list_app_consumer_get_response_apps_inst_running_list(list_app_consumer);
-    *response_element_count = sm_appslauncher_list_app_consumer_get_response_element_count(list_app_consumer);
+    *response_apps_inst_id_list = sm_appslauncher_listapp_consumer_get_response_apps_inst_id_list(listapp_consumer);
+    *response_apps_inst_running_list = sm_appslauncher_listapp_consumer_get_response_apps_inst_running_list(listapp_consumer);
+    *response_element_count = sm_appslauncher_listapp_consumer_get_response_element_count(listapp_consumer);
 
     // Set the return code as the error code of the consumer response
-    rc = sm_appslauncher_list_app_consumer_get_response_error_code(list_app_consumer);
+    rc = sm_appslauncher_listapp_consumer_get_response_error_code(listapp_consumer);
 
     // Unlock the consumer mutex
-    sm_appslauncher_list_app_consumer_mutex_unlock(list_app_consumer);
+    sm_appslauncher_listapp_consumer_mutex_unlock(listapp_consumer);
 
     // Destroy the listApp consumer
-    sm_appslauncher_list_app_consumer_destroy(&list_app_consumer);
+    sm_appslauncher_listapp_consumer_destroy(&listapp_consumer);
 
     // Destroy the consumer context / listening socket
     mal_ctx_destroy(&self->mal_ctx);
