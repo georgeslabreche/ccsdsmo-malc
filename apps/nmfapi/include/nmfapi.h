@@ -25,7 +25,7 @@ void
 common_directory_service_set_log_level (int level);
 
 void
-common_directory_lookup_provider_consumer_set_log_level (int level);
+common_directory_lookupprovider_consumer_set_log_level (int level);
 
 
 //  --------------------------------------------------------------------------
@@ -35,7 +35,7 @@ void
 sm_appslauncher_service_set_log_level (int level);
 
 void
-sm_appslauncher_list_app_consumer_set_log_level (int level);
+sm_appslauncher_listapp_consumer_set_log_level (int level);
 
 
 //  --------------------------------------------------------------------------
@@ -45,12 +45,12 @@ void
 mc_parameter_service_set_log_level (int level);
 
 void
-mc_parameter_get_value_consumer_set_log_level (int level);
+mc_parameter_getvalue_consumer_set_log_level (int level);
 
 void
-mc_parameter_set_value_consumer_set_log_level (int level);
+mc_parameter_setvalue_consumer_set_log_level (int level);
 
 void
-mc_parameter_list_definition_consumer_set_log_level (int level);
+mc_parameter_listdefinition_consumer_set_log_level (int level);
 
 #endif

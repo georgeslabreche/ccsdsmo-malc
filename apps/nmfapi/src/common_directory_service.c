@@ -44,7 +44,7 @@ struct _common_directory_service_t {
 
 
 // The consumers
-common_directory_lookup_provider_consumer_t * lookup_provider_consumer;
+common_directory_lookupprovider_consumer_t * lookup_provider_consumer;
 
 //  --------------------------------------------------------------------------
 //  Create a new common_directory_service
@@ -87,7 +87,7 @@ common_directory_service_destroy (common_directory_service_t **self_p)
         if(lookup_provider_consumer)  // FIXME: will response be cleared because consumer gets destroyed in interaction function?
         {
             // Destroy the consumer
-            common_directory_lookup_provider_consumer_destroy(&lookup_provider_consumer);
+            common_directory_lookupprovider_consumer_destroy(&lookup_provider_consumer);
         }
 
         // Destroy the context
@@ -122,13 +122,13 @@ common_directory_service_lookup_provider (common_directory_service_t *self,
     nmfapi_util_init_maltcp_ctx(self->hostname, self->consumer_port, &self->mal_ctx);
 
     // Create the lookupProvider consumer
-    lookup_provider_consumer = common_directory_lookup_provider_consumer_new(self->mal_ctx, self->provider_uri);
+    lookup_provider_consumer = common_directory_lookupprovider_consumer_new(self->mal_ctx, self->provider_uri);
 
     // Set the service_filter field
-    common_directory_lookup_provider_consumer_set_field_service_filter(lookup_provider_consumer, service_filter);
+    common_directory_lookupprovider_consumer_set_field_service_filter(lookup_provider_consumer, service_filter);
 
     // Create and initialize the consumer actor
-    common_directory_lookup_provider_consumer_actor_init(lookup_provider_consumer);
+    common_directory_lookupprovider_consumer_actor_init(lookup_provider_consumer);
 
     // Start the request response listener
     mal_ctx_start(self->mal_ctx);
@@ -136,19 +136,19 @@ common_directory_service_lookup_provider (common_directory_service_t *self,
     // Lock the consumer mutex which has already been locked at the beginning of this function
     // The initial mutex lock will only be released after the request finalize function has finished executing
     // We do this so that the response variables can be set and return synchronously
-    common_directory_lookup_provider_consumer_mutex_lock(lookup_provider_consumer);
+    common_directory_lookupprovider_consumer_mutex_lock(lookup_provider_consumer);
 
     // Set the response pointers
-    response_provider_summary_list = common_directory_lookup_provider_consumer_get_response_provider_summary_list(lookup_provider_consumer);
+    response_provider_summary_list = common_directory_lookupprovider_consumer_get_response_provider_summary_list(lookup_provider_consumer);
 
     // Set the return code as the error code of the consumer response
-    rc = common_directory_lookup_provider_consumer_get_response_error_code(lookup_provider_consumer);
+    rc = common_directory_lookupprovider_consumer_get_response_error_code(lookup_provider_consumer);
 
     // Unlock the consumer mutex
-    common_directory_lookup_provider_consumer_mutex_unlock(lookup_provider_consumer);
+    common_directory_lookupprovider_consumer_mutex_unlock(lookup_provider_consumer);
 
     // Destroy the lookupProvider consumer
-    common_directory_lookup_provider_consumer_destroy(&lookup_provider_consumer);
+    common_directory_lookupprovider_consumer_destroy(&lookup_provider_consumer);
 
     // Destroy the consumer context / listening socket
     mal_ctx_destroy(&self->mal_ctx);

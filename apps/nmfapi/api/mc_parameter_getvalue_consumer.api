@@ -1,4 +1,4 @@
-<class name = "mc_parameter_get_value_consumer" selftest="0">
+<class name = "mc_parameter_getvalue_consumer" selftest="0">
     The request consumer for the getValue operation
     The getValue operation returns the latest received value for a requested parameter
 
