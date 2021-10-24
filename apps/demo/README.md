@@ -4,8 +4,12 @@ Reference app that showcases how to use the MAL C API to develop apps for the [O
 ## Build and deploy
 The app can be build and deployed for either the local development environment or for the SEPP environment on the spacecraft.
 
+### Third-party dependencies
+The gsl, ZeroMQ, czmq, and zproject dependencies described in the [Installation section of the repo's top level README](https://github.com/tanagraspace/ccsdsmo-malc-sepp-apps#installation) must be installed before the *genmakeall* script can be executed.
+
 ### For local development
-Invoking the `genmake_tests` function inside the *genmakeall* script can be commented out for a quicker build. However, running `genmake_tests` at least once is a good way to make sure that all required dependencies are installed and running as expected before trying to build the app.
+- Invoking the `genmake_tests` function inside the *genmakeall* script can be commented out for a quicker build.
+- However, running `genmake_tests` at least once is a good way to make sure that all required dependencies are installed and running as expected before trying to build the app.
 
 ```bash
 ./../../genmakeall 

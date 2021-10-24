@@ -9,10 +9,11 @@
     <version major = "1" minor = "0" patch = "0" />
 
     <!--
-        Current libtool ABI version of your project's shared library.
-        Start at 0:0:0 and see:
+        Current libtool ABI version of the  project's shared library.
+        
+        For details on how/when to increment it, see:
         http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
-        for details on how/when to increment it.
+        
         If not defined 0:0:0 will be used.
     -->
     <abi current = "1" revision = "0" age = "0" />
