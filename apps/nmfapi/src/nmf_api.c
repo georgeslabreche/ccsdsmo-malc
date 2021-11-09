@@ -75,13 +75,13 @@ nmf_api_destroy (nmf_api_t **self_p)
         
         //  Free class properties here
 
-        // Destroy COMMON services
+        // Destroy the COMMON DIRECTORY service
         common_directory_service_destroy(&self->common_directory_service);
 
-        // Destroy SOFTWARE MANAGEMENT services
+        // Destroy SOFTWARE MANAGEMENT APPS LAUNCHER service
         sm_appslauncher_service_destroy(&self->sm_appslauncher_service);
 
-        // Destroy MONITOR & CONTROL services
+        // Destroy MONITOR & CONTROL PARAMETER service
         mc_parameter_service_destroy(&self->mc_parameter_service);
 
         //  Free object itself

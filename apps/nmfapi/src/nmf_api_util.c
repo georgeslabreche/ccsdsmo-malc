@@ -229,6 +229,11 @@ nmfapi_util_init_mal_attribute(char *raw_value, unsigned char tag, union mal_att
             attribute->finetime_value = strtoul(raw_value, 0L, 10);
             break;
 
+        case MAL_DURATION_ATTRIBUTE_TAG:
+            // type: double
+            attribute->duration_value = strtod(raw_value, NULL);
+            break;
+
         default:
             // Unsupported tag
             // Not supporting Blob tag for attribute value of type mal_blot_t struct

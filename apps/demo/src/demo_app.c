@@ -34,14 +34,11 @@ demo_directory_service_lookup_provider();
 int
 demo_appslauncher_service_list_app();
 
-//  Demonstrate the listDefinition operation with multiple parameters in a single request interaction
-int
-demo_parameter_service_list_definition();
-
 //  Demonstrate the listDefinition operation with one parameter per request interaction
 int
 demo_parameter_service_get_definition();
 
+//  Demonstrate the listDefinition operation with multiple parameters in a single request interaction
 //  Demonstrate the getValue operation with multiple parameters in a single request interaction
 int
 demo_parameter_service_get_value_list();
@@ -125,6 +122,9 @@ int main (int argc, char *argv [])
     // --------------------------------------------------------------------------
     // Set the log levels
 
+    // MAL log level
+    mal_set_log_level(log_level);
+
     // MAL TCP log level
     maltcp_set_log_level(log_level);
 
@@ -143,8 +143,6 @@ int main (int argc, char *argv [])
     mc_parameter_service_set_log_level(log_level);
     mc_parameter_listdefinition_consumer_set_log_level(log_level);
     mc_parameter_getvalue_consumer_set_log_level(log_level);
-
-    // TODO: uncomment
     mc_parameter_setvalue_consumer_set_log_level(log_level);
 
     // --------------------------------------------------------------------------
@@ -162,13 +160,11 @@ int main (int argc, char *argv [])
 
     // Demonstrate the listApp operation
     demo_appslauncher_service_list_app();
-
-    // Demonstrate the listDefinition operation with multiple parameters in a single request interaction
-    demo_parameter_service_list_definition();
-
+    
     // Demonstrate the listDefinition operation with one parameter per request interaction
     demo_parameter_service_get_definition();
 
+    // Demonstrate the listDefinition operation with multiple parameters in a single request interaction
     // Demonstrate the getValue operation with multiple parameters in a single request interaction
     demo_parameter_service_get_value_list();
 
@@ -191,19 +187,22 @@ int main (int argc, char *argv [])
 
     printf("\n\nDemonstration completed.\n\n");
 
+    // End demo
     return 0;
 }
 
 
 //  --------------------------------------------------------------------------
 //  Demonstrate the lookupProvider request interaction
+//  FIXME: Does not work
+//         See Issue #29: https://github.com/tanagraspace/ccsdsmo-malc-sepp-apps/issues/29
 int
 demo_directory_service_lookup_provider()
 {
     // Verbosity
     printf("\n\nDemonstrate the lookupProvider request interaction:\n\n");
 
-    // Create the Directory service
+    // Get pointer to the Directory service
     common_directory_service_t *directory_service = nmf_api_get_common_directory_service(nmf_api);
 
     // Request response variables
@@ -215,6 +214,7 @@ demo_directory_service_lookup_provider()
     common_directory_service_lookup_provider_all_uri (directory_service,
         &response_provider_id_list, &response_provider_uri_list, &response_element_count);
 
+    // End demo
     return 0;
 }
 
@@ -228,7 +228,7 @@ demo_appslauncher_service_list_app()
     // Verbosity
     printf("\n\nDemonstrate the listApp request interaction:\n\n");
 
-    // Create the AppsLauncher service
+    // Get pointer to the AppsLauncher service
     sm_appslauncher_service_t *appslauncher_service = nmf_api_get_sm_appslauncher_service(nmf_api);
 
     // Request parameters
@@ -253,76 +253,7 @@ demo_appslauncher_service_list_app()
         printf("App #%ld running status is %d\n", response_apps_inst_id_list[i], response_apps_inst_running_list[i]);
     }
 
-    // TODO: Destroy the response variables?
-
-    return 0;
-}
-
-
-//  --------------------------------------------------------------------------
-//  Demonstrate the listDefinition operation with multiple parameters in a single request interaction
-
-int
-demo_parameter_service_list_definition()
-{
-    // Verbosity
-    printf("\n\nDemonstrate the listDefinition operation with multiple parameters in a single request interaction:\n\n");
-
-    // The response error code
-    int rc;
-
-    // Create the Parameter service
-    mc_parameter_service_t *parameter_service = nmf_api_get_mc_parameter_service(nmf_api);
-
-    // Build the param names request field
-    char *param_name_list[] = {
-        "OSVersion",            // Version of the OS            1
-        "attitudeQuatA",        // Quaternion                   3
-        "attitudeQuatB",        // Quaternion                   4
-        "attitudeQuatC",        // Quaternion                   5
-        "attitudeQuatD",        // Quaternion                   6
-        "CADC0884",             // I_PD1_THETA                891
-        "CADC0886",             // I_PD2_THETA                893
-        "CADC0888",             // I_PD3_THETA                895
-        "CADC0890",             // I_PD4_THETA                897
-        "CADC0892",             // I_PD5_THETA                899
-        "CADC0894"              // I_PD6_THETA                901
-    };
-
-    // Calculate size of array
-    size_t param_name_list_size = sizeof(param_name_list) / sizeof(param_name_list[0]);
-
-    // Response variable pointers and element count
-    long *response_identity_id_list;
-    long *response_definition_id_list;
-    size_t response_element_count;
-
-    // Send the listDefinition request with the response variable pointers
-    rc = mc_parameter_service_list_definition(parameter_service, param_name_list, param_name_list_size,
-        &response_identity_id_list, &response_definition_id_list, &response_element_count);
-
-    // Error check
-    if(rc < 0)
-    {
-        // Print error message
-        printf("Error requesting list definition\n");
-
-        // Destroy the service
-        mc_parameter_service_destroy(&parameter_service);
-
-        // Return the error code
-        return rc;
-    }
-
-    // Print values for fetched parameters
-    for(size_t i = 0; i < response_element_count; i++)
-    {
-        printf("Param %s has identity id %ld and definition id %ld\n",
-            param_name_list[i], response_identity_id_list[i], response_definition_id_list[i]);
-    }
-
-    // TODO: Destroy the response variables?
-
+    // End demo
     return 0;
 }
 
@@ -339,28 +270,28 @@ demo_parameter_service_get_definition()
     // The response error code
     int rc;
 
-    // Create the Parameter service
+    // Get pointer to the Parameter service
     mc_parameter_service_t *parameter_service = nmf_api_get_mc_parameter_service(nmf_api);
 
-    // A list of parameter names, each will be requested individually instead of in bulk as in demo_parameter_service_list_definition
+    // A list of parameter names, each will be requested individually instead of in bulk as in demo_parameter_service_get_value_list
     char *param_name_list[] = {
-        "OSVersion",            // Version of the OS            1
-        "attitudeQuatA",        // Quaternion                   3
-        "attitudeQuatB",        // Quaternion                   4
-        "attitudeQuatC",        // Quaternion                   5
-        "attitudeQuatD",        // Quaternion                   6
-        "CADC0884",             // I_PD1_THETA                891
-        "CADC0886",             // I_PD2_THETA                893
-        "CADC0888",             // I_PD3_THETA                895
-        "CADC0890",             // I_PD4_THETA                897
-        "CADC0892",             // I_PD5_THETA                899
-        "CADC0894"              // I_PD6_THETA                901
+        "OSVersion",            // Version of the OS
+        "attitudeQuatA",        // Quaternion
+        "attitudeQuatB",        // Quaternion
+        "attitudeQuatC",        // Quaternion
+        "attitudeQuatD",        // Quaternion
+        "CADC0884",             // I_PD1_THETA
+        "CADC0886",             // I_PD2_THETA
+        "CADC0888",             // I_PD3_THETA
+        "CADC0890",             // I_PD4_THETA
+        "CADC0892",             // I_PD5_THETA
+        "CADC0894"              // I_PD6_THETA
     };
 
     // Calculate size of array
     size_t param_name_list_size = sizeof(param_name_list) / sizeof(param_name_list[0]);
 
-    // Response variable pointers and element count
+    // Response variable for parameter inst and def ids
     long response_identity_id;
     long response_definition_id;
 
@@ -372,52 +303,85 @@ demo_parameter_service_get_definition()
         // Error Checking
         if(rc != 0)
         {
-            printf("Error requesting list definition for param %s: \n", param_name_list[i]);
+            printf("Error requesting list definition for the %s parameter: \n", param_name_list[i]);
         }
         else // No errors
         {
             // Print response result
-            printf("Param %s has identity id %ld and definition id %ld\n",
+            printf("Parameter %s has identity id %ld and definition id %ld\n",
                 param_name_list[i], response_identity_id, response_definition_id);
         }
     }
 
+    // End demo
     return 0;
 }
 
 
 //  --------------------------------------------------------------------------
+//  Demonstrate the listDefinition operation with multiple parameters in a single request interaction
 //  Demonstrate the getValue operation with multiple parameters in a single request
 
 int
 demo_parameter_service_get_value_list()
 {
     // Verbosity
-    printf("\n\nDemonstrate the getValue operation with multiple parameters in a single request interaction:\n\n");
+    printf("\n\nDemonstrate: \
+        \n - the listDefinition operation with multiple parameters in a single request interaction \
+        \n - the getValue operation with multiple parameters in a single request interaction\n\n");
 
     // The response error code
     int rc;
 
-    // Create the Parameter service
+    // Get pointer to the Parameter service
     mc_parameter_service_t *parameter_service = nmf_api_get_mc_parameter_service(nmf_api);
 
-    // Request parameters
-    long param_inst_ids[] = {
-        1,      // OSVersion             Version of the OS          String
-        3,      // attitudeQuatA         Quaternion                 Float
-        4,      // attitudeQuatB         Quaternion                 Float
-        5,      // attitudeQuatC         Quaternion                 Float
-        6,      // attitudeQuatD         Quaternion                 Float
-        891,    // CADC0884              I_PD1_THETA                Float
-        892,    // CADC0885              I_PD1_VAL_FLAG             Boolean
-        1064,   // PACK1057              PACKET_STORE_USED_SIZE     UIntger
-        1101,   // TM_C1094              TM_CHANNEL_VALUE           UOctet
-        1164,   // BUSS1157              CONFIG_SEPP                UShort
-        8604    // EPS9830l              PDU1_VCC_LMIN              Short
+    // Build the param names request field
+    char *param_name_list[] = {
+        "OSVersion",             // Version of the OS          String
+        "attitudeQuatA",         // Quaternion                 Float
+        "attitudeQuatB",         // Quaternion                 Float
+        "attitudeQuatC",         // Quaternion                 Float
+        "attitudeQuatD",         // Quaternion                 Float
+        "CADC0884",              // I_PD1_THETA                Float
+        "CADC0885",              // I_PD1_VAL_FLAG             Boolean
+        "PACK1057",              // PACKET_STORE_USED_SIZE     UIntger
+        "TM_C1094",              // TM_CHANNEL_VALUE           UOctet
+        "BUSS1157",              // CONFIG_SEPP                UShort
+        "EPS9830l",              // PDU1_VCC_LMIN              Short
     };
 
     // Calculate size of array
-    size_t param_inst_ids_size = sizeof(param_inst_ids) / sizeof(param_inst_ids[0]);
+    size_t param_name_list_size = sizeof(param_name_list) / sizeof(param_name_list[0]);
+
+    // Response variable for param inst and def ids as well as element count
+    long *response_param_inst_ids;
+    long *response_param_def_id_list;
+    size_t response_param_inst_ids_size;
+
+    // Send the listDefinition request with the response variable pointers
+    rc = mc_parameter_service_list_definition(parameter_service, param_name_list, param_name_list_size,
+        &response_param_inst_ids, &response_param_def_id_list, &response_param_inst_ids_size);
+
+    // Error check
+    if(rc < 0)
+    {
+        // Print error message
+        printf("Error requesting list definition\n");
+
+        // Return the error code
+        return rc;
+    }
+
+    // Size check
+    if(param_name_list_size != response_param_inst_ids_size)
+    {
+        // Print error message
+        printf("Did not fetch the expected number of parameter definitions: Expected %lu but was %lu\n", param_name_list_size, response_param_inst_ids_size);
+
+        // Return the error code
+        return rc;
+    }
 
     // Response variable pointers and element count
     union mal_attribute_t *response_mal_attributes;
@@ -425,7 +389,7 @@ demo_parameter_service_get_value_list()
     size_t response_mal_attributes_count;
 
     // Send the getValue request with the response variable pointers
-    rc = mc_parameter_service_get_value_list(parameter_service, param_inst_ids, param_inst_ids_size,
+    rc = mc_parameter_service_get_value_list(parameter_service, response_param_inst_ids, response_param_inst_ids_size,
         &response_mal_attributes, &response_mal_attributes_tags, &response_mal_attributes_count);
 
     // Error check
@@ -434,8 +398,15 @@ demo_parameter_service_get_value_list()
         // Print error message
         printf("Error requesting parameter values\n");
 
-        // Destroy the service
-        mc_parameter_service_destroy(&parameter_service);
+        // Return the error code
+        return rc;
+    }
+
+    // Size check
+    if(response_param_inst_ids_size != response_mal_attributes_count)
+    {
+        // Print error message
+        printf("Did not fetch the expected number of parameter values: Expected %lu but was %lu\n", response_param_inst_ids_size, response_mal_attributes_count);
 
         // Return the error code
         return rc;
@@ -450,7 +421,7 @@ demo_parameter_service_get_value_list()
     for(size_t i = 0; i < response_mal_attributes_count; i++)
     {
         // Set the fetched attribute variables
-        param_id = param_inst_ids[i];
+        param_id = response_param_inst_ids[i];
         tag = response_mal_attributes_tags[i];
         attr = response_mal_attributes[i];
 
@@ -458,64 +429,64 @@ demo_parameter_service_get_value_list()
         switch(tag)
         {
             case MAL_IDENTIFIER_ATTRIBUTE_TAG:
-                printf("Param #%ld is an Identifier: %s\n", param_id, attr.identifier_value);
+                printf("Parameter %s has id %ld and is an Identifier: %s\n", param_name_list[i], param_id, attr.identifier_value);
                 break;
 
             case MAL_STRING_ATTRIBUTE_TAG:
-                printf("Param #%ld is a String: %s\n", param_id, attr.string_value);
+                printf("Parameter %s has id %ld and is a String: %s\n", param_name_list[i], param_id, attr.string_value);
                 break;
 
             case MAL_URI_ATTRIBUTE_TAG:
-                printf("Param #%ld is a URI: %s\n", param_id, attr.uri_value);
+                printf("Parameter %s has id %ld and is a URI: %s\n", param_name_list[i], param_id, attr.uri_value);
                 break;
 
             case MAL_BOOLEAN_ATTRIBUTE_TAG:
-                printf("Param #%ld is a Boolean: %d\n", param_id, attr.boolean_value);
+                printf("Parameter %s has id %ld and is a Boolean: %d\n", param_name_list[i], param_id, attr.boolean_value);
                 break;
 
             case MAL_FLOAT_ATTRIBUTE_TAG:
-                printf("Param #%ld is a Float: %f\n", param_id, attr.float_value);
+                printf("Parameter %s has id %ld and is a Float: %f\n", param_name_list[i], param_id, attr.float_value);
                 break;
 
             case MAL_DOUBLE_ATTRIBUTE_TAG:
-                printf("Param #%ld is a Double: %f\n", param_id, attr.double_value);
+                printf("Parameter %s has id %ld and is a Double: %f\n", param_name_list[i], param_id, attr.double_value);
                 break;
 
             case MAL_OCTET_ATTRIBUTE_TAG:
-                printf("Param #%ld is a Octet: %c\n", param_id, attr.octet_value);
+                printf("Parameter %s has id %ld and is a Octet: %c\n", param_name_list[i], param_id, attr.octet_value);
                 break;
 
             case MAL_UOCTET_ATTRIBUTE_TAG:
-                printf("Param #%ld is a UOctet: %u\n", param_id, attr.uoctet_value);
+                printf("Parameter %s has id %ld and is a UOctet: %u\n", param_name_list[i], param_id, attr.uoctet_value);
                 break;
 
             case MAL_SHORT_ATTRIBUTE_TAG:
-                printf("Param #%ld is a Short: %hd\n", param_id, attr.short_value);
+                printf("Parameter %s has id %ld and is a Short: %hd\n", param_name_list[i], param_id, attr.short_value);
                 break;
 
             case MAL_USHORT_ATTRIBUTE_TAG:
-                printf("Param #%ld is a UShort: %hu\n", param_id, attr.ushort_value);
+                printf("Parameter %s has id %ld and is a UShort: %hu\n", param_name_list[i], param_id, attr.ushort_value);
                 break;
 
             case MAL_INTEGER_ATTRIBUTE_TAG:
-                printf("Param #%ld is a Integer: %d\n", param_id, attr.integer_value);
+                printf("Parameter %s has id %ld and is a Integer: %d\n", param_name_list[i], param_id, attr.integer_value);
                 break;
 
             case MAL_UINTEGER_ATTRIBUTE_TAG:
-                printf("Param #%ld is a UInteger: %u\n", param_id, attr.uinteger_value);
+                printf("Parameter %s has id %ld and is a UInteger: %u\n", param_name_list[i], param_id, attr.uinteger_value);
                 break;
 
             case MAL_LONG_ATTRIBUTE_TAG:
-                printf("Param #%ld is a Long: %ld\n", param_id, attr.long_value);
+                printf("Parameter %s has id %ld and is a Long: %ld\n", param_name_list[i], param_id, attr.long_value);
                 break;
 
             case MAL_ULONG_ATTRIBUTE_TAG:
-                printf("Param #%ld is a ULong: %lu\n", param_id, attr.ulong_value);
+                printf("Parameter %s has id %ld and is a ULong: %lu\n", param_name_list[i], param_id, attr.ulong_value);
                 break;
 
             default:
                 // Not handling Blob, Time, and Finetime
-                printf("Param #%ld has unsupportred attribute tag %d\n", param_id, tag);
+                printf("Param %s has id %ld with unsupportred attribute tag %d\n", param_name_list[i], param_id, tag);
         }
 
         // IMPORTANT: Don't forget to destroy the MAL attribute object
@@ -525,8 +496,7 @@ demo_parameter_service_get_value_list()
         mal_attribute_destroy(&attr, tag);
     }
 
-    // TODO: Destroy the response variables?
-
+    // End demo
     return 0;
 }
 
@@ -543,11 +513,15 @@ demo_parameter_service_get_value()
     // The response error code
     int rc;
 
+    // Variables to store the parameter inst and def ids nedded to fetch parameter values
+    long param_inst_id;
+    long param_def_id;
+
     // --------------------------------------------------------------------------
     // Create the Parameter service
 
+    // Get pointer to the parameter service
     mc_parameter_service_t *parameter_service = nmf_api_get_mc_parameter_service(nmf_api);
-
 
     // --------------------------------------------------------------------------
     // Get the OS version parameter via mc_parameter_service_get_value()
@@ -557,7 +531,8 @@ demo_parameter_service_get_value()
     unsigned char response_mal_attribute_tag_os_version;
 
     // Send the getValue requests with the response variable pointers
-    rc = mc_parameter_service_get_value(parameter_service, 1, &response_mal_attribute_os_version, &response_mal_attribute_tag_os_version);
+    rc = mc_parameter_service_get_definition(parameter_service, "OSVersion", &param_inst_id, &param_def_id);
+    rc = rc || mc_parameter_service_get_value(parameter_service, param_inst_id, &response_mal_attribute_os_version, &response_mal_attribute_tag_os_version);
     
     // Error check
     if(rc < 0)
@@ -585,7 +560,8 @@ demo_parameter_service_get_value()
     char *os_version;
 
     // Send the getValue request with the string pointer to be set
-    rc = mc_parameter_service_get_value_string(parameter_service, 1, &os_version);
+    rc = mc_parameter_service_get_definition(parameter_service, "OSVersion", &param_inst_id, &param_def_id);
+    rc = rc || mc_parameter_service_get_value_string(parameter_service, param_inst_id, &os_version);
 
     // Error check
     if(rc < 0)
@@ -609,11 +585,23 @@ demo_parameter_service_get_value()
     // Get the quaternion parameters via mc_parameter_service_get_value_float()
 
     // Execute getValue interactions to fetch quaternion float values
+    
+    // Quaternion variables
     float q1, q2, q3, q4;
-    rc = mc_parameter_service_get_value_float(parameter_service, 3, &q1);
-    rc = rc || mc_parameter_service_get_value_float(parameter_service, 4, &q2);
-    rc = rc || mc_parameter_service_get_value_float(parameter_service, 5, &q3);
-    rc = rc || mc_parameter_service_get_value_float(parameter_service, 6, &q4);
+    
+    
+    // Send the listDefinition request for a single parameter
+    rc = mc_parameter_service_get_definition(parameter_service, "attitudeQuatA", &param_inst_id, &param_def_id);
+    rc = rc || mc_parameter_service_get_value_float(parameter_service, param_inst_id, &q1);
+
+    rc = rc || mc_parameter_service_get_definition(parameter_service, "attitudeQuatB", &param_inst_id, &param_def_id);
+    rc = rc || mc_parameter_service_get_value_float(parameter_service, param_inst_id, &q2);
+
+    rc = rc || mc_parameter_service_get_definition(parameter_service, "attitudeQuatC", &param_inst_id, &param_def_id);
+    rc = rc || mc_parameter_service_get_value_float(parameter_service, param_inst_id, &q3);
+
+    rc = rc || mc_parameter_service_get_definition(parameter_service, "attitudeQuatD", &param_inst_id, &param_def_id);
+    rc = rc || mc_parameter_service_get_value_float(parameter_service, param_inst_id, &q4);
 
     if(rc != 0)
     {
@@ -625,17 +613,14 @@ demo_parameter_service_get_value()
         printf("Quaternions (q1, q2, q3, q4) = (%f, %f, %f, %f)\n", q1, q2, q3, q4);
     }
 
-    // TODO: Destroy the response variables?
-
+    // End demo
     return 0;
 }
 
 
 //  --------------------------------------------------------------------------
 //  Demonstrate the setValue operation with one parameter per submit interaction
-//  FIXME: 
-//      - This demonstration will print an error message because the OSVersion parameter is read-only
-//      - Need to update this demonstration to set a parameter value that is not read-only
+
 int
 demo_parameter_service_set_value()
 {
@@ -645,69 +630,111 @@ demo_parameter_service_set_value()
     // The response error code
     int rc;
 
-    // Create the Parameter service
+    // Get pointer to the Parameter service
     mc_parameter_service_t *parameter_service = nmf_api_get_mc_parameter_service(nmf_api);
 
     // --------------------------------------------------------------------------
-    // Demonstrating getting, setting, and then getting again a String parameter (the OSVersion parameter)
+    // Demonstrate getting, setting, and then getting again
+
+    // STEP 1: Get the parameter's definition based on the given parameter name
+
+    // The param to set (it's of type double)
+    char *param_name = "attitudeMonitoringInterval";
+
+    // Get a random double value, between -1 and 1, to set as the new parameter value
+    double random_value;
+    srand (time(NULL));
+    random_value = (double) rand() / RAND_MAX * 2.0 - 1.0;
+
+    // Convert random double value to string
+    char param_value_to_set[20];
+    snprintf(param_value_to_set, 20, "%f", random_value);
+
+    // Response variables for param inst and def ids
+    long param_inst_id;
+    long param_def_id;
     
-    long param_id_osversion = 1;
+    // Send the listDefinition request for a single parameter
+    rc = mc_parameter_service_get_definition(parameter_service, param_name, &param_inst_id, &param_def_id);
 
-    // STEP 1: The getValue request interaction will fetch the OSVersion param value
+    // Error Checking
+    if(rc != 0)
+    {
+         // Print error mesage
+        printf("Error requesting list definition for parameter %s: \n", param_name);
 
-    // Pointer to the string response variable
-    char *os_version;
+        // Return the error code
+        return rc;
+    }
+    else // No errors
+    {
+        // Print response result
+        printf("Parameter %s has identity id %ld and definition id %ld\n",
+            param_name, param_inst_id, param_def_id);
+    }
+
+    // STEP 2: The getValue request interaction will fetch the param value
+
+    // Pointer to the response variable (of type Double)
+    double param_value;
 
     // Send the getValue request with the string pointer to be set
-    rc = mc_parameter_service_get_value_string(parameter_service, param_id_osversion, &os_version);
+    rc = mc_parameter_service_get_value_duration(parameter_service, param_inst_id, &param_value);
 
     // Error check
-    if(rc < 0)
+    if(rc != 0)
     {
-        printf("Error requesting parameter: OS Version\n");
+        // Print error message
+        printf("Error requesting parameter %s\n", param_name);
+
+        // Return the error code
+        return rc;
     }
     else
     {
         // Print the fetched parameter
-        printf("OS Version: %s\n", os_version);
+        printf("Value of parameter %s: %f\n", param_name, param_value);
     }
 
-    // Don't forget to destroy the string object
-    if(os_version)
+    // STEP 3: The setValue request interaction will set the OSVersion param value
+    
+    // Verbosity
+    printf("Setting value of parameter %s from %f to %s\n", param_name, param_value, param_value_to_set);
+
+    // Trigger the setValue submit interaction
+    rc = mc_parameter_service_set_value(parameter_service, param_inst_id, MAL_DURATION_ATTRIBUTE_TAG, param_value_to_set);
+
+    // Check for error
+    if(rc != 0)
     {
-        mal_string_destroy(&os_version);
+        // Print error message
+        printf("Error setting parameter %s\n", param_name);
+
+        // Return the error code
+        return rc;
     }
 
-    // STEP 2: The setValue request interaction will set the OSVersion param value
-    rc = mc_parameter_service_set_value(parameter_service, param_id_osversion, MAL_STRING_ATTRIBUTE_TAG, "New OSVersion via the setValue operation");
-
-    // STEP 3: The getValue request interaction should fetch the value of the OSVersion param value
+    // STEP 4: The getValue request interaction should fetch the new param value that was set
     if(rc == 0)
     {
         // Send the getValue request with the string pointer to be set
-        rc = mc_parameter_service_get_value_string(parameter_service, param_id_osversion, &os_version);
+        rc = mc_parameter_service_get_value_duration(parameter_service, param_inst_id, &param_value);
 
         // Error check
         if(rc < 0)
         {
-            printf("Error requesting parameter: OS Version\n");
+            printf("Error requesting parameter %s\n", param_name);
+
+            // Return the error code
+            return rc;
         }
         else
         {
             // Print the fetched parameter
-            printf("New OS Version: %s\n", os_version);
-        }
-
-        // Don't forget to destroy the string object
-        if(os_version)
-        {
-            mal_string_destroy(&os_version);
+            printf("New value of parameter %s: %f\n", param_name, param_value);
         }
     }
-    else
-    {
-        printf("Error setting parameter: OS Version\n");
-    }
 
+    // End demo
     return 0;
 }

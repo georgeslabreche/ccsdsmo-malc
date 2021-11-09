@@ -509,36 +509,24 @@ sm_appslauncher_listapp_consumer_response (void *self, mal_ctx_t *mal_ctx,
     clog_debug(sm_appslauncher_listapp_consumer_logger,
         "sm_appslauncher_listapp_consumer_response: offset=%d\n", mal_message_get_body_offset(message));
 
-    // The appInstIds field contains a list of apps
-    clog_debug(sm_appslauncher_listapp_consumer_logger, 
-        "sm_appslauncher_listapp_consumer_response: decode_0 for appInstIds\n");
-    
-    consumer->response_error_code = softwaremanagement_appslauncher_listapp_request_response_decode_0(cursor, decoder, &apps_inst_id_list);
-    mal_decoder_cursor_assert(decoder, cursor);
-
-    // Error check and handling
-    if (consumer->response_error_code != 0)
+    // Check if received error message
+    if(mal_message_is_error_message(message))
     {
         // Log error
         clog_error(sm_appslauncher_listapp_consumer_logger,
-            "sm_appslauncher_listapp_consumer_response: error decode_0 for appInstIds\n");
+            "sm_appslauncher_listapp_consumer_response: received error message for listApp request\n");
 
-        // Set and return the error code
+        // Set error code to error value
         consumer->response_error_code = -1;
     }
-    else // No error, get list size
+    else
     {
-        apps_inst_id_list_count = mal_long_list_get_element_count(apps_inst_id_list);
-    }
 
-    // Error check
-    if (consumer->response_error_code == 0)
-    {
-        // The running field contains a list of boolean values with the information about thte running status of requested apps
-        clog_debug(sm_appslauncher_listapp_consumer_logger,
-            "sm_appslauncher_listapp_consumer_response: decode_1 for running\n");
+        // The appInstIds field contains a list of apps
+        clog_debug(sm_appslauncher_listapp_consumer_logger, 
+            "sm_appslauncher_listapp_consumer_response: decode_0 for appInstIds\n");
         
-        consumer->response_error_code = softwaremanagement_appslauncher_listapp_request_response_decode_1(cursor, decoder, &apps_inst_running_list);
+        consumer->response_error_code = softwaremanagement_appslauncher_listapp_request_response_decode_0(cursor, decoder, &apps_inst_id_list);
         mal_decoder_cursor_assert(decoder, cursor);
 
         // Error check and handling
@@ -546,63 +534,67 @@ sm_appslauncher_listapp_consumer_response (void *self, mal_ctx_t *mal_ctx,
         {
             // Log error
             clog_error(sm_appslauncher_listapp_consumer_logger,
-                "sm_appslauncher_listapp_consumer_response: error decode_1 for running\n");
+                "sm_appslauncher_listapp_consumer_response: error decode_0 for appInstIds\n");
 
             // Set and return the error code
             consumer->response_error_code = -1;
         }
         else // No error, get list size
         {
-            apps_inst_running_list_count = mal_boolean_list_get_element_count(apps_inst_running_list);
+            apps_inst_id_list_count = mal_long_list_get_element_count(apps_inst_id_list);
         }
-    }
 
-    // Destroy the MAL decoder cursor
-    mal_decoder_cursor_destroy(decoder, cursor);
-
-    // Error check
-    if(consumer->response_error_code == 0)
-    {
-        // Check for response element count equality
-        if(apps_inst_id_list_count != apps_inst_running_list_count)
+        // Error check
+        if (consumer->response_error_code == 0)
         {
-            // Log error
-            clog_error(sm_appslauncher_listapp_consumer_logger,
-                "sm_appslauncher_listapp_consumer_response: error response list sizes not equal: %d != %d\n",
-                apps_inst_id_list_count, apps_inst_running_list_count);
+            // The running field contains a list of boolean values with the information about thte running status of requested apps
+            clog_debug(sm_appslauncher_listapp_consumer_logger,
+                "sm_appslauncher_listapp_consumer_response: decode_1 for running\n");
+            
+            consumer->response_error_code = softwaremanagement_appslauncher_listapp_request_response_decode_1(cursor, decoder, &apps_inst_running_list);
+            mal_decoder_cursor_assert(decoder, cursor);
 
-            // Set and return the error code
-            consumer->response_error_code = -1;
-        }
-        else
-        {
-            // Allocate memory for the apps inst id list response
-            consumer->response_apps_inst_id_list = (long *) calloc(apps_inst_id_list_count, sizeof(long));
-
-            // Error check
-            if (!consumer->response_apps_inst_id_list && (apps_inst_id_list_count > 0))
+            // Error check and handling
+            if (consumer->response_error_code != 0)
             {
                 // Log error
                 clog_error(sm_appslauncher_listapp_consumer_logger,
-                    "sm_appslauncher_listapp_consumer_response: memory allocation error for response apps inst id list\n");
+                    "sm_appslauncher_listapp_consumer_response: error decode_1 for running\n");
 
-                // Destroy consumer's response MAL attributes
-                sm_appslauncher_listapp_consumer_response_clear(consumer);
+                // Set and return the error code
+                consumer->response_error_code = -1;
+            }
+            else // No error, get list size
+            {
+                apps_inst_running_list_count = mal_boolean_list_get_element_count(apps_inst_running_list);
+            }
+        }
+
+        // Error check
+        if(consumer->response_error_code == 0)
+        {
+            // Check for response element count equality
+            if(apps_inst_id_list_count != apps_inst_running_list_count)
+            {
+                // Log error
+                clog_error(sm_appslauncher_listapp_consumer_logger,
+                    "sm_appslauncher_listapp_consumer_response: error response list sizes not equal: %d != %d\n",
+                    apps_inst_id_list_count, apps_inst_running_list_count);
 
                 // Set and return the error code
                 consumer->response_error_code = -1;
             }
             else
             {
-                // Allocate memory for the apps inst running list response
-                consumer->response_apps_inst_running_list = (bool *) calloc(apps_inst_running_list_count, sizeof(bool));
+                // Allocate memory for the apps inst id list response
+                consumer->response_apps_inst_id_list = (long *) calloc(apps_inst_id_list_count, sizeof(long));
 
                 // Error check
-                if (!consumer->response_apps_inst_running_list && (apps_inst_running_list_count > 0))
+                if (!consumer->response_apps_inst_id_list && (apps_inst_id_list_count > 0))
                 {
                     // Log error
                     clog_error(sm_appslauncher_listapp_consumer_logger,
-                        "sm_appslauncher_listapp_consumer_response: memory allocation error for response apps inst running list\n");
+                        "sm_appslauncher_listapp_consumer_response: memory allocation error for response apps inst id list\n");
 
                     // Destroy consumer's response MAL attributes
                     sm_appslauncher_listapp_consumer_response_clear(consumer);
@@ -610,50 +602,76 @@ sm_appslauncher_listapp_consumer_response (void *self, mal_ctx_t *mal_ctx,
                     // Set and return the error code
                     consumer->response_error_code = -1;
                 }
+                else
+                {
+                    // Allocate memory for the apps inst running list response
+                    consumer->response_apps_inst_running_list = (bool *) calloc(apps_inst_running_list_count, sizeof(bool));
+
+                    // Error check
+                    if (!consumer->response_apps_inst_running_list && (apps_inst_running_list_count > 0))
+                    {
+                        // Log error
+                        clog_error(sm_appslauncher_listapp_consumer_logger,
+                            "sm_appslauncher_listapp_consumer_response: memory allocation error for response apps inst running list\n");
+
+                        // Destroy consumer's response MAL attributes
+                        sm_appslauncher_listapp_consumer_response_clear(consumer);
+
+                        // Set and return the error code
+                        consumer->response_error_code = -1;
+                    }
+                }
             }
         }
-    }
 
-    // Error check
-    if(consumer->response_error_code == 0)
-    {
-        // Set response element count
-        consumer->response_element_count = apps_inst_id_list_count;
-
-        // Set appInstIds values
-        mal_long_t *apps_inst_id_list_content = mal_long_list_get_content(apps_inst_id_list);
-
-        // The apps_inst_id_list object is a mal_long_list_t that will be destroyed so we cannot point to its address
-        // Copy the content into the dedicated class property
-        for(size_t i = 0; i < consumer->response_element_count; i++)
+        // Error check
+        if(consumer->response_error_code == 0)
         {
-            consumer->response_apps_inst_id_list[i] = apps_inst_id_list_content[i];
+            // Set response element count
+            consumer->response_element_count = apps_inst_id_list_count;
+
+            // Set appInstIds values
+            mal_long_t *apps_inst_id_list_content = mal_long_list_get_content(apps_inst_id_list);
+
+            // The apps_inst_id_list object is a mal_long_list_t that will be destroyed so we cannot point to its address
+            // Copy the content into the dedicated class property
+            for(size_t i = 0; i < consumer->response_element_count; i++)
+            {
+                consumer->response_apps_inst_id_list[i] = apps_inst_id_list_content[i];
+            }
+
+            // Set apps running values
+            mal_boolean_t *apps_running_content = mal_boolean_list_get_content(apps_inst_running_list);
+
+            // The apps_inst_running_list object is a mal_boolean_list_t object that will be destroyed so we cannot point to its address
+            // Copy the content into the dedicated class property
+            for(size_t i = 0; i < consumer->response_element_count; i++)
+            {
+                consumer->response_apps_inst_running_list[i] = apps_running_content[i];
+            }
         }
 
-        // Set apps running values
-        mal_boolean_t *apps_running_content = mal_boolean_list_get_content(apps_inst_running_list);
 
-        // The apps_inst_running_list object is a mal_boolean_list_t object that will be destroyed so we cannot point to its address
-        // Copy the content into the dedicated class property
-        for(size_t i = 0; i < consumer->response_element_count; i++)
+        // Destroy and terminate
+        clog_debug(sm_appslauncher_listapp_consumer_logger, "sm_appslauncher_listapp_consumer_response: cleanup\n");
+
+        // Destroy fields
+        if(apps_inst_id_list)
         {
-            consumer->response_apps_inst_running_list[i] = apps_running_content[i];
+            mal_long_list_destroy(&apps_inst_id_list);
         }
+        
+        if(apps_inst_running_list)
+        {
+            mal_boolean_list_destroy(&apps_inst_running_list);
+        }
+
     }
 
-
-    // Destroy and terminate
-    clog_debug(sm_appslauncher_listapp_consumer_logger, "sm_appslauncher_listapp_consumer_response: cleanup\n");
-
-    // Destroy fields
-    if(apps_inst_id_list)
+    // Destroy the MAL decoder cursor
+    if(cursor)
     {
-        mal_long_list_destroy(&apps_inst_id_list);
-    }
-    
-    if(apps_inst_running_list)
-    {
-        mal_boolean_list_destroy(&apps_inst_running_list);
+        mal_decoder_cursor_destroy(decoder, cursor);
     }
     
     // Destroy MAL message
