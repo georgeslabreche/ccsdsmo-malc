@@ -261,7 +261,6 @@ mc_parameter_setvalue_consumer_initialize (void *self, mal_actor_t *mal_actor)
     // Construct the message content
     for(size_t i = 0; i < param_list_size; i++)
     {
-        // Set the mal attribute
         union mal_attribute_t attribute;
         mal_attribute_init_error_code = nmfapi_util_init_mal_attribute(consumer->param_value_list[i], consumer->param_tag_list[i], &attribute);
 
@@ -279,6 +278,9 @@ mc_parameter_setvalue_consumer_initialize (void *self, mal_actor_t *mal_actor)
         }
         else
         {
+            clog_debug(mc_parameter_setvalue_consumer_logger,
+                "mc_parameter_setvalue_consumer_initialize: Error initializing mal attribute: %d\n", mal_attribute_init_error_code);
+                
             // In case of error, set presence flag to false and log error
             mc_parameter_parameterrawvalue_rawvalue_set_present(content[i], false);
 

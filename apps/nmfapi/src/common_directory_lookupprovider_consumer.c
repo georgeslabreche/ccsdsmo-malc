@@ -360,33 +360,46 @@ common_directory_lookupprovider_consumer_response (void *self, mal_ctx_t *mal_ct
     clog_debug(common_directory_lookupprovider_consumer_logger, 
         "common_directory_lookupprovider_consumer_response: offset=%d\n", mal_message_get_body_offset(message));
 
-    // Decode the response
-    clog_debug(common_directory_lookupprovider_consumer_logger, 
-        "common_directory_lookupprovider_consumer_response: decode_0 for matchingProviders\n");
-
-    consumer->response_error_code = common_directory_lookupprovider_request_response_decode_0(cursor, decoder, &consumer->response_provider_summary_list);
-    mal_decoder_cursor_assert(decoder, cursor);
-
-    // Destroy the MAL decoder cursor
-    mal_decoder_cursor_destroy(decoder, cursor);
-
-    // Error check
-    if(consumer->response_error_code != 0)
+    // Check if received error message
+    if(mal_message_is_error_message(message))
     {
         // Log error
         clog_error(common_directory_lookupprovider_consumer_logger,
-            "common_directory_lookupprovider_consumer_response: error decode_0 for matchingProviders\n");
+            "mc_parameter_listdefinition_consumer_response: received error message for lookupProvider request\n");
 
-        // Destroy response object if it has been set
-        if(consumer->response_provider_summary_list)
+        // Set error code to error value
+        consumer->response_error_code = -1;
+    }
+    else
+    {
+        // Decode the response
+        clog_debug(common_directory_lookupprovider_consumer_logger, 
+            "common_directory_lookupprovider_consumer_response: decode_0 for matchingProviders\n");
+
+        consumer->response_error_code = common_directory_lookupprovider_request_response_decode_0(cursor, decoder, &consumer->response_provider_summary_list);
+        mal_decoder_cursor_assert(decoder, cursor);
+
+        // Error check
+        if(consumer->response_error_code != 0)
         {
-            common_directory_providersummary_list_destroy(&consumer->response_provider_summary_list);
+            // Log error
+            clog_error(common_directory_lookupprovider_consumer_logger,
+                "common_directory_lookupprovider_consumer_response: error decode_0 for matchingProviders\n");
+
+            // Destroy response object if it has been set
+            if(consumer->response_provider_summary_list)
+            {
+                common_directory_providersummary_list_destroy(&consumer->response_provider_summary_list);
+            }
         }
+
+        // Cleanup
+        clog_debug(common_directory_lookupprovider_consumer_logger,
+            "common_directory_lookupprovider_consumer_response: cleanup\n");
     }
 
-    // Cleanup
-    clog_debug(common_directory_lookupprovider_consumer_logger,
-        "common_directory_lookupprovider_consumer_response: cleanup\n");
+    // Destroy the MAL decoder cursor
+    mal_decoder_cursor_destroy(decoder, cursor);
 
     // Destroy MAL message
     if(message)

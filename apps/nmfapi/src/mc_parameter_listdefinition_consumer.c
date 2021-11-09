@@ -412,10 +412,6 @@ mc_parameter_listdefinition_consumer_response (void *self, mal_ctx_t *mal_ctx,
     // Log debug
     clog_debug(mc_parameter_listdefinition_consumer_logger, "mc_parameter_listdefinition_consumer_response()\n");
 
-    // The response fields
-    mc_objectinstancepair_t **content;
-    mc_objectinstancepair_list_t *object_instance_pair_list;
-
     // Cast consumer type
     mc_parameter_listdefinition_consumer_t *consumer = (mc_parameter_listdefinition_consumer_t *) self;
 
@@ -425,99 +421,118 @@ mc_parameter_listdefinition_consumer_response (void *self, mal_ctx_t *mal_ctx,
     // Get the MAL message decoder
     mal_decoder_t *decoder = malbinary_decoder_new(false);
 
+    // Get the MAL cursor
     void *cursor = mal_decoder_new_cursor(decoder,
         mal_message_get_body(message),
         mal_message_get_body_offset(message) + mal_message_get_body_length(message),
         mal_message_get_body_offset(message));
 
-    // Log the offset
-    clog_debug(mc_parameter_listdefinition_consumer_logger, 
-        "mc_parameter_listdefinition_consumer_response: offset=%d\n", mal_message_get_body_offset(message));
 
-    // Decode the response
-    clog_debug(mc_parameter_listdefinition_consumer_logger, 
-        "mc_parameter_listdefinition_consumer_response: decode_0 for objInstIds\n");
-    
-    consumer->response_error_code = mc_parameter_listdefinition_request_response_decode_0(cursor, decoder, &object_instance_pair_list);
-    mal_decoder_cursor_assert(decoder, cursor);
+    // Check if received error message
+    if(mal_message_is_error_message(message))
+    {
+        // Log error
+        clog_error(mc_parameter_listdefinition_consumer_logger,
+            "mc_parameter_listdefinition_consumer_response: received error message for listDefinition request\n");
+
+        // Set error code to error value
+        consumer->response_error_code = -1;
+    }
+    else
+    {
+        // The response fields
+        mc_objectinstancepair_t **content;
+        mc_objectinstancepair_list_t *object_instance_pair_list;
+        
+        // Log the offset
+        clog_debug(mc_parameter_listdefinition_consumer_logger, 
+            "mc_parameter_listdefinition_consumer_response: offset=%d\n", mal_message_get_body_offset(message));
+
+        // Decode the response
+        clog_debug(mc_parameter_listdefinition_consumer_logger, 
+            "mc_parameter_listdefinition_consumer_response: decode_0 for objInstIds\n");
+        
+        consumer->response_error_code = mc_parameter_listdefinition_request_response_decode_0(cursor, decoder, &object_instance_pair_list);
+        mal_decoder_cursor_assert(decoder, cursor);
+
+        // Check for errors
+        if (consumer->response_error_code != 0)
+        {
+            // Log error
+            clog_error(mc_parameter_listdefinition_consumer_logger,
+                "mc_parameter_listdefinition_consumer_response: error decode_0 for objInstIds\n");
+        }
+        else // No error, allocate memory for response lists
+        {
+            // Set response variable for element count
+            consumer->response_element_count = mc_objectinstancepair_list_get_element_count(object_instance_pair_list);
+
+            // Allocate memory for the identity ids response
+            consumer->response_identity_id_list = (long *) calloc(consumer->response_element_count, sizeof(long));
+            if (!consumer->response_identity_id_list && (consumer->response_element_count > 0))
+            {
+                // Log error
+                clog_error(mc_parameter_listdefinition_consumer_logger,
+                    "mc_parameter_listdefinition_consumer_response: memory allocation error for response identity ids\n");
+
+                // Destroy consumer's response MAL attributes
+                mc_parameter_listdefinition_consumer_response_clear(consumer);
+
+                // Set and return the error code
+                consumer->response_error_code = -1;
+            }
+
+            // Allocate memory for the definition ids response
+            consumer->response_definition_id_list = (long *) calloc(consumer->response_element_count, sizeof(long));
+            if (!consumer->response_definition_id_list && (consumer->response_element_count > 0))
+            {
+                // Log error
+                clog_error(mc_parameter_listdefinition_consumer_logger,
+                    "mc_parameter_listdefinition_consumer_response: memory allocation error for response definition ids\n");
+
+                // Destroy consumer's response MAL attributes
+                mc_parameter_listdefinition_consumer_response_clear(consumer);
+
+                // Set and return the error code
+                consumer->response_error_code = -1;
+            }
+
+        }
+
+        // Set response variables if no errors so far
+        if(consumer->response_error_code == 0)
+        {
+            // Get content of the response
+            content = mc_objectinstancepair_list_get_content(object_instance_pair_list);
+
+            // Set response variables
+            for (size_t i = 0; i < consumer->response_element_count; i++)
+            {
+                consumer->response_identity_id_list[i] = mc_objectinstancepair_get_objidentityinstanceid(content[i]);
+                consumer->response_definition_id_list[i] = mc_objectinstancepair_get_objdefinstanceid(content[i]);
+            }
+        }
+
+        // Cleanup
+        clog_debug(mc_parameter_listdefinition_consumer_logger,
+            "mc_parameter_listdefinition_consumer_response: cleanup\n");
+
+        // Only destroy the mc_objectinstancepair object if it was initialized
+        if(content)
+        {
+            mc_objectinstancepair_destroy(content);
+        }
+
+        // Destroy fields
+        if(object_instance_pair_list)
+        {
+            mc_objectinstancepair_list_destroy(&object_instance_pair_list);
+        }
+    }
 
     // Destroy the MAL decoder cursor
     mal_decoder_cursor_destroy(decoder, cursor);
 
-    // Check for errors
-    if (consumer->response_error_code != 0)
-    {
-        // Log error
-        clog_error(mc_parameter_listdefinition_consumer_logger,
-            "mc_parameter_listdefinition_consumer_response: error decode_0 for objInstIds\n");
-    }
-    else // No error, allocate memory for response lists
-    {
-        // Set response variable for element count
-        consumer->response_element_count = mc_objectinstancepair_list_get_element_count(object_instance_pair_list);
-
-        // Allocate memory for the identity ids response
-        consumer->response_identity_id_list = (long *) calloc(consumer->response_element_count, sizeof(long));
-        if (!consumer->response_identity_id_list && (consumer->response_element_count > 0))
-        {
-            // Log error
-            clog_error(mc_parameter_listdefinition_consumer_logger,
-                "mc_parameter_listdefinition_consumer_response: memory allocation error for response identity ids\n");
-
-            // Destroy consumer's response MAL attributes
-            mc_parameter_listdefinition_consumer_response_clear(consumer);
-
-            // Set and return the error code
-            consumer->response_error_code = -1;
-        }
-
-        // Allocate memory for the definition ids response
-        consumer->response_definition_id_list = (long *) calloc(consumer->response_element_count, sizeof(long));
-        if (!consumer->response_definition_id_list && (consumer->response_element_count > 0))
-        {
-            // Log error
-            clog_error(mc_parameter_listdefinition_consumer_logger,
-                "mc_parameter_listdefinition_consumer_response: memory allocation error for response definition ids\n");
-
-            // Destroy consumer's response MAL attributes
-            mc_parameter_listdefinition_consumer_response_clear(consumer);
-
-            // Set and return the error code
-            consumer->response_error_code = -1;
-        }
-
-    }
-
-    // Set response variables if no errors so far
-    if(consumer->response_error_code == 0)
-    {
-        // Get content of the response
-        content = mc_objectinstancepair_list_get_content(object_instance_pair_list);
-
-        // Set response variables
-        for (size_t i = 0; i < consumer->response_element_count; i++)
-        {
-            consumer->response_identity_id_list[i] = mc_objectinstancepair_get_objidentityinstanceid(content[i]);
-            consumer->response_definition_id_list[i] = mc_objectinstancepair_get_objdefinstanceid(content[i]);
-        }
-    }
-
-    // Cleanup
-    clog_debug(mc_parameter_listdefinition_consumer_logger,
-        "mc_parameter_listdefinition_consumer_response: cleanup\n");
-
-    // Only destroy the mc_objectinstancepair object if it was initialized
-    if(content)
-    {
-        mc_objectinstancepair_destroy(content);
-    }
-
-    // Destroy fields
-    if(object_instance_pair_list)
-    {
-        mc_objectinstancepair_list_destroy(&object_instance_pair_list);
-    }
-    
     // Destroy MAL message
     if(message)
     {

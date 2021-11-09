@@ -442,139 +442,154 @@ mc_parameter_getvalue_consumer_response (void *self, mal_ctx_t *mal_ctx,
     clog_debug(mc_parameter_getvalue_consumer_logger, 
         "mc_parameter_getvalue_consumer_response: offset=%d\n", mal_message_get_body_offset(message));
 
-    // Decode the response
-    clog_debug(mc_parameter_getvalue_consumer_logger, 
-        "mc_parameter_getvalue_consumer_response: decode_0 for paramValDetails\n");
-    
-    consumer->response_error_code = mc_parameter_getvalue_request_response_decode_0(cursor, decoder, &param_value_details);
-    mal_decoder_cursor_assert(decoder, cursor);
-
-    // Destroy the MAL decoder cursor
-    mal_decoder_cursor_destroy(decoder, cursor);
-
-    // Check for errors
-    if(consumer->response_error_code != 0)
+    // Check if received error message
+    if(mal_message_is_error_message(message))
     {
         // Log error
         clog_error(mc_parameter_getvalue_consumer_logger,
-            "mc_parameter_getvalue_consumer_response: error decode_0 for paramValDetails\n");
-    }
-    else // No error, allocate memory for response lists
-    {
-        // Get element count
-        consumer->response_element_count = mc_parameter_parametervaluedetails_list_get_element_count(param_value_details);
+            "mc_parameter_getvalue_consumer_response: received error message for getValue request\n");
 
-        // Allocate memory for the MAL attributes response
-        consumer->response_mal_attribute_list = (union mal_attribute_t *) calloc(consumer->response_element_count, sizeof(union mal_attribute_t));
-        if (!consumer->response_mal_attribute_list && (consumer->response_element_count > 0))
+        // Set error code to error value
+        consumer->response_error_code = -1;
+    }
+    else
+    {
+
+        // Decode the response
+        clog_debug(mc_parameter_getvalue_consumer_logger, 
+            "mc_parameter_getvalue_consumer_response: decode_0 for paramValDetails\n");
+        
+        consumer->response_error_code = mc_parameter_getvalue_request_response_decode_0(cursor, decoder, &param_value_details);
+        mal_decoder_cursor_assert(decoder, cursor);
+
+        // Check for errors
+        if(consumer->response_error_code != 0)
         {
             // Log error
             clog_error(mc_parameter_getvalue_consumer_logger,
-                "mc_parameter_getvalue_consumer_response: memory allocation error for response mal attributes\n");
-
-            // Destroy consumer's response MAL attributes
-            mc_parameter_getvalue_consumer_response_clear(consumer);
-
-            // Set and return the error code
-            consumer->response_error_code = -1;
+                "mc_parameter_getvalue_consumer_response: error decode_0 for paramValDetails\n");
         }
-
-        // Allocate memory for the MAL attributes tags response
-        consumer->response_mal_attribute_tag_list = (unsigned char *) calloc(consumer->response_element_count, sizeof(unsigned char));
-        if (!consumer->response_mal_attribute_tag_list && (consumer->response_element_count > 0))
+        else // No error, allocate memory for response lists
         {
-            // Log error
-            clog_error(mc_parameter_getvalue_consumer_logger,
-                "mc_parameter_getvalue_consumer_response: memory allocation error for response mal attributes tags\n");
+            // Get element count
+            consumer->response_element_count = mc_parameter_parametervaluedetails_list_get_element_count(param_value_details);
 
-            // Destroy consumer's response MAL attributes and MAL attributes tags
-            mc_parameter_getvalue_consumer_response_clear(consumer);
-
-            // Set and return the error code
-            consumer->response_error_code = -1;
-        }
-    }
-
-    // Set response variables if no errors so far
-    if(consumer->response_error_code == 0)
-    {
-        // Get content of the response
-        content = mc_parameter_parametervaluedetails_list_get_content(param_value_details);
-
-        // Fetch and set response variables
-        for (size_t i = 0; i < consumer->response_element_count; i++)
-        {
-            if (content[i] != NULL)
+            // Allocate memory for the MAL attributes response
+            consumer->response_mal_attribute_list = (union mal_attribute_t *) calloc(consumer->response_element_count, sizeof(union mal_attribute_t));
+            if (!consumer->response_mal_attribute_list && (consumer->response_element_count > 0))
             {
-                // Get the response parameter value object
-                // Note that param_value will be destroyed later when invoking mc_parameter_parametervaluedetails_destroy()
-                // The mc_parameter_parametervaluedetails_destroy function will invoke mc_parameter_parametervalue_destroy()
-                mal_long_t param_id = mc_parameter_parametervaluedetails_get_paramid(content[i]);
-                mc_parameter_parametervalue_t *param_value = mc_parameter_parametervaluedetails_get_value(content[i]);
+                // Log error
+                clog_error(mc_parameter_getvalue_consumer_logger,
+                    "mc_parameter_getvalue_consumer_response: memory allocation error for response mal attributes\n");
 
-                // Get response tag and attribute values
-                unsigned char tag = mc_parameter_parametervalue_rawvalue_get_attribute_tag(param_value);
-                union mal_attribute_t attr = mc_parameter_parametervalue_get_rawvalue(param_value);
+                // Destroy consumer's response MAL attributes
+                mc_parameter_getvalue_consumer_response_clear(consumer);
 
-                // Set the response tag to the respons tag buffer
-                consumer->response_mal_attribute_tag_list[i] = tag;
+                // Set and return the error code
+                consumer->response_error_code = -1;
+            }
 
-                // After exiting this for loop the mc_parameter_parametervaluedetails_destroy() destructor function will be invoked
-                // This will destroy char pointer attributes, i.e. attributes of type Blob, Identifier, String, and URI
-                // Whenever we encounter these attribute types we make sure to create new objects so that their values can persist
-                // elsewhere in memory after calling the mc_parameter_parametervaluedetails_destroy() destructor function
-                // WARNING: The client is responsible for destroying these objects
-                if(tag == MAL_BLOB_ATTRIBUTE_TAG)
+            // Allocate memory for the MAL attributes tags response
+            consumer->response_mal_attribute_tag_list = (unsigned char *) calloc(consumer->response_element_count, sizeof(unsigned char));
+            if (!consumer->response_mal_attribute_tag_list && (consumer->response_element_count > 0))
+            {
+                // Log error
+                clog_error(mc_parameter_getvalue_consumer_logger,
+                    "mc_parameter_getvalue_consumer_response: memory allocation error for response mal attributes tags\n");
+
+                // Destroy consumer's response MAL attributes and MAL attributes tags
+                mc_parameter_getvalue_consumer_response_clear(consumer);
+
+                // Set and return the error code
+                consumer->response_error_code = -1;
+            }
+        }
+
+        // Set response variables if no errors so far
+        if(consumer->response_error_code == 0)
+        {
+            // Get content of the response
+            content = mc_parameter_parametervaluedetails_list_get_content(param_value_details);
+
+            // Fetch and set response variables
+            for (size_t i = 0; i < consumer->response_element_count; i++)
+            {
+                if (content[i] != NULL)
                 {
-                    consumer->response_mal_attribute_list[i].blob_value = mal_blob_create(
-                        mal_blob_get_content(attr.blob_value), mal_blob_get_length(attr.blob_value));
-                }
-                else if(tag == MAL_IDENTIFIER_ATTRIBUTE_TAG)
-                {
-                    consumer->response_mal_attribute_list[i].identifier_value = mal_identifier_new(attr.identifier_value);
-                }
-                else if(tag == MAL_STRING_ATTRIBUTE_TAG)
-                {
-                    consumer->response_mal_attribute_list[i].string_value = mal_string_new(attr.string_value);
-                }
-                else if(tag == MAL_URI_ATTRIBUTE_TAG)
-                {
-                    consumer->response_mal_attribute_list[i].uri_value = mal_uri_new(attr.uri_value);
+                    // Get the response parameter value object
+                    // Note that param_value will be destroyed later when invoking mc_parameter_parametervaluedetails_destroy()
+                    // The mc_parameter_parametervaluedetails_destroy function will invoke mc_parameter_parametervalue_destroy()
+                    mal_long_t param_id = mc_parameter_parametervaluedetails_get_paramid(content[i]);
+                    mc_parameter_parametervalue_t *param_value = mc_parameter_parametervaluedetails_get_value(content[i]);
+
+                    // Get response tag and attribute values
+                    unsigned char tag = mc_parameter_parametervalue_rawvalue_get_attribute_tag(param_value);
+                    union mal_attribute_t attr = mc_parameter_parametervalue_get_rawvalue(param_value);
+
+                    // Set the response tag to the respons tag buffer
+                    consumer->response_mal_attribute_tag_list[i] = tag;
+
+                    // After exiting this for loop the mc_parameter_parametervaluedetails_destroy() destructor function will be invoked
+                    // This will destroy char pointer attributes, i.e. attributes of type Blob, Identifier, String, and URI
+                    // Whenever we encounter these attribute types we make sure to create new objects so that their values can persist
+                    // elsewhere in memory after calling the mc_parameter_parametervaluedetails_destroy() destructor function
+                    // WARNING: The client is responsible for destroying these objects
+                    if(tag == MAL_BLOB_ATTRIBUTE_TAG)
+                    {
+                        consumer->response_mal_attribute_list[i].blob_value = mal_blob_create(
+                            mal_blob_get_content(attr.blob_value), mal_blob_get_length(attr.blob_value));
+                    }
+                    else if(tag == MAL_IDENTIFIER_ATTRIBUTE_TAG)
+                    {
+                        consumer->response_mal_attribute_list[i].identifier_value = mal_identifier_new(attr.identifier_value);
+                    }
+                    else if(tag == MAL_STRING_ATTRIBUTE_TAG)
+                    {
+                        consumer->response_mal_attribute_list[i].string_value = mal_string_new(attr.string_value);
+                    }
+                    else if(tag == MAL_URI_ATTRIBUTE_TAG)
+                    {
+                        consumer->response_mal_attribute_list[i].uri_value = mal_uri_new(attr.uri_value);
+                    }
+                    else
+                    {
+                        consumer->response_mal_attribute_list[i] = attr;
+                    }
                 }
                 else
                 {
-                    consumer->response_mal_attribute_list[i] = attr;
+                    // Log error and exit function with error code
+                    clog_error(mc_parameter_getvalue_consumer_logger,
+                        "mc_parameter_getvalue_consumer_response: encountered null content\n");
+                        
+                    consumer->response_error_code = -1;
+                    break;
                 }
             }
-            else
-            {
-                // Log error and exit function with error code
-                clog_error(mc_parameter_getvalue_consumer_logger,
-                    "mc_parameter_getvalue_consumer_response: encountered null content\n");
-                    
-                consumer->response_error_code = -1;
-                break;
-            }
         }
+
+        // Cleanup
+        clog_debug(mc_parameter_getvalue_consumer_logger,
+            "mc_parameter_getvalue_consumer_response: cleanup\n");
+
+        // Only destroy the mc_parameter_parametervaluedetails_t object if it was initialized
+        if(content)
+        {
+            // This will also destroy f_value object of type mc_parameter_parametervalue_t
+            // by invoking mc_parameter_parametervalue_destroy()
+            mc_parameter_parametervaluedetails_destroy(content);
+        }
+
+        // Destroy fields
+        if(param_value_details)
+        {
+            mc_parameter_parametervaluedetails_list_destroy(&param_value_details);
+        }
+
     }
 
-    // Cleanup
-    clog_debug(mc_parameter_getvalue_consumer_logger,
-        "mc_parameter_getvalue_consumer_response: cleanup\n");
-
-    // Only destroy the mc_parameter_parametervaluedetails_t object if it was initialized
-    if(content)
-    {
-        // This will also destroy f_value object of type mc_parameter_parametervalue_t
-        // by invoking mc_parameter_parametervalue_destroy()
-        mc_parameter_parametervaluedetails_destroy(content);
-    }
-
-    // Destroy fields
-    if(param_value_details)
-    {
-        mc_parameter_parametervaluedetails_list_destroy(&param_value_details);
-    }
+    // Destroy the MAL decoder cursor
+    mal_decoder_cursor_destroy(decoder, cursor);
     
     // Destroy MAL message
     if(message)
