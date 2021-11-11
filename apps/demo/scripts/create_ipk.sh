@@ -9,15 +9,6 @@ echo "Create IPK"
 # Set the bash script variables.
 source env.sh
 
-# List the zmq dependencies to be included in the ipk.
-ZMQ_DEPS=('zmq' 'czmq')
-
-# List the malc dependencies to be included in the ipk.
-MAL_DEPS=('malutil' 'malattributes' 'mal' 'malbinary' 'malsplitbinary' 'malzmq' 'maltcp' 'malactor')
-
-# List the library dependencies to be included in the ipk.
-LIB_DEPS=('generated_areas')
-
 # Extract the package name, version, and architecture from the control file.
 PKG_NAME=$(sed -n -e '/^Package/p' sepp_package/CONTROL/control | cut -d ' ' -f2)
 PKG_VER=$(sed -n -e '/^Version/p' sepp_package/CONTROL/control | cut -d ' ' -f2)
@@ -26,32 +17,18 @@ PKG_ARCH=$(sed -n -e '/^Architecture/p' sepp_package/CONTROL/control | cut -d ' 
 # Clean and initialize the ipk repo.
 if [ -d sepp_package${SEPP_LIB_DIR} ] ; then rm -r sepp_package${SEPP_LIB_DIR}; fi
 mkdir -p sepp_package${SEPP_LIB_DIR}
+mkdir -p sepp_package${SEPP_BIN_DIR}
 cd sepp_package
 rm -f data.tar.gz
 rm -f control.tar.gz
 
-echo "Fetch library dependencies"
-
-# Fetch library files for zmq project dependencies.
-for dep in "${ZMQ_DEPS[@]}"
-do
-    cp ../${LOCAL_APP_LIB_DIR}/*${dep}*.so* ../sepp_package${SEPP_LIB_DIR}
-done
-
-# Fetch library files for mal project dependencies.
-for dep in "${MAL_DEPS[@]}"
-do
-    cp ../${LOCAL_APP_LIB_DIR}/*${dep}*.so* ../sepp_package${SEPP_LIB_DIR}
-done
-
-# Fetch library files for apps project dependencies.
-for dep in "${LIB_DEPS[@]}"
-do
-    cp ../${LOCAL_APP_LIB_DIR}/*${dep}*.so* ../sepp_package${SEPP_LIB_DIR}
-done
+echo "Fetch binary and library dependency"
 
 # Fetch this project's library files.
 cp ../${LOCAL_APP_LIB_DIR}/*${PKG_NAME}*.so* ../sepp_package${SEPP_LIB_DIR}
+
+# Fetch this project's executable binary file
+cp ../../src/${BIN_FILENAME} ../sepp_package${SEPP_BIN_DIR}
 
 echo "Package"
 
@@ -62,7 +39,7 @@ mv control.tar.gz ../
 cd ..
 
 # Create the data tar file.
-tar -czvf data.tar.gz usr
+tar -czvf data.tar.gz usr home
 
 # Build the ipk filename.
 IPK_FILENAME=${PKG_NAME}_${PKG_VER}_${PKG_ARCH}.ipk
