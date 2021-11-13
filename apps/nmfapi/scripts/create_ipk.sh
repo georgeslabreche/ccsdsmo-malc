@@ -77,9 +77,12 @@ echo "Created ${IPK_FILENAME}"
 # Cleanup.
 echo "Cleanup"
 
+# Delete the tar files.
 rm -f data.tar.gz
 rm -f control.tar.gz
-rm -r ../sepp_package${SEPP_LIB_DIR}
+
+# Delete the sepp file system directories created for the ipk.
+rm -r ../sepp_package/$(echo "$SEPP_LIB_DIR" | cut -d "/" -f2)
 
 # Done
 echo "Done"

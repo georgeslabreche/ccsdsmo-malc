@@ -28,7 +28,7 @@ echo "Fetch binary and library dependency"
 cp ../${LOCAL_APP_LIB_DIR}/*${PKG_NAME}*.so* ../sepp_package${SEPP_LIB_DIR}
 
 # Fetch this project's executable binary file
-cp ../../src/${BIN_FILENAME} ../sepp_package${SEPP_BIN_DIR}
+cp ../${LOCAL_APP_BIN_DIR}/${BIN_FILENAME} ../sepp_package${SEPP_BIN_DIR}
 
 echo "Package"
 
@@ -54,9 +54,13 @@ echo "Created ${IPK_FILENAME}"
 # Cleanup.
 echo "Cleanup"
 
+# Data tar files.
 rm -f data.tar.gz
 rm -f control.tar.gz
-rm -r ../sepp_package${SEPP_LIB_DIR}
+
+# Delete the sepp file system directories created for the ipk.
+rm -r ../sepp_package/$(echo "$SEPP_LIB_DIR" | cut -d "/" -f2)
+rm -r ../sepp_package/$(echo "$SEPP_BIN_DIR" | cut -d "/" -f2)
 
 # Done
 echo "Done"
