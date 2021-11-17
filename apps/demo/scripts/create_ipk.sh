@@ -34,12 +34,13 @@ echo "Package"
 
 # Create the control tar file.
 cd CONTROL && 
-tar -czvf control.tar.gz control postinst postrm preinst prerm
+tar -czvf control.tar.gz control postinst postrm preinst prerm --numeric-owner --group=0 --owner=0
+
 mv control.tar.gz ../
 cd ..
 
 # Create the data tar file.
-tar -czvf data.tar.gz usr home
+tar -czvf data.tar.gz usr home --numeric-owner --group=0 --owner=0
 
 # Build the ipk filename.
 IPK_FILENAME=${PKG_NAME}_${PKG_VER}_${PKG_ARCH}.ipk
