@@ -14,29 +14,36 @@
 
 #include "sepp_tm_classes.h"
 
+/* buffer for shell command stdout */
+#define SHELL_STDOUT_BUFFER_SIZE              500
+char shell_outbuf[SHELL_STDOUT_BUFFER_SIZE];
+
+//  --------------------------------------------------------------------------
+//  The main program
+
 int main (int argc, char *argv [])
 {
-    bool verbose = false;
-    int argn;
-    for (argn = 1; argn < argc; argn++) {
-        if (streq (argv [argn], "--help")
-        ||  streq (argv [argn], "-h")) {
-            puts ("sepp_tm_app [options] ...");
-            puts ("  --verbose / -v         verbose test output");
-            puts ("  --help / -h            this information");
-            return 0;
-        }
-        else
-        if (streq (argv [argn], "--verbose")
-        ||  streq (argv [argn], "-v"))
-            verbose = true;
-        else {
-            printf ("Unknown option: %s\n", argv [argn]);
-            return 1;
-        }
+    /* response code */
+    int res;
+
+    /* shell proxy object to execute shell commands and read their outputs */
+    shell_proxy_t *shell_proxy = shell_proxy_new();
+
+    /* fetch uptime */
+    res = shell_proxy_get_uptime(shell_proxy, shell_outbuf);
+
+    if(res != 0)
+    {
+        printf("Failed to fetch uptime.\n");
     }
-    //  Insert main code here
-    if (verbose)
-        zsys_info ("sepp_tm_app - SEPP TM");
+    else
+    {
+        /* write line to stdout */
+        printf("Uptime: %s\n", shell_outbuf);
+    }
+
+    /* destroy the shell project object */
+    shell_proxy_destroy(&shell_proxy);
+
     return 0;
 }

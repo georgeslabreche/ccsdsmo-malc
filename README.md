@@ -271,7 +271,7 @@ For NULL Macro:
 8. Make sure to only commit and push the relevant generated .c and .h files located in the `src` and `include` directories:
     - A lot of files have been generated from running `./genmake` in step 6.
     - Refer to the demo app folder in the source code repo as a reference on what to commit and what not to commit.
-
+9. Update the `genmake_apps` function in `genmakeall` to include the newly created app (optional).
 
 ## UPDATING DOCUMENTATION
 
