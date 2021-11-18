@@ -16,8 +16,8 @@
     files according to http://rfc.zeromq.org/spec:21.
 -->
 <project
-    name = "demo"
-    description = "Demo application using MAL C API"
+    name = "sepp_tm"
+    description = "An app to inject basic SEPP telemetry into the OBSW datapool"
     script = "zproject.gsl"
     email = "georges@tanagraspace.com"
     >
@@ -74,13 +74,11 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
 
-    <!-- 
-        Need at least one class generated to workaround a bug in which
-        the _classes.h header is not generated, i.e. demo_classes.h
-        Make it a utils class and at worst leave it "blank".
-    -->
-    <class name = "demo_app_utils" selftest = "0" />
-    <main name = "demo_app">Demo App</main>
+    <!-- A class with functions that executes shell commands and returns their outputs -->
+    <class name = "shell_proxy" selftest = "0" />
+
+    <!-- The main program -->
+    <main name = "sepp_tm_app">SEPP TM</main>
     
     <!-- Targets -->
     <target name = "rpi" />
