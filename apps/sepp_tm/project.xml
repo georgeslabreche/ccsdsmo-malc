@@ -1,0 +1,82 @@
+<!-- 
+    The project.xml generates build environments for:
+
+        * android
+        * autotool
+        * cmake
+        * mingw32
+        * cygwin
+        * vs2008
+        * vs2010
+        * vs2012
+        * vs2013
+
+    Classes are automatically added to all build environments. Further as you
+    add new classes to your project you can generate skeleton header and source 
+    files according to http://rfc.zeromq.org/spec:21.
+-->
+<project
+    name = "sepp_tm"
+    description = "An app to inject basic SEPP telemetry into the OBSW datapool"
+    script = "zproject.gsl"
+    email = "georges@tanagraspace.com"
+    >
+
+    <!--
+        Includes are processed first, so XML in included files will be
+        part of the XML tree
+    -->
+    <include filename = "license.xml" />
+
+    <!-- 
+        Current version of your project. 
+        This will be used to package your distribution 
+    -->
+    <version major = "1" minor = "0" patch = "0" />
+
+    <!--
+        Current libtool ABI version of the  project's shared library.
+        
+        For details on how/when to increment it, see:
+        http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
+        
+        If not defined 0:0:0 will be used.
+    -->
+    <abi current = "1" revision = "0" age = "0" />
+
+    <!--
+        Specify which other projects this depends on.
+        These projects must be known by zproject, and the list of
+        known projects is maintained in the zproject_known_projects.xml model.
+        You need not specify subdependencies if they are implied. -->
+    <use project = "czmq" />
+    <use project = "malutil" />
+    <use project = "malattributes" />
+    <use project = "mal" />
+    <use project = "malbinary" />
+    <use project = "malsplitbinary" />
+    <use project = "malzmq" />
+    <use project = "maltcp" />
+    <use project = "malactor" />
+    <use project = "generated_areas" />
+    <use project = "nmfapi"/>
+
+    <!-- Header Files
+         name := The name the header file to include without file ending
+    <header name = "myproject_prelude" />
+    -->
+
+    <!-- 
+        Classes, if the class header or source file doesn't exist this will
+        generate a skeletons for them.
+        use private = "1" for internal classes
+    <class name = "myclass">Public class description</class>
+    <class name = "someother" private = "1">Private class description</class>
+    -->
+
+    <main name = "sepp_tm_app">SEPP TM</main>
+    
+    <!-- Targets -->
+    <target name = "rpi" />
+
+</project>

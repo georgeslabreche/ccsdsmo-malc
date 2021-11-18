@@ -1,0 +1,4 @@
+#!/bin/bash
+
+PROGDIR=`cd "$(dirname "$0")" >/dev/null; pwd`
+${PROGDIR}/../../bin/genmake $*
