@@ -74,6 +74,11 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
 
+    <!-- 
+        Need at least one class generated to workaround a bug in which
+        the _classes.h header is not generated, i.e. demo_classes.h
+        Make it a utils class and at worst leave it "blank".
+    -->
     <class name = "demo_app_utils" selftest = "0" />
     <main name = "demo_app">Demo App</main>
     

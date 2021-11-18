@@ -74,6 +74,14 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
 
+    <!-- 
+        Need at least one class generated to workaround a bug in which
+        the _classes.h header is not generated, i.e. sepp_tm_classes.h
+        Make it a utils class and at worst leave it "blank".
+    -->
+    <class name = "sepp_tm_utils" selftest = "0" />
+
+    <!-- The main program -->
     <main name = "sepp_tm_app">SEPP TM</main>
     
     <!-- Targets -->

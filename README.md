@@ -253,6 +253,26 @@ For NULL Macro:
 
     /usr/lib/gcc/x86_64-redhat-linux/4.1.2/include/stddef.h
 
+
+## CREATE NEW APP
+1. Create a new app folder in the apps directory, e.g. `mkdir apps/new_program && cd apps/new_program`
+2. Copy the following files from the demo app folder into the newly created app folder:
+    - generate.sh
+    - genmake
+    - license.xml
+    - project.xml
+3. Update `project.xml` with configurations relevant to the new app.
+    - Make sure that the names of the classes and main program code to be generated are different than the project name.
+    - For instance, if the the project name is `new_program` then the main file should be named differently, e.g. `new_program_app`.
+4. Create a README file.
+5. Commit and push project files into the repo.
+6. Invoke genmake to generate code and build the app: `./genmake`.
+7. If a main program was defined in `project.xml` then run the executable binary that was created to check if it runs as expected, e.g.: `./src/new_program_app -v`
+8. Make sure to only commit and push the relevant generated .c and .h files located in the `src` and `include` directories:
+    - A lot of files have been generated from running `./genmake` in step 6.
+    - Refer to the demo app folder in the source code repo as a reference on what to commit and what not to commit.
+
+
 ## UPDATING DOCUMENTATION
 
 Project documentation is entirely in Markdown and lives in the `docs` directory. It is compiled into a static site thanks to [mkdocs](http://www.mkdocs.org/).
