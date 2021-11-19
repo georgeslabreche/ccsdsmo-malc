@@ -25,6 +25,10 @@ typedef struct {
 
 static test_item_t
 all_tests [] = {
+#ifdef SEPP_TM_BUILD_DRAFT_API
+// Tests for draft public classes:
+    { "shell_stdout_parser", shell_stdout_parser_test, false, true, NULL },
+#endif // SEPP_TM_BUILD_DRAFT_API
     {NULL, NULL, 0, 0, NULL}          //  Sentinel
 };
 

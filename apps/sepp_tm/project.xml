@@ -74,7 +74,13 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
 
-    <!-- A class with functions that executes shell commands and returns their outputs -->
+    <!-- A class to execute shell commands and return their outputs -->
+    <class name = "shell_cmd_dispatcher" selftest = "0" />
+
+    <!-- A class to parse shell command outputs and extract relevant data -->
+    <class name = "shell_stdout_parser" selftest = "1" />
+
+    <!-- A class to dispatch shell commands and parse their outputs -->
     <class name = "shell_proxy" selftest = "0" />
 
     <!-- The main program -->
