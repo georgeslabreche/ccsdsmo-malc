@@ -20,6 +20,9 @@ struct _shell_proxy_t {
     int filler;     //  Declare class properties here
 };
 
+/* remove carriage return and new line, if any */
+//std_out[strcspn(std_out, "\r\n")] = 0;
+
 
 //  --------------------------------------------------------------------------
 //  Create a new shell_proxy
@@ -50,18 +53,11 @@ shell_proxy_destroy (shell_proxy_t **self_p)
     }
 }
 
-
-//  --------------------------------------------------------------------------
-//  Get Linux uptime in seconds
-
 int
-shell_proxy_get_uptime (shell_proxy_t *self_p, char *stdout)
+shell_proxy_execute_command (char *command, char *std_out)
 {
     /* file pointer */
     FILE *fp;
-
-    /* command contains the command string (a character array) */
-    char *command = "awk '{print int($1)}' /proc/uptime";
 
     /* use popen to read output from command */
     fp = popen(command, "r");
@@ -73,17 +69,21 @@ shell_proxy_get_uptime (shell_proxy_t *self_p, char *stdout)
     }
 
     /* read stdout line into char buffer */
-    fgets(stdout, sizeof(stdout), fp);
+    char line[128];
+    int offset = 0;
+    while (fgets(line, sizeof(line), fp) != NULL)
+    {
+        strcpy(std_out + offset, line);
+        offset = offset + strlen(line);
+    }
 
     /* error check */
-    if (feof(fp) || ferror(fp))
+    if (ferror(fp))
     {
+        fclose(fp);
         return -1;
     }
 
-    /* remove carriage return and new line, if any */
-    stdout[strcspn(stdout, "\r\n")] = 0;
-    
     /* cleanup */
     fclose(fp);
 
@@ -91,3 +91,121 @@ shell_proxy_get_uptime (shell_proxy_t *self_p, char *stdout)
     return 0;
 }
 
+
+//  --------------------------------------------------------------------------
+//  Get Linux uptime in seconds
+
+int
+shell_proxy_get_uptime (shell_proxy_t *self_p, char *std_out)
+{
+    /* response code */
+    int res;
+    
+    /* execute command */
+    res = shell_proxy_execute_command("awk '{print int($1)}' /proc/uptime", std_out);
+
+    /* return response code */
+    return res;
+}
+
+//  --------------------------------------------------------------------------
+//  Get free memory
+
+int
+shell_proxy_get_free_memory (shell_proxy_t *self_p, char *std_out)
+{
+    /* response code */
+    int res;
+    
+    /* execute command */
+    res = shell_proxy_execute_command("free", std_out);
+
+    /* return response code */
+    return res;
+}
+
+//  --------------------------------------------------------------------------
+//  Get free CPU
+
+int
+shell_proxy_get_free_cpu (shell_proxy_t *self_p, char *std_out)
+{
+    return 0;
+}
+
+//  --------------------------------------------------------------------------
+//  Get disk usage
+
+int
+shell_proxy_get_disk_usage (shell_proxy_t *self_p, char *std_out)
+{
+    /* response code */
+    int res;
+    
+    /* execute command */
+    res = shell_proxy_execute_command("df -m | head -n2", std_out);
+
+    /* return response code */
+    return res;
+}
+
+//  --------------------------------------------------------------------------
+//  Get OOM counter
+
+int
+shell_proxy_get_oom_counter (shell_proxy_t *self_p, char *std_out)
+{
+    return 0;
+}
+
+//  --------------------------------------------------------------------------
+//  Get file count toGround
+
+int
+shell_proxy_get_file_count_toGround (shell_proxy_t *self_p, char *std_out)
+{
+    return 0;
+}
+
+//  --------------------------------------------------------------------------
+//  Get file count toGroundLP
+
+int
+shell_proxy_get_file_count_toGroundLP (shell_proxy_t *self_p, char *std_out)
+{
+    return 0;
+}
+
+//  --------------------------------------------------------------------------
+// Get FPGA image loaded
+
+int
+shell_proxy_get_fpga_image_loaded (shell_proxy_t *self_p, char *std_out)
+{
+    return 0;
+}
+
+//  --------------------------------------------------------------------------
+// Get core counter
+
+int
+shell_proxy_get_core_counter (shell_proxy_t *self_p, char *std_out)
+{
+    /* response code */
+    int res;
+    
+    /* execute command */
+    res = shell_proxy_execute_command("cat /proc/cpuinfo | grep processor | wc -l", std_out);
+
+    /* return response code */
+    return res;
+}
+
+//  --------------------------------------------------------------------------
+// Get rescue shell status
+
+int
+shell_proxy_get_rescue_shell_status (shell_proxy_t *self_p, char *std_out)
+{
+    return 0;
+}
