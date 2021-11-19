@@ -1,0 +1,7 @@
+Package: sepp_tm
+Priority: optional
+Maintainer: tanagraspace
+Architecture: sepp
+Section: Applications
+Version: 1.0.0
+Description: An app to inject basic SEPP telemetry into the OBSW datapool
