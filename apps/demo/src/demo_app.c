@@ -166,7 +166,10 @@ int main (int argc, char *argv [])
 
     // Demonstrate the listDefinition operation with multiple parameters in a single request interaction
     // Demonstrate the getValue operation with multiple parameters in a single request interaction
-    demo_parameter_service_get_value_list();
+    
+    // FIXME: There is a know issue in NMF Supervisor that triggers a Nanomind reboot when aggregations are created.
+    //        Disable this demo until that issue is resolved
+    //demo_parameter_service_get_value_list();
 
     // Demonstrate the getValue operation with one parameter per request interaction
     demo_parameter_service_get_value();
