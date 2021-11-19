@@ -271,7 +271,11 @@ For NULL Macro:
 8. Make sure to only commit and push the relevant generated .c and .h files located in the `src` and `include` directories:
     - A lot of files have been generated from running `./genmake` in step 6.
     - Refer to the demo app folder in the source code repo as a reference on what to commit and what not to commit.
-9. Update the `genmake_apps` function in `genmakeall` to include the newly created app (optional).
+9. Copy the scripts folder from the demo app into the newly created app folder. These are deployment and ipk creation scripts. Update the following files:
+    - scripts/sepp_package/CONTROL/control
+    - scripts/env.sh
+10. Review all other files in the scripts folder in case they need to be customized for the app's deployment purposes.
+11. Update the `genmake_apps` function in `genmakeall` to include the newly created app (optional).
 
 ## UPDATING DOCUMENTATION
 

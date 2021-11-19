@@ -15,8 +15,9 @@
 #include "sepp_tm_classes.h"
 
 /* buffer for shell command stdout */
-#define SHELL_STDOUT_BUFFER_SIZE              500
-char shell_outbuf[SHELL_STDOUT_BUFFER_SIZE];
+#define OUTPUT_BUFFER_SIZE              1024
+char output[OUTPUT_BUFFER_SIZE];
+
 
 //  --------------------------------------------------------------------------
 //  The main program
@@ -26,24 +27,21 @@ int main (int argc, char *argv [])
     /* response code */
     int res;
 
-    /* shell proxy object to execute shell commands and read their outputs */
-    shell_proxy_t *shell_proxy = shell_proxy_new();
-
     /* fetch uptime */
-    res = shell_proxy_get_uptime(shell_proxy, shell_outbuf);
+    res = shell_proxy_get_uptime(output);
 
-    if(res != 0)
+    if(res == 0)
     {
-        printf("Failed to fetch uptime.\n");
-    }
-    else
-    {
-        /* write line to stdout */
-        printf("Uptime: %s\n", shell_outbuf);
+        printf("uptime: %s\n", output);
     }
 
-    /* destroy the shell project object */
-    shell_proxy_destroy(&shell_proxy);
+    /* TODO: fetch free CPU */
+
+    /* fetch free memory */
+    res = shell_proxy_get_free_memory(output);
+
+    /* fetch disk usage */
+    res = shell_proxy_get_disk_usage(output);
 
     return 0;
 }

@@ -14,80 +14,165 @@
 
 #include "sepp_tm_classes.h"
 
-//  Structure of our class
 
-struct _shell_proxy_t {
-    int filler;     //  Declare class properties here
-};
-
-
-//  --------------------------------------------------------------------------
-//  Create a new shell_proxy
-
-shell_proxy_t *
-shell_proxy_new (void)
+void shell_proxy_process_stdout (char *id, int res, char *std_out)
 {
-    shell_proxy_t *self = (shell_proxy_t *) zmalloc (sizeof (shell_proxy_t));
-    assert (self);
-    //  Initialize class properties here
-    return self;
-}
-
-
-//  --------------------------------------------------------------------------
-//  Destroy the shell_proxy
-
-void
-shell_proxy_destroy (shell_proxy_t **self_p)
-{
-    assert (self_p);
-    if (*self_p) {
-        shell_proxy_t *self = *self_p;
-        //  Free class properties here
-        //  Free object itself
-        free (self);
-        *self_p = NULL;
+    if(res != 0)
+    {
+        printf("Failed to fetch %s.\n", id);
+    }
+    else
+    {
+        /* print command output */
+        printf("%s:\n %s\n", id, std_out);
     }
 }
-
 
 //  --------------------------------------------------------------------------
 //  Get Linux uptime in seconds
 
 int
-shell_proxy_get_uptime (shell_proxy_t *self_p, char *stdout)
+shell_proxy_get_uptime (char *uptime)
 {
-    /* file pointer */
-    FILE *fp;
+    /* response code */
+    int res;
 
-    /* command contains the command string (a character array) */
-    char *command = "awk '{print int($1)}' /proc/uptime";
-
-    /* use popen to read output from command */
-    fp = popen(command, "r");
+    /* fetch Linux uptime */
+    res = shell_cmd_dispatcher_get_uptime(uptime);
 
     /* error check */
-    if (!fp)
+    if(res != 0)
     {
-        return -1;
-    }
-
-    /* read stdout line into char buffer */
-    fgets(stdout, sizeof(stdout), fp);
-
-    /* error check */
-    if (feof(fp) || ferror(fp))
-    {
-        return -1;
+        /* return error code */
+        return res;
     }
 
     /* remove carriage return and new line, if any */
-    stdout[strcspn(stdout, "\r\n")] = 0;
-    
-    /* cleanup */
-    fclose(fp);
+    uptime[strcspn(uptime, "\r\n")] = 0;
 
-    /* success */
+    /* return response code */
+    return res;
+}
+
+//  --------------------------------------------------------------------------
+//  Get free memory
+
+int
+shell_proxy_get_free_memory (char *std_out)
+{
+    int res;
+
+    /* fetch free memory */
+    res = shell_cmd_dispatcher_get_free_memory(std_out);
+
+    /* process output */
+    shell_proxy_process_stdout("free memory", res, std_out);
+
+    return res;
+}
+
+//  --------------------------------------------------------------------------
+//  Get free CPU
+
+int
+shell_proxy_get_free_cpu (char *std_out)
+{
+    /* execute command */
     return 0;
 }
 
+//  --------------------------------------------------------------------------
+//  Get disk usage
+
+int
+shell_proxy_get_disk_usage (char *std_out)
+{
+    int res;
+
+    res = shell_cmd_dispatcher_get_disk_usage(std_out);
+
+    /* process output */
+    shell_proxy_process_stdout("disk usage", res, std_out);
+
+    return res;
+}
+
+//  --------------------------------------------------------------------------
+//  Get OOM counter
+
+int
+shell_proxy_get_oom_counter (char *std_out)
+{
+    /* execute command */
+    return 0;
+}
+
+//  --------------------------------------------------------------------------
+//  Get file count toGround
+
+int
+shell_proxy_get_file_count_toGround (char *std_out)
+{
+    /* execute command */
+    return 0;
+}
+
+//  --------------------------------------------------------------------------
+//  Get file count toGroundLP
+
+int
+shell_proxy_get_file_count_toGroundLP (char *std_out)
+{
+    /* execute command */
+    return 0;
+}
+
+//  --------------------------------------------------------------------------
+// Get FPGA image loaded
+
+int
+shell_proxy_get_fpga_image_loaded (char *std_out)
+{
+    /* execute command */
+    return 0;
+}
+
+//  --------------------------------------------------------------------------
+// Get core counter
+
+int
+shell_proxy_get_core_counter (char *std_out)
+{
+    /* execute command */
+    return 0;
+}
+
+//  --------------------------------------------------------------------------
+// Get rescue shell status
+
+int
+shell_proxy_get_rescue_shell_status (char *std_out)
+{
+    /* execute command */
+    return 0;
+}
+
+//  --------------------------------------------------------------------------
+// Get status of the CAN bridge
+
+int
+shell_proxy_get_spp_bridge (char *std_out)
+{
+    /* execute command */
+    return 0;
+}
+
+//  --------------------------------------------------------------------------
+// Get status of the CAN bridge (packetstore)
+
+int
+shell_proxy_get_spp_bridge_packetstore (char *std_out)
+{
+    /* execute command */
+    return 0;
+}
