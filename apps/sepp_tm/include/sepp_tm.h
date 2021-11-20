@@ -8,6 +8,9 @@
 #ifndef SEPP_TM_H_H_INCLUDED
 #define SEPP_TM_H_H_INCLUDED
 
+//  Include type definitions
+#include "sepp_tm_types.h"
+
 //  Include the project library file
 #include "sepp_tm_library.h"
 
