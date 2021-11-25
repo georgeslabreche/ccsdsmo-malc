@@ -14,19 +14,10 @@
 
 #include "sepp_tm_classes.h"
 
+/* buffer for shell command stdout */
+#define STDOUT_BUFFER_SIZE              1024
+char std_out[STDOUT_BUFFER_SIZE];
 
-void shell_proxy_process_stdout (char *id, int res, char *std_out)
-{
-    if(res != 0)
-    {
-        printf("Failed to fetch %s.\n", id);
-    }
-    else
-    {
-        /* print command output */
-        printf("%s:\n %s\n", id, std_out);
-    }
-}
 
 //  --------------------------------------------------------------------------
 //  Get Linux uptime in seconds
@@ -58,15 +49,15 @@ shell_proxy_get_uptime (char *uptime)
 //  Get free memory
 
 int
-shell_proxy_get_free_memory (char *std_out)
+shell_proxy_get_free_memory (sepp_tm_free_memory_t *sepp_tm_free_memory)
 {
     int res;
 
     /* fetch free memory */
     res = shell_cmd_dispatcher_get_free_memory(std_out);
 
-    /* process output */
-    shell_proxy_process_stdout("free memory", res, std_out);
+    /* parse output */
+    res = res || shell_stdout_parser_parse_free_memory(std_out, sepp_tm_free_memory);
 
     return res;
 }
@@ -75,7 +66,7 @@ shell_proxy_get_free_memory (char *std_out)
 //  Get free CPU
 
 int
-shell_proxy_get_free_cpu (char *std_out)
+shell_proxy_get_free_cpu (char *output)
 {
     /* execute command */
     return 0;
@@ -85,15 +76,16 @@ shell_proxy_get_free_cpu (char *std_out)
 //  Get disk usage
 
 int
-shell_proxy_get_disk_usage (char *std_out)
+shell_proxy_get_disk_usage (sepp_tm_disk_usage_t *sepp_tm_disk_usage)
 {
     int res;
 
+    /* fetch disk usage */
     res = shell_cmd_dispatcher_get_disk_usage(std_out);
 
-    /* process output */
-    shell_proxy_process_stdout("disk usage", res, std_out);
-
+    /* parse stdout */
+    res = res || shell_stdout_parser_parse_disk_usage(std_out, sepp_tm_disk_usage);
+ 
     return res;
 }
 
@@ -101,7 +93,7 @@ shell_proxy_get_disk_usage (char *std_out)
 //  Get OOM counter
 
 int
-shell_proxy_get_oom_counter (char *std_out)
+shell_proxy_get_oom_counter (char *output)
 {
     /* execute command */
     return 0;
@@ -111,7 +103,7 @@ shell_proxy_get_oom_counter (char *std_out)
 //  Get file count toGround
 
 int
-shell_proxy_get_file_count_toGround (char *std_out)
+shell_proxy_get_file_count_toGround (char *output)
 {
     /* execute command */
     return 0;
@@ -121,7 +113,7 @@ shell_proxy_get_file_count_toGround (char *std_out)
 //  Get file count toGroundLP
 
 int
-shell_proxy_get_file_count_toGroundLP (char *std_out)
+shell_proxy_get_file_count_toGroundLP (char *output)
 {
     /* execute command */
     return 0;
@@ -131,7 +123,7 @@ shell_proxy_get_file_count_toGroundLP (char *std_out)
 // Get FPGA image loaded
 
 int
-shell_proxy_get_fpga_image_loaded (char *std_out)
+shell_proxy_get_fpga_image_loaded (char *output)
 {
     /* execute command */
     return 0;
@@ -141,7 +133,7 @@ shell_proxy_get_fpga_image_loaded (char *std_out)
 // Get core counter
 
 int
-shell_proxy_get_core_counter (char *std_out)
+shell_proxy_get_core_counter (char *output)
 {
     /* execute command */
     return 0;
@@ -151,7 +143,7 @@ shell_proxy_get_core_counter (char *std_out)
 // Get rescue shell status
 
 int
-shell_proxy_get_rescue_shell_status (char *std_out)
+shell_proxy_get_rescue_shell_status (char *output)
 {
     /* execute command */
     return 0;
@@ -161,7 +153,7 @@ shell_proxy_get_rescue_shell_status (char *std_out)
 // Get status of the CAN bridge
 
 int
-shell_proxy_get_spp_bridge (char *std_out)
+shell_proxy_get_spp_bridge (char *output)
 {
     /* execute command */
     return 0;
@@ -171,7 +163,7 @@ shell_proxy_get_spp_bridge (char *std_out)
 // Get status of the CAN bridge (packetstore)
 
 int
-shell_proxy_get_spp_bridge_packetstore (char *std_out)
+shell_proxy_get_spp_bridge_packetstore (char *output)
 {
     /* execute command */
     return 0;

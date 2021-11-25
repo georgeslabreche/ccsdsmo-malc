@@ -14,11 +14,6 @@
 
 #include "sepp_tm_classes.h"
 
-/* buffer for shell command stdout */
-#define OUTPUT_BUFFER_SIZE              1024
-char output[OUTPUT_BUFFER_SIZE];
-
-
 //  --------------------------------------------------------------------------
 //  The main program
 
@@ -28,20 +23,28 @@ int main (int argc, char *argv [])
     int res;
 
     /* fetch uptime */
-    res = shell_proxy_get_uptime(output);
+    char uptime[16];
+    res = shell_proxy_get_uptime(uptime);
 
     if(res == 0)
     {
-        printf("uptime: %s\n", output);
+        printf("uptime: %s\n", uptime);
     }
 
     /* TODO: fetch free CPU */
 
     /* fetch free memory */
-    res = shell_proxy_get_free_memory(output);
+    struct sepp_tm_free_memory_t *sepp_tm_free_memory;
+    sepp_tm_free_memory = (struct sepp_tm_free_memory_t*)malloc(sizeof(struct sepp_tm_free_memory_t));
+
+    res = shell_proxy_get_free_memory(sepp_tm_free_memory);
+
+    printf("TOTAL FREE MEME %s", sepp_tm_free_memory->total);
+
+    free(sepp_tm_free_memory);
 
     /* fetch disk usage */
-    res = shell_proxy_get_disk_usage(output);
+    //res = shell_proxy_get_disk_usage(output);
 
     return 0;
 }
