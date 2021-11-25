@@ -18,19 +18,6 @@
 #define STDOUT_BUFFER_SIZE              1024
 char std_out[STDOUT_BUFFER_SIZE];
 
-// TODO: remove this util function
-void shell_proxy_process_stdout (char *id, int res, char *std_out)
-{
-    if(res != 0)
-    {
-        printf("Failed to fetch %s.\n", id);
-    }
-    else
-    {
-        /* print command output */
-        printf("%s:\n %s\n", id, std_out);
-    }
-}
 
 //  --------------------------------------------------------------------------
 //  Get Linux uptime in seconds
@@ -69,11 +56,8 @@ shell_proxy_get_free_memory (sepp_tm_free_memory_t *sepp_tm_free_memory)
     /* fetch free memory */
     res = shell_cmd_dispatcher_get_free_memory(std_out);
 
-    /* process output */
-    shell_proxy_process_stdout("free memory", res, std_out);
-
     /* parse output */
-    res = shell_stdout_parser_parse_free_memory(std_out, sepp_tm_free_memory);
+    res = res || shell_stdout_parser_parse_free_memory(std_out, sepp_tm_free_memory);
 
     return res;
 }
@@ -92,15 +76,16 @@ shell_proxy_get_free_cpu (char *output)
 //  Get disk usage
 
 int
-shell_proxy_get_disk_usage (char *output)
+shell_proxy_get_disk_usage (sepp_tm_disk_usage_t *sepp_tm_disk_usage)
 {
     int res;
 
-    res = shell_cmd_dispatcher_get_disk_usage(output);
+    /* fetch disk usage */
+    res = shell_cmd_dispatcher_get_disk_usage(std_out);
 
-    /* process output */
-    shell_proxy_process_stdout("disk usage", res, output);
-
+    /* parse stdout */
+    res = res || shell_stdout_parser_parse_disk_usage(std_out, sepp_tm_disk_usage);
+ 
     return res;
 }
 

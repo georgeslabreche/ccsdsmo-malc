@@ -27,7 +27,7 @@ SEPP_TM_EXPORT int
 
 //  Get disk usage
 SEPP_TM_EXPORT int
-    shell_proxy_get_disk_usage (char *output);
+    shell_proxy_get_disk_usage (sepp_tm_disk_usage_t *sepp_tm_disk_usage);
 
 //  Get OOM counter
 SEPP_TM_EXPORT int

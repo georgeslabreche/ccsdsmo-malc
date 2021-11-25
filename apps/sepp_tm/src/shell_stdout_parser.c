@@ -261,6 +261,61 @@ shell_stdout_parser_parse_disk_usage (char *std_out, sepp_tm_disk_usage_t *sepp_
 }
 
 //  --------------------------------------------------------------------------
+//  Parse stdout of fpga image loaded command
+
+int
+shell_stdout_parser_parse_fpga_image_loaded (char *std_out, char *id)
+{
+    // FIXME: Remove if not needed
+    /* remove new line charcter from the stdout string */
+    //std_out[strcspn(std_out, "\n")] = 0;
+
+    /* return predefined value in case of error */
+    if(strcmp(std_out, "Bus error (core dumped)") == 0)
+    {
+        strcpy(id, "0xffffffff");
+    }
+    else
+    {
+        /* copy to id */
+        strcpy(id, std_out);
+    }
+
+    return 0;
+}
+
+//  --------------------------------------------------------------------------
+//  Parse stdout of shell status command
+
+int
+shell_stdout_parser_parse_shell_status (char *std_out, char *status)
+{
+    // FIXME: Remove if not needed
+    /* remove new line charcter from the stdout string */
+    //std_out[strcspn(std_out, "\n")] = 0;
+
+    /* set number id for status */
+    if(strcmp(std_out, "running") == 0)
+    {
+        strcpy(status, "0");
+    }
+    else if(strcmp(std_out, "maintenance") == 0)
+    {
+        strcpy(status, "1");
+    }
+    else if(strcmp(std_out, "degraded") == 0)
+    {
+        strcpy(status, "2");
+    }
+    else
+    {
+        strcpy(status, "3");
+    }
+
+    return 0;
+}
+
+//  --------------------------------------------------------------------------
 //  Self test of this class
 
 // If your selftest reads SCMed fixture data, please keep it in
@@ -353,7 +408,7 @@ shell_stdout_parser_test (bool verbose)
         "Filesystem           1M-blocks      Used Available Use\% Mounted on\n" \
         "/dev/root                 3936      2300      1415  62\% /";
 
-    /* free spustruct */
+    /* disk usage struct */
     struct sepp_tm_disk_usage_t *sepp_tm_disk_usage;
     sepp_tm_disk_usage = (struct sepp_tm_disk_usage_t*)malloc(sizeof(struct sepp_tm_disk_usage_t));
 
@@ -369,7 +424,63 @@ shell_stdout_parser_test (bool verbose)
     /* test pass */
     printf ("OK\n");
 
-    /* cleanup */
+
+    //  --------------------------------------------------------------------------
+    //  TEST: shell_stdout_parser_parse_fpga_image_loaded
+
+    printf("\tshell_stdout_parser_parse_fpga_image_loaded: ");
+
+    /* mock stdout */
+    char *stdout_fpga_error = "Bus error (core dumped)";
+    char *stdout_fpga_loaded = "0x10101010";
+
+    /* parsed out hex id will be stored in this char array */
+    char id[12];
+
+    /* parse the fpga image loaded stdout and assert expected value */
+    shell_stdout_parser_parse_fpga_image_loaded(stdout_fpga_error, id);
+    assert(strcmp(id, "0xffffffff") == 0);
+
+    shell_stdout_parser_parse_fpga_image_loaded(stdout_fpga_loaded, id);
+    assert(strcmp(id, "0x10101010") == 0);
+
+    /* test pass */
+    printf ("OK\n");
+
+
+    //  --------------------------------------------------------------------------
+    //  TEST: shell_stdout_parser_parse_shell_status
+
+    printf("\tshell_stdout_parser_parse_shell_status: ");
+
+    /* mock stdout */
+    char *stdout_running = "running";
+    char *stdout_maintenance = "maintenance";
+    char *stdout_degraded = "degraded";
+    char *stdout_other = "invalid";
+
+    /* parsed out status will be stored in this char array */
+    char status[1];
+    
+    /* parse the fpga image loaded stdout and assert expected value */
+    shell_stdout_parser_parse_shell_status(stdout_running, status);
+    assert(strcmp(status, "0") == 0);
+
+    shell_stdout_parser_parse_shell_status(stdout_maintenance, status);
+    assert(strcmp(status, "1") == 0);
+
+    shell_stdout_parser_parse_shell_status(stdout_degraded, status);
+    assert(strcmp(status, "2") == 0);
+
+    shell_stdout_parser_parse_shell_status(stdout_other, status);
+    assert(strcmp(status, "3") == 0);
+
+    /* test pass */
+    printf ("OK\n");
+
+    //  --------------------------------------------------------------------------
+    //  cleanup
+    
     free(sepp_tm_free_memory);
     free(sepp_tm_free_cpu);
     free(sepp_tm_disk_usage);
