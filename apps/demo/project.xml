@@ -81,6 +81,7 @@
     -->
     <class name = "demo_app_utils" selftest = "0" />
     <main name = "demo_app">Demo App</main>
+    <main name = "demo_getValue">Demo the getValue interaction</main>
     
     <!-- Targets -->
     <target name = "rpi" />
