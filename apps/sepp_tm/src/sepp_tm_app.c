@@ -32,10 +32,11 @@ int main (int argc, char *argv [])
 
     if(res != 0)
     {
-        printf("uptime fetch error");
+        printf("error fetching uptime\n");
     }
     else
     {
+        /* print fetched value */
         printf("uptime: %s\n", uptime);
     }
 
@@ -52,11 +53,11 @@ int main (int argc, char *argv [])
 
     if(res != 0)
     {
-        printf("free CPU fetch error\n");
+        printf("error fetching free CPU\n");
     }
     else
     {
-        /* print fetched valued */
+        /* print fetched values */
         printf("cpu\n");
         printf("\tusr: %s\n", sepp_tm_free_cpu->usr);
         printf("\tsys: %s\n", sepp_tm_free_cpu->sys);
@@ -80,11 +81,11 @@ int main (int argc, char *argv [])
 
     if(res != 0)
     {
-        printf("free mem fetch error\n");
+        printf("error fetching free memory\n");
     }
     else
     {
-        /* print fetched valued */
+        /* print fetched values */
         printf("mem\n");
         printf("\ttotal: %s\n", sepp_tm_free_memory->total);
         printf("\tused: %s\n", sepp_tm_free_memory->used);
@@ -105,19 +106,128 @@ int main (int argc, char *argv [])
 
     if(res != 0)
     {
-        printf("disk usage fetch error\n");
+        printf("error fetching disk usage\n");
     }
     else
     {
-        /* print fetched valued */
+        /* print fetched values */
         printf("disk\n");
         printf("\tsize: %s\n", sepp_tm_disk_usage->size);
         printf("\tused: %s\n", sepp_tm_disk_usage->used);
         printf("\tavailable: %s\n", sepp_tm_disk_usage->available);
         printf("\tavailable_percentage: %s\n", sepp_tm_disk_usage->available_percentage);
     }
-    
 
+
+    //  --------------------------------------------------------------------------
+    //  fpga image loaded
+
+    /* fetch id of loaded fpga image */
+    char image_id[12];
+    res = shell_proxy_get_fpga_image_loaded(image_id);
+
+    if(res != 0)
+    {
+        printf("error fetching fpga image id\n");
+    }
+    else
+    {
+        /* print fetched value */
+        printf("fpga image loaded: %s\n", image_id);
+    }
+
+
+    //  --------------------------------------------------------------------------
+    //  out of memory counter
+
+    /* fetch oom counter */
+    char oom_counter[1024];
+    res = shell_proxy_get_oom_counter(oom_counter);
+
+    if(res != 0)
+    {
+        printf("error fetching oom count\n");
+    }
+    else
+    {
+        /* print fetched value */
+        printf("oom count: %s\n", oom_counter);
+    }
+
+
+    //  --------------------------------------------------------------------------
+    //  toGround file counter
+
+    /* fetch  */
+    char toGround_count[1024];
+    res = shell_proxy_get_file_count_toGround(toGround_count);
+
+    if(res != 0)
+    {
+        printf("error fetching toGround file count\n");
+    }
+    else
+    {
+        /* print fetched value */
+        printf("toGround file count: %s\n", toGround_count);
+    }
+
+
+    //  --------------------------------------------------------------------------
+    //  toGroundLP file counter
+
+    char toGroundLP_count[1024];
+    res = shell_proxy_get_file_count_toGroundLP(toGroundLP_count);
+
+    if(res != 0)
+    {
+        printf("error fetching toGroundLP file count\n");
+    }
+    else
+    {
+        /* print fetched value */
+        printf("toGroundLP file count: %s\n", toGroundLP_count);
+    }
+
+    //  --------------------------------------------------------------------------
+    //  core counter
+
+    char core_count[1];
+    res = shell_proxy_get_core_counter(core_count);
+
+    if(res != 0)
+    {
+        printf("error fetching core count\n");
+    }
+    else
+    {
+        /* print fetched value */
+        printf("core count: %s\n", core_count);
+    }
+
+    //  --------------------------------------------------------------------------
+    //  rescue shell status
+
+    char shell_status[1];
+    res = shell_proxy_get_rescue_shell_status(shell_status);
+
+    if(res != 0)
+    {
+        printf("error fetching rescue shell status\n");
+    }
+    else
+    {
+        /* print fetched value */
+        printf("rescue shell status: %s\n", shell_status);
+    }
+
+    //  --------------------------------------------------------------------------
+    //  CAN bridge status
+
+    //  --------------------------------------------------------------------------
+    //  CAN bridge status (packetstore)
+
+    
     //  --------------------------------------------------------------------------
     //  cleanup
 

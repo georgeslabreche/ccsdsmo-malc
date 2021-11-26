@@ -30,13 +30,11 @@ SEPP_TM_EXPORT int
 SEPP_TM_EXPORT int
     shell_stdout_parser_parse_disk_usage (char *std_out, sepp_tm_disk_usage_t *sepp_tm_disk_usage);
 
-
-
 //  --------------------------------------------------------------------------
 //  Parse stdout of fpga image loaded command
 
 SEPP_TM_EXPORT int
-    shell_stdout_parser_parse_fpga_image_loaded (char *std_out, char *id);
+    shell_stdout_parser_parse_fpga_image_loaded (char *std_out, char *image_id);
 
 
 //  --------------------------------------------------------------------------

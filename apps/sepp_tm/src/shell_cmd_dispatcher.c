@@ -95,6 +95,16 @@ shell_cmd_dispatcher_get_disk_usage (char *std_out)
 }
 
 //  --------------------------------------------------------------------------
+// Get FPGA image loaded
+
+int
+shell_cmd_dispatcher_get_fpga_image_loaded (char *std_out)
+{
+    /* execute command */
+    return shell_cmd_dispatcher_execute_command("devmem {}", std_out);
+}
+
+//  --------------------------------------------------------------------------
 //  Get OOM counter
 
 int
@@ -122,16 +132,6 @@ shell_cmd_dispatcher_get_file_count_toGroundLP (char *std_out)
 {
     /* execute command */
     return shell_cmd_dispatcher_execute_command("ls -F | grep -v /home/root/esoc-apps/fms/filestore/toGroundLP | wc -l", std_out);
-}
-
-//  --------------------------------------------------------------------------
-// Get FPGA image loaded
-
-int
-shell_cmd_dispatcher_get_fpga_image_loaded (char *std_out)
-{
-    /* execute command */
-    return shell_cmd_dispatcher_execute_command("devmem {}", std_out);
 }
 
 //  --------------------------------------------------------------------------

@@ -29,37 +29,37 @@ SEPP_TM_EXPORT int
 SEPP_TM_EXPORT int
     shell_proxy_get_disk_usage (sepp_tm_disk_usage_t *sepp_tm_disk_usage);
 
+// Get FPGA image loaded
+SEPP_TM_EXPORT int
+    shell_proxy_get_fpga_image_loaded (char *image_id);
+
 //  Get OOM counter
 SEPP_TM_EXPORT int
-    shell_proxy_get_oom_counter (char *output);
+    shell_proxy_get_oom_counter (char *oom_counter);
 
 //  Get file count toGround
 SEPP_TM_EXPORT int
-    shell_proxy_get_file_count_toGround (char *output);
+    shell_proxy_get_file_count_toGround (char *toGound_count);
 
 //  Get file count toGroundLP
 SEPP_TM_EXPORT int
-    shell_proxy_get_file_count_toGroundLP (char *output);
-
-// Get FPGA image loaded
-SEPP_TM_EXPORT int
-    shell_proxy_get_fpga_image_loaded (char *output);
+    shell_proxy_get_file_count_toGroundLP (char *toGroundLP_count);
 
 // Get core counter
 SEPP_TM_EXPORT int
-    shell_proxy_get_core_counter (char *output);
+    shell_proxy_get_core_counter (char *core_counter);
 
 // Get rescue shell status
 SEPP_TM_EXPORT int
-    shell_proxy_get_rescue_shell_status (char *output);
+    shell_proxy_get_rescue_shell_status (char *status);
 
 // Get status of the CAN bridge
 SEPP_TM_EXPORT int
-    shell_proxy_get_spp_bridge (char *output);
+    shell_proxy_get_spp_bridge (char *spp_bridge);
 
 // Get status of the CAN bridge (packetstore)
 SEPP_TM_EXPORT int
-    shell_proxy_get_spp_bridge_packetstore (char *output);
+    shell_proxy_get_spp_bridge_packetstore (char *spp_brdige);
 
 //  @end
 

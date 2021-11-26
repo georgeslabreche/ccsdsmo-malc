@@ -264,7 +264,7 @@ shell_stdout_parser_parse_disk_usage (char *std_out, sepp_tm_disk_usage_t *sepp_
 //  Parse stdout of fpga image loaded command
 
 int
-shell_stdout_parser_parse_fpga_image_loaded (char *std_out, char *id)
+shell_stdout_parser_parse_fpga_image_loaded (char *std_out, char *image_id)
 {
     // FIXME: Remove if not needed
     /* remove new line charcter from the stdout string */
@@ -273,12 +273,12 @@ shell_stdout_parser_parse_fpga_image_loaded (char *std_out, char *id)
     /* return predefined value in case of error */
     if(strcmp(std_out, "Bus error (core dumped)") == 0)
     {
-        strcpy(id, "0xffffffff");
+        strcpy(image_id, "0xffffffff");
     }
     else
     {
         /* copy to id */
-        strcpy(id, std_out);
+        strcpy(image_id, std_out);
     }
 
     return 0;
@@ -435,14 +435,14 @@ shell_stdout_parser_test (bool verbose)
     char *stdout_fpga_loaded = "0x10101010";
 
     /* parsed out hex id will be stored in this char array */
-    char id[12];
+    char image_id[12];
 
     /* parse the fpga image loaded stdout and assert expected value */
-    shell_stdout_parser_parse_fpga_image_loaded(stdout_fpga_error, id);
-    assert(strcmp(id, "0xffffffff") == 0);
+    shell_stdout_parser_parse_fpga_image_loaded(stdout_fpga_error, image_id);
+    assert(strcmp(image_id, "0xffffffff") == 0);
 
-    shell_stdout_parser_parse_fpga_image_loaded(stdout_fpga_loaded, id);
-    assert(strcmp(id, "0x10101010") == 0);
+    shell_stdout_parser_parse_fpga_image_loaded(stdout_fpga_loaded, image_id);
+    assert(strcmp(image_id, "0x10101010") == 0);
 
     /* test pass */
     printf ("OK\n");
