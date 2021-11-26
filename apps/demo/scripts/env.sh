@@ -1,9 +1,6 @@
 # The name of the project.
 PROJECT_NAME="demo"
 
-# The name of the executable binary.
-BIN_FILENAME="demo_app"
-
 BUILD_LIB_PATH="builds/rpi/tmp/lib"
 BUILD_BIN_PATH="builds/rpi/tmp/bin"
 

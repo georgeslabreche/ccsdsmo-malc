@@ -19,7 +19,7 @@
 //  --------------------------------------------------------------------------
 //  Declare global variables
 
-// The Gateway API object to access all services
+/* the Gateway API object to access all services */
 nmf_api_t *nmf_api;
 
 
@@ -39,16 +39,18 @@ int main (int argc, char *argv [])
     // parse the command arguments
 
     int argn;
-    for (argn = 1; argn < argc; argn++) {
+    for (argn = 1; argn < argc; argn++)
+    {
         if (streq (argv [argn], "--help")
-        ||  streq (argv [argn], "-?")) {
-            puts ("demo_app [options] ...");
-            puts ("  --host  / -h        hostname");
-            puts ("  --pport / -p        provider port");
-            puts ("  --cport / -p        consumer port");
-            puts ("  --pname / -n        comma separated list of param names (max 20)");
-            puts ("  --debug / -d        enable debug logging");
-            puts ("  --help  / -?        this information");
+        ||  streq (argv [argn], "-?"))
+        {
+            printf("demo_getvalue [options] ...");
+            printf("\n  --host  / -h        hostname");
+            printf("\n  --pport / -p        provider port");
+            printf("\n  --cport / -p        consumer port");
+            printf("\n  --pname / -n        comma separated list of param names (max %d)", MAX_PARAM_LIST_SIZE);
+            printf("\n  --debug / -d        enable debug logging");
+            printf("\n  --help  / -?        this information\n\n");
             return 0;
         }
         else
@@ -71,8 +73,9 @@ int main (int argc, char *argv [])
         if (streq (argv [argn], "--debug")
         ||  streq (argv [argn], "-d"))
             log_level = CLOG_DEBUG_LEVEL;
-        else {
-            printf ("Unknown option: %s\n", argv[argn]);
+        else
+        {
+            printf("Unknown option: %s\n\n", argv[argn]);
             return 1;
         }
     }
@@ -111,13 +114,6 @@ int main (int argc, char *argv [])
         /* increment param nama list index counter  */
         param_name_list_size++;
     }
-
-    /* print the parse param names */
-    for(size_t i = 0; i < param_name_list_size; i++)
-    {
-        printf("%s\n", param_name_list[i]);
-    }
-
 
     // --------------------------------------------------------------------------
     // set the log levels
@@ -192,6 +188,14 @@ int main (int argc, char *argv [])
         return rc;
     }
 
+    /* print parameter Ids */
+    for(size_t i = 0; i < param_name_list_size; i++)
+    {
+        printf("\t- Parameter %s has identity id %ld and definition id %ld\n",
+            param_name_list[i], response_param_inst_ids[i], response_param_def_id_list[i]);
+    }
+
+
     // --------------------------------------------------------------------------
     // getValue interaction to fetch parameter values
 
@@ -204,12 +208,12 @@ int main (int argc, char *argv [])
     size_t response_mal_attributes_count;
 
     /** 
-     * trigger getValue interations but in a way that incrementally tries aggregrations with different sizes
+     * trigger getValue interactions but in a way that incrementally tries aggregations with increasing number of parameters
      * what this means is that if 3 parameter names were given, e.g. paramA, paramB, and paramC, then 3 getValue interactions will be triggered: 
      * 
-     *      a) getValue for 1 parameter: paramA
-     *      b) getValue for 2 parameters: paramA and paramB
-     *      c) getValye for 3 parameters: paramA, paramB, and paramC
+     *      a) getValue with 1 parameter: paramA
+     *      b) getValue with 2 parameters: paramA and paramB
+     *      c) getValue with 3 parameters: paramA, paramB, and paramC
      * 
      * we do this to test if aggregation building breaks past a certain threshold.
      */
@@ -318,7 +322,7 @@ int main (int argc, char *argv [])
 
                 default:
                     /* not handling Blob, Time, and Finetime */
-                    printf("Param %s has id %ld with unsupportred attribute tag %d\n", param_name_list[i], param_id, tag);
+                    printf("Param %s has id %ld with unsupported attribute tag %d\n", param_name_list[i], param_id, tag);
             }
 
             /**
@@ -330,6 +334,7 @@ int main (int argc, char *argv [])
             mal_attribute_destroy(&attr, tag);
         }
     }
+
 
     // --------------------------------------------------------------------------
     // destroy
