@@ -2,7 +2,7 @@
 source env.sh
 
 # Delete app bin.
-rm -f ${SEPP_BIN_DIR}/${BIN_FILENAME}
+rm -f ${SEPP_BIN_DIR}/${PROJECT_NAME}_*
 
 # Delete app lib.
 rm -f ${SEPP_LIB_DIR}/lib${PROJECT_NAME}.so*

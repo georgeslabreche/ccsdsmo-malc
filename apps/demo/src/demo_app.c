@@ -489,7 +489,7 @@ demo_parameter_service_get_value_list()
 
             default:
                 // Not handling Blob, Time, and Finetime
-                printf("Param %s has id %ld with unsupportred attribute tag %d\n", param_name_list[i], param_id, tag);
+                printf("Param %s has id %ld with unsupported attribute tag %d\n", param_name_list[i], param_id, tag);
         }
 
         // IMPORTANT: Don't forget to destroy the MAL attribute object

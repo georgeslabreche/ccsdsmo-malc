@@ -130,6 +130,6 @@ do
         file tmp/lib/lib*
 
         # File info for this project's bin file.
-        file tmp/bin/${BIN_FILENAME}
+        file tmp/bin/${PROJECT_NAME}_*
     fi
 done

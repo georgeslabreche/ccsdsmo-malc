@@ -5,7 +5,7 @@ source env.sh
 ./sepp_uninstall.sh
 rm -rf builds
 rm -f ${TAR_FILENAME}
-rm -f ${BIN_FILENAME}
+rm -f ${PROJECT_NAME}_*
 rm -f sepp_install.sh 
 rm -f sepp_uninstall.sh
 rm -f env.sh

@@ -17,7 +17,7 @@
 -->
 <project
     name = "demo"
-    description = "Demo application using MAL C API"
+    description = "Demonstrations on how to interact with the MAL-C NMF API"
     script = "zproject.gsl"
     email = "georges@tanagraspace.com"
     >
@@ -80,7 +80,14 @@
         Make it a utils class and at worst leave it "blank".
     -->
     <class name = "demo_app_utils" selftest = "0" />
+
+    <!--
+        Make sure all main program binaries are prefixed with the project name.
+        If they are not properly prefixed then they won't be packaged for
+        deployment by the deployment scripts 
+    -->
     <main name = "demo_app">Demo App</main>
+    <main name = "demo_getvalue">Demo the getValue interaction</main>
     
     <!-- Targets -->
     <target name = "rpi" />
