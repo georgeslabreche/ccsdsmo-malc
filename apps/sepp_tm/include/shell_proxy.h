@@ -23,7 +23,7 @@ SEPP_TM_EXPORT int
 
 //  Get free CPU
 SEPP_TM_EXPORT int
-    shell_proxy_get_free_cpu (char *output);
+    shell_proxy_get_free_cpu (sepp_tm_free_cpu_t *sepp_tm_free_cpu);
 
 //  Get disk usage
 SEPP_TM_EXPORT int

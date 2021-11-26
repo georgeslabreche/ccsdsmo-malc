@@ -66,10 +66,17 @@ shell_proxy_get_free_memory (sepp_tm_free_memory_t *sepp_tm_free_memory)
 //  Get free CPU
 
 int
-shell_proxy_get_free_cpu (char *output)
+shell_proxy_get_free_cpu (sepp_tm_free_cpu_t *sepp_tm_free_cpu)
 {
-    /* execute command */
-    return 0;
+    int res;
+
+    /* fetch free cpu */
+    res = shell_cmd_dispatcher_get_free_cpu(std_out);
+
+    /* parse output */
+    res = res || shell_stdout_parser_parse_free_cpu(std_out, sepp_tm_free_cpu);
+
+    return res;
 }
 
 //  --------------------------------------------------------------------------
