@@ -264,21 +264,20 @@ shell_stdout_parser_parse_disk_usage (char *std_out, sepp_tm_disk_usage_t *sepp_
 //  Parse stdout of fpga image loaded command
 
 int
-shell_stdout_parser_parse_fpga_image_loaded (char *std_out, char *id)
+shell_stdout_parser_parse_fpga_image_loaded (char *std_out, char *image_id)
 {
-    // FIXME: Remove if not needed
     /* remove new line charcter from the stdout string */
-    //std_out[strcspn(std_out, "\n")] = 0;
+    std_out[strcspn(std_out, "\n")] = 0;
 
     /* return predefined value in case of error */
     if(strcmp(std_out, "Bus error (core dumped)") == 0)
     {
-        strcpy(id, "0xffffffff");
+        strcpy(image_id, "0xffffffff");
     }
     else
     {
         /* copy to id */
-        strcpy(id, std_out);
+        strcpy(image_id, std_out);
     }
 
     return 0;
@@ -290,9 +289,8 @@ shell_stdout_parser_parse_fpga_image_loaded (char *std_out, char *id)
 int
 shell_stdout_parser_parse_shell_status (char *std_out, char *status)
 {
-    // FIXME: Remove if not needed
     /* remove new line charcter from the stdout string */
-    //std_out[strcspn(std_out, "\n")] = 0;
+    std_out[strcspn(std_out, "\n")] = 0;
 
     /* set number id for status */
     if(strcmp(std_out, "running") == 0)
@@ -314,6 +312,7 @@ shell_stdout_parser_parse_shell_status (char *std_out, char *status)
 
     return 0;
 }
+
 
 //  --------------------------------------------------------------------------
 //  Self test of this class
@@ -367,7 +366,7 @@ shell_stdout_parser_test (bool verbose)
     assert(strcmp(sepp_tm_free_memory->free_plus_bufferscache, "907176") == 0);
 
     /* test pass */
-    printf ("OK\n");
+    printf("OK\n");
 
 
     //  --------------------------------------------------------------------------
@@ -395,7 +394,7 @@ shell_stdout_parser_test (bool verbose)
     assert(strcmp(sepp_tm_free_cpu->sirq, "1") == 0);
 
     /* test pass */
-    printf ("OK\n");
+    printf("OK\n");
 
 
     //  --------------------------------------------------------------------------
@@ -422,7 +421,7 @@ shell_stdout_parser_test (bool verbose)
     assert(strcmp(sepp_tm_disk_usage->available_percentage, "62") == 0);
 
     /* test pass */
-    printf ("OK\n");
+    printf("OK\n");
 
 
     //  --------------------------------------------------------------------------
@@ -435,17 +434,17 @@ shell_stdout_parser_test (bool verbose)
     char *stdout_fpga_loaded = "0x10101010";
 
     /* parsed out hex id will be stored in this char array */
-    char id[12];
+    char image_id[12] = {0};
 
     /* parse the fpga image loaded stdout and assert expected value */
-    shell_stdout_parser_parse_fpga_image_loaded(stdout_fpga_error, id);
-    assert(strcmp(id, "0xffffffff") == 0);
+    shell_stdout_parser_parse_fpga_image_loaded(stdout_fpga_error, image_id);
+    assert(strcmp(image_id, "0xffffffff") == 0);
 
-    shell_stdout_parser_parse_fpga_image_loaded(stdout_fpga_loaded, id);
-    assert(strcmp(id, "0x10101010") == 0);
+    shell_stdout_parser_parse_fpga_image_loaded(stdout_fpga_loaded, image_id);
+    assert(strcmp(image_id, "0x10101010") == 0);
 
     /* test pass */
-    printf ("OK\n");
+    printf("OK\n");
 
 
     //  --------------------------------------------------------------------------
@@ -460,7 +459,7 @@ shell_stdout_parser_test (bool verbose)
     char *stdout_other = "invalid";
 
     /* parsed out status will be stored in this char array */
-    char status[1];
+    char status[1] = {0};
     
     /* parse the fpga image loaded stdout and assert expected value */
     shell_stdout_parser_parse_shell_status(stdout_running, status);
@@ -476,7 +475,8 @@ shell_stdout_parser_test (bool verbose)
     assert(strcmp(status, "3") == 0);
 
     /* test pass */
-    printf ("OK\n");
+    printf("OK\n");
+
 
     //  --------------------------------------------------------------------------
     //  cleanup

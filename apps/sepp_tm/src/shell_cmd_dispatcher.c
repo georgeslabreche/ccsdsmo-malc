@@ -95,6 +95,16 @@ shell_cmd_dispatcher_get_disk_usage (char *std_out)
 }
 
 //  --------------------------------------------------------------------------
+// Get FPGA image loaded
+
+int
+shell_cmd_dispatcher_get_fpga_image_loaded (char *std_out)
+{
+    /* execute command */
+    return shell_cmd_dispatcher_execute_command("devmem 0xff20000", std_out);
+}
+
+//  --------------------------------------------------------------------------
 //  Get OOM counter
 
 int
@@ -111,7 +121,7 @@ int
 shell_cmd_dispatcher_get_file_count_toGround (char *std_out)
 {
     /* execute command */
-    return shell_cmd_dispatcher_execute_command("ls -F | grep -v /home/root/esoc-apps/fms/filestore/toGround | wc -l", std_out);
+    return shell_cmd_dispatcher_execute_command("ls /home/root/esoc-apps/fms/filestore/toGround | wc -l", std_out);
 }
 
 //  --------------------------------------------------------------------------
@@ -121,17 +131,7 @@ int
 shell_cmd_dispatcher_get_file_count_toGroundLP (char *std_out)
 {
     /* execute command */
-    return shell_cmd_dispatcher_execute_command("ls -F | grep -v /home/root/esoc-apps/fms/filestore/toGroundLP | wc -l", std_out);
-}
-
-//  --------------------------------------------------------------------------
-// Get FPGA image loaded
-
-int
-shell_cmd_dispatcher_get_fpga_image_loaded (char *std_out)
-{
-    /* execute command */
-    return shell_cmd_dispatcher_execute_command("devmem {}", std_out);
+    return shell_cmd_dispatcher_execute_command("ls /home/root/esoc-apps/fms/filestore/toGroundLP | wc -l", std_out);
 }
 
 //  --------------------------------------------------------------------------
@@ -161,7 +161,7 @@ int
 shell_cmd_dispatcher_get_spp_bridge (char *std_out)
 {
     /* execute command */
-    return shell_cmd_dispatcher_execute_command("systemctl status spp_bridge", std_out);
+    return shell_cmd_dispatcher_execute_command("if systemctl status spp_bridge 2>/dev/null | grep \"active (running)\" &>/dev/null ; then echo -n 1; else echo -n 0; fi", std_out);
 }
 
 //  --------------------------------------------------------------------------
@@ -171,5 +171,5 @@ int
 shell_cmd_dispatcher_get_spp_bridge_packetstore (char *std_out)
 {
     /* execute command */
-    return shell_cmd_dispatcher_execute_command("systemctl status spp_bridge_packetstore", std_out);
+    return shell_cmd_dispatcher_execute_command("if systemctl status spp_bridge_packetstore 2>/dev/null | grep \"active (running)\" &>/dev/null ; then echo -n 1; else echo -n 0; fi", std_out);
 }

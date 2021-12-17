@@ -8,7 +8,9 @@
 # This script is a workaround for problems related to the generated cross-compilation build.sh script.
 # It addresses these problems prior by "hotfixing" the generated build.sh scripts before invoking them.
 #
-# Prerequisite: run the genmake command in the app's project directory.
+# PREREQUISITE
+# ============
+# Run the genmake command in the app's project directory.
 #
 # THE PROBLEM
 # ===========

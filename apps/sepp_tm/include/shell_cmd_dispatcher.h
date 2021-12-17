@@ -1,5 +1,5 @@
 /*  =========================================================================
-    shell_cmd_dispatcher - class description
+    shell_cmd_dispatcher - executes bash commands
 
     The MIT License (MIT)
     =========================================================================
@@ -28,6 +28,10 @@ SEPP_TM_EXPORT int
 SEPP_TM_EXPORT int
     shell_cmd_dispatcher_get_disk_usage (char *std_out);
 
+// Get FPGA image loaded
+SEPP_TM_EXPORT int
+    shell_cmd_dispatcher_get_fpga_image_loaded (char *std_out);
+    
 //  Get OOM counter
 SEPP_TM_EXPORT int
     shell_cmd_dispatcher_get_oom_counter (char *std_out);
@@ -39,10 +43,6 @@ SEPP_TM_EXPORT int
 //  Get file count toGroundLP
 SEPP_TM_EXPORT int
     shell_cmd_dispatcher_get_file_count_toGroundLP (char *std_out);
-
-// Get FPGA image loaded
-SEPP_TM_EXPORT int
-    shell_cmd_dispatcher_get_fpga_image_loaded (char *std_out);
 
 // Get core counter
 SEPP_TM_EXPORT int
