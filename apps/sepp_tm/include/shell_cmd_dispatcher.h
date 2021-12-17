@@ -1,5 +1,5 @@
 /*  =========================================================================
-    shell_cmd_dispatcher - class description
+    shell_cmd_dispatcher - executes bash commands
 
     The MIT License (MIT)
     =========================================================================

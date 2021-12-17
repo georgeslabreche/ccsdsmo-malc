@@ -1,5 +1,5 @@
 /*  =========================================================================
-    shell_proxy - class description
+    shell_proxy - triggers bash command execution and parses stdout
 
     The MIT License (MIT)
     =========================================================================

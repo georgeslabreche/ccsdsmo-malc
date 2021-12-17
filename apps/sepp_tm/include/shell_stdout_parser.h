@@ -1,5 +1,5 @@
 /*  =========================================================================
-    shell_stdout_parser - class description
+    shell_stdout_parser - parse stdout of executed bash commands
 
     The MIT License (MIT)
     =========================================================================
@@ -42,6 +42,7 @@ SEPP_TM_EXPORT int
 
 SEPP_TM_EXPORT int
     shell_stdout_parser_parse_shell_status (char *std_out, char *status);
+
 
 //  --------------------------------------------------------------------------
 //  Self test of this class

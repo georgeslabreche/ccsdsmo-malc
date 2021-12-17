@@ -120,7 +120,20 @@ int
 shell_proxy_get_oom_counter (char *oom_counter)
 {
     /* fetch oom counter */
-    return shell_cmd_dispatcher_get_oom_counter(oom_counter);
+    int res = shell_cmd_dispatcher_get_oom_counter(oom_counter);
+
+    /* error check */
+    if(res != 0)
+    {
+        /* return error code */
+        return res;
+    }
+
+    /* remove carriage return and new line, if any */
+    oom_counter[strcspn(oom_counter, "\r\n")] = 0;
+
+    /* return response code */
+    return res;
 }
 
 //  --------------------------------------------------------------------------
@@ -130,7 +143,20 @@ int
 shell_proxy_get_file_count_toGround (char *toGound_count)
 {
     /* fetch toGround file counter */
-    return shell_cmd_dispatcher_get_file_count_toGround(toGound_count);
+    int res = shell_cmd_dispatcher_get_file_count_toGround(toGound_count);
+
+    /* error check */
+    if(res != 0)
+    {
+        /* return error code */
+        return res;
+    }
+
+    /* remove carriage return and new line, if any */
+    toGound_count[strcspn(toGound_count, "\r\n")] = 0;
+
+    /* return response code */
+    return res;
 }
 
 //  --------------------------------------------------------------------------
@@ -140,7 +166,20 @@ int
 shell_proxy_get_file_count_toGroundLP (char *toGroundLP_count)
 {
     /* fetch toGroundLP file counter */
-    return shell_cmd_dispatcher_get_file_count_toGroundLP(toGroundLP_count);
+    int res = shell_cmd_dispatcher_get_file_count_toGroundLP(toGroundLP_count);
+
+    /* error check */
+    if(res != 0)
+    {
+        /* return error code */
+        return res;
+    }
+
+    /* remove carriage return and new line, if any */
+    toGroundLP_count[strcspn(toGroundLP_count, "\r\n")] = 0;
+
+    /* return response code */
+    return res;
 }
 
 //  --------------------------------------------------------------------------
@@ -150,7 +189,20 @@ int
 shell_proxy_get_core_counter (char *core_counter)
 {
     /* fetch oom counter */
-    return shell_cmd_dispatcher_get_core_counter(core_counter);
+    int res = shell_cmd_dispatcher_get_core_counter(core_counter);
+
+    /* error check */
+    if(res != 0)
+    {
+        /* return error code */
+        return res;
+    }
+
+    /* remove carriage return and new line, if any */
+    core_counter[strcspn(core_counter, "\r\n")] = 0;
+
+    /* return response code */
+    return res;
 }
 
 //  --------------------------------------------------------------------------
@@ -159,14 +211,23 @@ shell_proxy_get_core_counter (char *core_counter)
 int
 shell_proxy_get_rescue_shell_status (char *status)
 {
-    int res;
-
-    /* fetch reschue shell status */
-    res = shell_cmd_dispatcher_get_rescue_shell_status(std_out);
+    /* fetch rescue shell status */
+    int res = shell_cmd_dispatcher_get_rescue_shell_status(std_out);
 
     /* parse stdout */
     res = res || shell_stdout_parser_parse_shell_status(std_out, status);
 
+    /* error check */
+    if(res != 0)
+    {
+        /* return error code */
+        return res;
+    }
+
+    /* remove carriage return and new line, if any */
+    status[strcspn(status, "\r\n")] = 0;
+
+    /* return response code */
     return res;
 }
 
@@ -177,7 +238,20 @@ int
 shell_proxy_get_spp_bridge (char *spp_bridge)
 {
     /* fetch CAN bridge status */
-    return 0;
+    int res = shell_cmd_dispatcher_get_spp_bridge(spp_bridge);
+
+    /* error check */
+    if(res != 0)
+    {
+        /* return error code */
+        return res;
+    }
+
+    /* remove carriage return and new line, if any */
+    spp_bridge[strcspn(spp_bridge, "\r\n")] = 0;
+
+    /* return response code */
+    return res;
 }
 
 //  --------------------------------------------------------------------------
@@ -187,5 +261,18 @@ int
 shell_proxy_get_spp_bridge_packetstore (char *spp_bridge)
 {
     /* fetch CAN bridge status (packetstore) */
-    return 0;
+    int res = shell_cmd_dispatcher_get_spp_bridge_packetstore(spp_bridge);
+
+    /* error check */
+    if(res != 0)
+    {
+        /* return error code */
+        return res;
+    }
+
+    /* remove carriage return and new line, if any */
+    spp_bridge[strcspn(spp_bridge, "\r\n")] = 0;
+
+    /* return response code */
+    return res;
 }
