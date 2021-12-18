@@ -83,6 +83,9 @@
     <!-- A class to dispatch shell commands and parse their outputs -->
     <class name = "shell_proxy" selftest = "0" />
 
+    <!-- A util class -->
+    <class name = "sepp_tm_utils" selftest = "0"/>
+
     <!-- The main program -->
     <main name = "sepp_tm_app">SEPP TM</main>
     

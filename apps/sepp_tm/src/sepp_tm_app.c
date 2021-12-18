@@ -16,58 +16,22 @@
 
 
 //  --------------------------------------------------------------------------
-//  init free mem struct members
-
-void
-init_struct_free_memory (sepp_tm_free_memory_t *sepp_tm_free_memory)
-{
-    memset(sepp_tm_free_memory->total, 0, FREE_MEMORY_ARRAY_SIZE);
-    memset(sepp_tm_free_memory->used, 0, FREE_MEMORY_ARRAY_SIZE);
-    memset(sepp_tm_free_memory->free, 0, FREE_MEMORY_ARRAY_SIZE);
-    memset(sepp_tm_free_memory->shared, 0, FREE_MEMORY_ARRAY_SIZE);
-    memset(sepp_tm_free_memory->buffers, 0, FREE_MEMORY_ARRAY_SIZE);
-    memset(sepp_tm_free_memory->cached, 0, FREE_MEMORY_ARRAY_SIZE);
-    memset(sepp_tm_free_memory->used_minus_bufferscache, 0, FREE_MEMORY_ARRAY_SIZE);
-    memset(sepp_tm_free_memory->free_plus_bufferscache, 0, FREE_MEMORY_ARRAY_SIZE);
-}
-
-
-//  --------------------------------------------------------------------------
-//  init free cpu struct members
-
-void
-init_struct_free_cpu (sepp_tm_free_cpu_t *sepp_tm_free_cpu)
-{
-    memset(sepp_tm_free_cpu->usr, 0, FREE_CPU_ARRAY_SIZE);
-    memset(sepp_tm_free_cpu->sys, 0, FREE_CPU_ARRAY_SIZE);
-    memset(sepp_tm_free_cpu->nic, 0, FREE_CPU_ARRAY_SIZE);
-    memset(sepp_tm_free_cpu->idle, 0, FREE_CPU_ARRAY_SIZE);
-    memset(sepp_tm_free_cpu->io, 0, FREE_CPU_ARRAY_SIZE);
-    memset(sepp_tm_free_cpu->irq, 0, FREE_CPU_ARRAY_SIZE);
-    memset(sepp_tm_free_cpu->sirq, 0, FREE_CPU_ARRAY_SIZE);
-}
-
-
-//  --------------------------------------------------------------------------
-//  init disk usage struct members
-
-void
-init_struct_disk_usage (sepp_tm_disk_usage_t *sepp_tm_disk_usage)
-{
-    memset(sepp_tm_disk_usage->size, 0, DISK_USAGE_ARRAY_SIZE);
-    memset(sepp_tm_disk_usage->used, 0, DISK_USAGE_ARRAY_SIZE);
-    memset(sepp_tm_disk_usage->available, 0, DISK_USAGE_ARRAY_SIZE);
-    memset(sepp_tm_disk_usage->available_percentage, 0, DISK_USAGE_ARRAY_SIZE);
-}
-
-
-//  --------------------------------------------------------------------------
 //  the main program
 
 int main (int argc, char *argv [])
 {
     /* response code */
     int res;
+
+    /* char array for provider host and port */
+    char host[20] = {0};
+    char port[5] = {0};
+
+    /* set provider host and port */
+    sepp_tm_utils_init_provider_host_and_port(host, port);
+
+    //  --------------------------------------------------------------------------
+    //  apps running
 
 
     //  --------------------------------------------------------------------------
@@ -96,7 +60,7 @@ int main (int argc, char *argv [])
     sepp_tm_free_cpu = (struct sepp_tm_free_cpu_t*)malloc(sizeof(struct sepp_tm_free_cpu_t));
     
     /* init the struct char array members */
-    init_struct_free_cpu(sepp_tm_free_cpu);
+    sepp_tm_utils_init_struct_free_cpu(sepp_tm_free_cpu);
 
     /* fetch free CPU */
     res = shell_proxy_get_free_cpu(sepp_tm_free_cpu);
@@ -127,7 +91,7 @@ int main (int argc, char *argv [])
     sepp_tm_free_memory = (struct sepp_tm_free_memory_t*)malloc(sizeof(struct sepp_tm_free_memory_t));
 
     /* init the struct char array members */
-    init_struct_free_memory(sepp_tm_free_memory);
+    sepp_tm_utils_init_struct_free_memory(sepp_tm_free_memory);
 
     /* fetch free memory */
     res = shell_proxy_get_free_memory(sepp_tm_free_memory);
@@ -159,7 +123,7 @@ int main (int argc, char *argv [])
     sepp_tm_disk_usage = (struct sepp_tm_disk_usage_t*)malloc(sizeof(struct sepp_tm_disk_usage_t));
 
     /* init the struct char array members */
-    init_struct_disk_usage(sepp_tm_disk_usage);
+    sepp_tm_utils_init_struct_disk_usage(sepp_tm_disk_usage);
 
     /* fetch disk usage */
     res = shell_proxy_get_disk_usage(sepp_tm_disk_usage);
