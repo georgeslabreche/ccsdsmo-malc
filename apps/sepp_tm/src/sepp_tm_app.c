@@ -14,14 +14,75 @@
 
 #include "sepp_tm_classes.h"
 
+//  --------------------------------------------------------------------------
+//  Declare global variables
+
+// The Gateway API object to access all services
+nmf_api_t *nmf_api;
+
 
 //  --------------------------------------------------------------------------
-//  the main program
+//  Declare global variables
+int
+fetch_apps_running_count(int *apps_running_count)
+{
+    /* the return code */
+    int rc = 0;
+
+    /* get pointer to the AppsLauncher service */
+    sm_appslauncher_service_t *appslauncher_service = nmf_api_get_sm_appslauncher_service(nmf_api);
+
+    /* request parameters */
+    char *app_name_list[] = {"*"};
+    char *category = "*";
+
+    /* calculate size of app_name_list array */
+    size_t app_name_list_size = sizeof(app_name_list) / sizeof(app_name_list[0]);
+    
+    /* request response variables */
+    long *response_apps_inst_id_list;
+    bool *response_apps_inst_running_list;
+    size_t response_element_count;
+
+    /* send the listApp request with the response variable pointers */
+    rc = sm_appslauncher_service_list_app(appslauncher_service, app_name_list, app_name_list_size, category,
+        &response_apps_inst_id_list, &response_apps_inst_running_list, &response_element_count);
+
+    /* an error occured, return the error code */
+    if(rc < 0)
+    {
+        return rc;
+    }
+
+    /* each response element corresponds to an app  */
+    for(size_t i = 0; i < response_element_count; i++)
+    {
+        /* increment a counter if the app is running */
+        if(response_apps_inst_running_list[i] == 1)
+        {
+            *apps_running_count++;
+        }
+    }
+
+    /* return the error code */
+    /* reaching this point means there were no errors */
+    return rc;
+}
+
+
+//  --------------------------------------------------------------------------
+//  The main program
 
 int main (int argc, char *argv [])
 {
     /* response code */
     int res;
+
+    /* init log level for the NMF API */
+    sepp_tm_utils_init_nmfapi_log_level(CLOG_ERROR_LEVEL);
+
+    //  --------------------------------------------------------------------------
+    //  Init the NMF Service Provider API
 
     /* char array for provider host and port */
     char host[20] = {0};
@@ -30,9 +91,26 @@ int main (int argc, char *argv [])
     /* set provider host and port */
     sepp_tm_utils_init_provider_host_and_port(host, port);
 
+    /* initialize the Gateway API object to access NMF services */
+    nmf_api = nmf_api_new(host, port, "1025");
+
+
     //  --------------------------------------------------------------------------
     //  apps running
 
+    /* fetch apps running */
+    int apps_running_count = 0;
+    res = fetch_apps_running_count(&apps_running_count);
+    
+    if(res != 0)
+    {
+        printf("error fetching number of apps running\n");
+    }
+    else
+    {
+        /* print fetched value */
+        printf("apps running: %d\n", apps_running_count);
+    }
 
     //  --------------------------------------------------------------------------
     //  uptime
@@ -288,9 +366,13 @@ int main (int argc, char *argv [])
     //  --------------------------------------------------------------------------
     //  cleanup
 
+    // destroy the structs
     free(sepp_tm_free_memory);
     free(sepp_tm_free_cpu);
     free(sepp_tm_disk_usage);
+
+    // destoy the API gateway object, also destroys all service objects
+    nmf_api_destroy(&nmf_api);
 
     return 0;
 }
