@@ -16,6 +16,10 @@ extern "C" {
 #define DIRECTORY_SERVICE_URI_FILEPATH          "/home/nmf/supervisor/centralDirectoryService.uri"
 #define DIRECTORY_SERVICE_URI_MAX_CHAR                                                         100
 
+// Init log levels for the NMF API
+SEPP_TM_EXPORT void
+    sepp_tm_utils_init_nmfapi_log_level (int log_level);
+
 //  Init free mem struct members
 SEPP_TM_EXPORT void
     sepp_tm_utils_init_struct_free_memory (sepp_tm_free_memory_t *sepp_tm_free_memory);

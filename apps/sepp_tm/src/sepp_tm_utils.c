@@ -15,6 +15,37 @@
 #include "sepp_tm_classes.h"
 
 
+// --------------------------------------------------------------------------
+// Init log levels for the NMF API
+
+void
+sepp_tm_utils_init_nmfapi_log_level (int log_level)
+{
+    // MAL log level
+    mal_set_log_level(log_level);
+
+    // MAL TCP log level
+    maltcp_set_log_level(log_level);
+
+    // Gateway API log level
+    nmf_api_set_log_level(log_level);
+
+    // Common service log level
+    common_directory_service_set_log_level(log_level);
+    common_directory_lookupprovider_consumer_set_log_level(log_level);
+
+    // AppsLauncher service log level
+    sm_appslauncher_service_set_log_level(log_level);
+    sm_appslauncher_listapp_consumer_set_log_level(log_level);
+
+    // Parameter service log levels
+    mc_parameter_service_set_log_level(log_level);
+    mc_parameter_listdefinition_consumer_set_log_level(log_level);
+    mc_parameter_getvalue_consumer_set_log_level(log_level);
+    mc_parameter_setvalue_consumer_set_log_level(log_level);
+}
+
+
 //  --------------------------------------------------------------------------
 //  Init free mem struct members
 
