@@ -115,30 +115,11 @@ int main (int argc, char *argv [])
         param_name_list_size++;
     }
 
+
     // --------------------------------------------------------------------------
     // set the log levels
 
-    /* MAL log level */
-    mal_set_log_level(log_level);
-
-    /* MAL TCP log level */
-    maltcp_set_log_level(log_level);
-
-    /* Gateway API log level */
-    nmf_api_set_log_level(log_level);
-
-    // FIXME: we shouldn't have to explicitely set this we are not using this service.
-    /* Common service log level */
-    common_directory_service_set_log_level(log_level);
-
-    // FIXME: we shouldn't have to explicitely set this we are not using this service.
-    /* AppsLauncher service log level */
-    sm_appslauncher_service_set_log_level(log_level);
-
-    /* Parameter service log levels */
-    mc_parameter_service_set_log_level(log_level);
-    mc_parameter_listdefinition_consumer_set_log_level(log_level);
-    mc_parameter_getvalue_consumer_set_log_level(log_level);
+    nmf_api_set_global_log_level(log_level);
 
 
     // --------------------------------------------------------------------------

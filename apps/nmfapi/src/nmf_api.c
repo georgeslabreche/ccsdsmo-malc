@@ -21,11 +21,39 @@
 // The class logger
 clog_logger_t nmf_api_logger = CLOG_DEBUG_LEVEL;
 
-//  Set the log level
+//  Set the log level for this class
 void
 nmf_api_set_log_level (int level)
 {
     nmf_api_logger = level;
+}
+
+//  Set the log level globally (for all classes of the nmf_api)
+void
+nmf_api_set_global_log_level (int level)
+{
+    // Gateway API
+    nmf_api_set_log_level(level);
+
+    // MAL
+    mal_set_log_level(level);
+
+    // MAL TCP
+    maltcp_set_log_level(level);
+
+    // Common service
+    common_directory_service_set_log_level(level);
+    common_directory_lookupprovider_consumer_set_log_level(level);
+
+    // AppsLauncher service
+    sm_appslauncher_service_set_log_level(level);
+    sm_appslauncher_listapp_consumer_set_log_level(level);
+
+    // Parameter service
+    mc_parameter_service_set_log_level(level);
+    mc_parameter_listdefinition_consumer_set_log_level(level);
+    mc_parameter_getvalue_consumer_set_log_level(level);
+    mc_parameter_setvalue_consumer_set_log_level(level);
 }
 
 

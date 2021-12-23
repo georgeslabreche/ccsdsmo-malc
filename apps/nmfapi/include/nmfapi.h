@@ -12,10 +12,17 @@
 #include "nmfapi_library.h"
 
 
+
 //  --------------------------------------------------------------------------
 //  Declare the NMF Gateway API log level setter
 void
 nmf_api_set_log_level (int level);
+
+
+//  --------------------------------------------------------------------------
+//  Set the log level globally 
+void
+nmf_api_set_global_log_level (int level);
 
 
 //  --------------------------------------------------------------------------

@@ -450,7 +450,7 @@ set_nmf_param_fpga_loaded()
     int rc;
 
     /* fetch */
-    char image_id[12] = {0};
+    char image_id[32] = {0};
     rc = shell_proxy_get_fpga_image_loaded(image_id);
 
     if(rc != 0)
@@ -728,8 +728,8 @@ set_nmf_param_can_spp_bridge_status()
 
 int main (int argc, char *argv [])
 {
-    /* init log level for the NMF API */
-    sepp_tm_utils_init_nmfapi_log_level(CLOG_ERROR_LEVEL);
+    /* init log level */
+    nmf_api_set_global_log_level(CLOG_ERROR_LEVEL);
 
     /* init the NMF Service Provider API */
     init_nmf_api();
