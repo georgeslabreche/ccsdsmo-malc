@@ -1,5 +1,5 @@
 /*  =========================================================================
-    demo_private_selftest.c - run private classes selftests
+    nmfapi_c_demo_private_selftest.c - run private classes selftests
 
     Runs all private classes selftests.
 
@@ -13,7 +13,7 @@
     =========================================================================
 */
 
-#include "demo_classes.h"
+#include "nmfapi_c_demo_classes.h"
 
 
 //  -------------------------------------------------------------------------
@@ -21,7 +21,7 @@
 //
 
 void
-demo_private_selftest (bool verbose, const char *subtest)
+nmfapi_c_demo_private_selftest (bool verbose, const char *subtest)
 {
 }
 /*

@@ -1,15 +1,15 @@
 /*  =========================================================================
-    demo - Demo application using MAL C API
+    nmfapi_c_demo - Demonstrations on how to interact with the MAL-C NMF API
 
     The MIT License (MIT)
     =========================================================================
 */
 
-#ifndef DEMO_H_H_INCLUDED
-#define DEMO_H_H_INCLUDED
+#ifndef NMFAPI_C_DEMO_H_H_INCLUDED
+#define NMFAPI_C_DEMO_H_H_INCLUDED
 
 //  Include the project library file
-#include "demo_library.h"
+#include "nmfapi_c_demo_library.h"
 
 //  Add your own public definitions here, if you need them
 

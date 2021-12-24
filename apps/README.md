@@ -1,8 +1,8 @@
-## Demo App
-Reference app that showcases how to use the MAL C API to develop apps for the [OPS-SAT spacecraft](https://opssat1.esoc.esa.int/). The app does a simple request operation the list [NMF apps](https://nanosat-mo-framework.github.io/) installed in SEPP.
+## Apps
+This directory contains apps and library projects that use the generated MAL areas for the OPS-SAT spacecraft.
 
 ## Build and deploy
-The app can be build and deployed for either the local development environment or for the SEPP environment on the spacecraft.
+App and library projects can be built and deployed for either the local development environment or for the SEPP environment on the spacecraft.
 
 ### Third-party dependencies
 The gsl, ZeroMQ, czmq, and zproject dependencies described in the [Installation section of the repo's top level README](https://github.com/tanagraspace/ccsdsmo-malc-sepp-apps#installation) must be installed before the *genmakeall* script can be executed.
@@ -11,30 +11,28 @@ The gsl, ZeroMQ, czmq, and zproject dependencies described in the [Installation 
 - Invoking the `genmake_tests` function inside the *genmakeall* script can be commented out for a quicker build.
 - However, running `genmake_tests` at least once is a good way to make sure that all required dependencies are installed and running as expected before trying to build the app.
 
+From the app's directory, execute the following command to build for the local development environment:
+
 ```bash
-./../../genmakeall 
-./src/demo_app -h <host> -p <provider_port> -c <consumer_port>
+./genmake
+```
+
+If the app has dependencies on other projects that have not been previously built then execute the following command:
+
+```bash
+./../../genmakeall
 ```
 
 ### For the spacecraft
 Building for the spacecraft uses zproject/gsl's cross-compilation mechanism for the Raspberry Pi ARM 32 bit target environment. Using the Raspberry Pi toolchain is non-ideal but workable **temporary** solution. As a permanent solution a zproject_sepp.gsl script must be written that will cross-compile using the SEPP toolchain instead of using [zproject_rpi.gsl](https://github.com/zeromq/zproject/blob/master/zproject_rpi.gsl).
 
-Read the comments for all script files in the scripts directory before executing the following commands to build and deploy the app to the spacecraft:
+From the app's directory, execute the following commands to build and deploy the app to the spacecraft:
 
 ```bash
-./../../genmakeall
-./genmake
 cd scripts
-./build4target.sh
-./deploy2sepp.sh
-```
-
-Then ssh into SEPP to untar and install the shared libraries and binary:
-
-```
-tar -xzvf malc_demo.tar.gz
-./sepp_install.sh
-./demo_app -h <host> -p <provider_port> -c <consumer_port>
+./build4targets.sh
+./ipk_create.sh
+./ipk_deploy.sh
 ```
 
 ### Cross-compilation

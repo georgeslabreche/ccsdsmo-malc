@@ -12,7 +12,7 @@
 @end
 */
 
-#include "demo_classes.h"
+#include "nmfapi_c_demo_classes.h"
 
 #define MAX_PARAM_LIST_SIZE            20
 

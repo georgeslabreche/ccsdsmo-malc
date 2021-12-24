@@ -1,5 +1,5 @@
 /*  =========================================================================
-    demo_selftest.c - run selftests
+    nmfapi_c_demo_selftest.c - run selftests
 
     Runs all selftests.
 
@@ -13,7 +13,7 @@
     =========================================================================
 */
 
-#include "demo_classes.h"
+#include "nmfapi_c_demo_classes.h"
 
 typedef struct {
     const char *testname;           // test name, can be called from command line this way
@@ -52,16 +52,16 @@ static void
 test_runall (bool verbose)
 {
     test_item_t *item;
-    printf ("Running demo selftests...\n");
+    printf ("Running nmfapi_c_demo selftests...\n");
     for (item = all_tests; item->testname; item++) {
         if (streq (item->testname, "private_classes"))
             continue;
         if (!item->subtest)
             item->test (verbose);
-#ifdef DEMO_BUILD_DRAFT_API // selftest is still in draft
+#ifdef NMFAPI_C_DEMO_BUILD_DRAFT_API // selftest is still in draft
         else
-            demo_private_selftest (verbose, item->subtest);
-#endif // DEMO_BUILD_DRAFT_API
+            nmfapi_c_demo_private_selftest (verbose, item->subtest);
+#endif // NMFAPI_C_DEMO_BUILD_DRAFT_API
     }
 
     printf ("Tests passed OK\n");
@@ -101,7 +101,7 @@ main (int argc, char **argv)
     for (argn = 1; argn < argc; argn++) {
         if (streq (argv [argn], "--help")
         ||  streq (argv [argn], "-h")) {
-            puts ("demo_selftest.c [options] ...");
+            puts ("nmfapi_c_demo_selftest.c [options] ...");
             puts ("  --verbose / -v         verbose test output");
             puts ("  --number / -n          report number of tests");
             puts ("  --list / -l            list all tests");
@@ -158,13 +158,13 @@ main (int argc, char **argv)
     #endif //
 
     if (test) {
-        printf ("Running demo test '%s'...\n", test->testname);
+        printf ("Running nmfapi_c_demo test '%s'...\n", test->testname);
         if (!test->subtest)
             test->test (verbose);
-#ifdef DEMO_BUILD_DRAFT_API // selftest is still in draft
+#ifdef NMFAPI_C_DEMO_BUILD_DRAFT_API // selftest is still in draft
         else
-            demo_private_selftest (verbose, test->subtest);
-#endif // DEMO_BUILD_DRAFT_API
+            nmfapi_c_demo_private_selftest (verbose, test->subtest);
+#endif // NMFAPI_C_DEMO_BUILD_DRAFT_API
     }
     else
         test_runall (verbose);

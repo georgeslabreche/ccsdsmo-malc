@@ -16,7 +16,7 @@
     files according to http://rfc.zeromq.org/spec:21.
 -->
 <project
-    name = "demo"
+    name = "nmfapi_c_demo"
     description = "Demonstrations on how to interact with the MAL-C NMF API"
     script = "zproject.gsl"
     email = "georges@tanagraspace.com"
@@ -59,7 +59,7 @@
     <use project = "maltcp" />
     <use project = "malactor" />
     <use project = "generated_areas" />
-    <use project = "nmfapi"/>
+    <use project = "nmfapi_c"/>
 
     <!-- Header Files
          name := The name the header file to include without file ending
@@ -76,10 +76,12 @@
 
     <!-- 
         Need at least one class generated to workaround a bug in which
-        the _classes.h header is not generated, i.e. demo_classes.h
+        the _classes.h header is not generated, i.e. nmfapi_c_demo_classes.h
         Make it a utils class and at worst leave it "blank".
     -->
-    <class name = "demo_app_utils" selftest = "0" />
+    <class name = "demo_app_utils" selftest = "0">
+        Dummy class to workaround a bug
+    </class>
 
     <!--
         Make sure all main program binaries are prefixed with the project name.

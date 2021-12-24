@@ -1,5 +1,5 @@
 /*  =========================================================================
-    demo_classes - private header file
+    nmfapi_c_demo_classes - private header file
 
     The MIT License (MIT)
 ################################################################################
@@ -9,8 +9,8 @@
     =========================================================================
 */
 
-#ifndef DEMO_CLASSES_H_INCLUDED
-#define DEMO_CLASSES_H_INCLUDED
+#ifndef NMFAPI_C_DEMO_CLASSES_H_INCLUDED
+#define NMFAPI_C_DEMO_CLASSES_H_INCLUDED
 
 //  Platform definitions, must come first
 #include "platform.h"
@@ -26,7 +26,7 @@
 #endif
 
 //  External API
-#include "../include/demo.h"
+#include "../include/nmfapi_c_demo.h"
 
 //  Private external dependencies
 
@@ -38,12 +38,12 @@
 
 
 //  *** To avoid double-definitions, only define if building without draft ***
-#ifndef DEMO_BUILD_DRAFT_API
+#ifndef NMFAPI_C_DEMO_BUILD_DRAFT_API
 
 //  Self test for private classes
-DEMO_PRIVATE void
-    demo_private_selftest (bool verbose, const char *subtest);
+NMFAPI_C_DEMO_PRIVATE void
+    nmfapi_c_demo_private_selftest (bool verbose, const char *subtest);
 
-#endif // DEMO_BUILD_DRAFT_API
+#endif // NMFAPI_C_DEMO_BUILD_DRAFT_API
 
 #endif
