@@ -1,0 +1,7 @@
+Package: nmfapi_c_demo
+Priority: optional
+Maintainer: tanagraspace
+Architecture: sepp
+Section: Applications
+Version: 1.0.0
+Description: An app that demonstrates using the MAL C implementation of the NMF API

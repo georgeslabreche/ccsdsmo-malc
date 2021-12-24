@@ -16,8 +16,8 @@
     files according to http://rfc.zeromq.org/spec:21.
 -->
 <project
-    name = "sepp_tm"
-    description = "An app to inject basic SEPP telemetry into the OBSW datapool"
+    name = "nmfapi_c_demo"
+    description = "Demonstrations on how to interact with the MAL-C NMF API"
     script = "zproject.gsl"
     email = "georges@tanagraspace.com"
     >
@@ -74,20 +74,22 @@
     <class name = "someother" private = "1">Private class description</class>
     -->
 
-    <!-- A class to execute shell commands and return their outputs -->
-    <class name = "shell_cmd_dispatcher" selftest = "0" />
+    <!-- 
+        Need at least one class generated to workaround a bug in which
+        the _classes.h header is not generated, i.e. nmfapi_c_demo_classes.h
+        Make it a utils class and at worst leave it "blank".
+    -->
+    <class name = "demo_app_utils" selftest = "0">
+        Dummy class to workaround a bug
+    </class>
 
-    <!-- A class to parse shell command outputs and extract relevant data -->
-    <class name = "shell_stdout_parser" selftest = "1" />
-
-    <!-- A class to dispatch shell commands and parse their outputs -->
-    <class name = "shell_proxy" selftest = "0" />
-
-    <!-- A util class -->
-    <class name = "sepp_tm_utils" selftest = "0"/>
-
-    <!-- The main program -->
-    <main name = "sepp_tm_app">SEPP TM</main>
+    <!--
+        Make sure all main program binaries are prefixed with the project name.
+        If they are not properly prefixed then they won't be packaged for
+        deployment by the deployment scripts 
+    -->
+    <main name = "demo_app">Demo App</main>
+    <main name = "demo_getvalue">Demo the getValue interaction</main>
     
     <!-- Targets -->
     <target name = "rpi" />

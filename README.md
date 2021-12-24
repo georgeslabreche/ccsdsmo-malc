@@ -152,7 +152,7 @@ and the definition of new projects such as 'mal':
         cmake_name = "GENERATED_AREAS">
     </use>
 
-    <use project = "nmfapi"
+    <use project = "nmfapi_c"
         repository = ""
         test = "nmf_api_test"
         cmake_name = "NMFAPI">
