@@ -66,7 +66,7 @@ int main (int argc, char *argv [])
         ||  streq (argv [argn], "-c"))
             argv_index_cport = ++argn;
         else
-        if (streq (argv [argn], "--pname")
+        if (streq (argv [argn], "--pnames")
         ||  streq (argv [argn], "-n"))
             argv_index_pname = ++argn;
         else

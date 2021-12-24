@@ -1,8 +1,6 @@
 # The name of the project.
-PROJECT_NAME="sepp_tm"
-
-# The name of the executable binary.
-BIN_FILENAME="sepp_tm_app"
+# Extract the project name from the control file (set as the package name).
+PROJECT_NAME=$(sed -n -e '/^Package/p' sepp_package/CONTROL/control | cut -d ' ' -f2)
 
 # lib and bin directories.
 BUILD_LIB_PATH="builds/rpi/tmp/lib"

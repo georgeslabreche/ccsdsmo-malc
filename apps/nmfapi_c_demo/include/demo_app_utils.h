@@ -14,11 +14,11 @@ extern "C" {
 
 //  @interface
 //  Create a new demo_app_utils
-DEMO_EXPORT demo_app_utils_t *
+NMFAPI_C_DEMO_EXPORT demo_app_utils_t *
     demo_app_utils_new (void);
 
 //  Destroy the demo_app_utils
-DEMO_EXPORT void
+NMFAPI_C_DEMO_EXPORT void
     demo_app_utils_destroy (demo_app_utils_t **self_p);
 
 

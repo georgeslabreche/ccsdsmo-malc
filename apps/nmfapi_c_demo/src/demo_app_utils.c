@@ -7,7 +7,7 @@
 
 /*
 @header
-    demo_app_utils -
+    demo_app_utils - A dummy class to workaround a bug (see comments in project.xml for details)
 @discuss
 @end
 */

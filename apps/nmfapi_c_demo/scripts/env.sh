@@ -1,7 +1,8 @@
 # The name of the project.
-# Extract the project name from the control file (set as the package name)
+# Extract the project name from the control file (set as the package name).
 PROJECT_NAME=$(sed -n -e '/^Package/p' sepp_package/CONTROL/control | cut -d ' ' -f2)
 
+# Build directories.
 BUILD_LIB_PATH="builds/rpi/tmp/lib"
 BUILD_BIN_PATH="builds/rpi/tmp/bin"
 

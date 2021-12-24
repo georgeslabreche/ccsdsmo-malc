@@ -6,10 +6,10 @@ The provider is the NMF Supervisor and the consumer is this app.
 
 ### Generic demo
 ```bash
-./src/demo_app -h <provider_host> -p <provider_port> -c <consumer_port>
+./src/demo_app --help
 ```
 
 ### getValue
 ```bash
-./src/demo_getvalue
+./src/demo_getvalue --help
 ```
