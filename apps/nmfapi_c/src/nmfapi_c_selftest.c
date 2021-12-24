@@ -25,10 +25,8 @@ typedef struct {
 
 static test_item_t
 all_tests [] = {
-#ifdef NMFAPI_C_BUILD_DRAFT_API
-// Tests for draft public classes:
-    { "nmf_api", nmf_api_test, false, true, NULL },
-#endif // NMFAPI_C_BUILD_DRAFT_API
+// Tests for stable public classes:
+    { "nmf_api", nmf_api_test, true, true, NULL },
     {NULL, NULL, 0, 0, NULL}          //  Sentinel
 };
 
