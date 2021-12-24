@@ -59,7 +59,7 @@
     <use project = "maltcp" />
     <use project = "malactor" />
     <use project = "generated_areas" />
-    <use project = "nmfapi"/>
+    <use project = "nmfapi_c"/>
 
     <!-- Header Files
          name := The name the header file to include without file ending

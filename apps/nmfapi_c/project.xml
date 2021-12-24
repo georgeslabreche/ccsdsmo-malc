@@ -1,5 +1,5 @@
 <project
-    name = "nmfapi-c"
+    name = "nmfapi_c"
     description = "NMF Service API"
     script = "zproject.gsl"
     email = "georges@tanagraspace.com"
