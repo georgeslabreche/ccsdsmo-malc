@@ -1,20 +1,9 @@
-## SEPP TM
-An app to inject basic SEPP telemetry into the OBSW datapool. Sets the following parameters:
-- Linux Uptime (in seconds)
-- Memory Usage
-- CPU Usage
-- Disk Usage
-- OOM Counter
-- Number of files in toGround 
-- Number of files in toGroundLP
-- System Status
-- FPGA image loaded
-- Dual core activated
-- Number of experiments active
-- Status of the CAN bridges
+
+## NMF API
+The [NMF](https://nanosat-mo-framework.github.io/) API uses the MAL C API and is built for the [OPS-SAT spacecraft](https://opssat1.esoc.esa.int/),
 
 ## Build and deploy
-The app can be built and deployed for either the local development environment or for the SEPP environment on the spacecraft.
+The API library can be built and deployed for either the local development environment or for the SEPP environment on the spacecraft.
 
 ### For local development
 Invoking the `genmake_tests` function inside the *genmakeall* script can be commented out for a quicker build. However, running `genmake_tests` at least once is a good way to make sure that all required dependencies are installed and running as expected before trying to build the app.

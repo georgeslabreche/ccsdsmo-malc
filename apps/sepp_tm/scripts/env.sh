@@ -12,6 +12,6 @@ BUILD_BIN_PATH="builds/rpi/tmp/bin"
 LOCAL_APP_LIB_DIR="../${BUILD_LIB_PATH}"
 LOCAL_APP_BIN_DIR="../${BUILD_BIN_PATH}"
 
-# SEPP deployment paths.
+# Deployment paths on the SEPP.
 SEPP_LIB_DIR="/usr/lib"
-SEPP_BIN_DIR="/home/root/georges/apps/malc/sepp_tm" # Change this if needed.
+SEPP_BIN_DIR="/home/root/georges/apps/malc/${PROJECT_NAME}" # Change this if needed.

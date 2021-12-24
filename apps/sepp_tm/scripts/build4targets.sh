@@ -48,7 +48,7 @@ TARGETS=('rpi')
 MAL_PROJECTS=('malutil' 'malattributes' 'mal' 'malbinary' 'malsplitbinary' 'malzmq' 'maltcp' 'malactor')
 
 # List the apps project dependencies.
-APPS_PROJECTS=('generated_areas' 'nmfapi')
+APPS_PROJECTS=('generated_areas' 'nmfapi-c')
 
 # Parse the "incremental" parameter if given.
 # For the purposes of this script, an "incremental" build is understood as just rebuilding the app,

@@ -1,7 +1,0 @@
-Package: nmfapi
-Priority: optional
-Maintainer: tanagraspace
-Architecture: sepp
-Section: Applications
-Version: 1.0.0
-Description: MAL C implementation of the NMF API
