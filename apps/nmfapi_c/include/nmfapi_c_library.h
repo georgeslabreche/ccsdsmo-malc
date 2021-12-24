@@ -65,14 +65,8 @@
 #   endif
 #endif
 
-//  Project has no stable classes, so we build the draft API
-#undef  NMFAPI_C_BUILD_DRAFT_API
-#define NMFAPI_C_BUILD_DRAFT_API
-
 //  Opaque class structures to allow forward references
 //  These classes are stable or legacy and built in all releases
-//  Draft classes are by default not built in stable releases
-#ifdef NMFAPI_C_BUILD_DRAFT_API
 typedef struct _nmf_api_t nmf_api_t;
 #define NMF_API_T_DEFINED
 typedef struct _nmf_api_util_t nmf_api_util_t;
@@ -93,11 +87,9 @@ typedef struct _sm_appslauncher_service_t sm_appslauncher_service_t;
 #define SM_APPSLAUNCHER_SERVICE_T_DEFINED
 typedef struct _sm_appslauncher_listapp_consumer_t sm_appslauncher_listapp_consumer_t;
 #define SM_APPSLAUNCHER_LISTAPP_CONSUMER_T_DEFINED
-#endif // NMFAPI_C_BUILD_DRAFT_API
 
 
 //  Public classes, each with its own header file
-#ifdef NMFAPI_C_BUILD_DRAFT_API
 #include "nmf_api.h"
 #include "nmf_api_util.h"
 #include "common_directory_service.h"
@@ -108,7 +100,6 @@ typedef struct _sm_appslauncher_listapp_consumer_t sm_appslauncher_listapp_consu
 #include "mc_parameter_listdefinition_consumer.h"
 #include "sm_appslauncher_service.h"
 #include "sm_appslauncher_listapp_consumer.h"
-#endif // NMFAPI_C_BUILD_DRAFT_API
 
 #ifdef NMFAPI_C_BUILD_DRAFT_API
 
