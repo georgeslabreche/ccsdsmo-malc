@@ -122,28 +122,8 @@ int main (int argc, char *argv [])
     // --------------------------------------------------------------------------
     // Set the log levels
 
-    // MAL log level
-    mal_set_log_level(log_level);
+    nmf_api_set_global_log_level(log_level);
 
-    // MAL TCP log level
-    maltcp_set_log_level(log_level);
-
-    // Gateway API log level
-    nmf_api_set_log_level(log_level);
-
-    // Common service log level
-    common_directory_service_set_log_level(log_level);
-    common_directory_lookupprovider_consumer_set_log_level(log_level);
-
-    // AppsLauncher service log level
-    sm_appslauncher_service_set_log_level(log_level);
-    sm_appslauncher_listapp_consumer_set_log_level(log_level);
-
-    // Parameter service log levels
-    mc_parameter_service_set_log_level(log_level);
-    mc_parameter_listdefinition_consumer_set_log_level(log_level);
-    mc_parameter_getvalue_consumer_set_log_level(log_level);
-    mc_parameter_setvalue_consumer_set_log_level(log_level);
 
     // --------------------------------------------------------------------------
     // Initialize the Gateway API object to access NMF services
@@ -167,9 +147,7 @@ int main (int argc, char *argv [])
     // Demonstrate the listDefinition operation with multiple parameters in a single request interaction
     // Demonstrate the getValue operation with multiple parameters in a single request interaction
     
-    // FIXME: There is a know issue in NMF Supervisor that triggers a Nanomind reboot when aggregations are created.
-    //        Disable this demo until that issue is resolved
-    //demo_parameter_service_get_value_list();
+    demo_parameter_service_get_value_list();
 
     // Demonstrate the getValue operation with one parameter per request interaction
     demo_parameter_service_get_value();
@@ -644,10 +622,10 @@ demo_parameter_service_set_value()
     // The param to set (it's of type double)
     char *param_name = "attitudeMonitoringInterval";
 
-    // Get a random double value, between -1 and 1, to set as the new parameter value
+    // Get a random double value, between 0 and 2, to set as the new parameter value
     double random_value;
     srand (time(NULL));
-    random_value = (double) rand() / RAND_MAX * 2.0 - 1.0;
+    random_value = (double) rand() / RAND_MAX * 2.0;
 
     // Convert random double value to string
     char param_value_to_set[20];

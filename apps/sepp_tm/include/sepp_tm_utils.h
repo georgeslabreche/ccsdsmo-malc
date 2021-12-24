@@ -16,10 +16,6 @@ extern "C" {
 #define DIRECTORY_SERVICE_URI_FILEPATH          "/home/nmf/supervisor/centralDirectoryService.uri"
 #define DIRECTORY_SERVICE_URI_MAX_CHAR                                                         100
 
-// Init log levels for the NMF API
-SEPP_TM_EXPORT void
-    sepp_tm_utils_init_nmfapi_log_level (int log_level);
-
 //  Init free mem struct members
 SEPP_TM_EXPORT void
     sepp_tm_utils_init_struct_free_memory (sepp_tm_free_memory_t *sepp_tm_free_memory);
@@ -31,6 +27,10 @@ SEPP_TM_EXPORT void
 //  Init disk usage struct members
 SEPP_TM_EXPORT void
     sepp_tm_utils_init_struct_disk_usage (sepp_tm_disk_usage_t *sepp_tm_disk_usage);
+
+//  Remove unwanted chars
+SEPP_TM_EXPORT void
+    sepp_tm_utils_remove_unwanted_chars (char *str);
 
 //  Get index of the nth char occurence in a given string
 SEPP_TM_EXPORT int

@@ -267,7 +267,7 @@ int
 shell_stdout_parser_parse_fpga_image_loaded (char *std_out, char *image_id)
 {
     /* remove new line charcter from the stdout string */
-    std_out[strcspn(std_out, "\n")] = 0;
+    sepp_tm_utils_remove_unwanted_chars(std_out);
 
     /* return predefined value in case of error */
     if(strcmp(std_out, "Bus error (core dumped)") == 0)
@@ -290,7 +290,7 @@ int
 shell_stdout_parser_parse_shell_status (char *std_out, char *status)
 {
     /* remove new line charcter from the stdout string */
-    std_out[strcspn(std_out, "\n")] = 0;
+    sepp_tm_utils_remove_unwanted_chars(std_out);
 
     /* set number id for status */
     if(strcmp(std_out, "running") == 0)
@@ -438,6 +438,7 @@ shell_stdout_parser_test (bool verbose)
 
     /* parse the fpga image loaded stdout and assert expected value */
     shell_stdout_parser_parse_fpga_image_loaded(stdout_fpga_error, image_id);
+
     assert(strcmp(image_id, "0xffffffff") == 0);
 
     shell_stdout_parser_parse_fpga_image_loaded(stdout_fpga_loaded, image_id);

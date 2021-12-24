@@ -15,37 +15,6 @@
 #include "sepp_tm_classes.h"
 
 
-// --------------------------------------------------------------------------
-// Init log levels for the NMF API
-
-void
-sepp_tm_utils_init_nmfapi_log_level (int log_level)
-{
-    // MAL log level
-    mal_set_log_level(log_level);
-
-    // MAL TCP log level
-    maltcp_set_log_level(log_level);
-
-    // Gateway API log level
-    nmf_api_set_log_level(log_level);
-
-    // Common service log level
-    common_directory_service_set_log_level(log_level);
-    common_directory_lookupprovider_consumer_set_log_level(log_level);
-
-    // AppsLauncher service log level
-    sm_appslauncher_service_set_log_level(log_level);
-    sm_appslauncher_listapp_consumer_set_log_level(log_level);
-
-    // Parameter service log levels
-    mc_parameter_service_set_log_level(log_level);
-    mc_parameter_listdefinition_consumer_set_log_level(log_level);
-    mc_parameter_getvalue_consumer_set_log_level(log_level);
-    mc_parameter_setvalue_consumer_set_log_level(log_level);
-}
-
-
 //  --------------------------------------------------------------------------
 //  Init free mem struct members
 
@@ -91,6 +60,25 @@ sepp_tm_utils_init_struct_disk_usage (sepp_tm_disk_usage_t *sepp_tm_disk_usage)
     memset(sepp_tm_disk_usage->available_percentage, 0, DISK_USAGE_ARRAY_SIZE);
 }
 
+
+//  --------------------------------------------------------------------------
+//  Remove unwanted chars
+
+void
+sepp_tm_utils_remove_unwanted_chars (char *str)
+{
+    /* remove carriage return characters if they exist */
+    if(strstr(str, "\r"))
+    {
+        str[strcspn(str, "\r")] = 0;
+    }
+
+    /* remove new line characters if they exist */
+    if(strstr(str, "\n"))
+    {
+        str[strcspn(str, "\n")] = 0;
+    }
+}
 
 //  --------------------------------------------------------------------------
 //  Get index of the nth char occurence in a given string

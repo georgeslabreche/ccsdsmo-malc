@@ -39,7 +39,7 @@ shell_proxy_get_uptime (char *uptime)
     }
 
     /* remove carriage return and new line, if any */
-    uptime[strcspn(uptime, "\r\n")] = 0;
+    sepp_tm_utils_remove_unwanted_chars(uptime);
 
     /* return response code */
     return res;
@@ -130,7 +130,7 @@ shell_proxy_get_oom_counter (char *oom_counter)
     }
 
     /* remove carriage return and new line, if any */
-    oom_counter[strcspn(oom_counter, "\r\n")] = 0;
+    sepp_tm_utils_remove_unwanted_chars(oom_counter);
 
     /* return response code */
     return res;
@@ -153,7 +153,7 @@ shell_proxy_get_file_count_toGround (char *toGound_count)
     }
 
     /* remove carriage return and new line, if any */
-    toGound_count[strcspn(toGound_count, "\r\n")] = 0;
+    sepp_tm_utils_remove_unwanted_chars(toGound_count);
 
     /* return response code */
     return res;
@@ -176,7 +176,7 @@ shell_proxy_get_file_count_toGroundLP (char *toGroundLP_count)
     }
 
     /* remove carriage return and new line, if any */
-    toGroundLP_count[strcspn(toGroundLP_count, "\r\n")] = 0;
+    sepp_tm_utils_remove_unwanted_chars(toGroundLP_count);
 
     /* return response code */
     return res;
@@ -199,7 +199,7 @@ shell_proxy_get_core_counter (char *core_counter)
     }
 
     /* remove carriage return and new line, if any */
-    core_counter[strcspn(core_counter, "\r\n")] = 0;
+    sepp_tm_utils_remove_unwanted_chars(core_counter);
 
     /* return response code */
     return res;
@@ -225,7 +225,7 @@ shell_proxy_get_rescue_shell_status (char *status)
     }
 
     /* remove carriage return and new line, if any */
-    status[strcspn(status, "\r\n")] = 0;
+    sepp_tm_utils_remove_unwanted_chars(status);
 
     /* return response code */
     return res;
@@ -248,7 +248,7 @@ shell_proxy_get_spp_bridge (char *spp_bridge)
     }
 
     /* remove carriage return and new line, if any */
-    spp_bridge[strcspn(spp_bridge, "\r\n")] = 0;
+    sepp_tm_utils_remove_unwanted_chars(spp_bridge);
 
     /* return response code */
     return res;
@@ -271,7 +271,7 @@ shell_proxy_get_spp_bridge_packetstore (char *spp_bridge)
     }
 
     /* remove carriage return and new line, if any */
-    spp_bridge[strcspn(spp_bridge, "\r\n")] = 0;
+    sepp_tm_utils_remove_unwanted_chars(spp_bridge);
 
     /* return response code */
     return res;
