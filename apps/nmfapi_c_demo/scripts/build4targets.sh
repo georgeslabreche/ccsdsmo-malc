@@ -48,7 +48,7 @@ TARGETS=('rpi')
 MAL_PROJECTS=('malutil' 'malattributes' 'mal' 'malbinary' 'malsplitbinary' 'malzmq' 'maltcp' 'malactor')
 
 # List the apps project dependencies.
-APPS_PROJECTS=('generated_areas' 'nmfapi')
+APPS_PROJECTS=('generated_areas' 'nmfapi_c')
 
 # Parse the "incremental" parameter if given.
 # For the purposes of this script, an "incremental" build is understood as just rebuilding the app,
@@ -132,6 +132,7 @@ do
         file tmp/lib/lib*
 
         # File info for this project's bin file.
-        file tmp/bin/${PROJECT_NAME}_*
+        # The bin files are prefixed with "demo_*".
+        file tmp/bin/demo_*
     fi
 done
