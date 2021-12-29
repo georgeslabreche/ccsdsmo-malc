@@ -57,7 +57,7 @@
     </method>
 
     <method name = "get_response_element_count">
-        Get response variable for number elements
+        Get response variable for number of elements
         <return type = "size" />
     </method>
 

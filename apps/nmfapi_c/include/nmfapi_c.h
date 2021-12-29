@@ -59,4 +59,7 @@ mc_parameter_setvalue_consumer_set_log_level (int level);
 void
 mc_parameter_listdefinition_consumer_set_log_level (int level);
 
+void
+mc_parameter_addparameter_consumer_set_log_level (int level);
+
 #endif

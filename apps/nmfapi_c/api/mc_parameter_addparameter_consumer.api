@@ -1,0 +1,145 @@
+<class name = "mc_parameter_addparameter_consumer" selftest="0">
+    The request consumer for the addParameter operation
+    The addParameter operation allows a consumer to define one or more parameters that do not currently exist
+
+    <constant name = "uri" value = "mc/parameter/consumer/addParameter" type="string">The consumer URI for the addParameter operation</constant>
+
+    <constructor>
+        Instanciate a consumer object for the addParameter operation
+        <argument name = "mal_ctx" c_type = "mal_ctx_t *" />
+        <argument name = "provider_uri" c_type = "mal_uri_t *" />
+    </constructor>
+
+    <!--
+        Deallocation functions
+    -->
+
+    <destructor>
+        The destructor
+    </destructor>
+
+    <method name = "response_clear">
+        Clear the response variables
+    </method>
+
+    <!--
+        Mutex operators
+    -->
+
+    <method name = "mutex_lock">
+        Lock the mutex
+        A mutex is used to force a synchronous response despite the request being an asynchronous operation
+    </method>
+
+    <method name = "mutex_unlock">
+        Unlock the mutex
+        A mutex is used to force a synchronous response despite the request being an asynchronous operation
+    </method>
+
+    <!--
+        MAL actor function
+    -->
+    
+    <method name = "actor_init">
+        Create and initialize the actor
+    </method>
+
+    <!-- 
+        Getters for response variables
+    -->
+
+    <method name = "get_response_error_code">
+        Get error code from processing the response
+        <return type = "integer" />
+    </method>
+
+    <method name = "get_response_param_identity_id_list">
+        Get the identity id list of the created parameters
+        <return c_type = "long *" />
+    </method>
+
+    <method name = "get_response_param_definition_id_list">
+        Get the definition id list of the created parameters
+        <return c_type = "long *" />
+    </method>
+
+    <method name = "get_response_element_count">
+        Get response variable for number of elements
+        <return type = "size" />
+    </method>
+
+    <!--
+        Getters and Setters for class variables
+    -->
+
+    <method name = "get_field_param_name_list">
+        Get the param names MAL message field
+        <return c_type = "char **" />
+    </method>
+
+    <method name = "set_field_param_name_list">
+        Set the param names MAL message field
+        <argument name = "param_name_list" c_type = "char **" />
+    </method>
+
+    <method name = "get_field_param_description_list">
+        Get the param descriptions MAL message field
+        <return c_type = "char **" />
+    </method>
+
+    <method name = "set_field_param_description_list">
+        Set the param descriptions MAL message field
+        <argument name = "param_description_list" c_type = "char **" />
+    </method>
+
+    <method name = "get_field_param_raw_type_list">
+        Get the param raw types MAL message field
+        <return c_type = "unsigned char*" />
+    </method>
+
+    <method name = "set_field_param_raw_type_list">
+        Set the param raw types MAL message field
+        <argument name = "param_raw_type_list" c_type = "unsigned char *" />
+    </method>
+
+    <method name = "get_field_param_raw_unit_list">
+        Get the param raw units MAL message field
+        <return c_type = "char **" />
+    </method>
+
+    <method name = "set_field_param_raw_unit_list">
+        Set the param raw units MAL message field
+        <argument name = "param_raw_unit_list" c_type = "char **" />
+    </method>
+
+    <method name = "get_field_param_generation_enabled_list">
+        Get the param generation enabled MAL message field
+        <return c_type = "bool *" />
+    </method>
+
+    <method name = "set_field_param_generation_enabled_list">
+        Set the param generation enabled MAL message field
+        <argument name = "param_generation_enabled_list" c_type = "bool *" />
+    </method>
+
+    <method name = "get_field_param_report_interval_list">
+        Get the param report interval MAL message field
+        <return c_type = "double *" />
+    </method>
+
+    <method name = "set_field_param_report_interval_list">
+        Set the param report interval MAL message field
+        <argument name = "param_report_interval_list" c_type = "double *" />
+    </method>
+
+    <method name = "get_field_param_list_size">
+        Get the number of params MAL message field
+        <return type = "size" />
+    </method>
+
+    <method name = "set_field_param_list_size">
+        Set the number of params MAL message field
+        <argument name = "param_list_size" type = "size" />
+    </method>
+
+</class>

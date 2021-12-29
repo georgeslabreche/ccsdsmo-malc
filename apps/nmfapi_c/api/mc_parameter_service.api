@@ -234,4 +234,32 @@
         <return type = "integer" />
     </method>
 
+    <method name = "add_parameter_list">
+        The addParameter operation allows a consumer to define a list of parameters that do not currently exist
+        <argument name = "param_name_list" c_type = "char **" />
+        <argument name = "param_description_list" c_type = "char **" />
+        <argument name = "param_raw_type_list" c_type = "unsigned char *" />
+        <argument name = "param_raw_unit_list" c_type = "char **" />
+        <argument name = "param_generation_enabled_list" c_type = "bool *" />
+        <argument name = "param_report_interval_list" c_type = "double *" />
+        <argument name = "param_list_size" type = "size" />
+        <argument name = "response_param_identity_id_list" c_type = "long **" />
+        <argument name = "response_param_definition_id_list" c_type = "long **" />
+        <argument name = "response_element_count" c_type = "size_t *" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "add_parameter">
+        The addParameter operation allows a consumer to define a single parameter that does not currently exist
+        <argument name = "param_name" c_type = "char *" />
+        <argument name = "param_description" c_type = "char *" />
+        <argument name = "param_raw_type" c_type = "unsigned char" />
+        <argument name = "param_raw_unit" c_type = "char *" />
+        <argument name = "param_generation_enabled" c_type = "bool" />
+        <argument name = "param_report_interval" c_type = "double" />
+        <argument name = "response_param_identity_id" c_type = "long *" />
+        <argument name = "response_param_definition_id" c_type = "long *" />
+        <return type = "integer" />
+    </method>
+
 </class>
