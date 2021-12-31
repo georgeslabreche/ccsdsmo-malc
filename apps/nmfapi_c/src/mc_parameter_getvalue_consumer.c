@@ -572,20 +572,11 @@ mc_parameter_getvalue_consumer_response (void *self, mal_ctx_t *mal_ctx,
         clog_debug(mc_parameter_getvalue_consumer_logger,
             "mc_parameter_getvalue_consumer_response: cleanup\n");
 
-        // Only destroy the mc_parameter_parametervaluedetails_t object if it was initialized
-        if(content)
-        {
-            // This will also destroy f_value object of type mc_parameter_parametervalue_t
-            // by invoking mc_parameter_parametervalue_destroy()
-            mc_parameter_parametervaluedetails_destroy(content);
-        }
-
         // Destroy fields
         if(param_value_details)
         {
             mc_parameter_parametervaluedetails_list_destroy(&param_value_details);
         }
-
     }
 
     // Destroy the MAL decoder cursor
