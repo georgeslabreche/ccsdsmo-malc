@@ -46,7 +46,7 @@ struct _mc_parameter_service_t {
 mc_parameter_getvalue_consumer_t *getvalue_consumer;
 mc_parameter_setvalue_consumer_t *setvalue_consumer;
 mc_parameter_listdefinition_consumer_t *listdefinition_consumer;
-
+mc_parameter_addparameter_consumer_t *addparameter_consumer;
 
 //  --------------------------------------------------------------------------
 //  Create a new mc_parameter_service
@@ -198,7 +198,7 @@ mc_parameter_service_get_definition (mc_parameter_service_t *self, char *param_n
     // The return code
     int rc;
 
-    // Create long list with single element
+    // Create list with single element
     char *param_name_list[] = {param_name};
 
     // The response pointers and element count variable
@@ -326,7 +326,7 @@ mc_parameter_service_get_value (mc_parameter_service_t *self, long param_inst_id
     if (rc < 0)
     {
         // Log the error
-        clog_error(mc_parameter_service_logger, "mc_parameter_service_get_value: error requestion getValue\n");
+        clog_error(mc_parameter_service_logger, "mc_parameter_service_get_value: error requesting getValue\n");
 
         // Return error code
         return rc;
@@ -1327,4 +1327,157 @@ mc_parameter_service_set_value_blob (mc_parameter_service_t *self, long param_in
 
     // Return the return code
     return -1;
+}
+
+
+//  --------------------------------------------------------------------------
+//  The addParameter operation allows a consumer to define one or more parameters that do not currently exist
+
+int
+mc_parameter_service_add_parameter_list (mc_parameter_service_t *self,
+    char **param_name_list, char **param_description_list, unsigned char *param_raw_type_list,
+    char **param_raw_unit_list, bool *param_generation_enabled_list, double *param_report_interval_list, size_t param_list_size,
+    long **response_param_identity_id_list, long **response_param_definition_id_list, size_t *response_element_count)
+{
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_add_parameter_list()\n");
+
+    // The return code
+    int rc;
+
+    // Initialize the consumer context / listening socket
+    nmfapi_util_init_maltcp_ctx(self->hostname, self->consumer_port, &self->mal_ctx);
+
+    // Create the addParameter consumer
+    addparameter_consumer = mc_parameter_addparameter_consumer_new(self->mal_ctx, self->provider_uri);
+
+    // Set the param names MAL message field
+    mc_parameter_addparameter_consumer_set_field_param_name_list(addparameter_consumer, param_name_list);
+
+    // Set the param descriptions MAL message field
+    mc_parameter_addparameter_consumer_set_field_param_description_list(addparameter_consumer, param_description_list);
+
+    // Set the param raw types MAL message field
+    mc_parameter_addparameter_consumer_set_field_param_raw_type_list(addparameter_consumer, param_raw_type_list);
+
+    // Set the param raw units MAL message field
+    mc_parameter_addparameter_consumer_set_field_param_raw_unit_list(addparameter_consumer, param_raw_unit_list);
+
+    // Set the param generation enabled MAL message field
+    mc_parameter_addparameter_consumer_set_field_param_generation_enabled_list(addparameter_consumer, param_generation_enabled_list);
+
+    // Set the param report interval MAL message field
+    mc_parameter_addparameter_consumer_set_field_param_report_interval_list(addparameter_consumer, param_report_interval_list);
+
+    // Set the param list size MAL message field
+    mc_parameter_addparameter_consumer_set_field_param_list_size(addparameter_consumer, param_list_size);
+
+    // Create and initialize the consumer actor
+    mc_parameter_addparameter_consumer_actor_init(addparameter_consumer);
+
+    // Start the request response listener
+    mal_ctx_start(self->mal_ctx);
+
+    // Lock the consumer mutex which has already been locked at the beginning of this function
+    // The initial mutex lock will only be released after the request finalize function has finished executing
+    // We do this so that the response variables can be set and return synchronously
+    mc_parameter_addparameter_consumer_mutex_lock(addparameter_consumer);
+
+    // Set the response pointers
+    *response_param_identity_id_list = mc_parameter_addparameter_consumer_get_response_param_identity_id_list(addparameter_consumer);
+    *response_param_definition_id_list = mc_parameter_addparameter_consumer_get_response_param_definition_id_list(addparameter_consumer);
+    *response_element_count = mc_parameter_addparameter_consumer_get_response_element_count(addparameter_consumer);
+
+    // Set the return code as the error code of the consumer response
+    rc = mc_parameter_addparameter_consumer_get_response_error_code(addparameter_consumer);
+
+    // Unlock the consumer mutex
+    mc_parameter_addparameter_consumer_mutex_unlock(addparameter_consumer);
+
+    // Destroy the getValue consumer
+    mc_parameter_addparameter_consumer_destroy(&addparameter_consumer);
+
+    // Destroy the consumer context / listening socket
+    mal_ctx_destroy(&self->mal_ctx);
+
+    // Return the return code
+    return rc;
+}
+
+//  The addParameter operation for a single parameter
+int
+mc_parameter_service_add_parameter (mc_parameter_service_t *self,
+    char *param_name, char *param_description, unsigned char param_raw_type,
+    char *param_raw_unit, bool param_generation_enabled, double param_report_interval,
+    long *response_param_identity_id, long *response_param_definition_id)
+{
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_add_parameter()\n");
+
+    // The return code
+    int rc;
+
+    // Create param name list with single element
+    char *param_name_list[] = {param_name};
+
+    // Create param description list with single element
+    char *param_description_list[] = {param_description};
+
+    // Create param raw type list with single element
+    unsigned char param_raw_type_list[] = {param_raw_type};
+
+    // Create param raw unit list with single element
+    char *param_raw_unit_list[] = {param_raw_unit};
+
+    // Create param generation_enabled list with single element
+    bool param_generation_enabled_list[] = {param_generation_enabled};
+
+    // Create param report interval list with single element
+    double param_report_interval_list[] = {param_report_interval};
+
+    // The response pointers and element count variable
+    long *response_param_identity_id_list;
+    long *response_param_definition_id_list;
+    size_t response_element_count;
+
+    // Invoke the addParameter function
+    rc = mc_parameter_service_add_parameter_list(self,
+        param_name_list,
+        param_description == NULL ? NULL : param_description_list,
+        param_raw_type_list,
+        param_raw_unit == NULL ? NULL : param_raw_unit_list,
+        param_generation_enabled_list,
+        param_report_interval_list,
+        1,
+        &response_param_identity_id_list, &response_param_definition_id_list, &response_element_count);
+
+    // Error check
+    if (rc < 0)
+    {
+        // Log the error
+        clog_error(mc_parameter_service_logger, "mc_parameter_service_add_parameter: error requesting addParameter\n");
+
+        // Return error code
+        return rc;
+    }
+
+    // Check that element count is as expected
+    if(response_element_count == 1)
+    {
+        *response_param_identity_id = response_param_identity_id_list[0];
+        *response_param_definition_id = response_param_definition_id_list[0];
+    }
+    else
+    {
+        // Log the error
+        clog_error(mc_parameter_service_logger, 
+            "mc_parameter_service_add_parameter: retrieved unexpected element count, expected %d but was %d\n",
+            1, response_element_count);
+
+        // Set the return code to an error value
+        rc = -1;
+    }
+
+    // Return the return code
+    return rc;
 }

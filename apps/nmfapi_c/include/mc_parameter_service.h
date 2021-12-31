@@ -146,6 +146,14 @@ NMFAPI_C_EXPORT int
 NMFAPI_C_EXPORT int
     mc_parameter_service_set_value_blob (mc_parameter_service_t *self, long param_inst_id, char *param_content, size_t param_content_length);
 
+//  The addParameter operation allows a consumer to define a list of parameters that do not currently exist
+NMFAPI_C_EXPORT int
+    mc_parameter_service_add_parameter_list (mc_parameter_service_t *self, char **param_name_list, char **param_description_list, unsigned char *param_raw_type_list, char **param_raw_unit_list, bool *param_generation_enabled_list, double *param_report_interval_list, size_t param_list_size, long **response_param_identity_id_list, long **response_param_definition_id_list, size_t *response_element_count);
+
+//  The addParameter operation allows a consumer to define a single parameter that does not currently exist
+NMFAPI_C_EXPORT int
+    mc_parameter_service_add_parameter (mc_parameter_service_t *self, char *param_name, char *param_description, unsigned char param_raw_type, char *param_raw_unit, bool param_generation_enabled, double param_report_interval, long *response_param_identity_id, long *response_param_definition_id);
+
 //  @end
 
 #ifdef __cplusplus

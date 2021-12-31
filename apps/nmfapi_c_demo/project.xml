@@ -89,7 +89,8 @@
         deployment by the deployment scripts 
     -->
     <main name = "demo_app">Demo App</main>
-    <main name = "demo_getvalue">Demo the getValue interaction</main>
+    <main name = "demo_getvalue">Demo the getValue interaction provided by the Monitor and Control Parameter Service</main>
+    <main name = "demo_addparameter">Demo the addParameter interaction provided by the Monitor and Control Parameter Service</main>
     
     <!-- Targets -->
     <target name = "rpi" />

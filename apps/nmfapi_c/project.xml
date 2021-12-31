@@ -76,6 +76,10 @@
         The consumer class for the setValue operation
     </class>
 
+    <class name = "mc_parameter_addparameter_consumer" selftest = "0" state = "stable">
+        The consumer class for the addParameter operation
+    </class>
+
     <class name = "mc_parameter_listdefinition_consumer" selftest = "0" state = "stable">
         The consumer class for the listDefinition operation
     </class>

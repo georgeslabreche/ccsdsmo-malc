@@ -53,7 +53,7 @@ NMFAPI_C_EXPORT long *
 NMFAPI_C_EXPORT long *
     mc_parameter_listdefinition_consumer_get_response_definition_id_list (mc_parameter_listdefinition_consumer_t *self);
 
-//  Get response variable for number elements
+//  Get response variable for number of elements
 NMFAPI_C_EXPORT size_t
     mc_parameter_listdefinition_consumer_get_response_element_count (mc_parameter_listdefinition_consumer_t *self);
 
