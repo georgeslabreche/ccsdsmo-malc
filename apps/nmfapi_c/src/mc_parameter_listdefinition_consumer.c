@@ -517,13 +517,6 @@ mc_parameter_listdefinition_consumer_response (void *self, mal_ctx_t *mal_ctx,
         clog_debug(mc_parameter_listdefinition_consumer_logger,
             "mc_parameter_listdefinition_consumer_response: cleanup\n");
 
-        // Only destroy the mc_objectinstancepair object if it was initialized
-        // FIXME: mc_objectinstancepair_destroy will be destroyed after calling mc_objectinstancepair_list_destroy
-        if(content)
-        {
-            mc_objectinstancepair_destroy(content);
-        }
-
         // Destroy fields
         if(object_instance_pair_list)
         {
