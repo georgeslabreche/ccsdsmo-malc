@@ -80,6 +80,10 @@
         The consumer class for the addParameter operation
     </class>
 
+    <class name = "mc_parameter_removeparameter_consumer" selftest = "0" state = "stable">
+        The consumer class for the removeParameter operation
+    </class>
+
     <class name = "mc_parameter_listdefinition_consumer" selftest = "0" state = "stable">
         The consumer class for the listDefinition operation
     </class>

@@ -54,6 +54,7 @@ nmf_api_set_global_log_level (int level)
     mc_parameter_getvalue_consumer_set_log_level(level);
     mc_parameter_setvalue_consumer_set_log_level(level);
     mc_parameter_addparameter_consumer_set_log_level(level);
+    mc_parameter_removeparameter_consumer_set_log_level(level);
 }
 
 

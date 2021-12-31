@@ -1,0 +1,76 @@
+<class name = "mc_parameter_removeparameter_consumer" selftest="0">
+    The submit consumer for the removeParameter operation
+    The removeParameter operation allows a consumer to remove one or more parameters from the list of parameters supported by the parameter provider
+
+    <constant name = "uri" value = "mc/parameter/consumer/removeParameter" type="string">The consumer URI for the removeParameter operation</constant>
+
+    <constructor>
+        Instanciate a consumer object for the removeParameter operation
+        <argument name = "mal_ctx" c_type = "mal_ctx_t *" />
+        <argument name = "provider_uri" c_type = "mal_uri_t *" />
+    </constructor>
+
+    <!--
+        Deallocation functions
+    -->
+
+    <destructor>
+        The destructor
+    </destructor>
+
+    <!--
+        Mutex operators
+    -->
+
+    <method name = "mutex_lock">
+        Lock the mutex
+        A mutex is used to force a synchronous response despite the request being an asynchronous operation
+    </method>
+
+    <method name = "mutex_unlock">
+        Unlock the mutex
+        A mutex is used to force a synchronous response despite the request being an asynchronous operation
+    </method>
+
+    <!--
+        MAL actor function
+    -->
+    
+    <method name = "actor_init">
+        Create and initialize the actor
+    </method>
+
+    <!-- 
+        Getters for response variables
+    -->
+
+    <method name = "get_response_error_code">
+        Get error code from processing the response
+        <return type = "integer" />
+    </method>
+
+    <!--
+        Getters and Setters for class variables
+    -->
+
+    <method name = "get_field_param_identiy_id_list">
+        Get the param instance identity ids MAL message field
+        <return c_type = "long *" />
+    </method>
+
+    <method name = "set_field_param_identity_id_list">
+        Set the param instance identity ids MAL message field
+        <argument name = "param_inst_id_list" c_type = "long *" />
+    </method>
+
+    <method name = "get_field_param_identity_id_list_size">
+        Get the number of params MAL message field
+        <return type = "size" />
+    </method>
+
+    <method name = "set_field_param_identity_id_list_size">
+        Set the number of params MAL message field
+        <argument name = "param_identity_id_list_size" type = "size" />
+    </method>
+
+</class>

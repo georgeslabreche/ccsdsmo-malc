@@ -47,6 +47,7 @@ mc_parameter_getvalue_consumer_t *getvalue_consumer;
 mc_parameter_setvalue_consumer_t *setvalue_consumer;
 mc_parameter_listdefinition_consumer_t *listdefinition_consumer;
 mc_parameter_addparameter_consumer_t *addparameter_consumer;
+mc_parameter_removeparameter_consumer_t *removeparameter_consumer;
 
 //  --------------------------------------------------------------------------
 //  Create a new mc_parameter_service
@@ -86,8 +87,11 @@ mc_parameter_service_destroy (mc_parameter_service_t **self_p)
 
         // Free class properties here
 
+        //  --------------------------------------------------------------------------
+        //  Destroy the consumers
+
         // Destroy the listDefinition consumer
-        if(listdefinition_consumer) // FIXME: will response be cleared because consumer gets destroyed in mc_parameter_service_list_definition?
+        if(listdefinition_consumer)
         {
             // Clear the response variables
             mc_parameter_listdefinition_consumer_response_clear(listdefinition_consumer);
@@ -97,7 +101,7 @@ mc_parameter_service_destroy (mc_parameter_service_t **self_p)
         }
 
         // Destroy the getValue consumer
-        if(getvalue_consumer) // FIXME: will response be cleared because consumer gets destroyed in mc_parameter_service_get_value_list?
+        if(getvalue_consumer)
         {
             // Clear the response variables
             mc_parameter_getvalue_consumer_response_clear(getvalue_consumer);
@@ -106,12 +110,35 @@ mc_parameter_service_destroy (mc_parameter_service_t **self_p)
             mc_parameter_getvalue_consumer_destroy(&getvalue_consumer);
         }
 
-        // Destroy the getValue consumer
-        if(setvalue_consumer) // FIXME: will response be cleared because consumer gets destroyed in mc_parameter_service_get_value_list?
+        // Destroy the setValue consumer
+        if(setvalue_consumer)
         {
             // Destroy the consumer
             mc_parameter_setvalue_consumer_destroy(&setvalue_consumer);
         }
+
+        // Destroy the addParameter consumer
+        if(addparameter_consumer)
+        {
+            // Clear the response variables
+            mc_parameter_addparameter_consumer_response_clear(addparameter_consumer);
+
+            // Destroy the consumer
+            mc_parameter_addparameter_consumer_destroy(&addparameter_consumer);
+        }
+        
+        // Destroy the removeParameter consumer
+        if(removeparameter_consumer)
+        {
+            // Destroy the consumer
+            mc_parameter_removeparameter_consumer_destroy(&removeparameter_consumer);
+        }
+
+
+        //  --------------------------------------------------------------------------
+        // Destroy the response objects
+        // FIXME: destroy the responses separately from the consumer (alternatively, refactor a bit)
+        
         
         // Destroy the context
         if(self->mal_ctx)
@@ -174,7 +201,7 @@ mc_parameter_service_list_definition (mc_parameter_service_t *self, char **param
     // Unlock the consumer mutex
     mc_parameter_listdefinition_consumer_mutex_unlock(listdefinition_consumer);
 
-    // Destroy the getValue consumer
+    // Destroy the listDefinition consumer
     mc_parameter_listdefinition_consumer_destroy(&listdefinition_consumer);
 
     // Destroy the consumer context / listening socket
@@ -1477,6 +1504,78 @@ mc_parameter_service_add_parameter (mc_parameter_service_t *self,
         // Set the return code to an error value
         rc = -1;
     }
+
+    // Return the return code
+    return rc;
+}
+
+
+//  --------------------------------------------------------------------------
+//  The removeParameter operation allows a consumer to remove one or more parameters from the list of parameters supported by the parameter provider
+
+int
+mc_parameter_service_remove_parameter_list (mc_parameter_service_t *self, long *param_identity_id_list, size_t param_identity_id_list_size)
+{
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_remove_parameter_list()\n");
+
+    // The return code
+    int rc;
+
+    // Initialize the consumer context / listening socket
+    nmfapi_util_init_maltcp_ctx(self->hostname, self->consumer_port, &self->mal_ctx);
+
+    // Create the removeParameter consumer
+    removeparameter_consumer = mc_parameter_removeparameter_consumer_new(self->mal_ctx, self->provider_uri);
+
+    // Set the param names MAL message field
+    mc_parameter_removeparameter_consumer_set_field_param_identity_id_list(removeparameter_consumer, param_identity_id_list);
+
+    // Set the param size MAL message field
+    mc_parameter_removeparameter_consumer_set_field_param_identity_id_list_size(removeparameter_consumer, param_identity_id_list_size);
+
+    // Create and initialize the consumer actor
+    mc_parameter_removeparameter_consumer_actor_init(removeparameter_consumer);
+
+    // Start the request response listener
+    mal_ctx_start(self->mal_ctx);
+
+    // Lock the consumer mutex which has already been locked at the beginning of this function
+    // The initial mutex lock will only be released after the request finalize function has finished executing
+    // We do this so that the response variables can be set and return synchronously
+    mc_parameter_removeparameter_consumer_mutex_lock(removeparameter_consumer);
+
+    // Set the return code as the error code of the consumer response
+    rc = mc_parameter_removeparameter_consumer_get_response_error_code(removeparameter_consumer);
+
+    // Unlock the consumer mutex
+    mc_parameter_removeparameter_consumer_mutex_unlock(removeparameter_consumer);
+
+    // Destroy the removeParameter consumer
+    mc_parameter_removeparameter_consumer_destroy(&removeparameter_consumer);
+
+    // Destroy the consumer context / listening socket
+    mal_ctx_destroy(&self->mal_ctx);
+
+    // Return the return code
+    return rc;
+}
+
+//  The removeParameter operation allows a consumer to remove one or more parameters from the list of parameters supported by the parameter provider
+int
+mc_parameter_service_remove_parameter (mc_parameter_service_t *self, long param_identity_id)
+{
+    // Log debug
+    clog_debug(mc_parameter_service_logger, "mc_parameter_service_remove_parameter()\n");
+
+    // The return code
+    int rc;
+
+    // Create param identity id list with single element
+    long param_identity_id_list[] = {param_identity_id};
+
+    // Invoke the removeParameter function
+    rc = mc_parameter_service_remove_parameter_list (self, param_identity_id_list, 1);
 
     // Return the return code
     return rc;

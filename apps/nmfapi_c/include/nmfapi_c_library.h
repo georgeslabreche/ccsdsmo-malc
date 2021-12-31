@@ -83,6 +83,8 @@ typedef struct _mc_parameter_setvalue_consumer_t mc_parameter_setvalue_consumer_
 #define MC_PARAMETER_SETVALUE_CONSUMER_T_DEFINED
 typedef struct _mc_parameter_addparameter_consumer_t mc_parameter_addparameter_consumer_t;
 #define MC_PARAMETER_ADDPARAMETER_CONSUMER_T_DEFINED
+typedef struct _mc_parameter_removeparameter_consumer_t mc_parameter_removeparameter_consumer_t;
+#define MC_PARAMETER_REMOVEPARAMETER_CONSUMER_T_DEFINED
 typedef struct _mc_parameter_listdefinition_consumer_t mc_parameter_listdefinition_consumer_t;
 #define MC_PARAMETER_LISTDEFINITION_CONSUMER_T_DEFINED
 typedef struct _sm_appslauncher_service_t sm_appslauncher_service_t;
@@ -100,6 +102,7 @@ typedef struct _sm_appslauncher_listapp_consumer_t sm_appslauncher_listapp_consu
 #include "mc_parameter_getvalue_consumer.h"
 #include "mc_parameter_setvalue_consumer.h"
 #include "mc_parameter_addparameter_consumer.h"
+#include "mc_parameter_removeparameter_consumer.h"
 #include "mc_parameter_listdefinition_consumer.h"
 #include "sm_appslauncher_service.h"
 #include "sm_appslauncher_listapp_consumer.h"

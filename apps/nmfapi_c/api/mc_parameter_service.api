@@ -262,4 +262,17 @@
         <return type = "integer" />
     </method>
 
+    <method name = "remove_parameter_list">
+        The removeParameter operation allows a consumer to remove one or more parameters from the list of parameters supported by the parameter provider
+        <argument name = "param_identity_id_list" c_type = "long *" />
+        <argument name = "param_identity_id_list_size" type = "size" />
+        <return type = "integer" />
+    </method>
+
+    <method name = "remove_parameter">
+        The removeParameter operation allows a consumer to remove one or more parameters from the list of parameters supported by the parameter provider
+        <argument name = "param_identity_id" c_type = "long" />
+        <return type = "integer" />
+    </method>
+
 </class>
