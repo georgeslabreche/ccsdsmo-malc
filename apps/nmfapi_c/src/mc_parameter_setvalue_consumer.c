@@ -247,6 +247,10 @@ mc_parameter_setvalue_consumer_initialize (void *self, mal_actor_t *mal_actor)
         clog_error(mc_parameter_setvalue_consumer_logger,
             "mc_parameter_setvalue_consumer_initialize: error register consumer submit handler\n");
 
+        // Terminate the actor thread or else z_poller will wait indefinitely
+        // This will trigger the finalize function
+        mal_actor_term(mal_actor);
+
         // Return the error code
         return rc;
     }
@@ -319,6 +323,10 @@ mc_parameter_setvalue_consumer_initialize (void *self, mal_actor_t *mal_actor)
         // Destroy the field
         mc_parameter_parameterrawvalue_list_destroy(&param_raw_value_list);
 
+        // Terminate the actor thread or else z_poller will wait indefinitely
+        // This will trigger the finalize function
+        mal_actor_term(mal_actor);
+
         // Return the error code
         return rc;
     }
@@ -355,6 +363,10 @@ mc_parameter_setvalue_consumer_initialize (void *self, mal_actor_t *mal_actor)
 
         // Destroy the field
         mc_parameter_parameterrawvalue_list_destroy(&param_raw_value_list);
+
+        // Terminate the actor thread or else z_poller will wait indefinitely
+        // This will trigger the finalize function
+        mal_actor_term(mal_actor);
 
         // Return the error code
         return rc;

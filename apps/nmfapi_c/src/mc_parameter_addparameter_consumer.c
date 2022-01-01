@@ -345,6 +345,10 @@ mc_parameter_addparameter_consumer_initialize (void *self, mal_actor_t *mal_acto
         clog_error(mc_parameter_addparameter_consumer_logger,
             "mc_parameter_addparameter_consumer_initialize: error register consumer request handler\n");
 
+        // Terminate the actor thread or else z_poller will wait indefinitely
+        // This will trigger the finalize function
+        mal_actor_term(mal_actor);
+
         // Return the error code
         return rc;
     }
@@ -446,6 +450,10 @@ mc_parameter_addparameter_consumer_initialize (void *self, mal_actor_t *mal_acto
         // Destroy the field
         mc_parameter_parametercreationrequest_list_destroy(&param_creation_req_list);
 
+        // Terminate the actor thread or else z_poller will wait indefinitely
+        // This will trigger the finalize function
+        mal_actor_term(mal_actor);
+
         // Return the error code
         return rc;
     }
@@ -484,6 +492,10 @@ mc_parameter_addparameter_consumer_initialize (void *self, mal_actor_t *mal_acto
 
         // Destroy the field
         mc_parameter_parametercreationrequest_list_destroy(&param_creation_req_list);
+
+        // Terminate the actor thread or else z_poller will wait indefinitely
+        // This will trigger the finalize function
+        mal_actor_term(mal_actor);
 
         // Return the error code
         return rc;

@@ -223,6 +223,10 @@ common_directory_lookupprovider_consumer_initialize (void *self, mal_actor_t *ma
         clog_error(common_directory_lookupprovider_consumer_logger,
             "common_directory_lookupprovider_consumer_initialize: error register consumer request handler\n");
 
+        // Terminate the actor thread or else z_poller will wait indefinitely
+        // This will trigger the finalize function
+        mal_actor_term(mal_actor);
+
         // Return the error code
         return rc;
     }
@@ -248,6 +252,10 @@ common_directory_lookupprovider_consumer_initialize (void *self, mal_actor_t *ma
 
         // Destroy the MAL encoder cursor
         mal_encoder_cursor_destroy(encoder, cursor);
+
+        // Terminate the actor thread or else z_poller will wait indefinitely
+        // This will trigger the finalize function
+        mal_actor_term(mal_actor);
 
         // Return the error code
         return rc;
@@ -282,6 +290,10 @@ common_directory_lookupprovider_consumer_initialize (void *self, mal_actor_t *ma
 
         // Destroy the MAL encoder cursor
         mal_encoder_cursor_destroy(encoder, cursor);
+
+        // Terminate the actor thread or else z_poller will wait indefinitely
+        // This will trigger the finalize function
+        mal_actor_term(mal_actor);
 
         // Return the error code
         return rc;
