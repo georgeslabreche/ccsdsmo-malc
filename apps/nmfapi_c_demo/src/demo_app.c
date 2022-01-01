@@ -234,6 +234,14 @@ demo_appslauncher_service_list_app()
         printf("App #%ld running status is %d\n", response_apps_inst_id_list[i], response_apps_inst_running_list[i]);
     }
 
+    // Deallocate memory
+    free(response_apps_inst_id_list);
+    response_apps_inst_id_list = NULL;
+
+    // Deallocate memory
+    free(response_apps_inst_running_list);
+    response_apps_inst_running_list = NULL;
+
     // End demo
     return 0;
 }
@@ -336,13 +344,13 @@ demo_parameter_service_get_value_list()
     size_t param_name_list_size = sizeof(param_name_list) / sizeof(param_name_list[0]);
 
     // Response variable for param inst and def ids as well as element count
-    long *response_param_inst_ids;
+    long *response_param_inst_id_list;
     long *response_param_def_id_list;
-    size_t response_param_inst_ids_size;
+    size_t response_param_inst_id_list_size;
 
     // Send the listDefinition request with the response variable pointers
     rc = mc_parameter_service_list_definition(parameter_service, param_name_list, param_name_list_size,
-        &response_param_inst_ids, &response_param_def_id_list, &response_param_inst_ids_size);
+        &response_param_inst_id_list, &response_param_def_id_list, &response_param_inst_id_list_size);
 
     // Error check
     if(rc < 0)
@@ -355,23 +363,23 @@ demo_parameter_service_get_value_list()
     }
 
     // Size check
-    if(param_name_list_size != response_param_inst_ids_size)
+    if(param_name_list_size != response_param_inst_id_list_size)
     {
         // Print error message
-        printf("Did not fetch the expected number of parameter definitions: Expected %lu but was %lu\n", param_name_list_size, response_param_inst_ids_size);
+        printf("Did not fetch the expected number of parameter definitions: Expected %lu but was %lu\n", param_name_list_size, response_param_inst_id_list_size);
 
         // Return the error code
         return rc;
     }
 
     // Response variable pointers and element count
-    union mal_attribute_t *response_mal_attributes;
-    unsigned char *response_mal_attributes_tags;
+    union mal_attribute_t *response_mal_attribute_list;
+    unsigned char *response_mal_attributes_tag_list;
     size_t response_mal_attributes_count;
 
     // Send the getValue request with the response variable pointers
-    rc = mc_parameter_service_get_value_list(parameter_service, response_param_inst_ids, response_param_inst_ids_size,
-        &response_mal_attributes, &response_mal_attributes_tags, &response_mal_attributes_count);
+    rc = mc_parameter_service_get_value_list(parameter_service, response_param_inst_id_list, response_param_inst_id_list_size,
+        &response_mal_attribute_list, &response_mal_attributes_tag_list, &response_mal_attributes_count);
 
     // Error check
     if(rc < 0)
@@ -384,10 +392,10 @@ demo_parameter_service_get_value_list()
     }
 
     // Size check
-    if(response_param_inst_ids_size != response_mal_attributes_count)
+    if(response_param_inst_id_list_size != response_mal_attributes_count)
     {
         // Print error message
-        printf("Did not fetch the expected number of parameter values: Expected %lu but was %lu\n", response_param_inst_ids_size, response_mal_attributes_count);
+        printf("Did not fetch the expected number of parameter values: Expected %lu but was %lu\n", response_param_inst_id_list_size, response_mal_attributes_count);
 
         // Return the error code
         return rc;
@@ -402,9 +410,9 @@ demo_parameter_service_get_value_list()
     for(size_t i = 0; i < response_mal_attributes_count; i++)
     {
         // Set the fetched attribute variables
-        param_id = response_param_inst_ids[i];
-        tag = response_mal_attributes_tags[i];
-        attr = response_mal_attributes[i];
+        param_id = response_param_inst_id_list[i];
+        tag = response_mal_attributes_tag_list[i];
+        attr = response_mal_attribute_list[i];
 
         // Fetch the parameter value based on the parameter type indicated by the attribute tag
         switch(tag)
@@ -476,6 +484,23 @@ demo_parameter_service_get_value_list()
         // Here we just call the destructor everytime, no harm done.
         mal_attribute_destroy(&attr, tag);
     }
+
+
+    // Deallocate memory
+    free(response_param_inst_id_list);
+    response_param_inst_id_list = NULL;
+
+    // Deallocate memory
+    free(response_param_def_id_list);
+    response_param_def_id_list = NULL;
+
+    // Deallocate memory
+    free(response_mal_attribute_list);
+    response_mal_attribute_list = NULL;
+
+    // Deallocate memory
+    free(response_mal_attributes_tag_list);
+    response_mal_attributes_tag_list = NULL;
 
     // End demo
     return 0;

@@ -10,6 +10,9 @@
 @header
     common_directory_service - The Directory service allows service providers to publish information about which services
     they provide and consumersto discover service provider address and capability information
+
+    TODO: This Service class is not fully implemented
+          See Issue #29: https://github.com/tanagraspace/ccsdsmo-malc-sepp-apps/issues/29
 @discuss
 @end
 */
@@ -84,7 +87,7 @@ common_directory_service_destroy (common_directory_service_t **self_p)
         // Free class properties here
 
         // Destroy the lookupProvider consumer
-        if(lookup_provider_consumer)  // FIXME: will response be cleared because consumer gets destroyed in interaction function?
+        if(lookup_provider_consumer)
         {
             // Destroy the consumer
             common_directory_lookupprovider_consumer_destroy(&lookup_provider_consumer);

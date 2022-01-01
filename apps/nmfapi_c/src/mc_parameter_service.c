@@ -133,12 +133,6 @@ mc_parameter_service_destroy (mc_parameter_service_t **self_p)
             // Destroy the consumer
             mc_parameter_removeparameter_consumer_destroy(&removeparameter_consumer);
         }
-
-
-        //  --------------------------------------------------------------------------
-        // Destroy the response objects
-        // FIXME: destroy the responses separately from the consumer (alternatively, refactor a bit)
-        
         
         // Destroy the context
         if(self->mal_ctx)
@@ -263,6 +257,14 @@ mc_parameter_service_get_definition (mc_parameter_service_t *self, char *param_n
         // Set the return code to an error value
         rc = -1;
     }
+
+    // Deallocate memory
+    free(response_identity_id_list);
+    response_identity_id_list = NULL;
+
+    // Deallocate memory
+    free(response_definition_id_list);
+    response_definition_id_list = NULL;
 
     // Return the return code
     return rc;
@@ -389,6 +391,20 @@ mc_parameter_service_get_value (mc_parameter_service_t *self, long param_inst_id
         rc = -1;
     }
 
+    // Deallocate memory
+    if(response_mal_attribute_list)
+    {
+        free(response_mal_attribute_list);
+        response_mal_attribute_list = NULL;
+    }
+
+    // Deallocate memory
+    if(response_mal_attribute_tag_list)
+    {
+        free(response_mal_attribute_tag_list);
+        response_mal_attribute_tag_list = NULL;
+    }
+
     // Return the return code
     return rc;
 }
@@ -429,7 +445,7 @@ mc_parameter_service_get_value_blob (mc_parameter_service_t *self, long param_in
             "mc_parameter_service_get_value_blob: retrieved unexpected tag value, expected %d but was %d\n",
             MAL_BLOB_ATTRIBUTE_TAG, response_mal_attribute_tag);
 
-        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // Call the MAL attribute destructor in case erroneously fetched a String object
         // String objects are attributes of type: Blob, Identifier, String, and URI
         mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
         
@@ -477,7 +493,7 @@ mc_parameter_service_get_value_boolean (mc_parameter_service_t *self, long param
             "mc_parameter_service_get_value_boolean: retrieved unexpected tag value, expected %d but was %d\n",
             MAL_BOOLEAN_ATTRIBUTE_TAG, response_mal_attribute_tag);
 
-        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // Call the MAL attribute destructor in case erroneously fetched a String object
         // String objects are attributes of type: Blob, Identifier, String, and URI
         mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
         
@@ -525,7 +541,7 @@ mc_parameter_service_get_value_duration (mc_parameter_service_t *self, long para
             "mc_parameter_service_get_value_duration: retrieved unexpected tag value, expected %d but was %d\n",
             MAL_DURATION_ATTRIBUTE_TAG, response_mal_attribute_tag);
 
-        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // Call the MAL attribute destructor in case erroneously fetched a String object
         // String objects are attributes of type: Blob, Identifier, String, and URI
         mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
         
@@ -573,7 +589,7 @@ mc_parameter_service_get_value_float (mc_parameter_service_t *self, long param_i
             "mc_parameter_service_get_value_float: retrieved unexpected tag value, expected %d but was %d\n",
             MAL_FLOAT_ATTRIBUTE_TAG, response_mal_attribute_tag);
 
-        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // Call the MAL attribute destructor in case erroneously fetched a String object
         // String objects are attributes of type: Blob, Identifier, String, and URI
         mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
         
@@ -621,7 +637,7 @@ mc_parameter_service_get_value_double (mc_parameter_service_t *self, long param_
             "mc_parameter_service_get_value_double: retrieved unexpected tag value, expected %d but was %d\n",
             MAL_DOUBLE_ATTRIBUTE_TAG, response_mal_attribute_tag);
 
-        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // Call the MAL attribute destructor in case erroneously fetched a String object
         // String objects are attributes of type: Blob, Identifier, String, and URI
         mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
         
@@ -669,7 +685,7 @@ mc_parameter_service_get_value_identifier (mc_parameter_service_t *self, long pa
             "mc_parameter_service_get_value_identifier: retrieved unexpected tag value, expected %d but was %d\n",
             MAL_IDENTIFIER_ATTRIBUTE_TAG, response_mal_attribute_tag);
 
-        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // Call the MAL attribute destructor in case erroneously fetched a String object
         // String objects are attributes of type: Blob, Identifier, String, and URI
         mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
         
@@ -717,7 +733,7 @@ mc_parameter_service_get_value_octet (mc_parameter_service_t *self, long param_i
             "mc_parameter_service_get_value_octet: retrieved unexpected tag value, expected %d but was %d\n",
             MAL_OCTET_ATTRIBUTE_TAG, response_mal_attribute_tag);
 
-        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // Call the MAL attribute destructor in case erroneously fetched a String object
         // String objects are attributes of type: Blob, Identifier, String, and URI
         mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
         
@@ -765,7 +781,7 @@ mc_parameter_service_get_value_uoctet (mc_parameter_service_t *self, long param_
             "mc_parameter_service_get_value_uoctet: retrieved unexpected tag value, expected %d but was %d\n",
             MAL_UOCTET_ATTRIBUTE_TAG, response_mal_attribute_tag);
 
-        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // Call the MAL attribute destructor in case erroneously fetched a String object
         // String objects are attributes of type: Blob, Identifier, String, and URI
         mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
         
@@ -813,7 +829,7 @@ mc_parameter_service_get_value_short (mc_parameter_service_t *self, long param_i
             "mc_parameter_service_get_value_short: retrieved unexpected tag value, expected %d but was %d\n",
             MAL_SHORT_ATTRIBUTE_TAG, response_mal_attribute_tag);
 
-        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // Call the MAL attribute destructor in case erroneously fetched a String object
         // String objects are attributes of type: Blob, Identifier, String, and URI
         mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
         
@@ -861,7 +877,7 @@ mc_parameter_service_get_value_ushort (mc_parameter_service_t *self, long param_
             "mc_parameter_service_get_value_ushort: retrieved unexpected tag value, expected %d but was %d\n",
             MAL_USHORT_ATTRIBUTE_TAG, response_mal_attribute_tag);
 
-        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // Call the MAL attribute destructor in case erroneously fetched a String object
         // String objects are attributes of type: Blob, Identifier, String, and URI
         mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
         
@@ -909,7 +925,7 @@ mc_parameter_service_get_value_integer (mc_parameter_service_t *self, long param
             "mc_parameter_service_get_value_integer: retrieved unexpected tag value, expected %d but was %d\n",
             MAL_INTEGER_ATTRIBUTE_TAG, response_mal_attribute_tag);
 
-        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // Call the MAL attribute destructor in case erroneously fetched a String object
         // String objects are attributes of type: Blob, Identifier, String, and URI
         mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
         
@@ -957,7 +973,7 @@ mc_parameter_service_get_value_uinteger (mc_parameter_service_t *self, long para
             "mc_parameter_service_get_value_uinteger: retrieved unexpected tag value, expected %d but was %d\n",
             MAL_UINTEGER_ATTRIBUTE_TAG, response_mal_attribute_tag);
 
-        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // Call the MAL attribute destructor in case erroneously fetched a String object
         // String objects are attributes of type: Blob, Identifier, String, and URI
         mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
         
@@ -1005,7 +1021,7 @@ mc_parameter_service_get_value_long (mc_parameter_service_t *self, long param_in
             "mc_parameter_service_get_value_long: retrieved unexpected tag value, expected %d but was %d\n",
             MAL_LONG_ATTRIBUTE_TAG, response_mal_attribute_tag);
 
-        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // Call the MAL attribute destructor in case erroneously fetched a String object
         // String objects are attributes of type: Blob, Identifier, String, and URI
         mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
         
@@ -1053,7 +1069,7 @@ mc_parameter_service_get_value_ulong (mc_parameter_service_t *self, long param_i
             "mc_parameter_service_get_value_ulong: retrieved unexpected tag value, expected %d but was %d\n",
             MAL_ULONG_ATTRIBUTE_TAG, response_mal_attribute_tag);
 
-        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // Call the MAL attribute destructor in case erroneously fetched a String object
         // String objects are attributes of type: Blob, Identifier, String, and URI
         mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
         
@@ -1157,7 +1173,7 @@ mc_parameter_service_get_value_time (mc_parameter_service_t *self, long param_in
             "mc_parameter_service_get_value_time: retrieved unexpected tag value, expected %d but was %d\n",
             MAL_TIME_ATTRIBUTE_TAG, response_mal_attribute_tag);
 
-        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // Call the MAL attribute destructor in case erroneously fetched a String object
         // String objects are attributes of type: Blob, Identifier, String, and URI
         mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
         
@@ -1205,7 +1221,7 @@ mc_parameter_service_get_value_finetime (mc_parameter_service_t *self, long para
             "mc_parameter_service_get_value_finetime: retrieved unexpected tag value, expected %d but was %d\n",
             MAL_FINETIME_ATTRIBUTE_TAG, response_mal_attribute_tag);
 
-        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // Call the MAL attribute destructor in case erroneously fetched a String object
         // String objects are attributes of type: Blob, Identifier, String, and URI
         mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
         
@@ -1253,7 +1269,7 @@ mc_parameter_service_get_value_uri (mc_parameter_service_t *self, long param_ins
             "mc_parameter_service_get_value_uri: retrieved unexpected tag value, expected %d but was %d\n",
             MAL_URI_ATTRIBUTE_TAG, response_mal_attribute_tag);
 
-        // Call the MAL attribute destructor in case the erroneously fetched a String object
+        // Call the MAL attribute destructor in case erroneously fetched a String object
         // String objects are attributes of type: Blob, Identifier, String, and URI
         mal_attribute_destroy(&response_mal_attribute, response_mal_attribute_tag);
         
@@ -1421,7 +1437,7 @@ mc_parameter_service_add_parameter_list (mc_parameter_service_t *self,
     // Unlock the consumer mutex
     mc_parameter_addparameter_consumer_mutex_unlock(addparameter_consumer);
 
-    // Destroy the getValue consumer
+    // Destroy the addParameter consumer
     mc_parameter_addparameter_consumer_destroy(&addparameter_consumer);
 
     // Destroy the consumer context / listening socket
@@ -1504,6 +1520,14 @@ mc_parameter_service_add_parameter (mc_parameter_service_t *self,
         // Set the return code to an error value
         rc = -1;
     }
+
+    // Deallocate memory
+    free(response_param_identity_id_list);
+    response_param_identity_id_list = NULL;
+
+    // Deallocate memory
+    free(response_param_definition_id_list);
+    response_param_definition_id_list = NULL;
 
     // Return the return code
     return rc;

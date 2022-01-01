@@ -83,7 +83,7 @@ sm_appslauncher_service_destroy (sm_appslauncher_service_t **self_p)
         // Free class properties here
 
         // Destroy the listApp consumer
-        if(listapp_consumer) // FIXME: will response be cleared because consumer gets destroyed in sm_appslauncher_service_list_app?
+        if(listapp_consumer)
         {
             // Clear the response variables
             sm_appslauncher_listapp_consumer_response_clear(listapp_consumer);
