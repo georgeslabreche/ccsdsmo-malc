@@ -141,13 +141,13 @@ int main (int argc, char *argv [])
     mc_parameter_service_t *parameter_service = nmf_api_get_mc_parameter_service(nmf_api);
 
     /* response variable for param inst and def ids as well as element count */
-    long *response_param_inst_ids;
+    long *response_param_inst_id_list;
     long *response_param_def_id_list;
-    size_t response_param_inst_ids_size;
+    size_t response_param_inst_id_list_size;
 
     /* send the listDefinition request with the response variable pointers */
     rc = mc_parameter_service_list_definition(parameter_service, param_name_list, param_name_list_size,
-        &response_param_inst_ids, &response_param_def_id_list, &response_param_inst_ids_size);
+        &response_param_inst_id_list, &response_param_def_id_list, &response_param_inst_id_list_size);
 
     /* error check */
     if(rc < 0)
@@ -160,10 +160,10 @@ int main (int argc, char *argv [])
     }
 
     /* size check */
-    if(param_name_list_size != response_param_inst_ids_size)
+    if(param_name_list_size != response_param_inst_id_list_size)
     {
         /* print error message */
-        printf("Did not fetch the expected number of parameter definitions: Expected %lu but was %lu\n", param_name_list_size, response_param_inst_ids_size);
+        printf("Did not fetch the expected number of parameter definitions: Expected %lu but was %lu\n", param_name_list_size, response_param_inst_id_list_size);
 
         /* return the error code */
         return rc;
@@ -173,7 +173,7 @@ int main (int argc, char *argv [])
     for(size_t i = 0; i < param_name_list_size; i++)
     {
         printf("\t- Parameter %s has identity id %ld and definition id %ld\n",
-            param_name_list[i], response_param_inst_ids[i], response_param_def_id_list[i]);
+            param_name_list[i], response_param_inst_id_list[i], response_param_def_id_list[i]);
     }
 
 
@@ -184,8 +184,8 @@ int main (int argc, char *argv [])
     printf("\nTriggering the getValue interaction to fetch parameter values\n");
 
     /* response variable pointers and element  */
-    union mal_attribute_t *response_mal_attributes;
-    unsigned char *response_mal_attributes_tags;
+    union mal_attribute_t *response_mal_attribute_list;
+    unsigned char *response_mal_attributes_tag_list;
     size_t response_mal_attributes_count;
 
     /** 
@@ -198,14 +198,14 @@ int main (int argc, char *argv [])
      * 
      * we do this to test if aggregation building breaks past a certain threshold.
      */
-    for(size_t param_inst_ids_size = 1; param_inst_ids_size <= response_param_inst_ids_size; param_inst_ids_size++)
+    for(size_t param_inst_ids_size = 1; param_inst_ids_size <= response_param_inst_id_list_size; param_inst_ids_size++)
     {
         /* verbosity */
         printf("\nFetching values for %ld parameters:\n", param_inst_ids_size);
 
         /* Send the getValue request with the response variable pointers */
-        rc = mc_parameter_service_get_value_list(parameter_service, response_param_inst_ids, param_inst_ids_size,
-            &response_mal_attributes, &response_mal_attributes_tags, &response_mal_attributes_count);
+        rc = mc_parameter_service_get_value_list(parameter_service, response_param_inst_id_list, param_inst_ids_size,
+            &response_mal_attribute_list, &response_mal_attributes_tag_list, &response_mal_attributes_count);
 
         /* error check */
         if(rc < 0)
@@ -229,6 +229,7 @@ int main (int argc, char *argv [])
 
         /* variables used to store and print responses */
         long param_id;
+        long param_def_id;
         char tag;
         union mal_attribute_t attr;
 
@@ -236,9 +237,10 @@ int main (int argc, char *argv [])
         for(size_t i = 0; i < response_mal_attributes_count; i++)
         {
             // Set the fetched attribute variables
-            param_id = response_param_inst_ids[i];
-            tag = response_mal_attributes_tags[i];
-            attr = response_mal_attributes[i];
+            param_id = response_param_inst_id_list[i];
+            param_def_id = response_param_def_id_list[i];
+            tag = response_mal_attributes_tag_list[i];
+            attr = response_mal_attribute_list[i];
 
             printf("\t- ");
 
@@ -246,64 +248,64 @@ int main (int argc, char *argv [])
             switch(tag)
             {
                 case MAL_IDENTIFIER_ATTRIBUTE_TAG:
-                    printf("Parameter %s has id %ld and is an Identifier: %s\n", param_name_list[i], param_id, attr.identifier_value);
+                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is an Identifier: %s\n", param_name_list[i], param_id, param_def_id, attr.identifier_value);
                     break;
 
                 case MAL_STRING_ATTRIBUTE_TAG:
-                    printf("Parameter %s has id %ld and is a String: %s\n", param_name_list[i], param_id, attr.string_value);
+                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a String: %s\n", param_name_list[i], param_id, param_def_id, attr.string_value);
                     break;
 
                 case MAL_URI_ATTRIBUTE_TAG:
-                    printf("Parameter %s has id %ld and is a URI: %s\n", param_name_list[i], param_id, attr.uri_value);
+                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a URI: %s\n", param_name_list[i], param_id, param_def_id, attr.uri_value);
                     break;
 
                 case MAL_BOOLEAN_ATTRIBUTE_TAG:
-                    printf("Parameter %s has id %ld and is a Boolean: %d\n", param_name_list[i], param_id, attr.boolean_value);
+                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a Boolean: %d\n", param_name_list[i], param_id, param_def_id, attr.boolean_value);
                     break;
 
                 case MAL_FLOAT_ATTRIBUTE_TAG:
-                    printf("Parameter %s has id %ld and is a Float: %f\n", param_name_list[i], param_id, attr.float_value);
+                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a Float: %f\n", param_name_list[i], param_id, param_def_id, attr.float_value);
                     break;
 
                 case MAL_DOUBLE_ATTRIBUTE_TAG:
-                    printf("Parameter %s has id %ld and is a Double: %f\n", param_name_list[i], param_id, attr.double_value);
+                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a Double: %f\n", param_name_list[i], param_id, param_def_id, attr.double_value);
                     break;
 
                 case MAL_OCTET_ATTRIBUTE_TAG:
-                    printf("Parameter %s has id %ld and is a Octet: %c\n", param_name_list[i], param_id, attr.octet_value);
+                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a Octet: %c\n", param_name_list[i], param_id, param_def_id, attr.octet_value);
                     break;
 
                 case MAL_UOCTET_ATTRIBUTE_TAG:
-                    printf("Parameter %s has id %ld and is a UOctet: %u\n", param_name_list[i], param_id, attr.uoctet_value);
+                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a UOctet: %u\n", param_name_list[i], param_id, param_def_id, attr.uoctet_value);
                     break;
 
                 case MAL_SHORT_ATTRIBUTE_TAG:
-                    printf("Parameter %s has id %ld and is a Short: %hd\n", param_name_list[i], param_id, attr.short_value);
+                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a Short: %hd\n", param_name_list[i], param_id, param_def_id, attr.short_value);
                     break;
 
                 case MAL_USHORT_ATTRIBUTE_TAG:
-                    printf("Parameter %s has id %ld and is a UShort: %hu\n", param_name_list[i], param_id, attr.ushort_value);
+                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a UShort: %hu\n", param_name_list[i], param_id, param_def_id, attr.ushort_value);
                     break;
 
                 case MAL_INTEGER_ATTRIBUTE_TAG:
-                    printf("Parameter %s has id %ld and is a Integer: %d\n", param_name_list[i], param_id, attr.integer_value);
+                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a Integer: %d\n", param_name_list[i], param_id, param_def_id, attr.integer_value);
                     break;
 
                 case MAL_UINTEGER_ATTRIBUTE_TAG:
-                    printf("Parameter %s has id %ld and is a UInteger: %u\n", param_name_list[i], param_id, attr.uinteger_value);
+                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a UInteger: %u\n", param_name_list[i], param_id, param_def_id, attr.uinteger_value);
                     break;
 
                 case MAL_LONG_ATTRIBUTE_TAG:
-                    printf("Parameter %s has id %ld and is a Long: %ld\n", param_name_list[i], param_id, attr.long_value);
+                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a Long: %ld\n", param_name_list[i], param_id, param_def_id, attr.long_value);
                     break;
 
                 case MAL_ULONG_ATTRIBUTE_TAG:
-                    printf("Parameter %s has id %ld and is a ULong: %lu\n", param_name_list[i], param_id, attr.ulong_value);
+                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a ULong: %lu\n", param_name_list[i], param_id, param_def_id, attr.ulong_value);
                     break;
 
                 default:
                     /* not handling Blob, Time, and Finetime */
-                    printf("Param %s has id %ld with unsupported attribute tag %d\n", param_name_list[i], param_id, tag);
+                    printf("Parameter %s has instance identity id %ld, definition id %ld, with unsupported attribute tag %d\n", param_name_list[i], param_id, tag);
             }
 
             /**
@@ -316,6 +318,21 @@ int main (int argc, char *argv [])
         }
     }
 
+    // Deallocate memory
+    free(response_param_inst_id_list);
+    response_param_inst_id_list = NULL;
+
+    // Deallocate memory
+    free(response_param_def_id_list);
+    response_param_def_id_list = NULL;
+
+    // Deallocate memory
+    free(response_mal_attribute_list);
+    response_mal_attribute_list = NULL;
+
+    // Deallocate memory
+    free(response_mal_attributes_tag_list);
+    response_mal_attributes_tag_list = NULL;
 
     // --------------------------------------------------------------------------
     // destroy
