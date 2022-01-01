@@ -305,7 +305,7 @@ int main (int argc, char *argv [])
 
                 default:
                     /* not handling Blob, Time, and Finetime */
-                    printf("Parameter %s has instance identity id %ld, definition id %ld, with unsupported attribute tag %d\n", param_name_list[i], param_id, tag);
+                    printf("Parameter %s has instance identity id %ld, definition id %ld, with unsupported attribute tag %d\n", param_name_list[i], param_id, param_def_id, tag);
             }
 
             /**

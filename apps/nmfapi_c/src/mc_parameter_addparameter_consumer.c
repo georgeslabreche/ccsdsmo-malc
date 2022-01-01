@@ -178,7 +178,10 @@ mc_parameter_addparameter_consumer_mutex_unlock (mc_parameter_addparameter_consu
 void
 mc_parameter_addparameter_consumer_actor_init (mc_parameter_addparameter_consumer_t *self)
 {
+    // Create the consumer URI
     mal_uri_t *consumer_uri = mal_ctx_create_uri(self->mal_ctx, MC_PARAMETER_ADDPARAMETER_CONSUMER_URI);
+
+    // Create the MAL actor
     self->actor = mal_actor_new(self->mal_ctx, consumer_uri, self,
         mc_parameter_addparameter_consumer_initialize, mc_parameter_addparameter_consumer_finalize);
 }
@@ -496,18 +499,19 @@ mc_parameter_addparameter_consumer_initialize (void *self, mal_actor_t *mal_acto
     rc = mc_parameter_addparameter_request(
         mal_actor_get_mal_endpoint(mal_actor), message, consumer->provider_uri);
 
+    // Destroy the field
+    mc_parameter_parametercreationrequest_list_destroy(&param_creation_req_list);
+
     // Error check
     if (rc < 0)
     {
         // Log error
         clog_error(mc_parameter_addparameter_consumer_logger,
             "mc_parameter_addparameter_consumer_initialize: error sending addParameter request message\n");
-    }
 
-    // Destroy the field
-    if(param_creation_req_list)
-    {
-        mc_parameter_parametercreationrequest_list_destroy(&param_creation_req_list);
+        // Terminate the actor thread or else z_poller will wait indefinitely
+        // This will trigger the finalize function
+        mal_actor_term(mal_actor);
     }
 
     // Return the return code
