@@ -300,6 +300,10 @@ sm_appslauncher_listapp_consumer_initialize (void *self, mal_actor_t *mal_actor)
         clog_error(sm_appslauncher_listapp_consumer_logger,
             "sm_appslauncher_listapp_consumer_initialize: error register consumer request handler\n");
 
+        // Terminate the actor thread or else z_poller will wait indefinitely
+        // This will trigger the finalize function
+        mal_actor_term(mal_actor);
+
         return rc;
     }
 
@@ -340,6 +344,10 @@ sm_appslauncher_listapp_consumer_initialize (void *self, mal_actor_t *mal_actor)
         mal_identifier_list_destroy(&app_name_list);
         mal_identifier_destroy(&category);
 
+        // Terminate the actor thread or else z_poller will wait indefinitely
+        // This will trigger the finalize function
+        mal_actor_term(mal_actor);
+
         return rc;
     }
 
@@ -361,6 +369,10 @@ sm_appslauncher_listapp_consumer_initialize (void *self, mal_actor_t *mal_actor)
         // Destroy the fields
         mal_identifier_list_destroy(&app_name_list);
         mal_identifier_destroy(&category);
+
+        // Terminate the actor thread or else z_poller will wait indefinitely
+        // This will trigger the finalize function
+        mal_actor_term(mal_actor);
 
         return rc;
     }
@@ -398,6 +410,10 @@ sm_appslauncher_listapp_consumer_initialize (void *self, mal_actor_t *mal_actor)
         mal_identifier_list_destroy(&app_name_list);
         mal_identifier_destroy(&category);
 
+        // Terminate the actor thread or else z_poller will wait indefinitely
+        // This will trigger the finalize function
+        mal_actor_term(mal_actor);
+
         return rc;
     }
 
@@ -422,6 +438,10 @@ sm_appslauncher_listapp_consumer_initialize (void *self, mal_actor_t *mal_actor)
         mal_identifier_list_destroy(&app_name_list);
         mal_identifier_destroy(&category);
 
+        // Terminate the actor thread or else z_poller will wait indefinitely
+        // This will trigger the finalize function
+        mal_actor_term(mal_actor);
+
         return rc;
     }
 
@@ -435,16 +455,21 @@ sm_appslauncher_listapp_consumer_initialize (void *self, mal_actor_t *mal_actor)
     rc = softwaremanagement_appslauncher_listapp_request(
         mal_actor_get_mal_endpoint(mal_actor), message, consumer->provider_uri);
 
+    // Destroy the fields
+    mal_identifier_list_destroy(&app_name_list);
+    mal_identifier_destroy(&category);
+
     if (rc < 0)
     {
         // Log error
         clog_error(sm_appslauncher_listapp_consumer_logger,
             "sm_appslauncher_listapp_consumer_initialize: error listapp request\n");
+
+        // Terminate the actor thread or else z_poller will wait indefinitely
+        // This will trigger the finalize function
+        mal_actor_term(mal_actor);
     }
 
-    // Destroy the fields
-    mal_identifier_list_destroy(&app_name_list);
-    mal_identifier_destroy(&category);
 
     // Return the return code
     return rc;
