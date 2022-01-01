@@ -39,6 +39,8 @@ maltcp_header_t *maltcp_header_new(
     mal_identifier_t *session_name, mal_identifier_list_t *domain,
     mal_blob_t *authentication_id);
 
+void maltcp_header_destroy(maltcp_header_t **self_p);
+
 unsigned char maltcp_header_get_version(maltcp_header_t *self);
 
 void maltcp_header_set_version(maltcp_header_t *self, unsigned char version);

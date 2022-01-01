@@ -63,7 +63,7 @@ maltcp_header_t *maltcp_header_new(
 
   if (network_zone == NULL) {
     self->network_zone_flag = true;
-    self->network_zone = "";            // MAL/TCP default value (see section 3.3.9.2-c)
+    self->network_zone =  mal_identifier_new("");            // MAL/TCP default value (see section 3.3.9.2-c)
   } else {
     self->network_zone_flag = false;
     self->network_zone = network_zone;  // User defined default value
@@ -71,7 +71,7 @@ maltcp_header_t *maltcp_header_new(
 
   if (session_name == NULL) {
     self->session_name_flag = true;
-    self->session_name = "";            // MAL/TCP default value (see section 3.3.11.2-c)
+    self->session_name = mal_identifier_new("");            // MAL/TCP default value (see section 3.3.11.2-c)
   } else {
     self->session_name_flag = false;
     self->session_name = session_name;  // User defined default value
@@ -94,6 +94,28 @@ maltcp_header_t *maltcp_header_new(
   }
 
   return self;
+}
+
+void maltcp_header_destroy(maltcp_header_t **self_p) {
+
+  if (self_p && *self_p) {
+    maltcp_header_t *self = *self_p;
+
+    // Destroy the network zone (MAL Identifier)
+    mal_identifier_destroy(&self->network_zone);
+
+    // Destroy the session name (MAL Identifier)
+    mal_identifier_destroy(&self->session_name);
+
+    // Destroy the domain (MAL Identifier List)
+    mal_identifier_list_destroy(&self->domain);
+    
+    // Destroy the autentication id (MAL Blob)
+    mal_blob_destroy(&self->authentication_id);
+
+    free(self);
+    *self_p = NULL;
+  }
 }
 
 unsigned char maltcp_header_get_version(maltcp_header_t *self) {

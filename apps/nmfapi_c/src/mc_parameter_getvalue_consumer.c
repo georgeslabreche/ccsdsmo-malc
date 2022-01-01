@@ -36,6 +36,7 @@ mc_parameter_getvalue_consumer_set_log_level (int level)
 struct _mc_parameter_getvalue_consumer_t {
     mal_ctx_t *mal_ctx;
     mal_uri_t *provider_uri;
+    mal_uri_t *consumer_uri;
     mal_actor_t *actor;
     long *param_inst_id_list;
     size_t param_inst_id_list_size;
@@ -81,6 +82,7 @@ mc_parameter_getvalue_consumer_new (mal_ctx_t *mal_ctx, mal_uri_t *provider_uri)
     // Initialize class properties here
     self->mal_ctx = mal_ctx;
     self->provider_uri = provider_uri;
+    self->consumer_uri = mal_ctx_create_uri(mal_ctx, MC_PARAMETER_GETVALUE_CONSUMER_URI);
 
     return self;
 }
@@ -105,6 +107,9 @@ mc_parameter_getvalue_consumer_destroy (mc_parameter_getvalue_consumer_t **self_
         // This is because we still want those variables to be available to the client even after the 
         // mc_parameter_service's mc_parameter_service_get_values function is done executing.
         // The reponse variables will be cleared when invoking mc_parameter_service's destructor.
+
+        // Destroy the consumer URI
+        mal_uri_destroy(&self->consumer_uri);
 
         // Make sure the actor thread object is terminated before destroying it
         mal_actor_join(self->actor);
@@ -173,11 +178,8 @@ mc_parameter_getvalue_consumer_mutex_unlock (mc_parameter_getvalue_consumer_t *s
 void
 mc_parameter_getvalue_consumer_actor_init (mc_parameter_getvalue_consumer_t *self)
 {
-    // Create the consumer URI
-    mal_uri_t *consumer_uri = mal_ctx_create_uri(self->mal_ctx, MC_PARAMETER_GETVALUE_CONSUMER_URI);
-
     // Create the MAL actor
-    self->actor = mal_actor_new(self->mal_ctx, consumer_uri, self,
+    self->actor = mal_actor_new(self->mal_ctx, self->consumer_uri, self,
         mc_parameter_getvalue_consumer_initialize, mc_parameter_getvalue_consumer_finalize);
 }
 
@@ -324,6 +326,9 @@ mc_parameter_getvalue_consumer_initialize (void *self, mal_actor_t *mal_actor)
         // Destroy the MAL encoder cursor
         mal_encoder_cursor_destroy(encoder, cursor);
 
+        // Destroy the MAL encoder
+        free(encoder);
+
         // Destroy the field
         mal_long_list_destroy(&param_inst_id_list);
 
@@ -339,6 +344,7 @@ mc_parameter_getvalue_consumer_initialize (void *self, mal_actor_t *mal_actor)
     clog_debug(mc_parameter_getvalue_consumer_logger,
         "mc_parameter_getvalue_consumer_initialize: new MAL message\n");
 
+    // The MAL Message object will be destroyed in the consumer's destructor
     mal_message_t *message = nmfapi_util_create_mal_message(encoder, cursor);
 
     // Initialize the MAL encoder cursor
@@ -353,6 +359,8 @@ mc_parameter_getvalue_consumer_initialize (void *self, mal_actor_t *mal_actor)
         "mc_parameter_getvalue_consumer_initialize: encode_0 for paramInstIds\n");
 
     rc = mc_parameter_getvalue_request_encode_0(cursor, encoder, param_inst_id_list);
+
+    // Assert MAL encoder cursor
     mal_encoder_cursor_assert(encoder, cursor);
 
     // Error check
@@ -362,11 +370,17 @@ mc_parameter_getvalue_consumer_initialize (void *self, mal_actor_t *mal_actor)
         clog_error(mc_parameter_getvalue_consumer_logger,
             "mc_parameter_getvalue_consumer_initialize: error encode_0 for paramInstIds\n");
 
+        // Destroy the field
+        mal_long_list_destroy(&param_inst_id_list);
+
+        // Destroy the MAL message
+        nmfapi_util_destroy_mal_message(message, consumer->mal_ctx);
+
         // Destroy the MAL encoder cursor
         mal_encoder_cursor_destroy(encoder, cursor);
 
-        // Destroy the field
-        mal_long_list_destroy(&param_inst_id_list);
+        // Destroy the MAL encoder
+        free(encoder);
 
         // Terminate the actor thread or else z_poller will wait indefinitely
         // This will trigger the finalize function
@@ -375,9 +389,6 @@ mc_parameter_getvalue_consumer_initialize (void *self, mal_actor_t *mal_actor)
         // Return the error code
         return rc;
     }
-
-    // Destroy the MAL encoder cursor
-    mal_encoder_cursor_destroy(encoder, cursor);
 
     // Send the request message
     clog_debug(mc_parameter_getvalue_consumer_logger,
@@ -388,6 +399,15 @@ mc_parameter_getvalue_consumer_initialize (void *self, mal_actor_t *mal_actor)
 
     // Destroy the field
     mal_long_list_destroy(&param_inst_id_list);
+
+    // Destroy the MAL message
+    nmfapi_util_destroy_mal_message(message, consumer->mal_ctx);
+
+    // Destroy the MAL encoder cursor
+    mal_encoder_cursor_destroy(encoder, cursor);
+
+    // Destroy the MAL encoder
+    free(encoder);
 
     // Error check
     if (rc < 0)
@@ -479,6 +499,8 @@ mc_parameter_getvalue_consumer_response (void *self, mal_ctx_t *mal_ctx,
             "mc_parameter_getvalue_consumer_response: decode_0 for paramValDetails\n");
         
         consumer->response_error_code = mc_parameter_getvalue_request_response_decode_0(cursor, decoder, &param_value_details);
+        
+        // Assert decoder cursor
         mal_decoder_cursor_assert(decoder, cursor);
 
         // Check for errors
@@ -600,12 +622,12 @@ mc_parameter_getvalue_consumer_response (void *self, mal_ctx_t *mal_ctx,
 
     // Destroy the MAL decoder cursor
     mal_decoder_cursor_destroy(decoder, cursor);
+
+    // Destroy the MAL binary decoder
+    free(decoder);
     
     // Destroy MAL message
-    if(message)
-    {
-        mal_message_destroy(&message, mal_ctx);
-    }
+    mal_message_destroy(&message, mal_ctx);
     
     // Terminating the actor thread will trigger the finalize function
     mal_actor_term(consumer->actor);
