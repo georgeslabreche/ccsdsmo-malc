@@ -137,7 +137,10 @@ common_directory_lookupprovider_consumer_mutex_unlock (common_directory_lookuppr
 void
 common_directory_lookupprovider_consumer_actor_init (common_directory_lookupprovider_consumer_t *self)
 {
+    // Create the consumer URI
     mal_uri_t *consumer_uri = mal_ctx_create_uri(self->mal_ctx, COMMON_DIRECTORY_LOOKUPPROVIDER_CONSUMER_URI);
+
+    // Create the MAL actor
     self->actor = mal_actor_new(self->mal_ctx, consumer_uri, self,
         common_directory_lookupprovider_consumer_initialize, common_directory_lookupprovider_consumer_finalize);
 }
@@ -300,6 +303,10 @@ common_directory_lookupprovider_consumer_initialize (void *self, mal_actor_t *ma
         // Log error
         clog_error(common_directory_lookupprovider_consumer_logger,
             "common_directory_lookupprovider_consumer_initialize: error sending lookupProvider request message\n");
+
+        // Terminate the actor thread or else z_poller will wait indefinitely
+        // This will trigger the finalize function
+        mal_actor_term(mal_actor);
     }
 
     // Return the return code
