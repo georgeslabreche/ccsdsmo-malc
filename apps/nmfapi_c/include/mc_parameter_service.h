@@ -154,6 +154,14 @@ NMFAPI_C_EXPORT int
 NMFAPI_C_EXPORT int
     mc_parameter_service_add_parameter (mc_parameter_service_t *self, char *param_name, char *param_description, unsigned char param_raw_type, char *param_raw_unit, bool param_generation_enabled, double param_report_interval, long *response_param_identity_id, long *response_param_definition_id);
 
+//  The removeParameter operation allows a consumer to remove one or more parameters from the list of parameters supported by the parameter provider
+NMFAPI_C_EXPORT int
+    mc_parameter_service_remove_parameter_list (mc_parameter_service_t *self, long *param_identity_id_list, size_t param_identity_id_list_size);
+
+//  The removeParameter operation allows a consumer to remove one or more parameters from the list of parameters supported by the parameter provider
+NMFAPI_C_EXPORT int
+    mc_parameter_service_remove_parameter (mc_parameter_service_t *self, long param_identity_id);
+
 //  @end
 
 #ifdef __cplusplus

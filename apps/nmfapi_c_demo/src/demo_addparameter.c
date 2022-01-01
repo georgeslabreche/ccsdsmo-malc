@@ -8,11 +8,7 @@
 /*
 @header
     demo_addparameter - Demo the addParameter interaction provided by the Monitor and Control Parameter Service
-    TODO: 
-        1. Right now the Param provider implementation does not support storing or persisting values on its own.
-        2. Remove the parameter if it already exists and then add it.
-           Requires the removeParameter operation to be implemented:
-           https://github.com/tanagraspace/CCSDS_MO_StubGenerator/blob/46b0be7bfe5340b6a2b608c6dc14319fa095d340/specs/xml/area004-v001-Monitor-and-Control.xml
+    TODO: Right now the Param provider implementation in NFM Superviser does not support storing or persisting values on its own
 @discuss
 @end
 */
@@ -148,8 +144,8 @@ int main (int argc, char *argv [])
     size_t param_list_size = sizeof(param_name_list) / sizeof(param_name_list[0]);
 
     /* response variables */
-    long response_param_identity_id;
-    long response_param_definition_id;
+    long param_identity_id;
+    long param_definition_id;
 
 
     // --------------------------------------------------------------------------
@@ -160,39 +156,66 @@ int main (int argc, char *argv [])
     for(int i = 0; i < param_list_size; i++)
     {
         /* use the listDefinition operation to check if the parameter we want to create already exists */
-        rc = mc_parameter_service_get_definition(parameter_service, param_name_list[i], &response_param_identity_id, &response_param_definition_id);
+        rc = mc_parameter_service_get_definition(parameter_service, param_name_list[i], &param_identity_id, &param_definition_id);
 
         /* if the parameter already exists then don't try to add it (it will trigger a DUPLICATE error) */
+        /* instead, remove it and then add it (this serves to also test the removeParameter operation) */
         if(rc == 0)
         {
             /* keep track of the ids of the created params */
-            param_id_list[i] = response_param_identity_id;
+            param_id_list[i] = param_identity_id;
 
             /* verbosity */
-            printf("The %s parameter already exists with id %ld (delete comArchive.db and try again)\n", param_name_list[i], response_param_identity_id);
+            printf("The %s parameter already exists with instance identity id %ld and definition id %ld",
+                param_name_list[i], param_identity_id, param_definition_id);
+
+            /* remove parameter */
+            rc = mc_parameter_service_remove_parameter(parameter_service, param_identity_id);
+
+            if(rc == 0)
+            {
+                printf(": removed it\n");
+            }
+            else
+            {
+                printf("\nFailed to remove %s, using its existing definition\n", param_name_list[i]);
+            }
         }
         else
+        {
+            /* parameter to add does not exist because listDefintion returned an error */
+            /* this is what we want so reset the return code to non error value */
+            rc = 0;
+
+            /* also print a message stating that the logged listDefinition error is normal */
+            printf("The above error message is expected (it means that the parameter does not already exist)\n");
+        }
+
+        if(rc == 0)
         {
             /* send the addParameter request with the response variable pointers */
             rc = mc_parameter_service_add_parameter(parameter_service,
                 param_name_list[i], NULL, param_raw_type_list[i], NULL, false, 0,
-                &response_param_identity_id, &response_param_definition_id);
+                &param_identity_id, &param_definition_id);
 
             /* error check */
             if(rc < 0)
             {
                 /* print error message */
-                printf("Error creating %s\n", param_name_list[i]);
+                printf("Error adding %s\n", param_name_list[i]);
             }
             else
             {
                 /* keep track of the ids of the created params */
-                param_id_list[i] = response_param_identity_id;
+                param_id_list[i] = param_identity_id;
 
                 /* verbosity */
-                printf("Created %s with id %ld\n", param_name_list[i], response_param_identity_id);
+                printf("Added %s with instance identity id %ld and definition id %ld\n", param_name_list[i], param_identity_id, param_definition_id);
             }
         }
+
+        /* for Terminal output clarity */
+        printf("\n");
     }
 
 

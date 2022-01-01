@@ -1,9 +1,13 @@
 
 # NMF API
-The [NMF](https://nanosat-mo-framework.github.io/) API is a library that uses the MAL C API and is built for the [OPS-SAT spacecraft](https://opssat1.esoc.esa.int/).
+The [NanoSat MO Framework (NMF)](https://nanosat-mo-framework.github.io/) MAL C API is an NMF API library implemented in C for the [OPS-SAT spacecraft](https://opssat1.esoc.esa.int/).
 
 ## 1. Background
+This API is build on top of:
+- An implementation of the [CCSDS MO MAL Standard](https://en.wikipedia.org/wiki/CCSDS_Mission_Operations) in C using [ZeroMQ](zeromq.org) as transport backend.
+- Generated MO MAL service areas for the [OPS-SAT](https://opssat1.esoc.esa.int/) spacecraft.
 
+The API allows for OPS-SAT Apps developed in C to interact with the spacecraft's NMF Supervisor and its Services (developed in Java).
 ## 2. Extending
 This API does not implement all of the spacecraft's NMF capability sets. This section provides a narrative that describes how the Monitor and Control (M&C) Parameter Service's *addParameter* operation was implemented. The description serves as a reference on how the API can be extended with additional capability sets. This feature's [pull request](https://github.com/tanagraspace/ccsdsmo-malc-sepp-apps/pull/78) is a good reference on how to update this project to support other NMF Service operations.
 ### 2.1 Consumer API
@@ -219,6 +223,7 @@ The following logic needs to be implemented:
     - Include a global variable for the `mc_parameter_addparameter_consumer` consumer.
     - Implement `add_parameter_list`.
     - Implement `add_parameter` (it invokes `add_parameter_list` with a parameter list of size 1).
+    - Desctroy the consumer in the service's destructor method. Note that this is missing from the feature's [pull request](https://github.com/tanagraspace/ccsdsmo-malc-sepp-apps/pull/78) as an accidental omission).
 2. mc_parameter_addparameter_consumer.c:
     - Include a global variable for the mutex object.
     - Implement private functions for the consumer's initialization, finalization, and response handling.
@@ -274,3 +279,6 @@ Implement the demo app, build, and run:
 ./genmake
 ./src/demo_addparameter -?
 ```
+
+### 2.7 Additional reference
+The [pull request](https://github.com/tanagraspace/ccsdsmo-malc-sepp-apps/pull/82) for the *removeParameter* operation can also be used as a reference on extending the API with a submit operation. The XML specification can be found [here](https://github.com/tanagraspace/CCSDS_MO_StubGenerator/blob/46b0be7bfe5340b6a2b608c6dc14319fa095d340/specs/xml/area004-v001-Monitor-and-Control.xml#L653-L671).
