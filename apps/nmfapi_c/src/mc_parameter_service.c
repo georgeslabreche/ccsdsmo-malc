@@ -38,8 +38,8 @@ struct _mc_parameter_service_t {
     char *hostname;
     char *provider_port;
     char *consumer_port;
-    mal_ctx_t *mal_ctx;
     mal_uri_t *provider_uri;
+    mal_ctx_t *mal_ctx;
 };
 
 // The consumers
@@ -66,6 +66,7 @@ mc_parameter_service_new (char *hostname, char *provider_port, char *consumer_po
     // Create provider URI
     char *provider_id = "nanosat-mo-supervisor-Parameter";
     self->provider_uri = nmfapi_util_create_uri(MALTCP_URI, hostname, provider_port, provider_id);
+
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_new: provider URI: %s\n", self->provider_uri);
 
     return self;
@@ -84,8 +85,6 @@ mc_parameter_service_destroy (mc_parameter_service_t **self_p)
     assert (self_p);
     if (*self_p) {
         mc_parameter_service_t *self = *self_p;
-
-        // Free class properties here
 
         //  --------------------------------------------------------------------------
         //  Destroy the consumers
@@ -133,7 +132,17 @@ mc_parameter_service_destroy (mc_parameter_service_t **self_p)
             // Destroy the consumer
             mc_parameter_removeparameter_consumer_destroy(&removeparameter_consumer);
         }
-        
+
+
+        //  --------------------------------------------------------------------------
+        //  Free class properties here
+
+        // Destroy the provider URI
+        if(self->provider_uri)
+        {
+            mal_uri_destroy(&self->provider_uri);
+        }
+
         // Destroy the context
         if(self->mal_ctx)
         {
@@ -161,8 +170,15 @@ mc_parameter_service_list_definition (mc_parameter_service_t *self, char **param
     // The return code
     int rc;
 
+    // Create the MAL context
+    self->mal_ctx = mal_ctx_new();
+
+    // Create MAL TCP header: all the MAL header fields are passed
+    maltcp_header_t *maltcp_header = maltcp_header_new(true, 0, true, NULL, NULL, NULL, NULL);
+
     // Initialize the consumer context / listening socket
-    nmfapi_util_init_maltcp_ctx(self->hostname, self->consumer_port, &self->mal_ctx);
+    // Create the consumer listening socket: bind to server with the consumer port number
+    void *maltcp_ctx = maltcp_ctx_new(self->mal_ctx, self->hostname, self->consumer_port, maltcp_header, false);
 
     // Create the getValue consumer
     listdefinition_consumer = mc_parameter_listdefinition_consumer_new(self->mal_ctx, self->provider_uri);
@@ -285,8 +301,15 @@ mc_parameter_service_get_value_list (mc_parameter_service_t *self, long *param_i
     // The return code
     int rc;
 
+    // Create the MAL context
+    self->mal_ctx = mal_ctx_new();
+
+    // Create MAL TCP header: all the MAL header fields are passed
+    maltcp_header_t *maltcp_header = maltcp_header_new(true, 0, true, NULL, NULL, NULL, NULL);
+
     // Initialize the consumer context / listening socket
-    nmfapi_util_init_maltcp_ctx(self->hostname, self->consumer_port, &self->mal_ctx);
+    // Create the consumer listening socket: bind to server with the consumer port number
+    void *maltcp_ctx = maltcp_ctx_new(self->mal_ctx, self->hostname, self->consumer_port, maltcp_header, false);
 
     // Create the getValue consumer
     getvalue_consumer = mc_parameter_getvalue_consumer_new(self->mal_ctx, self->provider_uri);
@@ -1294,8 +1317,15 @@ mc_parameter_service_set_value_list (mc_parameter_service_t *self, long *param_i
     // The return code
     int rc = 0;
 
+    // Create the MAL context
+    self->mal_ctx = mal_ctx_new();
+
+    // Create MAL TCP header: all the MAL header fields are passed
+    maltcp_header_t *maltcp_header = maltcp_header_new(true, 0, true, NULL, NULL, NULL, NULL);
+
     // Initialize the consumer context / listening socket
-    nmfapi_util_init_maltcp_ctx(self->hostname, self->consumer_port, &self->mal_ctx);
+    // Create the consumer listening socket: bind to server with the consumer port number
+    void *maltcp_ctx = maltcp_ctx_new(self->mal_ctx, self->hostname, self->consumer_port, maltcp_header, false);
 
     // Create the setValue consumer
     setvalue_consumer = mc_parameter_setvalue_consumer_new(self->mal_ctx, self->provider_uri);
@@ -1388,8 +1418,15 @@ mc_parameter_service_add_parameter_list (mc_parameter_service_t *self,
     // The return code
     int rc;
 
+    // Create the MAL context
+    self->mal_ctx = mal_ctx_new();
+
+    // Create MAL TCP header: all the MAL header fields are passed
+    maltcp_header_t *maltcp_header = maltcp_header_new(true, 0, true, NULL, NULL, NULL, NULL);
+    
     // Initialize the consumer context / listening socket
-    nmfapi_util_init_maltcp_ctx(self->hostname, self->consumer_port, &self->mal_ctx);
+    // Create the consumer listening socket: bind to server with the consumer port number
+    void *maltcp_ctx = maltcp_ctx_new(self->mal_ctx, self->hostname, self->consumer_port, maltcp_header, false);
 
     // Create the addParameter consumer
     addparameter_consumer = mc_parameter_addparameter_consumer_new(self->mal_ctx, self->provider_uri);
@@ -1546,8 +1583,15 @@ mc_parameter_service_remove_parameter_list (mc_parameter_service_t *self, long *
     // The return code
     int rc;
 
+    // Create the MAL context
+    self->mal_ctx = mal_ctx_new();
+
+    // Create MAL TCP header: all the MAL header fields are passed
+    maltcp_header_t *maltcp_header = maltcp_header_new(true, 0, true, NULL, NULL, NULL, NULL);
+    
     // Initialize the consumer context / listening socket
-    nmfapi_util_init_maltcp_ctx(self->hostname, self->consumer_port, &self->mal_ctx);
+    // Create the consumer listening socket: bind to server with the consumer port number
+    void *maltcp_ctx = maltcp_ctx_new(self->mal_ctx, self->hostname, self->consumer_port, maltcp_header, false);
 
     // Create the removeParameter consumer
     removeparameter_consumer = mc_parameter_removeparameter_consumer_new(self->mal_ctx, self->provider_uri);

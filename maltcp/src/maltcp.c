@@ -700,7 +700,7 @@ int maltcp_decode_message(maltcp_header_t *maltcp_header,
 
 // BEGIN -- URI manipulation functions maltcp:
 // - maltcp://192.168.0.1:2534/Service
-// - maltcp://[2001:0db8:85a3:0000:0000:8a2e:0370:7334]:972/Service’
+// - maltcp://[2001:0db8:85a3:0000:0000:8a2e:0370:7334]:972/Serviceï¿½
 
 // Returns a newly allocated string containing the base URI of the full URI specified
 // in parameter: "maltcp://ipaddress:port/service" -> "maltcp://ipaddress:port"

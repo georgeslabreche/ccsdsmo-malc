@@ -37,8 +37,8 @@ struct _sm_appslauncher_service_t {
     char *hostname;
     char *provider_port;
     char *consumer_port;
-    mal_ctx_t *mal_ctx;
     mal_uri_t *provider_uri;
+    mal_ctx_t *mal_ctx;
 };
 
 // The consumers
@@ -62,6 +62,7 @@ sm_appslauncher_service_new (char *hostname, char *provider_port, char *consumer
     // Create provider URI
     char *provider_id = "nanosat-mo-supervisor-AppsLauncher";
     self->provider_uri = nmfapi_util_create_uri(MALTCP_URI, hostname, provider_port, provider_id);
+
     clog_debug(sm_appslauncher_service_logger, "sm_appslauncher_service_new: provider URI: %s\n", self->provider_uri);
 
     return self;
@@ -80,9 +81,9 @@ sm_appslauncher_service_destroy (sm_appslauncher_service_t **self_p)
     if (*self_p) {
         sm_appslauncher_service_t *self = *self_p;
 
-        // Free class properties here
+        //  --------------------------------------------------------------------------
+        //  Destroy the consumers
 
-        // Destroy the listApp consumer
         if(listapp_consumer)
         {
             // Clear the response variables
@@ -90,6 +91,15 @@ sm_appslauncher_service_destroy (sm_appslauncher_service_t **self_p)
 
             // Destroy the consumer
             sm_appslauncher_listapp_consumer_destroy(&listapp_consumer);
+        }
+
+        //  --------------------------------------------------------------------------
+        //  Free class properties here
+
+        // Destroy the provider URI
+        if(self->provider_uri)
+        {
+            mal_uri_destroy(&self->provider_uri);
         }
 
         // Destroy the context
@@ -118,8 +128,15 @@ sm_appslauncher_service_list_app (sm_appslauncher_service_t *self, char **app_na
     // The return code
     int rc;
 
+    // Create the MAL context
+    self->mal_ctx = mal_ctx_new();
+
+    // Create MAL TCP header: all the MAL header fields are passed
+    maltcp_header_t *maltcp_header = maltcp_header_new(true, 0, true, NULL, NULL, NULL, NULL);
+
     // Initialize the consumer context / listening socket
-    nmfapi_util_init_maltcp_ctx(self->hostname, self->consumer_port, &self->mal_ctx);
+    // Create the consumer listening socket: bind to server with the consumer port number
+    void *maltcp_ctx = maltcp_ctx_new(self->mal_ctx, self->hostname, self->consumer_port, maltcp_header, false);
 
     // Create the listApp consumer
     listapp_consumer = sm_appslauncher_listapp_consumer_new(self->mal_ctx, self->provider_uri);

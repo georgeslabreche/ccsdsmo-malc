@@ -35,6 +35,7 @@ common_directory_lookupprovider_consumer_set_log_level (int level)
 struct _common_directory_lookupprovider_consumer_t {
     mal_ctx_t *mal_ctx;
     mal_uri_t *provider_uri;
+    mal_uri_t *consumer_uri;
     mal_actor_t *actor;
     common_directory_servicefilter_t *service_filter;
     common_directory_providersummary_list_t *response_provider_summary_list;
@@ -79,6 +80,7 @@ common_directory_lookupprovider_consumer_new (mal_ctx_t *mal_ctx, mal_uri_t *pro
     // Initialize class properties here
     self->mal_ctx = mal_ctx;
     self->provider_uri = provider_uri;
+    self->consumer_uri = mal_ctx_create_uri(self->mal_ctx, COMMON_DIRECTORY_LOOKUPPROVIDER_CONSUMER_URI);
 
     return self;
 }
@@ -99,11 +101,17 @@ common_directory_lookupprovider_consumer_destroy (common_directory_lookupprovide
         common_directory_lookupprovider_consumer_t *self = *self_p;
         //  Free class properties here
 
+        // Destroy the conusmer URI
+        mal_uri_destroy(&self->consumer_uri);
+
         // Make sure the actor thread object is terminated before destroying it
         mal_actor_join(self->actor);
 
         // Destroy the actor object
         mal_actor_destroy(self->mal_ctx, &self->actor);
+
+        // Destroy the filter object
+        common_directory_servicefilter_destroy(&self->service_filter);
 
         //  Free object itself
         free (self);
@@ -137,11 +145,8 @@ common_directory_lookupprovider_consumer_mutex_unlock (common_directory_lookuppr
 void
 common_directory_lookupprovider_consumer_actor_init (common_directory_lookupprovider_consumer_t *self)
 {
-    // Create the consumer URI
-    mal_uri_t *consumer_uri = mal_ctx_create_uri(self->mal_ctx, COMMON_DIRECTORY_LOOKUPPROVIDER_CONSUMER_URI);
-
     // Create the MAL actor
-    self->actor = mal_actor_new(self->mal_ctx, consumer_uri, self,
+    self->actor = mal_actor_new(self->mal_ctx, self->consumer_uri, self,
         common_directory_lookupprovider_consumer_initialize, common_directory_lookupprovider_consumer_finalize);
 }
 
@@ -253,6 +258,9 @@ common_directory_lookupprovider_consumer_initialize (void *self, mal_actor_t *ma
         // Destroy the MAL encoder cursor
         mal_encoder_cursor_destroy(encoder, cursor);
 
+        // Destroy the MAL encoder
+        free(encoder);
+
         // Terminate the actor thread or else z_poller will wait indefinitely
         // This will trigger the finalize function
         mal_actor_term(mal_actor);
@@ -265,6 +273,7 @@ common_directory_lookupprovider_consumer_initialize (void *self, mal_actor_t *ma
     clog_debug(common_directory_lookupprovider_consumer_logger,
         "common_directory_lookupprovider_consumer_initialize: new MAL message\n");
 
+    // The MAL Message object will be destroyed in the consumer's destructor
     mal_message_t *message = nmfapi_util_create_mal_message(encoder, cursor);
 
     // Initialize the MAL encoder cursor
@@ -279,6 +288,8 @@ common_directory_lookupprovider_consumer_initialize (void *self, mal_actor_t *ma
         "common_directory_lookupprovider_consumer_initialize: encode_0 for filter\n");
 
     rc = common_directory_lookupprovider_request_encode_0(cursor, encoder, consumer->service_filter);
+    
+    // Assert MAL encoder cursor
     mal_encoder_cursor_assert(encoder, cursor);
 
     // Error check
@@ -288,8 +299,14 @@ common_directory_lookupprovider_consumer_initialize (void *self, mal_actor_t *ma
         clog_error(common_directory_lookupprovider_consumer_logger,
             "common_directory_lookupprovider_consumer_initialize: error encode_0 for filter\n");
 
+        // Destroy the MAL message
+        nmfapi_util_destroy_mal_message(message, consumer->mal_ctx);
+
         // Destroy the MAL encoder cursor
         mal_encoder_cursor_destroy(encoder, cursor);
+
+        // Destroy the MAL encoder
+        free(encoder);
 
         // Terminate the actor thread or else z_poller will wait indefinitely
         // This will trigger the finalize function
@@ -299,15 +316,22 @@ common_directory_lookupprovider_consumer_initialize (void *self, mal_actor_t *ma
         return rc;
     }
 
-    // Destroy the MAL encoder cursor
-    mal_encoder_cursor_destroy(encoder, cursor);
-
     // Send the request message
     clog_debug(common_directory_lookupprovider_consumer_logger,
         "common_directory_lookupprovider_consumer_initialize: send lookupProvider request message\n");
 
     rc = common_directory_lookupprovider_request(
         mal_actor_get_mal_endpoint(mal_actor), message, consumer->provider_uri);
+
+
+    // Destroy the MAL message
+    nmfapi_util_destroy_mal_message(message, consumer->mal_ctx);
+
+    // Destroy the MAL encoder cursor
+    mal_encoder_cursor_destroy(encoder, cursor);
+
+    // Destroy the MAL encoder
+    free(encoder);
 
     // Error check
     if (rc < 0)
@@ -420,11 +444,11 @@ common_directory_lookupprovider_consumer_response (void *self, mal_ctx_t *mal_ct
     // Destroy the MAL decoder cursor
     mal_decoder_cursor_destroy(decoder, cursor);
 
+    // Destroy the MAL binary decoder
+    free(decoder);
+
     // Destroy MAL message
-    if(message)
-    {
-        mal_message_destroy(&message, mal_ctx);
-    }
+    mal_message_destroy(&message, mal_ctx);
     
     // Terminating the actor thread will trigger the finalize function
     mal_actor_term(consumer->actor);

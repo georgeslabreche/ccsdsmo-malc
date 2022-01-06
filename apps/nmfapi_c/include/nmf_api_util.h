@@ -1,5 +1,5 @@
 /*  =========================================================================
-    nmf_api_util - class description
+    nmf_api_util - a utils class for convenience
 
     The MIT License (MIT)
     =========================================================================
@@ -20,9 +20,9 @@ nmfapi_util_create_uri(const char* protocol, const char *hostname, const char *p
 mal_message_t *
 nmfapi_util_create_mal_message(mal_encoder_t *encoder, void *cursor);
 
-//  Intiialize maltcp context and start listening socket
-int
-nmfapi_util_init_maltcp_ctx(char *hostname, char *port, mal_ctx_t **mal_ctx);
+//  Destroy a MAL message
+void
+nmfapi_util_destroy_mal_message(mal_message_t *message, mal_ctx_t *mal_ctx);
 
 //  Initialize a MAL Attribute given the raw value and attribute tag
 int

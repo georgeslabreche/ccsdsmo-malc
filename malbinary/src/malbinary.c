@@ -25,7 +25,7 @@
 #include "malbinary.h"
 
 void malbinary_cursor_destroy(void *cursor) {
-  if (! cursor) free(cursor);
+  if (cursor) free(cursor);
 }
 
 void  malbinary_cursor_reset(void *cursor) {

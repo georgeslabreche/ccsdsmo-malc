@@ -194,10 +194,10 @@ int maltcp_ctx_connection_register_incoming(maltcp_ctx_t *self, int socket, char
 maltcp_ctx_connection_t *maltcp_ctx_connection_register_outgoing(maltcp_ctx_t *self, int socket, char *peer_uri) {
   maltcp_ctx_connection_t *cnx_ptr = maltcp_ctx_connection_create(socket);
   if (cnx_ptr != NULL) {
-    char *uri = (char *) malloc(strlen(peer_uri) +1);
-    strcpy(uri, peer_uri);
-    zhash_update(self->cnx_table, uri, cnx_ptr);
-    zhash_freefn(self->cnx_table, uri, free);
+    //char *uri = (char *) malloc(strlen(peer_uri) +1);
+    //strcpy(uri, peer_uri);
+    zhash_update(self->cnx_table, peer_uri, cnx_ptr);
+    zhash_freefn(self->cnx_table, peer_uri, free);
   }
   return cnx_ptr;
 }
@@ -361,6 +361,9 @@ int maltcp_ctx_socket_receive(zloop_t *loop, zmq_pollitem_t *poller, void *arg) 
   // Destroy URIs: Be careful, short_uri_to is simply a pointer in uri_to.
   mal_uri_destroy(&uri_to);
   mal_uri_destroy(&uri_from);
+
+  // Deallocate the message
+  free(msg);
 
   return 0;
 }
@@ -580,7 +583,9 @@ int maltcp_ctx_destroy(void **self_p) {
     // TODO (AF): Close all pollers?
     clog_debug(maltcp_logger, "maltcp_ctx_destroy: stopped.\n");
 
-    free(self->maltcp_header);
+    // Free the MAL TCP header and its properties
+    maltcp_header_destroy(&self->maltcp_header);
+
     // Free all structures in hash-table, close socket and destroy mutex.
     if (self->cnx_table)
       zhash_destroy(&self->cnx_table);
@@ -588,6 +593,13 @@ int maltcp_ctx_destroy(void **self_p) {
 //    zsocket_destroy(self->zmq_ctx, self->endpoints_socket);
 //    zmq_close(self->endpoints_socket);
     zctx_destroy(&self->zmq_ctx);
+
+    // Free the encoder and decoder
+    free(self->encoder);
+    free(self->decoder);
+
+    // Free the root URI string
+    free(self->root_uri);
 
     free(self);
     *self_p = NULL;
@@ -708,8 +720,10 @@ int maltcp_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
 
   // Note: We could use virtual allocation and initialization functions from encoder
   // rather than malbinary interface.
+  char *mal_msg_bytes = (char *) malloc(malbinary_cursor_get_length(&cursor));
+
   malbinary_cursor_init(&cursor,
-      (char *) malloc(malbinary_cursor_get_length(&cursor)),
+      mal_msg_bytes,
       malbinary_cursor_get_length(&cursor),
       0);
 
@@ -724,7 +738,12 @@ int maltcp_ctx_send_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
   clog_debug(maltcp_logger, "maltcp_ctx: message is encoded: %d bytes\n", malbinary_cursor_get_offset(&cursor));
 
   // send the message
-  if (maltcp_ctx_socket_send(cnx_ptr, &cursor) < 0)
+  rc = maltcp_ctx_socket_send(cnx_ptr, &cursor);
+
+  // deallocate memory: message bytes
+  free(mal_msg_bytes);
+
+  if (rc < 0)
     return -1;
 
   return 0;
@@ -849,6 +868,9 @@ int maltcp_ctx_recv_message(void *self, mal_endpoint_t *mal_endpoint, mal_messag
   } else {
     clog_debug(maltcp_logger, "maltcp_ctx_recv_message(): NULL\n");
   }
+
+  // Destroy the message object and all frames it contains
+  zmsg_destroy(&zmsg);
 
   return rc;
 }

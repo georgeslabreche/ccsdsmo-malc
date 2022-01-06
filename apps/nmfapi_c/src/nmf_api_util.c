@@ -14,6 +14,10 @@
 
 #include "nmfapi_c_classes.h"
 
+//  --------------------------------------------------------------------------
+//  Create a URI
+//  It's the invoker of this funtion to destroy the returned URI with mal_uri_destroy
+
 mal_uri_t *
 nmfapi_util_create_uri(const char* protocol, const char *hostname, const char *port, const char *id)
 {
@@ -37,7 +41,7 @@ nmfapi_util_create_uri(const char* protocol, const char *hostname, const char *p
         uri_length += strlen(id) + 1;
     }
 
-    // Crate string variable for URI
+    // Create string variable for URI
     char *uri = (char *) malloc(uri_length + 1);
   
     // Need to set the final '\0' before using strcat
@@ -63,9 +67,13 @@ nmfapi_util_create_uri(const char* protocol, const char *hostname, const char *p
         }
     }
 
+    // Return the URI
     return uri;
 }
 
+
+//  --------------------------------------------------------------------------
+//  Create a MAL message
 
 mal_message_t *
 nmfapi_util_create_mal_message(mal_encoder_t *encoder, void *cursor)
@@ -82,35 +90,51 @@ nmfapi_util_create_mal_message(mal_encoder_t *encoder, void *cursor)
         priority, domain, network_zone, session, session_name,
         mal_encoder_cursor_get_length(encoder, cursor));
 
+    // Return the MAL message
     return message;
 }
 
+//  --------------------------------------------------------------------------
+//  Destroy a MAL message
 
-int
-nmfapi_util_init_maltcp_ctx(char *hostname, char *port, mal_ctx_t **mal_ctx)
+void
+nmfapi_util_destroy_mal_message(mal_message_t *message, mal_ctx_t *mal_ctx)
 {
-    // Create context
-    *mal_ctx = mal_ctx_new();
+    /**
+     * Invoking mal_message_destroy does not destroy the object's properties
+     * unless they are flagged to be free, e.g.:
+     * 
+     *    if (self->free_domain) {
+     *      mal_identifier_list_destroy(&self->domain);
+     *    }
+     * 
+     * This util function makes sure that all the message object's property "free"
+     * flags are set to True prior to destroying the message object.
+     */
 
-    // Create mal tcp header: all the MAL header fields are passed
-    maltcp_header_t *maltcp_header = NULL;
-    maltcp_header = maltcp_header_new(true, 0, true, NULL, NULL, NULL, NULL);
-    
-    // Create the consumer listening socket: bind to server with the consumer port number
-    maltcp_ctx_t *maltcp_ctx = NULL;
-    maltcp_ctx = maltcp_ctx_new(*mal_ctx, hostname, port, maltcp_header, false);
-
-    // Check consumer context
-    if (!maltcp_ctx)
+    // Destroy the message object's properties
+    if(message)
     {
-        // Return error code in case of error
-        return -1;
-    }
+        // DO NOT destroy the provider URI
+        // Those URI objects are created in the service class and thus must be deallocated there
+        
+        // DO NOT destroy the consumer URI
+        // Those URI objects are created in the consumer class and thus must be deallocated there
+        
+        // All other properties are OK to free
+        mal_message_set_free_network_zone(message, true);
+        mal_message_set_free_session_name(message, true);
+        mal_message_set_free_domain(message, true);
+        mal_message_set_free_authentication_id(message, true);
 
-    // Return no-error code
-    return 0;
+        // And now we can destroy the message and its properties
+        mal_message_destroy(&message, mal_ctx);
+    }
 }
 
+
+//  --------------------------------------------------------------------------
+//  Initialize a MAL attribute
 
 int
 nmfapi_util_init_mal_attribute(char *raw_value, unsigned char tag, union mal_attribute_t *attribute)
