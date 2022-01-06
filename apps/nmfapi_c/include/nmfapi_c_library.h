@@ -71,10 +71,6 @@ typedef struct _nmf_api_t nmf_api_t;
 #define NMF_API_T_DEFINED
 typedef struct _nmf_api_util_t nmf_api_util_t;
 #define NMF_API_UTIL_T_DEFINED
-typedef struct _common_directory_service_t common_directory_service_t;
-#define COMMON_DIRECTORY_SERVICE_T_DEFINED
-typedef struct _common_directory_lookupprovider_consumer_t common_directory_lookupprovider_consumer_t;
-#define COMMON_DIRECTORY_LOOKUPPROVIDER_CONSUMER_T_DEFINED
 typedef struct _mc_parameter_service_t mc_parameter_service_t;
 #define MC_PARAMETER_SERVICE_T_DEFINED
 typedef struct _mc_parameter_getvalue_consumer_t mc_parameter_getvalue_consumer_t;
@@ -91,13 +87,18 @@ typedef struct _sm_appslauncher_service_t sm_appslauncher_service_t;
 #define SM_APPSLAUNCHER_SERVICE_T_DEFINED
 typedef struct _sm_appslauncher_listapp_consumer_t sm_appslauncher_listapp_consumer_t;
 #define SM_APPSLAUNCHER_LISTAPP_CONSUMER_T_DEFINED
+//  Draft classes are by default not built in stable releases
+#ifdef NMFAPI_C_BUILD_DRAFT_API
+typedef struct _common_directory_service_t common_directory_service_t;
+#define COMMON_DIRECTORY_SERVICE_T_DEFINED
+typedef struct _common_directory_lookupprovider_consumer_t common_directory_lookupprovider_consumer_t;
+#define COMMON_DIRECTORY_LOOKUPPROVIDER_CONSUMER_T_DEFINED
+#endif // NMFAPI_C_BUILD_DRAFT_API
 
 
 //  Public classes, each with its own header file
 #include "nmf_api.h"
 #include "nmf_api_util.h"
-#include "common_directory_service.h"
-#include "common_directory_lookupprovider_consumer.h"
 #include "mc_parameter_service.h"
 #include "mc_parameter_getvalue_consumer.h"
 #include "mc_parameter_setvalue_consumer.h"
@@ -106,6 +107,10 @@ typedef struct _sm_appslauncher_listapp_consumer_t sm_appslauncher_listapp_consu
 #include "mc_parameter_listdefinition_consumer.h"
 #include "sm_appslauncher_service.h"
 #include "sm_appslauncher_listapp_consumer.h"
+#ifdef NMFAPI_C_BUILD_DRAFT_API
+#include "common_directory_service.h"
+#include "common_directory_lookupprovider_consumer.h"
+#endif // NMFAPI_C_BUILD_DRAFT_API
 
 #ifdef NMFAPI_C_BUILD_DRAFT_API
 
