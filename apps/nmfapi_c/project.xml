@@ -54,11 +54,11 @@
 
     <!-- COMMON -->
     <!-- Common: Directory Service -->
-    <class name = "common_directory_service" selftest = "0" state = "stable">
+    <class name = "common_directory_service" selftest = "0" state = "draft">
         The Directory Service class
     </class>
 
-    <class name = "common_directory_lookupprovider_consumer" selftest = "0" state = "stable">
+    <class name = "common_directory_lookupprovider_consumer" selftest = "0" state = "draft">
         The consumer class for the lookupProdvider operation
     </class>
 
