@@ -2,7 +2,7 @@
 
 This project includes: 
 - An implementation of the [CCSDS MO MAL Standard](https://en.wikipedia.org/wiki/CCSDS_Mission_Operations) in C using [ZeroMQ](zeromq.org) as transport backend.
-- Generated MO MAL service areas for the [OPS-SAT](https://opssat1.esoc.esa.int/) spacecraft.
+- [Generated MO MAL service areas](https://github.com/tanagraspace/ccsdsmo-malc-sepp-apps/tree/opssat/apps/generated_areas) for the [OPS-SAT](https://opssat1.esoc.esa.int/) spacecraft.
 - Applications using the MAL C API, developed to run onboard the [OPS-SAT](https://opssat1.esoc.esa.int/) spacecraft's SEPP/Linux environment.
 
 CCSDS Mission Operation implementations for other languages (e.g. Java) can be found on the [CCSDS MO WebSite](http://ccsdsmo.github.io/)
@@ -23,7 +23,7 @@ In particular:
 
 CCSDS MO MAL C documentation is available at http://ccsdsmo.github.io/malc
 
-Source code and comments in the source code are in English so you can proably get a good idea of what is goining on by just having a look at the code. A good place to start is the `test` directory for sample MO MAL interactions and in the `apps/demo` directory for a sample OPS-SAT MO MAL C app developed to run on the spacecraft's SEPP/Linux environment.
+Source code and comments in the source code are in English so you can proably get a good idea of what is goining on by just having a look at the code. A good place to start is the `test` directory for sample MO MAL interactions and in the [apps/nmfapi_c_demo](https://github.com/tanagraspace/ccsdsmo-malc-sepp-apps/tree/opssat/apps/nmfapi_c_demo) directory for sample OPS-SAT MO MAL C apps developed to run on the spacecraft's SEPP/Linux environment.
 
 ## INSTALLATION
 
@@ -49,14 +49,11 @@ sudo ldconfig
 
 ### CZMQ
 
-The project requires **CZMQ** version 3.0.2 to be installed. The v3.0.2 tag for **CZMQ* can be found [here](https://github.com/zeromq/czmq/tree/v3.0.2).
+The project requires an update of **CZMQ** v3.0.2 with patches provided by the [v3.0.2-10 source package in Ubuntu](https://launchpad.net/ubuntu/+source/czmq/3.0.2-10). The patched version is tagged as v3.0.2-10 and can be found [here](https://github.com/tanagraspace/opssat-czmq/tree/v3.0.2-10). Review the "Building and Installing" of the [README](https://github.com/tanagraspace/opssat-czmq#toc3-71) documentation. In a nutshell:
 
-
-Review the "Building and Installing" of the [README](https://github.com/zeromq/czmq/blob/v3.0.2/README.md) documentation. In a nutshell:
 ```
-git clone https://github.com/zeromq/czmq.git
-cd czmq
-git checkout tags/v3.0.2 -b v3.0.2
+git clone https://github.com/tanagraspace/opssat-czmq.git
+cd opssat-czmq
 ./autogen.sh
 ./configure
 make check
@@ -78,9 +75,9 @@ has to be updated in order to contain the right versions of libzmq and czmq:
         release = "v4.0.10" />
 
     <use project = "czmq" libname = "libczmq"
-        repository = "https://github.com/zeromq/czmq.git"
+        repository = "https://github.com/tanagraspace/opssat-czmq.git"
         test = "zctx_test"
-        release = "v3.0.2">
+        release = "v3.0.2-10">
         <use project = "libzmq" />
     </use>
 ```
