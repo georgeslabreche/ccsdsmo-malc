@@ -30,6 +30,10 @@ cp ../${LOCAL_APP_LIB_DIR}/*${PKG_NAME}*.so* ../sepp_package${SEPP_LIB_DIR}
 # Fetch this project's executable binary file
 cp ../${LOCAL_APP_BIN_DIR}/${BIN_FILENAME} ../sepp_package${SEPP_BIN_DIR}
 
+# Fetch start and stop scripts
+cp start_exp*.sh ../sepp_package${SEPP_BIN_DIR}
+cp stop_exp*.sh ../sepp_package${SEPP_BIN_DIR}
+
 echo "Package"
 
 # Create the control tar file.

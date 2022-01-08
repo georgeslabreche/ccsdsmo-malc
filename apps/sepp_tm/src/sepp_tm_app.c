@@ -930,6 +930,13 @@ int main (int argc, char *argv [])
     /* enter the program loop */
     while(1)
     {
+        /* exit the program if the stop experiment file exists in the app's folder */
+        /* this file is created when invoking the stop experiment bash script */
+        if(access(".stop", F_OK) == 0)
+        {
+            break;
+        }
+
         /* fetch SEPP environment data and set them as telemetry data in the NMF datapool param values */
         set_nmf_param_all();
 
