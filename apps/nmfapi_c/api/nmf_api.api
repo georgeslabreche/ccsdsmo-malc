@@ -12,7 +12,7 @@
         The destructor
     </destructor>
 
-    <method name = "get_common_directory_service">
+    <method name = "get_common_directory_service" state="draft">
         Get the Common Directory service
         <return c_type = "common_directory_service_t *" />
     </method>

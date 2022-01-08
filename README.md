@@ -152,7 +152,7 @@ and the definition of new projects such as 'mal':
     <use project = "nmfapi_c"
         repository = ""
         test = "nmf_api_test"
-        cmake_name = "NMFAPI">
+        cmake_name = "NMFAPI_C">
     </use>
 ```
 
