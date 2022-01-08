@@ -40,9 +40,9 @@ nmf_api_set_global_log_level (int level)
     // MAL TCP
     maltcp_set_log_level(level);
 
-    // Common service
-    common_directory_service_set_log_level(level);
-    common_directory_lookupprovider_consumer_set_log_level(level);
+    // Common service (DRAFT)
+    //common_directory_service_set_log_level(level);
+    //common_directory_lookupprovider_consumer_set_log_level(level);
 
     // AppsLauncher service
     sm_appslauncher_service_set_log_level(level);
@@ -62,7 +62,7 @@ nmf_api_set_global_log_level (int level)
 //  Structure of our class
 
 struct _nmf_api_t {
-    common_directory_service_t *common_directory_service;
+    //common_directory_service_t *common_directory_service; /* DRAFT */
     sm_appslauncher_service_t *sm_appslauncher_service;
     mc_parameter_service_t *mc_parameter_service;
 };
@@ -79,8 +79,8 @@ nmf_api_new (char *hostname, char *provider_port, char *consumer_port)
     
     // Initialize class properties here
 
-    // Initialize COMMON services
-    self->common_directory_service = common_directory_service_new(hostname, provider_port, consumer_port);
+    // Initialize COMMON services (DRAFT)
+    //self->common_directory_service = common_directory_service_new(hostname, provider_port, consumer_port);
 
     // Initialize SOFTWARE MANAGEMENT services
     self->sm_appslauncher_service = sm_appslauncher_service_new(hostname, provider_port, consumer_port);
@@ -104,8 +104,8 @@ nmf_api_destroy (nmf_api_t **self_p)
         
         //  Free class properties here
 
-        // Destroy the COMMON DIRECTORY service
-        common_directory_service_destroy(&self->common_directory_service);
+        // Destroy the COMMON DIRECTORY service (DRAFT)
+        //common_directory_service_destroy(&self->common_directory_service);
 
         // Destroy SOFTWARE MANAGEMENT APPS LAUNCHER service
         sm_appslauncher_service_destroy(&self->sm_appslauncher_service);
@@ -123,12 +123,14 @@ nmf_api_destroy (nmf_api_t **self_p)
 //  --------------------------------------------------------------------------
 // Service getters
 
-//  Get the Common Directory service
+//  Get the Common Directory service (DRAFT)
+/**
 common_directory_service_t *
 nmf_api_get_common_directory_service (nmf_api_t *self)
 {
     return self->common_directory_service;
 }
+*/
 
 //  Get the AppsLauncher service
 sm_appslauncher_service_t *

@@ -25,14 +25,15 @@ nmf_api_set_global_log_level (int level);
 
 
 //  --------------------------------------------------------------------------
-//  Declare the Directory service log level setters
+//  Declare the Directory service log level setters (DRAFT)
 
+/**
 void
 common_directory_service_set_log_level (int level);
 
 void
 common_directory_lookupprovider_consumer_set_log_level (int level);
-
+*/
 
 //  --------------------------------------------------------------------------
 //  Declare the AppsLauncher service log level setters

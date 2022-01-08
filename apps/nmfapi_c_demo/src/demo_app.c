@@ -27,8 +27,10 @@
 //  Declare the demonstration functions
 
 //  Demonstrate the lookupProvider request interaction
-int
-demo_directory_service_lookup_provider();
+//  FIXME: Does not work
+//         See Issue #29: https://github.com/tanagraspace/ccsdsmo-malc-sepp-apps/issues/29
+//int
+//demo_directory_service_lookup_provider();
 
 //  Demonstrate the listApp operation request interaction
 int
@@ -172,7 +174,7 @@ int main (int argc, char *argv [])
     return 0;
 }
 
-
+#if 0
 //  --------------------------------------------------------------------------
 //  Demonstrate the lookupProvider request interaction
 //  FIXME: Does not work
@@ -198,6 +200,7 @@ demo_directory_service_lookup_provider()
     // End demo
     return 0;
 }
+#endif
 
 
 //  --------------------------------------------------------------------------

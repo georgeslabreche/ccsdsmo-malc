@@ -40,6 +40,11 @@
 //  *** To avoid double-definitions, only define if building without draft ***
 #ifndef NMFAPI_C_BUILD_DRAFT_API
 
+//  *** Draft method, defined for internal use only ***
+//  Get the Common Directory service
+NMFAPI_C_PRIVATE common_directory_service_t *
+    nmf_api_get_common_directory_service (nmf_api_t *self);
+
 //  Self test for private classes
 NMFAPI_C_PRIVATE void
     nmfapi_c_private_selftest (bool verbose, const char *subtest);
