@@ -15,10 +15,12 @@
 #include "sepp_tm_classes.h"
 
 //  --------------------------------------------------------------------------
-//  SEPP datapool parameter names
+//  Constants
+
 #define ARRAY_SIZE_HOST                                20
 #define ARRAY_SIZE_PPORT                                5
 #define ARRAY_SIZE_CPORT                                5
+#define DEFAULT_POLLING_FREQUENCY                      20 /* seconds */
 
 //  --------------------------------------------------------------------------
 //  SEPP datapool parameter names
@@ -101,8 +103,6 @@ init_nmf_api(char *arg_host, char *arg_pport, char *arg_cport)
     {
         strcpy(cport, arg_cport);
     }
-
-    printf("\n\nDO DA CONNECT %s:%s:%s\n\n:", phost, pport, cport);
 
     /* initialize the Gateway API object to access NMF services */
     nmf_api = nmf_api_new(phost, pport, cport);
@@ -885,7 +885,7 @@ int parse_args (int argc, char *argv [], char *host, char *pport, char *cport, i
     *iter = argv_index_iter == -1 ? -1 : atoi(argv[argv_index_iter]);
 
     /* set the sleep time in between iterations */
-    *sleep = argv_index_sleep == -1 ? 2 : (uint)atoi(argv[argv_index_sleep]);
+    *sleep = argv_index_sleep == -1 ? DEFAULT_POLLING_FREQUENCY : (uint)atoi(argv[argv_index_sleep]);
     
     /* parse success */
     return 0;
