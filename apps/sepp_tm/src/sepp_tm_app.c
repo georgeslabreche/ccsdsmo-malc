@@ -16,6 +16,12 @@
 
 //  --------------------------------------------------------------------------
 //  SEPP datapool parameter names
+#define ARRAY_SIZE_HOST                                20
+#define ARRAY_SIZE_PPORT                                5
+#define ARRAY_SIZE_CPORT                                5
+
+//  --------------------------------------------------------------------------
+//  SEPP datapool parameter names
 
 #define PARAM_NAME_UPTIME                       "SEPTM001"      /* uptime */
 #define PARAM_NAME_MEM_TOTAL                    "SEPTM002"      /* memory total */
@@ -58,14 +64,16 @@ nmf_api_t *nmf_api;
 //  Init the NMF Service Provider API
 
 int
-init_nmf_api()
+init_nmf_api(char *arg_host, char *arg_pport, char *arg_cport)
 {
+    /* Fetch the default host and port values by reading the centralDirectoryService.uri file */
+
     /* char array for provider host and port */
-    char phost[20] = {0};
-    char pport[5] = {0};
+    char phost[ARRAY_SIZE_HOST] = {0};
+    char pport[ARRAY_SIZE_PPORT] = {0};
 
     /* char array for consumer port */
-    char cport[5] = {0};
+    char cport[ARRAY_SIZE_CPORT] = {0};
 
     /* set provider host and port */
     sepp_tm_utils_init_provider_host_and_port(phost, pport);
@@ -77,6 +85,24 @@ init_nmf_api()
 
     /* cast consumer port to string */
     sprintf(cport, "%d", cport_int);
+
+    /* Default to values that were given via command arguments (overwrite values read from the centralDirectoryService.uri file) */
+    if(strlen(arg_host) != 0)
+    {
+        strcpy(phost, arg_host);
+    }
+
+    if(strlen(arg_pport) != 0)
+    {
+        strcpy(pport, arg_pport);
+    }
+
+    if(strlen(arg_cport) != 0)
+    {
+        strcpy(cport, arg_cport);
+    }
+
+    printf("\n\nDO DA CONNECT %s:%s:%s\n\n:", phost, pport, cport);
 
     /* initialize the Gateway API object to access NMF services */
     nmf_api = nmf_api_new(phost, pport, cport);
@@ -724,16 +750,10 @@ set_nmf_param_can_spp_bridge_status()
 
 
 //  --------------------------------------------------------------------------
-//  The main program
+//  Fetch SEPP environment data and set them as telemetry data in the NMF datapool param values
 
-int main (int argc, char *argv [])
+void set_nmf_param_all()
 {
-    /* init log level */
-    nmf_api_set_global_log_level(CLOG_ERROR_LEVEL);
-
-    /* init the NMF Service Provider API */
-    init_nmf_api();
-
     /* number of apps running */
     set_nmf_param_apps_running_count();
 
@@ -766,10 +786,174 @@ int main (int argc, char *argv [])
 
     /* CAN bridge status */
     set_nmf_param_can_spp_bridge_status();
+}
+
+
+//  --------------------------------------------------------------------------
+//  Parse main program arguments (all arguments are optional)
+
+int parse_args (int argc, char *argv [], char *host, char *pport, char *cport, int *iter, uint *sleep, int *log_level)
+{
+    /* get provider host and port from command arguments */
+    int argv_index_host = -1;
+    int argv_index_pport = -1;
+    int argv_index_cport = -1;
+    int argv_index_iter = -1;
+    int argv_index_sleep = -1;
+    int argv_index_log = -1;
+
+    /* only log errors by default */
+    *log_level = CLOG_ERROR_LEVEL;
+
+    // --------------------------------------------------------------------------
+    // parse the command arguments (all arguments are optional)
+
+    int argn;
+    for (argn = 1; argn < argc; argn++)
+    {
+        if (streq (argv [argn], "--help")
+        ||  streq (argv [argn], "-?"))
+        {
+            printf("sepp_tm_app [options] ...");
+            printf("\n  --host  / -h        hostname");
+            printf("\n  --pport / -p        provider port");
+            printf("\n  --cport / -p        consumer port");
+            printf("\n  --iter  / -i        number of iterations");
+            printf("\n  --sleep / -s        sleep time between iterations (in seconds)");
+            printf("\n  --debug / -d        enable debug logging");
+            printf("\n  --help  / -?        this information\n\n");
+            
+            /* program exit code */
+            return 1;
+        }
+        else
+        if (streq (argv [argn], "--host")
+        ||  streq (argv [argn], "-h"))
+            argv_index_host = ++argn;
+        else
+        if (streq (argv [argn], "--pport")
+        ||  streq (argv [argn], "-p"))
+            argv_index_pport = ++argn;
+        else
+        if (streq (argv [argn], "--cport")
+        ||  streq (argv [argn], "-c"))
+            argv_index_cport = ++argn;
+        else
+        if (streq (argv [argn], "--iter")
+        ||  streq (argv [argn], "-i"))
+            argv_index_iter = ++argn;
+        else
+        if (streq (argv [argn], "--sleep")
+        ||  streq (argv [argn], "-s"))
+            argv_index_sleep = ++argn;
+        else
+        if (streq (argv [argn], "--debug")
+        ||  streq (argv [argn], "-d"))
+            *log_level = CLOG_DEBUG_LEVEL;
+        else
+        {
+            /* print error message */
+            printf("Unknown option: %s\n\n", argv[argn]);
+
+            /* program exit code */
+            return 1;
+        }
+    }
+
+    /* set values for options that have been set via command arguments */
+    /* default values for host and ports are read from the centralDirectoryService.uri file  */
+
+    /* set the provider host */
+    if(argv_index_host != -1)
+    {
+        strcpy(host, argv[argv_index_host]);
+    }
+
+    /* set the provider port */
+    if(argv_index_pport != -1)
+    {
+        strcpy(pport, argv[argv_index_pport]);
+    }
+
+    /* set the consumer port */
+    if(argv_index_cport != -1)
+    {
+        strcpy(cport, argv[argv_index_cport]);
+    }
+
+    /* set the number of iterations */
+    *iter = argv_index_iter == -1 ? -1 : atoi(argv[argv_index_iter]);
+
+    /* set the sleep time in between iterations */
+    *sleep = argv_index_sleep == -1 ? 2 : (uint)atoi(argv[argv_index_sleep]);
+    
+    /* parse success */
+    return 0;
+}
+
+
+//  --------------------------------------------------------------------------
+//  The main program
+
+int main (int argc, char *argv [])
+{
+    /* return code to check for errors or program exit codes */
+    int rc = 0;
+
+    /* optional program arguments */
+    char host[ARRAY_SIZE_HOST] = {0};
+    char pport[ARRAY_SIZE_PPORT] = {0};
+    char cport[ARRAY_SIZE_CPORT] = {0};
+    int iter;
+    uint iter_sleep;
+    int log_level;
+
+    /* parse the given program arguments */
+    rc = parse_args(argc, argv, host, pport, cport, &iter, &iter_sleep, &log_level);
+
+    /* check for error code or program exit code */
+    if (rc != 0)
+    {
+        /* exit program */
+        return rc;
+    }
+
+    /* init log level */
+    nmf_api_set_global_log_level(log_level);
+
+    /* init the NMF Service Provider API */
+    init_nmf_api(host, pport, cport);
+
+    /* program loop counter */
+    uint loop_counter = 0;
+
+    /* enter the program loop */
+    while(1)
+    {
+        /* fetch SEPP environment data and set them as telemetry data in the NMF datapool param values */
+        set_nmf_param_all();
+
+        /* break out of the program loop when the target iteration number has been reached */
+        /* if no target iteration number was specified as a prgram argument then the program loop is infinite */
+        if(iter != -1)
+        {
+            /* increment loop counter */
+            loop_counter++;
+
+            /* break out of the loop is passed a given threshold */
+            if(loop_counter >= iter)
+            {
+                break;
+            }
+        }
+
+        /* wait before executing next iteration */
+        sleep(iter_sleep);
+    }
 
     /* destoy the API gateway object, also destroys all service objects */
     nmf_api_destroy(&nmf_api);
 
     /* end of program */
-    return 0;
+    return rc;
 }
