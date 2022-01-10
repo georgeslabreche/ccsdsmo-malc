@@ -159,18 +159,31 @@ set_nmf_param(char *param_name, unsigned char param_tag, char *param_value)
     rc = get_nmf_param_ids(param_name, &param_identity_id, &param_definition_id);
 
     /* create param in case of error when fetching param ids */
+
+    /** 
+     * TODO: should explicitely check for error code/message confirming that the
+     * parameter does not exist instead of assuming that this is the root of the
+     * error. there's always the possibility that an error is due to something else.
+     * 
+     * error mal message response decoding is not yet implementd in the NMF MAL C API.
+     * https://github.com/tanagraspace/ccsdsmo-malc-sepp-apps/issues/33
+     */
     if(rc != 0)
     {
         printf("create param %s\n", param_name);
 
-        // TODO: create param.
-        rc = -1;
+        /* send the addParameter request with the response variable pointers */
+        rc = mc_parameter_service_add_parameter(parameter_service,
+            param_name, NULL, param_tag, NULL, false, 0,
+            &param_identity_id, &param_definition_id);
 
         /* check for param creation error */
         if(rc != 0)
         {
             /* if error then print message and exit function with an error code */
             printf("error creating param %s\n", param_name);
+
+            /* return the error code */
             return rc;
         }
     }
@@ -185,6 +198,8 @@ set_nmf_param(char *param_name, unsigned char param_tag, char *param_value)
         {
             /* if error then print message and exit function with an error code */
             printf("error setting param %s\n", param_name);
+
+            /* return the error code */
             return rc;
         }
     }
