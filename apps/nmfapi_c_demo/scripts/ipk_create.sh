@@ -28,7 +28,7 @@ echo "Fetch binary and library dependency"
 cp ../${LOCAL_APP_LIB_DIR}/*${PKG_NAME}*.so* ../sepp_package${SEPP_LIB_DIR}
 
 # Fetch this project's executable binary file
-cp ../${LOCAL_APP_BIN_DIR}/${PROJECT_NAME}_* ../sepp_package${SEPP_BIN_DIR}
+cp ../${LOCAL_APP_BIN_DIR}/demo_* ../sepp_package${SEPP_BIN_DIR}
 
 echo "Package"
 
