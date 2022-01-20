@@ -95,6 +95,13 @@ int main (int argc, char *argv [])
 
     nmf_api = nmf_api_new(argv[argv_index_host], argv[argv_index_pport], argv[argv_index_cport]);
 
+    // Check for error
+    if(nmf_api == NULL)
+    {
+        printf ("Error initializing the API.\n");
+        return 1;
+    }
+
 
     // --------------------------------------------------------------------------
     // get a pointer to the Monitor and Control Parameter Service

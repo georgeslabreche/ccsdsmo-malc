@@ -107,6 +107,12 @@ init_nmf_api(char *arg_host, char *arg_pport, char *arg_cport)
     /* initialize the Gateway API object to access NMF services */
     nmf_api = nmf_api_new(phost, pport, cport);
 
+    // Check for error
+    if(nmf_api == NULL)
+    {
+        return 1;
+    }
+
     /* success */
     return 0;
 }
@@ -937,7 +943,14 @@ int main (int argc, char *argv [])
     nmf_api_set_global_log_level(log_level);
 
     /* init the NMF Service Provider API */
-    init_nmf_api(host, pport, cport);
+    rc = init_nmf_api(host, pport, cport);
+
+    /* check for error code or program exit code */
+    if (rc != 0)
+    {
+        /* exit program */
+        return rc;
+    }
 
     /* program loop counter */
     uint loop_counter = 0;
