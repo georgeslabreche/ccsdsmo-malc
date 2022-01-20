@@ -74,6 +74,18 @@ struct _nmf_api_t {
 nmf_api_t *
 nmf_api_new (char *hostname, char *provider_port, char *consumer_port)
 {
+    // Return code
+    int rc;
+
+    // If the port is not available then increment its number until an available one is found;
+    rc = nmfapi_util_set_available_port(hostname, consumer_port);
+
+    if(rc != 0)
+    {
+        return NULL;
+    }
+
+    // Creat class object
     nmf_api_t *self = (nmf_api_t *) zmalloc (sizeof (nmf_api_t));
     assert (self);
     

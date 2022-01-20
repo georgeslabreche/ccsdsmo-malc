@@ -14,6 +14,92 @@
 
 #include "nmfapi_c_classes.h"
 
+
+//  --------------------------------------------------------------------------
+//  Given a port number, checks if it's available
+//  If the port is not available then increment its number until an available one is found
+
+int
+nmfapi_util_set_available_port(char *hostname, char *port)
+{
+    // The return code
+    int rc = 0;
+
+    // Cast consumer port to int type
+    int port_int;
+    sscanf(port, "%d", &port_int);
+ 
+    // Define connection variables
+    int sockfd;
+    struct sockaddr_in serv_addr;
+    struct hostent *server;
+ 
+    // Create socket
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
+    // Error check
+    if (sockfd < 0)
+    {
+        return -1;
+    }
+ 
+    // Get host
+    server = gethostbyname(hostname);
+ 
+    // Error check
+    if (server == NULL)
+    {
+        return -1;
+    }
+ 
+    // Init server connection
+    bzero((char *) &serv_addr, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    bcopy((char *)server->h_addr,
+         (char *)&serv_addr.sin_addr.s_addr,
+         server->h_length);
+    
+    // Keep track of number of attemps to find an availabel port number to avoid an infinite loop
+    int attempts;
+
+    // Loop to find available port
+    // Keep increment the port number until an available one is found
+    for(attempts = 0; attempts < MAX_PORT_INCREMENTS; attempts++)
+    {
+        serv_addr.sin_port = htons(port_int);
+        
+        // Check if connection can be made for the given port
+        if (connect(sockfd,(struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
+        {
+            // If connection is successful then the current port was available
+            // Cast the available consumer port to string
+            sprintf(port, "%d", port_int);
+
+            // Exit the loop and disconnect from the server to make the port available again
+            break;
+        } 
+        else
+        {
+            // If connection failed then the port was not available
+            // Increment the port number and check again
+            port_int++;
+        }
+    }
+ 
+    // Close the socket connection so that the port is made available again
+    close(sockfd);
+
+    // If the attempt counter passed the max number of attempts the we failed to find an available port
+    if(attempts >= MAX_PORT_INCREMENTS)
+    {
+        return -1;
+    }
+
+    // Success
+    return 0;
+}
+
+
 //  --------------------------------------------------------------------------
 //  Create a URI
 //  It's the invoker of this funtion to destroy the returned URI with mal_uri_destroy
@@ -104,7 +190,8 @@ nmfapi_util_destroy_mal_message(mal_message_t *message, mal_ctx_t *mal_ctx)
      * Invoking mal_message_destroy does not destroy the object's properties
      * unless they are flagged to be free, e.g.:
      * 
-     *    if (self->free_domain) {
+     *    if (self->free_domain)
+     *    {
      *      mal_identifier_list_destroy(&self->domain);
      *    }
      * 

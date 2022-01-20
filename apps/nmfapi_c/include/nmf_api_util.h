@@ -12,6 +12,14 @@
 extern "C" {
 #endif
 
+
+#define MAX_PORT_INCREMENTS         100 // The maximum number of port number increments to find an available port
+
+
+//  If the given port is not available then increment its number until an available one is found
+int
+nmfapi_util_set_available_port(char *hostname, char *port);
+
 //  Create a URI string
 mal_uri_t *
 nmfapi_util_create_uri(const char* protocol, const char *hostname, const char *port, const char *id);
