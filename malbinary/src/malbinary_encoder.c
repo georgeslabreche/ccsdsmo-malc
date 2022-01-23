@@ -47,14 +47,14 @@ void *malbinary_encoder_new_cursor() {
   return (void *) cursor;
 }
 
-void malbinary_write16(int int_value, void *cursor) {
+void malbinary_write16(int16_t int_value, void *cursor) {
   unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
   ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (int_value >> 8);
   ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (int_value >> 0);
   ((malbinary_cursor_t *) cursor)->body_offset = index;
 }
 
-void malbinary_write32(int int_value, void *cursor) {
+void malbinary_write32(int32_t int_value, void *cursor) {
   unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
   ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (int_value >> 24);
   ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (int_value >> 16);
@@ -63,7 +63,7 @@ void malbinary_write32(int int_value, void *cursor) {
   ((malbinary_cursor_t *) cursor)->body_offset = index;
 }
 
-void malbinary_write64(long long_value, void *cursor) {
+void malbinary_write64(int64_t long_value, void *cursor) {
   unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
   ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (long_value >> 56);
   ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (long_value >> 48);
@@ -517,7 +517,7 @@ int malbinary_encoder_add_duration_encoding_length(mal_encoder_t *self,
     mal_duration_t to_encode, void *cursor) {
 // TODO: Be careful, during MAL/ZMTP interop duration was defined as a float (fixed by Guilhem).
 //  return malbinary_encoder_add_float_encoding_length(self, (mal_float_t) to_encode, cursor);
-  return malbinary_encoder_add_double_encoding_length(self, (mal_float_t) to_encode, cursor);
+  return malbinary_encoder_add_double_encoding_length(self, (mal_double_t) to_encode, cursor);
 }
 
 int floatToIntBits(float x) {
@@ -590,7 +590,7 @@ int malbinary_encoder_add_finetime_encoding_length(mal_encoder_t *self,
 int malbinary_encoder_encode_duration(mal_encoder_t *self, void *cursor, mal_duration_t to_encode) {
 // TODO: Be careful, during MAL/ZMTP interop duration was defined as a float (fixed by Guilhem).
 // return  malbinary_encoder_encode_float(self, cursor, (mal_float_t) to_encode);
- return  malbinary_encoder_encode_double(self, cursor, (mal_float_t) to_encode);
+ return  malbinary_encoder_encode_double(self, cursor, (mal_double_t) to_encode);
 }
 
 int malbinary_encoder_encode_float(mal_encoder_t *self, void *cursor, mal_float_t to_encode) {

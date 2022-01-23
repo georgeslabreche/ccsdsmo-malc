@@ -32,6 +32,8 @@
 extern "C" {
 #endif
 
+#include <stdint.h>
+
 #include "mal_encoder.h"
 #include "mal_decoder.h"
 

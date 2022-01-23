@@ -32,6 +32,7 @@
 extern "C" {
 #endif
 
+#include <stdint.h>
 #include <malattributes.h>
 
 #define MAL_AREA_NUMBER 1

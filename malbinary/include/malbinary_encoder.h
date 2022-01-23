@@ -150,11 +150,11 @@ int malbinary_encoder_encode_boolean(mal_encoder_t *self, void *cursor, mal_bool
 
 void malbinary_write(char b, void *cursor);
 
-void malbinary_write16(int int_value, void *cursor);
+void malbinary_write16(int16_t int_value, void *cursor);
 
-void malbinary_write32(int int_value, void *cursor);
+void malbinary_write32(int32_t int_value, void *cursor);
 
-void malbinary_write64(long long_value, void *cursor);
+void malbinary_write64(int64_t long_value, void *cursor);
 
 int malbinary_encoder_encode_duration(mal_encoder_t *self, void *cursor, mal_duration_t to_encode);
 
