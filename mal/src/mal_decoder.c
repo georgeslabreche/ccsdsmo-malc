@@ -76,15 +76,15 @@ void mal_decoder_cursor_assert(mal_decoder_t *self, void *cursor) {
 
 /* Decoding functions */
 
-short mal_read16(mal_decoder_t *self, void *cursor) {
+uint16_t mal_read16(mal_decoder_t *self, void *cursor) {
   return self->mal_read16(cursor);
 }
 
-int mal_read32(mal_decoder_t *self, void *cursor) {
+uint32_t mal_read32(mal_decoder_t *self, void *cursor) {
   return self->mal_read32(cursor);
 }
 
-long mal_read64(mal_decoder_t *self, void *cursor) {
+uint64_t mal_read64(mal_decoder_t *self, void *cursor) {
   return self->mal_read64(cursor);
 }
 

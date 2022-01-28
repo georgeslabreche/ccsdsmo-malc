@@ -7,4 +7,4 @@ source env.sh
 cd sepp_package
 
 # Deploy the ipk file to the sepp them to SEPP.
-scp -P2223 *.ipk  root@localhost:${SEPP_DEPLOY_DIR}
+scp -P2223 *.ipk root@localhost:${SEPP_DEPLOY_DIR}

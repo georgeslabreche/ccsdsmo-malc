@@ -151,9 +151,9 @@ int mal_encoder_encode_uoctet(mal_encoder_t *self, void *cursor, mal_uoctet_t to
 int mal_encoder_encode_long(mal_encoder_t *self, void *cursor, mal_long_t to_encode);
 int mal_encoder_encode_ushort(mal_encoder_t *self, void *cursor, mal_ushort_t to_encode);
 int mal_encoder_encode_boolean(mal_encoder_t *self, void *cursor, mal_boolean_t to_encode);
-void mal_write16(mal_encoder_t *self, int16_t int_value, void *cursor);
-void mal_write32(mal_encoder_t *self, int32_t int_value, void *cursor);
-void mal_write64(mal_encoder_t *self, int64_t long_value, void *cursor);
+void mal_write16(mal_encoder_t *self, uint16_t int_value, void *cursor);
+void mal_write32(mal_encoder_t *self, uint32_t int_value, void *cursor);
+void mal_write64(mal_encoder_t *self, uint64_t long_value, void *cursor);
 int mal_encoder_encode_duration(mal_encoder_t *self, void *cursor, mal_duration_t to_encode);
 int mal_encoder_encode_float(mal_encoder_t *self, void *cursor, mal_float_t to_encode);
 int mal_encoder_encode_double(mal_encoder_t *self, void *cursor, mal_double_t to_encode);
@@ -314,9 +314,9 @@ typedef int mal_encoder_encode_uoctet_fn(mal_encoder_t *self, void *cursor, mal_
 typedef int mal_encoder_encode_long_fn(mal_encoder_t *self, void *cursor, mal_long_t to_encode);
 typedef int mal_encoder_encode_ushort_fn(mal_encoder_t *self, void *cursor, mal_ushort_t to_encode);
 typedef int mal_encoder_encode_boolean_fn(mal_encoder_t *self, void *cursor, mal_boolean_t to_encode);
-typedef void mal_write16_fn(int16_t int_value, void *cursor);
-typedef void mal_write32_fn(int32_t int_value, void *cursor);
-typedef void mal_write64_fn(int64_t long_value, void *cursor);
+typedef void mal_write16_fn(uint16_t int_value, void *cursor);
+typedef void mal_write32_fn(uint32_t int_value, void *cursor);
+typedef void mal_write64_fn(uint64_t long_value, void *cursor);
 typedef int mal_encoder_encode_duration_fn(mal_encoder_t *self, void *cursor, mal_duration_t to_encode);
 typedef int mal_encoder_encode_float_fn(mal_encoder_t *self, void *cursor, mal_float_t to_encode);
 typedef int mal_encoder_encode_double_fn(mal_encoder_t *self, void *cursor, mal_double_t to_encode);
