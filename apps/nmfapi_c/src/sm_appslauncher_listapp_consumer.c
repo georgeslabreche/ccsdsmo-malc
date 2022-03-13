@@ -39,11 +39,11 @@ struct _sm_appslauncher_listapp_consumer_t {
     mal_uri_t *consumer_uri;
     mal_actor_t *actor;
     char **app_name_list;
-    size_t app_name_list_size;
+    unsigned int app_name_list_size;
     char *category;
-    long *response_apps_inst_id_list;
+    int64_t *response_apps_inst_id_list;
     bool *response_apps_inst_running_list;
-    size_t response_element_count;
+    unsigned int response_element_count;
     int response_error_code;
 };
 
@@ -203,7 +203,7 @@ sm_appslauncher_listapp_consumer_set_field_app_name_list (sm_appslauncher_listap
 }
 
 //  Get the size of the app names MAL message field
-size_t
+unsigned int
 sm_appslauncher_listapp_consumer_get_field_app_name_list_size (sm_appslauncher_listapp_consumer_t *self)
 {
     return self->app_name_list_size;
@@ -211,7 +211,7 @@ sm_appslauncher_listapp_consumer_get_field_app_name_list_size (sm_appslauncher_l
 
 //  Set the size of the app names MAL message field
 void
-sm_appslauncher_listapp_consumer_set_field_app_name_list_size (sm_appslauncher_listapp_consumer_t *self, size_t app_name_list_size)
+sm_appslauncher_listapp_consumer_set_field_app_name_list_size (sm_appslauncher_listapp_consumer_t *self, unsigned int app_name_list_size)
 {
     self->app_name_list_size = app_name_list_size;
 }
@@ -235,7 +235,7 @@ sm_appslauncher_listapp_consumer_set_field_category (sm_appslauncher_listapp_con
 //  Getters for response variables
 
 //  Get response variable for appsInstIds
-long *
+int64_t *
 sm_appslauncher_listapp_consumer_get_response_apps_inst_id_list (sm_appslauncher_listapp_consumer_t *self)
 {
     return self->response_apps_inst_id_list;
@@ -249,7 +249,7 @@ sm_appslauncher_listapp_consumer_get_response_apps_inst_running_list (sm_appslau
 }
 
 //  Get response variable for number of apps
-size_t
+unsigned int
 sm_appslauncher_listapp_consumer_get_response_element_count (sm_appslauncher_listapp_consumer_t *self)
 {
     return self->response_element_count;
@@ -311,7 +311,7 @@ sm_appslauncher_listapp_consumer_initialize (void *self, mal_actor_t *mal_actor)
     mal_identifier_list_t *app_name_list = mal_identifier_list_new(consumer->app_name_list_size);
     mal_identifier_t **content = mal_identifier_list_get_content(app_name_list);
 
-    for(size_t i = 0; i < consumer->app_name_list_size; i++)
+    for(unsigned int i = 0; i < consumer->app_name_list_size; i++)
     {
         content[i] = mal_identifier_new(consumer->app_name_list[i]);
     }
@@ -539,8 +539,8 @@ sm_appslauncher_listapp_consumer_response (void *self, mal_ctx_t *mal_ctx,
     // The response variables
     mal_long_list_t *apps_inst_id_list;
     mal_boolean_list_t *apps_inst_running_list;
-    size_t apps_inst_id_list_count;
-    size_t apps_inst_running_list_count;
+    unsigned int apps_inst_id_list_count;
+    unsigned int apps_inst_running_list_count;
 
     // Cast self to consumer type
     sm_appslauncher_listapp_consumer_t *consumer = (sm_appslauncher_listapp_consumer_t *) self;
@@ -639,7 +639,7 @@ sm_appslauncher_listapp_consumer_response (void *self, mal_ctx_t *mal_ctx,
             else
             {
                 // Allocate memory for the apps inst id list response
-                consumer->response_apps_inst_id_list = (long *) calloc(apps_inst_id_list_count, sizeof(long));
+                consumer->response_apps_inst_id_list = (int64_t *) calloc(apps_inst_id_list_count, sizeof(int64_t));
 
                 // Error check
                 if (!consumer->response_apps_inst_id_list && (apps_inst_id_list_count > 0))
@@ -684,22 +684,49 @@ sm_appslauncher_listapp_consumer_response (void *self, mal_ctx_t *mal_ctx,
 
             // Set appInstIds values
             mal_long_t *apps_inst_id_list_content = mal_long_list_get_content(apps_inst_id_list);
+            printf("-------------------------------------------\n");
 
-            // The apps_inst_id_list object is a mal_long_list_t that will be destroyed so we cannot point to its address
-            // Copy the content into the dedicated class property
-            for(size_t i = 0; i < consumer->response_element_count; i++)
-            {
-                consumer->response_apps_inst_id_list[i] = apps_inst_id_list_content[i];
-            }
+
+
+            printf("-------------------------------------------\n");
 
             // Set apps running values
             mal_boolean_t *apps_running_content = mal_boolean_list_get_content(apps_inst_running_list);
 
+            
+
+            printf("-------------------zu-----------------------\n");
+
+            bool *prez_flags = mal_long_list_get_presence_flags(apps_inst_id_list);
+            for(unsigned int i = 0; i < consumer->response_element_count; i++)
+            {
+                //printf("idx: %lu, flag: %d, app id: %ld, running: %d\n", i, apps_inst_prez_flags[i], apps_inst_id_list_content[i], apps_running_content[i]);
+                //try:
+                //printf("idx: %lu, app id: %ld, running: %d\n", i, apps_inst_id_list_content[i], apps_running_content[i]);
+                printf("flag: %d\n", prez_flags[i]);
+                printf("idx: %u, flag: %d\n", i, prez_flags[i]);
+                // printf("idx: %lu, flag: %d, app id: %ld, running: %d\n", i, apps_inst_prez_flags[i], apps_inst_id_list_content[i], apps_running_content[i]);
+            }
+
+            printf("-------------------------------------------\n");
+
+             // The apps_inst_id_list object is a mal_long_list_t that will be destroyed so we cannot point to its address
+            // Copy the content into the dedicated class property
+            for(unsigned int i = 0; i < consumer->response_element_count; i++)
+            {
+                consumer->response_apps_inst_id_list[i] = apps_inst_id_list_content[i];
+                printf("idx: %u, app id: %ld\n", i, apps_inst_id_list_content[i]);
+            }
+
+            printf("-------------------------------------------\n");
+
+
             // The apps_inst_running_list object is a mal_boolean_list_t object that will be destroyed so we cannot point to its address
             // Copy the content into the dedicated class property
-            for(size_t i = 0; i < consumer->response_element_count; i++)
+            for(unsigned int i = 0; i < consumer->response_element_count; i++)
             {
                 consumer->response_apps_inst_running_list[i] = apps_running_content[i];
+                printf("idx: %u, running: %d\n", i, apps_running_content[i]);
             }
         }
 
@@ -710,26 +737,32 @@ sm_appslauncher_listapp_consumer_response (void *self, mal_ctx_t *mal_ctx,
         // Destroy fields
         if(apps_inst_id_list)
         {
+            clog_debug(sm_appslauncher_listapp_consumer_logger, "sm_appslauncher_listapp_consumer_response: mal_long_list_destroy\n");
             mal_long_list_destroy(&apps_inst_id_list);
         }
         
         if(apps_inst_running_list)
         {
+            clog_debug(sm_appslauncher_listapp_consumer_logger, "sm_appslauncher_listapp_consumer_response: mal_boolean_list_destroy\n");
             mal_boolean_list_destroy(&apps_inst_running_list);
         }
 
     }
 
     // Destroy the MAL decoder cursor
+    clog_debug(sm_appslauncher_listapp_consumer_logger, "sm_appslauncher_listapp_consumer_response: mal_decoder_cursor_destroy\n");
     mal_decoder_cursor_destroy(decoder, cursor);
 
     // Destroy the MAL binary decoder
+    clog_debug(sm_appslauncher_listapp_consumer_logger, "sm_appslauncher_listapp_consumer_response: free\n");
     free(decoder);
     
     // Destroy MAL message
+    clog_debug(sm_appslauncher_listapp_consumer_logger, "sm_appslauncher_listapp_consumer_response: mal_message_destroy\n");
     mal_message_destroy(&message, mal_ctx);
     
     // Terminating the actor thread will trigger the finalize function
+    clog_debug(sm_appslauncher_listapp_consumer_logger, "sm_appslauncher_listapp_consumer_response: mal_actor_term\n");
     mal_actor_term(consumer->actor);
 
     // Return error code

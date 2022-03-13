@@ -31,9 +31,9 @@ void malsplitbinary_set_log_level(int level) {
 }
 
 //decode bitfield most significant
-unsigned int malbinary_read_uvarinteger(char *bytes) {
-  unsigned int index = 0;
-  unsigned int value = 0;
+uint32_t malbinary_read_uvarinteger(char *bytes) {
+  uint32_t index = 0;
+  uint32_t value = 0;
   int i;
   int b;
   for (i = 0; ((b = bytes[index++]) & 0x80) != 0; i += 7) {
@@ -42,10 +42,10 @@ unsigned int malbinary_read_uvarinteger(char *bytes) {
   return value | b << i;
 }
 
-int malbinary_var_uinteger_encoding_length(unsigned int value) {
+uint32_t malbinary_var_uinteger_encoding_length(uint32_t value) {
   if (value == 0) return 1;
-  int ret = 0;
-  for (int i = 0; i < 32; i += 7) {
+  uint32_t ret = 0;
+  for (uint32_t i = 0; i < 32; i += 7) {
     if ((value >> i) == 0) {
       break;
     }
@@ -54,9 +54,9 @@ int malbinary_var_uinteger_encoding_length(unsigned int value) {
   return ret;
 }
 
-void malbinary_write_uvarinteger(unsigned int value, char *bytes)
+void malbinary_write_uvarinteger(uint32_t value, char *bytes)
 {
-  unsigned int index = 0;
+  uint32_t index = 0;
   while ((value & -128) != 0)
   {
     bytes[index++] = (char) ((value & 127) | 128);
@@ -65,7 +65,7 @@ void malbinary_write_uvarinteger(unsigned int value, char *bytes)
   bytes[index++] = (char) (value & 127);
 }
 
-unsigned int malsplitbinary_cursor_get_bitfield_nb_bytes(unsigned int most_significant) {
+uint32_t malsplitbinary_cursor_get_bitfield_nb_bytes(uint32_t most_significant) {
   // The result should be zero if most_significant is zero.
   if (most_significant <= 0) return 0;
   return ((most_significant -1) /8) +1;
@@ -84,7 +84,7 @@ void  malsplitbinary_cursor_reset(void *cursor) {
 }
 
 void  malsplitbinary_decoder_cursor_reset(void *cursor,
-    char *bytes, unsigned int length, unsigned int offset) {
+    char *bytes, uint32_t length, uint32_t offset) {
   malsplitbinary_cursor_reset(cursor);
   malsplitbinary_decoder_cursor_init(cursor, bytes, length, offset);
 }
@@ -95,21 +95,21 @@ void  malsplitbinary_decoder_cursor_reset(void *cursor,
  */
 void  malsplitbinary_encoder_cursor_init(void *cursor,
     char *bytes,              //message
-    unsigned int length,      //message length
-    unsigned int offset) {    //message_offset
+    uint32_t length,      //message length
+    uint32_t offset) {    //message_offset
   ((malsplitbinary_cursor_t *) cursor)->bitfield_length = ((malsplitbinary_cursor_t *) cursor)->most_significant;
-  unsigned int bf_nb_bytes = malsplitbinary_cursor_get_bitfield_nb_bytes(((malsplitbinary_cursor_t *) cursor)->most_significant);
+  uint32_t bf_nb_bytes = malsplitbinary_cursor_get_bitfield_nb_bytes(((malsplitbinary_cursor_t *) cursor)->most_significant);
   // set most_significant bytes length
   malbinary_write_uvarinteger(bf_nb_bytes, bytes+offset);
   // Calculates the bitfield offset
-  unsigned int bf_offset = offset + malbinary_var_uinteger_encoding_length(bf_nb_bytes);
+  uint32_t bf_offset = offset + malbinary_var_uinteger_encoding_length(bf_nb_bytes);
   // Cleans the bitfield area
   if (bf_nb_bytes > 0) memset(&bytes[bf_offset], 0, bf_nb_bytes);
   ((malsplitbinary_cursor_t *) cursor)->bitfield_ptr = &bytes[bf_offset];
   //body_offset
-  int body_offset = bf_offset + bf_nb_bytes;
+  uint32_t body_offset = bf_offset + bf_nb_bytes;
   //body_length
-  int body_length = length - body_offset;
+  uint32_t body_length = length - body_offset;
   malbinary_cursor_init(&((malsplitbinary_cursor_t *) cursor)->malbinary_cursor, bytes, body_length, body_offset);
   // Reset bitfield index in order to encode bits.
   ((malsplitbinary_cursor_t *) cursor)->bitfield_idx = 0;
@@ -123,18 +123,18 @@ void  malsplitbinary_encoder_cursor_init(void *cursor,
  */
 void  malsplitbinary_decoder_cursor_init(void *cursor,
     char *bytes,            //message
-    unsigned int length,    //message length
-    unsigned int offset) {  //message_offset
+    uint32_t length,    //message length
+    uint32_t offset) {  //message_offset
 
-  unsigned int bf_nb_bytes = malbinary_read_uvarinteger(bytes+offset);
+  uint32_t bf_nb_bytes = malbinary_read_uvarinteger(bytes+offset);
   ((malsplitbinary_cursor_t *) cursor)->bitfield_length = bf_nb_bytes *8;
 
-  unsigned int bf_offset = offset + malbinary_var_uinteger_encoding_length(bf_nb_bytes);
+  uint32_t bf_offset = offset + malbinary_var_uinteger_encoding_length(bf_nb_bytes);
   ((malsplitbinary_cursor_t *) cursor)->bitfield_ptr = &bytes[bf_offset];
   //body_offset
-  int body_offset = bf_offset + bf_nb_bytes;
+  uint32_t body_offset = bf_offset + bf_nb_bytes;
   //body_length
-  int body_length = length - body_offset;
+  uint32_t body_length = length - body_offset;
   // Initializes malbinary part of cursor
   malbinary_cursor_init(&((malsplitbinary_cursor_t *) cursor)->malbinary_cursor, bytes, body_length, body_offset);
   // Set next bit to decode index
@@ -161,19 +161,19 @@ char *malsplitbinary_cursor_get_bitfield_ptr(malsplitbinary_cursor_t *cursor) {
   return cursor->bitfield_ptr;
 }
 
-unsigned int malsplitbinary_cursor_get_bitfield_idx(malsplitbinary_cursor_t *cursor) {
+uint32_t malsplitbinary_cursor_get_bitfield_idx(malsplitbinary_cursor_t *cursor) {
   return cursor->bitfield_idx;
 }
 
-unsigned int malsplitbinary_cursor_get_most_significant(malsplitbinary_cursor_t *cursor) {
+uint32_t malsplitbinary_cursor_get_most_significant(malsplitbinary_cursor_t *cursor) {
   return cursor->most_significant;
 }
 
 /**
  * Returns the size in bytes of the bitfield including the encoding of its size.
  */
-unsigned int malsplitbinary_cursor_get_bitfield_length(malsplitbinary_cursor_t *cursor) {
-  unsigned int bf_nb_bytes = malsplitbinary_cursor_get_bitfield_nb_bytes(cursor->most_significant);
+uint32_t malsplitbinary_cursor_get_bitfield_length(malsplitbinary_cursor_t *cursor) {
+  uint32_t bf_nb_bytes = malsplitbinary_cursor_get_bitfield_nb_bytes(cursor->most_significant);
   return malbinary_var_uinteger_encoding_length(bf_nb_bytes) + bf_nb_bytes;
 }
 
@@ -181,15 +181,15 @@ char *malsplitbinary_cursor_get_body_ptr(malsplitbinary_cursor_t *cursor) {
   return cursor->malbinary_cursor.body_ptr;
 }
 
-unsigned int malsplitbinary_cursor_get_body_offset(malsplitbinary_cursor_t *cursor) {
+uint32_t malsplitbinary_cursor_get_body_offset(malsplitbinary_cursor_t *cursor) {
   return malbinary_cursor_get_offset(&cursor->malbinary_cursor);
 }
 
-unsigned int malsplitbinary_cursor_get_body_length(malsplitbinary_cursor_t *cursor) {
+uint32_t malsplitbinary_cursor_get_body_length(malsplitbinary_cursor_t *cursor) {
   return malbinary_cursor_get_length(&cursor->malbinary_cursor);
 }
 
-unsigned int malsplitbinary_cursor_get_length(void *cursor) {
+uint32_t malsplitbinary_cursor_get_length(void *cursor) {
   // NOTE: Only used for debug
 //  printf("message len = %d (body %d + bitfield %d)\n",
 //      (malbinary_cursor_get_length(&((malsplitbinary_cursor_t *) cursor)->malbinary_cursor) +
@@ -200,7 +200,7 @@ unsigned int malsplitbinary_cursor_get_length(void *cursor) {
       malsplitbinary_cursor_get_bitfield_length((malsplitbinary_cursor_t *) cursor);
 }
 
-unsigned int malsplitbinary_cursor_get_offset(void *cursor) {
+uint32_t malsplitbinary_cursor_get_offset(void *cursor) {
   return malbinary_cursor_get_offset(&((malsplitbinary_cursor_t *) cursor)->malbinary_cursor);
 }
 
@@ -222,7 +222,7 @@ void malsplitbinary_cursor_print(malsplitbinary_cursor_t *cursor) {
 
 void malsplitbinary_cursor_dump(malsplitbinary_cursor_t *cursor) {
   char *bitfield = malsplitbinary_cursor_get_bitfield_ptr(cursor);
-  int bitfield_idx = malsplitbinary_cursor_get_bitfield_idx(cursor);
+  uint32_t bitfield_idx = malsplitbinary_cursor_get_bitfield_idx(cursor);
   clog_debug(malsplitbinary_logger, "malsplitbinary_cursor(bitfield_length=%d:[", cursor->bitfield_length);
   if ((bitfield != NULL) && (cursor->bitfield_length > 0)) {
     for (int i = 0 ; i < (cursor->bitfield_length/8 + 1) ; i++) {
@@ -237,8 +237,8 @@ void malsplitbinary_cursor_dump(malsplitbinary_cursor_t *cursor) {
   }
   clog_debug_no_header(malsplitbinary_logger, "]");
   char *body = malsplitbinary_cursor_get_body_ptr(cursor);
-  unsigned int body_len = malsplitbinary_cursor_get_body_length(cursor);
-  int body_offset = malsplitbinary_cursor_get_body_offset(cursor);
+  uint32_t body_len = malsplitbinary_cursor_get_body_length(cursor);
+  uint32_t body_offset = malsplitbinary_cursor_get_body_offset(cursor);
   clog_debug_no_header(malsplitbinary_logger, ",body_length=%d:[", body_len);
   if (body != NULL)
   for (int j = 0 ; j < body_len ; j++) {

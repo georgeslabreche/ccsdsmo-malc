@@ -45,7 +45,7 @@ int malbinary_encoder_add_presence_flag_encoding_length(
     mal_encoder_t *self, mal_boolean_t to_encode, void *cursor);
 
 int malbinary_encoder_add_short_form_encoding_length(mal_encoder_t *self,
-    long to_encode, void *cursor);
+    int64_t to_encode, void *cursor);
 
 int malbinary_encoder_add_integer_encoding_length(mal_encoder_t *self,
     mal_integer_t to_encode, void *cursor);
@@ -81,13 +81,13 @@ int malbinary_encoder_add_list_size_encoding_length(mal_encoder_t *self,
     unsigned int to_encode, void *cursor);
 
 int malbinary_encoder_add_small_enum_encoding_length(mal_encoder_t *self,
-    unsigned int to_encode, void *cursor);
+    uint32_t to_encode, void *cursor);
 
 int malbinary_encoder_add_medium_enum_encoding_length(mal_encoder_t *self,
-    unsigned int to_encode, void *cursor);
+    uint32_t to_encode, void *cursor);
 
 int malbinary_encoder_add_large_enum_encoding_length(mal_encoder_t *self,
-    unsigned int to_encode, void *cursor);
+    uint32_t to_encode, void *cursor);
 
 int malbinary_encoder_add_duration_encoding_length(mal_encoder_t *self, mal_duration_t to_encode, void *cursor);
 
@@ -112,19 +112,19 @@ int malbinary_encoder_add_attribute_encoding_length(mal_encoder_t *encoder,
 /*
  * Encoding functions.
  */
-void malbinary_write_array(char *array, unsigned int length, void *cursor);
+void malbinary_write_array(char *array, uint32_t length, void *cursor);
 
 int malbinary_encoder_encode_string(mal_encoder_t *self, void *cursor, mal_string_t *to_encode);
 
 int malbinary_encoder_encode_presence_flag(mal_encoder_t *self, void *cursor, bool to_encode);
 
-int malbinary_encoder_encode_short_form(mal_encoder_t *self, void *cursor, long to_encode);
+int malbinary_encoder_encode_short_form(mal_encoder_t *self, void *cursor, int64_t to_encode);
 
-int malbinary_encoder_encode_small_enum(mal_encoder_t *self, void *cursor, int to_encode);
+int malbinary_encoder_encode_small_enum(mal_encoder_t *self, void *cursor, int32_t to_encode);
 
-int malbinary_encoder_encode_medium_enum(mal_encoder_t *self, void *cursor, int to_encode);
+int malbinary_encoder_encode_medium_enum(mal_encoder_t *self, void *cursor, int32_t to_encode);
 
-int malbinary_encoder_encode_large_enum(mal_encoder_t *self, void *cursor, int to_encode);
+int malbinary_encoder_encode_large_enum(mal_encoder_t *self, void *cursor, int32_t to_encode);
 
 int malbinary_encoder_encode_integer(mal_encoder_t *self, void *cursor, mal_integer_t to_encode);
 
@@ -150,11 +150,11 @@ int malbinary_encoder_encode_boolean(mal_encoder_t *self, void *cursor, mal_bool
 
 void malbinary_write(char b, void *cursor);
 
-void malbinary_write16(int int_value, void *cursor);
+void malbinary_write16(int16_t int_value, void *cursor);
 
-void malbinary_write32(int int_value, void *cursor);
+void malbinary_write32(int32_t int_value, void *cursor);
 
-void malbinary_write64(long long_value, void *cursor);
+void malbinary_write64(int64_t long_value, void *cursor);
 
 int malbinary_encoder_encode_duration(mal_encoder_t *self, void *cursor, mal_duration_t to_encode);
 

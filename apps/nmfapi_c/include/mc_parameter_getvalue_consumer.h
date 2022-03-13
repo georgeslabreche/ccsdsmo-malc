@@ -17,7 +17,9 @@ extern "C" {
 //  @interface
 //  This is a stable class, and may not change except for emergencies. It
 //  is provided in stable builds.
-#define MC_PARAMETER_GETVALUE_CONSUMER_URI "mc/parameter/consumer/getValue"  // The consumer URI for the getValue operation
+
+// The consumer URI for the getValue operation
+#define MC_PARAMETER_GETVALUE_CONSUMER_URI "mc/parameter/consumer/getValue"
 
 //  Instanciate a consumer object for the getValue operation
 NMFAPI_C_EXPORT mc_parameter_getvalue_consumer_t *
@@ -54,7 +56,7 @@ NMFAPI_C_EXPORT unsigned char *
     mc_parameter_getvalue_consumer_get_response_mal_attribute_tag_list (mc_parameter_getvalue_consumer_t *self);
 
 //  Get response variable for number of MAL attributes
-NMFAPI_C_EXPORT size_t
+NMFAPI_C_EXPORT unsigned int
     mc_parameter_getvalue_consumer_get_response_element_count (mc_parameter_getvalue_consumer_t *self);
 
 //  Get error code from processing the response
@@ -62,20 +64,20 @@ NMFAPI_C_EXPORT int
     mc_parameter_getvalue_consumer_get_response_error_code (mc_parameter_getvalue_consumer_t *self);
 
 //  Get the param inst ids MAL message field
-NMFAPI_C_EXPORT long *
+NMFAPI_C_EXPORT int64_t *
     mc_parameter_getvalue_consumer_get_field_param_inst_id_list (mc_parameter_getvalue_consumer_t *self);
 
 //  Set the param inst ids MAL message field
 NMFAPI_C_EXPORT void
-    mc_parameter_getvalue_consumer_set_field_param_inst_id_list (mc_parameter_getvalue_consumer_t *self, long *param_inst_id_list);
+    mc_parameter_getvalue_consumer_set_field_param_inst_id_list (mc_parameter_getvalue_consumer_t *self, int64_t *param_inst_id_list);
 
 //  Get the size of the param inst ids MAL message field
-NMFAPI_C_EXPORT size_t
+NMFAPI_C_EXPORT unsigned int
     mc_parameter_getvalue_consumer_get_field_param_inst_id_list_size (mc_parameter_getvalue_consumer_t *self);
 
 //  Set the size of the param inst ids MAL message field
 NMFAPI_C_EXPORT void
-    mc_parameter_getvalue_consumer_set_field_param_inst_id_list_size (mc_parameter_getvalue_consumer_t *self, size_t param_inst_id_list_size);
+    mc_parameter_getvalue_consumer_set_field_param_inst_id_list_size (mc_parameter_getvalue_consumer_t *self, unsigned int param_inst_id_list_size);
 
 //  @end
 

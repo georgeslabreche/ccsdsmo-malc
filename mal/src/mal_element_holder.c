@@ -53,12 +53,12 @@ void mal_element_holder_set_presence_flag(mal_element_holder_t *self,
   self->presence_flag = presence_flag;
 }
 
-long mal_element_holder_get_short_form(mal_element_holder_t *self) {
+int64_t mal_element_holder_get_short_form(mal_element_holder_t *self) {
   return self->short_form;
 }
 
 void mal_element_holder_set_short_form(mal_element_holder_t *self,
-    long short_form) {
+    int64_t short_form) {
   self->short_form = short_form;
 }
 

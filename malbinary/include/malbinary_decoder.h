@@ -33,7 +33,7 @@ extern "C" {
 
 mal_decoder_t *malbinary_decoder_new(bool varint_supported);
 void  malbinary_decoder_cursor_reset(void *cursor,
-    char *bytes, unsigned int length, unsigned int offset);
+    char *bytes, uint32_t length, uint32_t offset);
 void malbinary_init_decode_functions(mal_decoder_t *decoder);
 
 void malbinary_decoder_set_log_level(mal_decoder_t *self, int level);
@@ -41,24 +41,24 @@ clog_logger_t malbinary_decoder_get_logger(mal_decoder_t *self);
 
 char malbinary_read(void *cursor);
 
-short malbinary_read16(void *cursor);
+int16_t malbinary_read16(void *cursor);
 
-int malbinary_read32(void *cursor);
+int32_t malbinary_read32(void *cursor);
 
-long malbinary_read64(void *cursor);
+int64_t malbinary_read64(void *cursor);
 
 int malbinary_decoder_decode_string(mal_decoder_t *self, void *cursor, mal_string_t **result);
 
 int malbinary_decoder_decode_presence_flag(mal_decoder_t *self,
     void *cursor, bool *result);
 
-int malbinary_decoder_decode_short_form(mal_decoder_t *self, void *cursor, long *result);
+int malbinary_decoder_decode_short_form(mal_decoder_t *self, void *cursor, int64_t *result);
 
-int malbinary_decoder_decode_small_enum(mal_decoder_t *self, void *cursor, int *result);
+int malbinary_decoder_decode_small_enum(mal_decoder_t *self, void *cursor, int32_t *result);
 
-int malbinary_decoder_decode_medium_enum(mal_decoder_t *self, void *cursor, int *result);
+int malbinary_decoder_decode_medium_enum(mal_decoder_t *self, void *cursor, int32_t *result);
 
-int malbinary_decoder_decode_large_enum(mal_decoder_t *self, void *cursor, int *result);
+int malbinary_decoder_decode_large_enum(mal_decoder_t *self, void *cursor, int32_t *result);
 
 int malbinary_decoder_decode_integer(mal_decoder_t *self, void *cursor, mal_integer_t *result);
 
@@ -82,11 +82,11 @@ int malbinary_decoder_decode_ushort(mal_decoder_t *self, void *cursor, mal_ushor
 
 int malbinary_decoder_decode_boolean(mal_decoder_t *self, void *cursor, mal_boolean_t *result);
 
-short malbinary_read16(void *cursor);
+int16_t malbinary_read16(void *cursor);
 
-int malbinary_read32(void *cursor);
+int32_t malbinary_read32(void *cursor);
 
-long malbinary_read64(void *cursor);
+int64_t malbinary_read64(void *cursor);
 
 int malbinary_decoder_decode_duration(mal_decoder_t *self, void *cursor, mal_duration_t *result);
 

@@ -39,10 +39,10 @@ struct _mc_parameter_setvalue_consumer_t {
     mal_uri_t *provider_uri;
     mal_uri_t *consumer_uri;
     mal_actor_t *actor;
-    long *param_inst_id_list;
+    int64_t *param_inst_id_list;
     unsigned char *param_tag_list;
     char **param_value_list;
-    size_t param_list_size;
+    unsigned int param_list_size;
     int response_error_code;
 };
 
@@ -163,14 +163,14 @@ mc_parameter_setvalue_consumer_get_response_error_code (mc_parameter_setvalue_co
 //  --------------------------------------------------------------------------
 //  Getters and Setters for the class variables
 
-long *
+int64_t *
 mc_parameter_setvalue_consumer_get_field_param_inst_id_list (mc_parameter_setvalue_consumer_t *self)
 {
     return self->param_inst_id_list;
 }
 
 void
-mc_parameter_setvalue_consumer_set_field_param_inst_id_list (mc_parameter_setvalue_consumer_t *self, long *param_inst_id_list)
+mc_parameter_setvalue_consumer_set_field_param_inst_id_list (mc_parameter_setvalue_consumer_t *self, int64_t *param_inst_id_list)
 {
     self->param_inst_id_list = param_inst_id_list;
 }
@@ -199,14 +199,14 @@ mc_parameter_setvalue_consumer_set_field_param_value_list (mc_parameter_setvalue
     self->param_value_list = param_value_list;
 }
 
-size_t
+unsigned int
 mc_parameter_setvalue_consumer_get_field_param_list_size (mc_parameter_setvalue_consumer_t *self)
 {
     return self->param_list_size;
 }
 
 void
-mc_parameter_setvalue_consumer_set_field_param_list_size (mc_parameter_setvalue_consumer_t *self, size_t param_list_size)
+mc_parameter_setvalue_consumer_set_field_param_list_size (mc_parameter_setvalue_consumer_t *self, unsigned int param_list_size)
 {
     self->param_list_size = param_list_size;
 }
@@ -258,7 +258,7 @@ mc_parameter_setvalue_consumer_initialize (void *self, mal_actor_t *mal_actor)
     }
 
     // Get the number of params to set
-    size_t param_list_size = mc_parameter_setvalue_consumer_get_field_param_list_size(consumer);
+    unsigned int param_list_size = mc_parameter_setvalue_consumer_get_field_param_list_size(consumer);
 
     // Build the submit ParameterRawValue list field
     mc_parameter_parameterrawvalue_list_t *param_raw_value_list = mc_parameter_parameterrawvalue_list_new(param_list_size);
@@ -268,7 +268,7 @@ mc_parameter_setvalue_consumer_initialize (void *self, mal_actor_t *mal_actor)
     int mal_attribute_init_error_code;
 
     // Construct the message content
-    for(size_t i = 0; i < param_list_size; i++)
+    for(unsigned int i = 0; i < param_list_size; i++)
     {
         union mal_attribute_t attribute;
         mal_attribute_init_error_code = nmfapi_util_init_mal_attribute(consumer->param_value_list[i], consumer->param_tag_list[i], &attribute);

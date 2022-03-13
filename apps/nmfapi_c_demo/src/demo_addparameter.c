@@ -136,7 +136,7 @@ int main (int argc, char *argv [])
     };
 
     /* list of params ids assigned to the created parameters */
-    long param_id_list[5] = {0};
+    int64_t param_id_list[5] = {0};
 
     /* list of param values to set */
     char *param_values_list[] = {
@@ -148,11 +148,11 @@ int main (int argc, char *argv [])
     };
 
     /* calculate list size */
-    size_t param_list_size = sizeof(param_name_list) / sizeof(param_name_list[0]);
+    unsigned int param_list_size = sizeof(param_name_list) / sizeof(param_name_list[0]);
 
     /* response variables */
-    long param_identity_id;
-    long param_definition_id;
+    int64_t param_identity_id;
+    int64_t param_definition_id;
 
 
     // --------------------------------------------------------------------------
@@ -160,7 +160,7 @@ int main (int argc, char *argv [])
 
     printf("\naddParameter:\n=============\n\n");
 
-    for(int i = 0; i < param_list_size; i++)
+    for(unsigned int i = 0; i < param_list_size; i++)
     {
         /* use the listDefinition operation to check if the parameter we want to create already exists */
         rc = mc_parameter_service_get_definition(parameter_service, param_name_list[i], &param_identity_id, &param_definition_id);
@@ -173,7 +173,7 @@ int main (int argc, char *argv [])
             param_id_list[i] = param_identity_id;
 
             /* verbosity */
-            printf("The %s parameter already exists with instance identity id %ld and definition id %ld",
+            printf("The %s parameter already exists with instance identity id %" PRId64 " and definition id %" PRId64 "",
                 param_name_list[i], param_identity_id, param_definition_id);
 
             /* remove parameter */
@@ -217,7 +217,7 @@ int main (int argc, char *argv [])
                 param_id_list[i] = param_identity_id;
 
                 /* verbosity */
-                printf("Added %s with instance identity id %ld and definition id %ld\n", param_name_list[i], param_identity_id, param_definition_id);
+                printf("Added %s with instance identity id %" PRId64 " and definition id %" PRId64 "\n", param_name_list[i], param_identity_id, param_definition_id);
             }
         }
 
@@ -232,7 +232,7 @@ int main (int argc, char *argv [])
 
     printf("\nsetValue:\n=========\n\n");
 
-    for(int i = 0; i < param_list_size; i++)
+    for(unsigned int i = 0; i < param_list_size; i++)
     {
         /* verbosity */
         printf("Set %s value to '%s'\n", param_name_list[i], param_values_list[i]);
@@ -256,7 +256,7 @@ int main (int argc, char *argv [])
     printf("\ngetValue:\n=========\n\n");
 
     char *param_value;
-    for(int i = 0; i < param_list_size; i++)
+    for(unsigned int i = 0; i < param_list_size; i++)
     {
         rc = mc_parameter_service_get_value_string(parameter_service, param_id_list[i], &param_value);
 

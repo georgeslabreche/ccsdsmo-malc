@@ -247,7 +247,7 @@ common_directory_service_lookup_provider_all (common_directory_service_t *self,
 
 int
 common_directory_service_lookup_provider_all_uri (common_directory_service_t *self,
-    long **response_provider_id_list, char ***response_provider_uri_list, size_t *response_element_count)
+    int64_t **response_provider_id_list, char ***response_provider_uri_list, unsigned int *response_element_count)
 {
     // Log debug
     clog_debug(common_directory_service_logger, "common_directory_service_lookup_provider_all_uri()\n");
@@ -264,10 +264,10 @@ common_directory_service_lookup_provider_all_uri (common_directory_service_t *se
     // TODO: Process the response object to extract and set provider id and url lists
     if(rc == 0)
     {   
-        size_t element_count = common_directory_providersummary_list_get_element_count(response_provider_summary_list);
+        unsigned int element_count = common_directory_providersummary_list_get_element_count(response_provider_summary_list);
         common_directory_providersummary_t **content = common_directory_providersummary_list_get_content(response_provider_summary_list);
 
-        for(size_t i = 0; i < element_count; i++)
+        for(unsigned int i = 0; i < element_count; i++)
         {
             // Get the provider id
             mal_identifier_t *provider_id = common_directory_providersummary_get_providerid(content[i]);
@@ -289,7 +289,7 @@ common_directory_service_lookup_provider_all_uri (common_directory_service_t *se
     // Destroy the response object
     if(response_provider_summary_list != NULL)
     {
-        size_t element_count = common_directory_providersummary_list_get_element_count(response_provider_summary_list);
+        unsigned int element_count = common_directory_providersummary_list_get_element_count(response_provider_summary_list);
 
         if(element_count > 0)
         {

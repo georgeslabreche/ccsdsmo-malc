@@ -31,9 +31,9 @@
     <method name = "lookup_provider_all_uri">
         The lookup operation allows a service consumer to query the directory service to return a list of
         service providers that match the requested criteria. If no match is found, then an empty list is returned
-        <argument name = "response_provider_id_list" c_type = "long **" />
+        <argument name = "response_provider_id_list" c_type = "int64_t **" />
         <argument name = "response_provider_uri_list" c_type = "char ***" />
-        <argument name = "response_element_count" c_type = "size_t *" />
+        <argument name = "response_element_count" c_type = "unsigned int *" />
         <return type = "integer" />
     </method>
 

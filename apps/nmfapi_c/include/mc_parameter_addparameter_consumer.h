@@ -18,7 +18,9 @@ extern "C" {
 //  @interface
 //  This is a stable class, and may not change except for emergencies. It
 //  is provided in stable builds.
-#define MC_PARAMETER_ADDPARAMETER_CONSUMER_URI "mc/parameter/consumer/addParameter"  // The consumer URI for the addParameter operation
+
+// The consumer URI for the addParameter operation
+#define MC_PARAMETER_ADDPARAMETER_CONSUMER_URI "mc/parameter/consumer/addParameter"
 
 //  Instanciate a consumer object for the addParameter operation
 NMFAPI_C_EXPORT mc_parameter_addparameter_consumer_t *
@@ -51,15 +53,15 @@ NMFAPI_C_EXPORT int
     mc_parameter_addparameter_consumer_get_response_error_code (mc_parameter_addparameter_consumer_t *self);
 
 //  Get the identity id list of the created parameters
-NMFAPI_C_EXPORT long *
+NMFAPI_C_EXPORT int64_t *
     mc_parameter_addparameter_consumer_get_response_param_identity_id_list (mc_parameter_addparameter_consumer_t *self);
 
 //  Get the definition id list of the created parameters
-NMFAPI_C_EXPORT long *
+NMFAPI_C_EXPORT int64_t *
     mc_parameter_addparameter_consumer_get_response_param_definition_id_list (mc_parameter_addparameter_consumer_t *self);
 
 //  Get response variable for number of elements
-NMFAPI_C_EXPORT size_t
+NMFAPI_C_EXPORT unsigned int
     mc_parameter_addparameter_consumer_get_response_element_count (mc_parameter_addparameter_consumer_t *self);
 
 //  Get the param names MAL message field
@@ -111,12 +113,12 @@ NMFAPI_C_EXPORT void
     mc_parameter_addparameter_consumer_set_field_param_report_interval_list (mc_parameter_addparameter_consumer_t *self, double *param_report_interval_list);
 
 //  Get the number of params MAL message field
-NMFAPI_C_EXPORT size_t
+NMFAPI_C_EXPORT unsigned int
     mc_parameter_addparameter_consumer_get_field_param_list_size (mc_parameter_addparameter_consumer_t *self);
 
 //  Set the number of params MAL message field
 NMFAPI_C_EXPORT void
-    mc_parameter_addparameter_consumer_set_field_param_list_size (mc_parameter_addparameter_consumer_t *self, size_t param_list_size);
+    mc_parameter_addparameter_consumer_set_field_param_list_size (mc_parameter_addparameter_consumer_t *self, unsigned int param_list_size);
 
 //  @end
 

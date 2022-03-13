@@ -35,7 +35,7 @@ void  malbinary_cursor_reset(void *cursor) {
 }
 
 void malbinary_cursor_init(void *cursor,
-    char *bytes, unsigned int length, unsigned int offset) {
+    char *bytes, uint32_t length, uint32_t offset) {
   ((malbinary_cursor_t *) cursor)->body_ptr = &bytes[offset];
   ((malbinary_cursor_t *) cursor)->body_length = length;
   ((malbinary_cursor_t *) cursor)->body_offset = 0;
@@ -54,11 +54,11 @@ void malbinary_cursor_assert(void *cursor) {
   assert(((malbinary_cursor_t *) cursor)->body_offset <= ((malbinary_cursor_t *) cursor)->body_length);
 }
 
-unsigned int malbinary_cursor_get_length(void *cursor){
+uint32_t malbinary_cursor_get_length(void *cursor){
   return ((malbinary_cursor_t *) cursor)->body_length;
 }
 
-unsigned int malbinary_cursor_get_offset(void *cursor){
+uint32_t malbinary_cursor_get_offset(void *cursor){
   return ((malbinary_cursor_t *) cursor)->body_offset;
 }
 

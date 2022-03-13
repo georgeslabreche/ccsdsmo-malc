@@ -38,11 +38,11 @@ struct _mc_parameter_getvalue_consumer_t {
     mal_uri_t *provider_uri;
     mal_uri_t *consumer_uri;
     mal_actor_t *actor;
-    long *param_inst_id_list;
-    size_t param_inst_id_list_size;
+    int64_t *param_inst_id_list;
+    unsigned int param_inst_id_list_size;
     union mal_attribute_t *response_mal_attribute_list;
     unsigned char *response_mal_attribute_tag_list;
-    size_t response_element_count;
+    unsigned int response_element_count;
     int response_error_code;
 };
 
@@ -187,26 +187,26 @@ mc_parameter_getvalue_consumer_actor_init (mc_parameter_getvalue_consumer_t *sel
 //  --------------------------------------------------------------------------
 //  Getters and Setters for the class variables
 
-long *
+int64_t *
 mc_parameter_getvalue_consumer_get_field_param_inst_id_list (mc_parameter_getvalue_consumer_t *self)
 {
     return self->param_inst_id_list;
 }
 
 void
-mc_parameter_getvalue_consumer_set_field_param_inst_id_list (mc_parameter_getvalue_consumer_t *self, long *param_inst_id_list)
+mc_parameter_getvalue_consumer_set_field_param_inst_id_list (mc_parameter_getvalue_consumer_t *self, int64_t *param_inst_id_list)
 {
     self->param_inst_id_list = param_inst_id_list;
 }
 
-size_t
+unsigned int
 mc_parameter_getvalue_consumer_get_field_param_inst_id_list_size (mc_parameter_getvalue_consumer_t *self)
 {
     return self->param_inst_id_list_size;
 }
 
 void
-mc_parameter_getvalue_consumer_set_field_param_inst_id_list_size (mc_parameter_getvalue_consumer_t *self, size_t param_inst_id_list_size)
+mc_parameter_getvalue_consumer_set_field_param_inst_id_list_size (mc_parameter_getvalue_consumer_t *self, unsigned int param_inst_id_list_size)
 {
     self->param_inst_id_list_size = param_inst_id_list_size;
 }
@@ -230,7 +230,7 @@ mc_parameter_getvalue_consumer_get_response_mal_attribute_tag_list (mc_parameter
 }
 
 //  Get response variable for number of MAL attributes
-size_t
+unsigned int
 mc_parameter_getvalue_consumer_get_response_element_count (mc_parameter_getvalue_consumer_t *self)
 {
     return self->response_element_count;
@@ -290,7 +290,7 @@ mc_parameter_getvalue_consumer_initialize (void *self, mal_actor_t *mal_actor)
     }
 
     // Get number of parameters requested
-    size_t param_inst_id_list_size = mc_parameter_getvalue_consumer_get_field_param_inst_id_list_size(consumer);
+    unsigned int param_inst_id_list_size = mc_parameter_getvalue_consumer_get_field_param_inst_id_list_size(consumer);
 
     // Build the paramInstIds request field
     mal_long_list_t *param_inst_id_list = mal_long_list_new(param_inst_id_list_size);
@@ -298,7 +298,7 @@ mc_parameter_getvalue_consumer_initialize (void *self, mal_actor_t *mal_actor)
     bool *presence_flag = mal_long_list_get_presence_flags(param_inst_id_list);
 
     // Construct the message content
-    for(size_t i = 0; i < param_inst_id_list_size; i++)
+    for(unsigned int i = 0; i < param_inst_id_list_size; i++)
     {
         content[i] = (mal_long_t)consumer->param_inst_id_list[i];
         presence_flag[i] = true;
@@ -553,7 +553,7 @@ mc_parameter_getvalue_consumer_response (void *self, mal_ctx_t *mal_ctx,
             content = mc_parameter_parametervaluedetails_list_get_content(param_value_details);
 
             // Fetch and set response variables
-            for (size_t i = 0; i < consumer->response_element_count; i++)
+            for (unsigned int i = 0; i < consumer->response_element_count; i++)
             {
                 if (content[i] != NULL)
                 {

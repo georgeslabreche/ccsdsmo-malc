@@ -161,8 +161,8 @@ mc_parameter_service_destroy (mc_parameter_service_t **self_p)
 //  of the ParameterIdentity and ParameterDefinition objects for the supported parameters of the provider
 
 int
-mc_parameter_service_list_definition (mc_parameter_service_t *self, char **param_name_list, size_t param_name_list_size,
-    long **response_identity_id_list, long **response_definition_id_list, size_t *response_element_count)
+mc_parameter_service_list_definition (mc_parameter_service_t *self, char **param_name_list, unsigned int param_name_list_size,
+    int64_t **response_identity_id_list, int64_t **response_definition_id_list, unsigned int *response_element_count)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_list_definition()\n");
@@ -227,7 +227,7 @@ mc_parameter_service_list_definition (mc_parameter_service_t *self, char **param
 //  of the ParameterIdentity and ParameterDefinition objects for the supported parameters of the provider
 
 int
-mc_parameter_service_get_definition (mc_parameter_service_t *self, char *param_name, long *response_identity_id, long *response_definition_id)
+mc_parameter_service_get_definition (mc_parameter_service_t *self, char *param_name, int64_t *response_identity_id, int64_t *response_definition_id)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_definition()\n");
@@ -239,9 +239,9 @@ mc_parameter_service_get_definition (mc_parameter_service_t *self, char *param_n
     char *param_name_list[] = {param_name};
 
     // The response pointers and element count variable
-    long *response_identity_id_list;
-    long *response_definition_id_list;
-    size_t response_element_count;
+    int64_t *response_identity_id_list;
+    int64_t *response_definition_id_list;
+    unsigned int response_element_count;
 
     // Invoke the list_definitions list
     rc = mc_parameter_service_list_definition (self, param_name_list, 1,
@@ -291,9 +291,9 @@ mc_parameter_service_get_definition (mc_parameter_service_t *self, char *param_n
 //  The getValue operation functions return the latest received value for the requested parameters
 
 int
-mc_parameter_service_get_value_list (mc_parameter_service_t *self, long *param_inst_id_list, size_t param_inst_id_list_size,
+mc_parameter_service_get_value_list (mc_parameter_service_t *self, int64_t *param_inst_id_list, unsigned int param_inst_id_list_size,
     union mal_attribute_t **response_mal_attribute_list, unsigned char **response_mal_attribute_tag_list,
-    size_t *response_element_count)
+    unsigned int *response_element_count)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_list()\n");
@@ -354,7 +354,7 @@ mc_parameter_service_get_value_list (mc_parameter_service_t *self, long *param_i
 
 //  The getValue operation returns the latest received value for the requested parameters
 int
-mc_parameter_service_get_value (mc_parameter_service_t *self, long param_inst_id,
+mc_parameter_service_get_value (mc_parameter_service_t *self, int64_t param_inst_id,
     union mal_attribute_t *response_mal_attribute, unsigned char *response_mal_attribute_tag)
 {
     // Log debug
@@ -364,12 +364,12 @@ mc_parameter_service_get_value (mc_parameter_service_t *self, long param_inst_id
     int rc = 0;
 
     // Create long list with single element
-    long param_inst_id_list[] = {param_inst_id};
+    int64_t param_inst_id_list[] = {param_inst_id};
 
     // The response pointers and element count variable
     union mal_attribute_t *response_mal_attribute_list;
     unsigned char *response_mal_attribute_tag_list;
-    size_t response_element_count;
+    unsigned int response_element_count;
 
     // Invoke the get_values function
     rc = mc_parameter_service_get_value_list(self, param_inst_id_list, 1,
@@ -433,7 +433,7 @@ mc_parameter_service_get_value (mc_parameter_service_t *self, long param_inst_id
 }
 
 int
-mc_parameter_service_get_value_blob (mc_parameter_service_t *self, long param_inst_id, char **content, size_t *content_length)
+mc_parameter_service_get_value_blob (mc_parameter_service_t *self, int64_t param_inst_id, char **content, unsigned int *content_length)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_blob()\n");
@@ -481,7 +481,7 @@ mc_parameter_service_get_value_blob (mc_parameter_service_t *self, long param_in
 }
 
 int
-mc_parameter_service_get_value_boolean (mc_parameter_service_t *self, long param_inst_id, bool *value)
+mc_parameter_service_get_value_boolean (mc_parameter_service_t *self, int64_t param_inst_id, bool *value)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_boolean()\n");
@@ -529,7 +529,7 @@ mc_parameter_service_get_value_boolean (mc_parameter_service_t *self, long param
 }
 
 int
-mc_parameter_service_get_value_duration (mc_parameter_service_t *self, long param_inst_id, double *value)
+mc_parameter_service_get_value_duration (mc_parameter_service_t *self, int64_t param_inst_id, double *value)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_duration()\n");
@@ -577,7 +577,7 @@ mc_parameter_service_get_value_duration (mc_parameter_service_t *self, long para
 }
 
 int
-mc_parameter_service_get_value_float (mc_parameter_service_t *self, long param_inst_id, float *value)
+mc_parameter_service_get_value_float (mc_parameter_service_t *self, int64_t param_inst_id, float *value)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_float()\n");
@@ -625,7 +625,7 @@ mc_parameter_service_get_value_float (mc_parameter_service_t *self, long param_i
 }
 
 int
-mc_parameter_service_get_value_double (mc_parameter_service_t *self, long param_inst_id, double *value)
+mc_parameter_service_get_value_double (mc_parameter_service_t *self, int64_t param_inst_id, double *value)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_double()\n");
@@ -673,7 +673,7 @@ mc_parameter_service_get_value_double (mc_parameter_service_t *self, long param_
 }
 
 int
-mc_parameter_service_get_value_identifier (mc_parameter_service_t *self, long param_inst_id, char **value)
+mc_parameter_service_get_value_identifier (mc_parameter_service_t *self, int64_t param_inst_id, char **value)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_identifier()\n");
@@ -721,7 +721,7 @@ mc_parameter_service_get_value_identifier (mc_parameter_service_t *self, long pa
 }
 
 int
-mc_parameter_service_get_value_octet (mc_parameter_service_t *self, long param_inst_id, char *value)
+mc_parameter_service_get_value_octet (mc_parameter_service_t *self, int64_t param_inst_id, char *value)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_octet()\n");
@@ -769,7 +769,7 @@ mc_parameter_service_get_value_octet (mc_parameter_service_t *self, long param_i
 }
 
 int
-mc_parameter_service_get_value_uoctet (mc_parameter_service_t *self, long param_inst_id, unsigned char *value)
+mc_parameter_service_get_value_uoctet (mc_parameter_service_t *self, int64_t param_inst_id, unsigned char *value)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_uoctet()\n");
@@ -817,7 +817,7 @@ mc_parameter_service_get_value_uoctet (mc_parameter_service_t *self, long param_
 }
 
 int
-mc_parameter_service_get_value_short (mc_parameter_service_t *self, long param_inst_id, short *value)
+mc_parameter_service_get_value_short (mc_parameter_service_t *self, int64_t param_inst_id, int16_t *value)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_short()\n");
@@ -865,7 +865,7 @@ mc_parameter_service_get_value_short (mc_parameter_service_t *self, long param_i
 }
 
 int
-mc_parameter_service_get_value_ushort (mc_parameter_service_t *self, long param_inst_id, unsigned short *value)
+mc_parameter_service_get_value_ushort (mc_parameter_service_t *self, int64_t param_inst_id, uint16_t *value)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_ushort()\n");
@@ -913,7 +913,7 @@ mc_parameter_service_get_value_ushort (mc_parameter_service_t *self, long param_
 }
 
 int
-mc_parameter_service_get_value_integer (mc_parameter_service_t *self, long param_inst_id, int *value)
+mc_parameter_service_get_value_integer (mc_parameter_service_t *self, int64_t param_inst_id, int32_t *value)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_integer()\n");
@@ -961,7 +961,7 @@ mc_parameter_service_get_value_integer (mc_parameter_service_t *self, long param
 }
 
 int
-mc_parameter_service_get_value_uinteger (mc_parameter_service_t *self, long param_inst_id, unsigned int *value)
+mc_parameter_service_get_value_uinteger (mc_parameter_service_t *self, int64_t param_inst_id, uint32_t *value)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_uinteger()\n");
@@ -1009,7 +1009,7 @@ mc_parameter_service_get_value_uinteger (mc_parameter_service_t *self, long para
 }
 
 int
-mc_parameter_service_get_value_long (mc_parameter_service_t *self, long param_inst_id, long *value)
+mc_parameter_service_get_value_long (mc_parameter_service_t *self, int64_t param_inst_id, int64_t *value)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_long()\n");
@@ -1057,7 +1057,7 @@ mc_parameter_service_get_value_long (mc_parameter_service_t *self, long param_in
 }
 
 int
-mc_parameter_service_get_value_ulong (mc_parameter_service_t *self, long param_inst_id, unsigned long *value)
+mc_parameter_service_get_value_ulong (mc_parameter_service_t *self, int64_t param_inst_id, uint64_t *value)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_ulong()\n");
@@ -1105,7 +1105,7 @@ mc_parameter_service_get_value_ulong (mc_parameter_service_t *self, long param_i
 }
 
 int
-mc_parameter_service_get_value_string (mc_parameter_service_t *self, long param_inst_id, char **value)
+mc_parameter_service_get_value_string (mc_parameter_service_t *self, int64_t param_inst_id, char **value)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_string()\n");
@@ -1161,7 +1161,7 @@ mc_parameter_service_get_value_string (mc_parameter_service_t *self, long param_
 }
 
 int
-mc_parameter_service_get_value_time (mc_parameter_service_t *self, long param_inst_id, unsigned long *value)
+mc_parameter_service_get_value_time (mc_parameter_service_t *self, int64_t param_inst_id, uint64_t *value)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_time()\n");
@@ -1209,7 +1209,7 @@ mc_parameter_service_get_value_time (mc_parameter_service_t *self, long param_in
 }
 
 int
-mc_parameter_service_get_value_finetime (mc_parameter_service_t *self, long param_inst_id, unsigned long *value)
+mc_parameter_service_get_value_finetime (mc_parameter_service_t *self, int64_t param_inst_id, uint64_t *value)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_finetime()\n");
@@ -1257,7 +1257,7 @@ mc_parameter_service_get_value_finetime (mc_parameter_service_t *self, long para
 }
 
 int
-mc_parameter_service_get_value_uri (mc_parameter_service_t *self, long param_inst_id, char **value)
+mc_parameter_service_get_value_uri (mc_parameter_service_t *self, int64_t param_inst_id, char **value)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_get_value_uri()\n");
@@ -1309,7 +1309,7 @@ mc_parameter_service_get_value_uri (mc_parameter_service_t *self, long param_ins
 //  The setValue operation functions allows setting the raw value for one or more parameters
 
 int
-mc_parameter_service_set_value_list (mc_parameter_service_t *self, long *param_inst_id_list, unsigned char *param_tag_list, char **param_value_list, size_t param_list_size)
+mc_parameter_service_set_value_list (mc_parameter_service_t *self, int64_t *param_inst_id_list, unsigned char *param_tag_list, char **param_value_list, unsigned int param_list_size)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_set_value_list()\n");
@@ -1364,7 +1364,7 @@ mc_parameter_service_set_value_list (mc_parameter_service_t *self, long *param_i
 }
 
 int
-mc_parameter_service_set_value (mc_parameter_service_t *self, long param_inst_id, unsigned char param_tag, char *param_value)
+mc_parameter_service_set_value (mc_parameter_service_t *self, int64_t param_inst_id, unsigned char param_tag, char *param_value)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_set_value()\n");
@@ -1373,7 +1373,7 @@ mc_parameter_service_set_value (mc_parameter_service_t *self, long param_inst_id
     int rc = 0;
 
     // Create param inst id long list with single element
-    long param_inst_id_list[] = {param_inst_id};
+    int64_t param_inst_id_list[] = {param_inst_id};
 
     // Create param attribute tag string list with single element
     unsigned char param_tag_list[] = {param_tag};
@@ -1389,7 +1389,7 @@ mc_parameter_service_set_value (mc_parameter_service_t *self, long param_inst_id
 }
 
 int
-mc_parameter_service_set_value_blob (mc_parameter_service_t *self, long param_inst_id, char *param_content, size_t param_content_length)
+mc_parameter_service_set_value_blob (mc_parameter_service_t *self, int64_t param_inst_id, char *param_content, unsigned int param_content_length)
 {
     
     // Log debug
@@ -1409,8 +1409,8 @@ mc_parameter_service_set_value_blob (mc_parameter_service_t *self, long param_in
 int
 mc_parameter_service_add_parameter_list (mc_parameter_service_t *self,
     char **param_name_list, char **param_description_list, unsigned char *param_raw_type_list,
-    char **param_raw_unit_list, bool *param_generation_enabled_list, double *param_report_interval_list, size_t param_list_size,
-    long **response_param_identity_id_list, long **response_param_definition_id_list, size_t *response_element_count)
+    char **param_raw_unit_list, bool *param_generation_enabled_list, double *param_report_interval_list, unsigned int param_list_size,
+    int64_t **response_param_identity_id_list, int64_t **response_param_definition_id_list, unsigned int *response_element_count)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_add_parameter_list()\n");
@@ -1489,7 +1489,7 @@ int
 mc_parameter_service_add_parameter (mc_parameter_service_t *self,
     char *param_name, char *param_description, unsigned char param_raw_type,
     char *param_raw_unit, bool param_generation_enabled, double param_report_interval,
-    long *response_param_identity_id, long *response_param_definition_id)
+    int64_t *response_param_identity_id, int64_t *response_param_definition_id)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_add_parameter()\n");
@@ -1516,9 +1516,9 @@ mc_parameter_service_add_parameter (mc_parameter_service_t *self,
     double param_report_interval_list[] = {param_report_interval};
 
     // The response pointers and element count variable
-    long *response_param_identity_id_list;
-    long *response_param_definition_id_list;
-    size_t response_element_count;
+    int64_t *response_param_identity_id_list;
+    int64_t *response_param_definition_id_list;
+    unsigned int response_element_count;
 
     // Invoke the addParameter function
     rc = mc_parameter_service_add_parameter_list(self,
@@ -1575,7 +1575,7 @@ mc_parameter_service_add_parameter (mc_parameter_service_t *self,
 //  The removeParameter operation allows a consumer to remove one or more parameters from the list of parameters supported by the parameter provider
 
 int
-mc_parameter_service_remove_parameter_list (mc_parameter_service_t *self, long *param_identity_id_list, size_t param_identity_id_list_size)
+mc_parameter_service_remove_parameter_list (mc_parameter_service_t *self, int64_t *param_identity_id_list, unsigned int param_identity_id_list_size)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_remove_parameter_list()\n");
@@ -1631,7 +1631,7 @@ mc_parameter_service_remove_parameter_list (mc_parameter_service_t *self, long *
 
 //  The removeParameter operation allows a consumer to remove one or more parameters from the list of parameters supported by the parameter provider
 int
-mc_parameter_service_remove_parameter (mc_parameter_service_t *self, long param_identity_id)
+mc_parameter_service_remove_parameter (mc_parameter_service_t *self, int64_t param_identity_id)
 {
     // Log debug
     clog_debug(mc_parameter_service_logger, "mc_parameter_service_remove_parameter()\n");
@@ -1640,7 +1640,7 @@ mc_parameter_service_remove_parameter (mc_parameter_service_t *self, long param_
     int rc;
 
     // Create param identity id list with single element
-    long param_identity_id_list[] = {param_identity_id};
+    int64_t param_identity_id_list[] = {param_identity_id};
 
     // Invoke the removeParameter function
     rc = mc_parameter_service_remove_parameter_list (self, param_identity_id_list, 1);

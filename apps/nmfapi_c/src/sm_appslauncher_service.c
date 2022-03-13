@@ -120,8 +120,8 @@ sm_appslauncher_service_destroy (sm_appslauncher_service_t **self_p)
 //  and running status for an app name or for a certain app category
 
 int
-sm_appslauncher_service_list_app (sm_appslauncher_service_t *self, char **app_name_list, size_t app_name_list_size, char *category,
-    long **response_apps_inst_id_list, bool **response_apps_inst_running_list, size_t *response_element_count)
+sm_appslauncher_service_list_app (sm_appslauncher_service_t *self, char **app_name_list, unsigned int app_name_list_size, char *category,
+    int64_t **response_apps_inst_id_list, bool **response_apps_inst_running_list, unsigned int *response_element_count)
 {
     clog_debug(sm_appslauncher_service_logger, "sm_appslauncher_service_list_app()\n");
 

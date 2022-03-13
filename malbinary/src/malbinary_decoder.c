@@ -38,7 +38,7 @@ mal_decoder_t *malbinary_decoder_new(bool varint_supported) {
   return self;
 }
 
-void *malbinary_decoder_new_cursor(char *bytes, unsigned int length, unsigned int offset) {
+void *malbinary_decoder_new_cursor(char *bytes, uint32_t length, uint32_t offset) {
   malbinary_cursor_t *cursor = (malbinary_cursor_t *) malloc(sizeof(malbinary_cursor_t));
   if (! cursor) return NULL;
 
@@ -47,113 +47,144 @@ void *malbinary_decoder_new_cursor(char *bytes, unsigned int length, unsigned in
   return (void *) cursor;
 }
 
-void  malbinary_decoder_cursor_reset(void *cursor,
-    char *bytes, unsigned int length, unsigned int offset) {
+void malbinary_decoder_cursor_reset(void *cursor,
+    char *bytes, uint32_t length, uint32_t offset) {
   malbinary_cursor_reset(cursor);
   malbinary_cursor_init(cursor, bytes, length, offset);
 }
 
-short malbinary_read16(void *cursor) {
-  unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;;
-  short res = (short) ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & 0xFF) << 8);
-  res = (short) (res | (((malbinary_cursor_t *) cursor)->body_ptr[index++] & 0xFF));
+int16_t malbinary_read16(void *cursor) {
+  uint32_t  index = ((malbinary_cursor_t *) cursor)->body_offset;;
+
+  int16_t res = (short) ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & INT16_C(0xFF)) << 8);
+  printf("read16: (%" PRIu32 ":%" PRId16 "), ", index, res);
+
+  res = (short) (res | (((malbinary_cursor_t *) cursor)->body_ptr[index++] & INT16_C(0xFF)));
+  printf("(%" PRIu32 ":%" PRId16 ")\n", index, res);
+
   ((malbinary_cursor_t *) cursor)->body_offset = index;
   return res;
 }
 
-int malbinary_read32(void *cursor) {
-  unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
-  int res = (((malbinary_cursor_t *) cursor)->body_ptr[index++] & 0xFF) << 24;
-  res = res | ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & 0xFF) << 16);
-  res = res | ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & 0xFF) << 8);
-  res = res | (((malbinary_cursor_t *) cursor)->body_ptr[index++] & 0xFF);
+int32_t malbinary_read32(void *cursor) {
+  uint32_t  index = ((malbinary_cursor_t *) cursor)->body_offset;
+
+  int32_t res = (((malbinary_cursor_t *) cursor)->body_ptr[index++] & INT32_C(0xFF)) << 24;
+  printf("read32: (%" PRIu32 ":%" PRId32 "), ", index, res);
+
+  res = res | ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & INT32_C(0xFF)) << 16);
+  printf("(%" PRIu32 ":%" PRId32 "), ", index, res);
+
+  res = res | ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & INT32_C(0xFF)) << 8);
+  printf("(%" PRIu32 ":%" PRId32 "), ", index, res);
+
+  res = res | (((malbinary_cursor_t *) cursor)->body_ptr[index++] & INT32_C(0xFF));
+  printf("(%" PRIu32 ":%" PRId32 ")\n", index, res);
+
   ((malbinary_cursor_t *) cursor)->body_offset = index;
   return res;
 }
 
-long malbinary_read64(void *cursor) {
-  unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
-  long res = ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & 0xFFL) << 56);
-  res = res | ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & 0xFFL) << 48);
-  res = res | ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & 0xFFL) << 40);
-  res = res | ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & 0xFFL) << 32);
-  res = res | ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & 0xFFL) << 24);
-  res = res | ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & 0xFFL) << 16);
-  res = res | ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & 0xFFL) << 8);
-  res = res | (((malbinary_cursor_t *) cursor)->body_ptr[index++] & 0xFFL);
+int64_t malbinary_read64(void *cursor) {
+  uint32_t index = ((malbinary_cursor_t *) cursor)->body_offset;
+
+  int64_t res = ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & INT64_C(0xFF)) << 56);
+  printf("read64: (%" PRIu32 ":%" PRId64 "), ", index, res);
+
+  res = res | ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & INT64_C(0xFF)) << 48);
+  printf("(%" PRIu32 ":%" PRId64 "), ", index, res);
+
+  res = res | ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & INT64_C(0xFF)) << 40);
+  printf("(%" PRIu32 ":%" PRId64 "), ", index, res);
+
+  res = res | ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & INT64_C(0xFF)) << 32);
+  printf("(%" PRIu32 ":%" PRId64 "), ", index, res);
+
+  res = res | ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & INT64_C(0xFF)) << 24);
+  printf("(%" PRIu32 ":%" PRId64 "), ", index, res);
+
+  res = res | ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & INT64_C(0xFF)) << 16);
+  printf("(%" PRIu32 ":%" PRId64 "), ", index, res);
+
+  res = res | ((((malbinary_cursor_t *) cursor)->body_ptr[index++] & INT64_C(0xFF)) << 8);
+  printf("(%" PRIu32 ":%" PRId64 "), ", index, res);
+
+  res = res | (((malbinary_cursor_t *) cursor)->body_ptr[index++] & INT64_C(0xFF));
+  printf("(%" PRIu32 ":%" PRId64 ")\n", index, res);
+
   ((malbinary_cursor_t *) cursor)->body_offset = index;
   return res;
 }
 
-unsigned short malbinary_read_uvarshort(void *cursor) {
-  unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
-  unsigned short value = 0;
-  int i;
-  short b;
-  for (i = 0; ((b = ((malbinary_cursor_t *) cursor)->body_ptr[index++]) & 0x80) != 0; i += 7) {
-    value |= (b & 0x7f) << i;
+uint16_t malbinary_read_uvarshort(void *cursor) {
+  uint32_t index = ((malbinary_cursor_t *) cursor)->body_offset;
+  uint16_t value = 0;
+  int32_t i;
+  int16_t b;
+  for (i = 0; ((b = ((malbinary_cursor_t *) cursor)->body_ptr[index++]) & INT16_C(0x80)) != 0; i += 7) {
+    value |= (b & INT16_C(0x7f)) << i;
   }
   ((malbinary_cursor_t *) cursor)->body_offset = index;
   return value | b << i;
 }
 
-unsigned int malbinary_read_uvarint(void *cursor) {
-  unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
-  unsigned int value = 0;
-  int i;
-  int b;
-  for (i = 0; ((b = ((malbinary_cursor_t *) cursor)->body_ptr[index++]) & 0x80) != 0; i += 7) {
-    value |= (b & 0x7f) << i;
+uint32_t malbinary_read_uvarint(void *cursor) {
+  uint32_t index = ((malbinary_cursor_t *) cursor)->body_offset;
+  uint32_t value = 0;
+  int32_t i;
+  int32_t b;
+  for (i = 0; ((b = ((malbinary_cursor_t *) cursor)->body_ptr[index++]) & INT32_C(0x80)) != 0; i += 7) {
+    value |= (b & INT32_C(0x7f)) << i;
   }
   ((malbinary_cursor_t *) cursor)->body_offset = index;
   return value | b << i;
 }
 
-unsigned long malbinary_read_uvarlong(void *cursor) {
-  unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
-  unsigned long value = 0L;
-  int i;
-  long b;
-  for (i = 0; ((b = ((malbinary_cursor_t *) cursor)->body_ptr[index++]) & 0x80L) != 0L; i += 7) {
-    value |= (b & 0x7fL) << i;
+uint64_t malbinary_read_uvarlong(void *cursor) {
+  uint32_t index = ((malbinary_cursor_t *) cursor)->body_offset;
+  uint64_t value = 0L;
+  int32_t i;
+  int64_t b;
+  for (i = 0; ((b = ((malbinary_cursor_t *) cursor)->body_ptr[index++]) & INT64_C(0x80)) != 0; i += 7) {
+    value |= (b & INT64_C(0x7f)) << i;
   }
   ((malbinary_cursor_t *) cursor)->body_offset = index;
   return value | b << i;
 }
 
-short malbinary_read_varshort(void *cursor) {
-  unsigned short i = malbinary_read_uvarshort(cursor);
-  short s = 0;
-  if ((i&0x1) != 0)
+int16_t malbinary_read_varshort(void *cursor) {
+  uint16_t i = malbinary_read_uvarshort(cursor);
+  int16_t s = 0;
+  if ((i & UINT16_C(0x1)) != 0)
     s = -1;
-  short temp = i >> 1;
+  int16_t temp = i >> 1;
   temp = temp ^ s;
   return temp;
 }
 
-int malbinary_read_varint(void *cursor) {
-  unsigned int i = malbinary_read_uvarint(cursor);
-  int s = 0;
-  if ((i&0x1) != 0)
-    s = 0xFFFFFFFF;
-  int temp = i >> 1;
+int32_t malbinary_read_varint(void *cursor) {
+  uint32_t i = malbinary_read_uvarint(cursor);
+  int32_t s = 0;
+  if ((i & UINT32_C(0x1)) != 0)
+    s = INT32_C(0xFFFFFFFF);
+  int32_t temp = i >> 1;
   temp = temp ^ s;
   return temp;
 }
 
-long malbinary_read_varlong(void *cursor) {
-  unsigned long l = malbinary_read_uvarlong(cursor);
-  long s = 0L;
-  if ((l&0x1) != 0)
-    s = 0xFFFFFFFFFFFFFFFFL;
-  long temp = l >> 1;
+int64_t malbinary_read_varlong(void *cursor) {
+  uint64_t l = malbinary_read_uvarlong(cursor);
+  int64_t s = 0;
+  if ((l & UINT64_C(0x1)) != 0)
+    s = INT64_C(0xFFFFFFFFFFFFFFFF);
+  int64_t temp = l >> 1;
 
   temp = temp ^ s;
   return temp;
 }
 
 char *malbinary_read_str(mal_decoder_t *self, void *cursor) {
-  unsigned int length;
+  uint32_t length;
   if (self->varint_supported)
     length = malbinary_read_uvarint(cursor);
   else
@@ -178,16 +209,16 @@ char *malbinary_read_str(mal_decoder_t *self, void *cursor) {
   return array;
 }
 
-void malbinary_read_array(char *array, unsigned int length, void *cursor) {
-  unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
-  for (int i = 0; i < length; i++) {
+void malbinary_read_array(char *array, uint32_t length, void *cursor) {
+  uint32_t index = ((malbinary_cursor_t *) cursor)->body_offset;
+  for (uint32_t i = 0; i < length; i++) {
     array[i] = ((malbinary_cursor_t *) cursor)->body_ptr[index++];
   }
   ((malbinary_cursor_t *) cursor)->body_offset = index;
 }
 
 char malbinary_read(void *cursor) {
-  unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
+  uint32_t index = ((malbinary_cursor_t *) cursor)->body_offset;
   char res = ((malbinary_cursor_t *) cursor)->body_ptr[index++];
   ((malbinary_cursor_t *) cursor)->body_offset = index;
   return res;
@@ -202,9 +233,12 @@ int malbinary_decoder_decode_string(mal_decoder_t *self, void *cursor, mal_strin
 
 int malbinary_decoder_decode_presence_flag(mal_decoder_t *self, void *cursor, bool *result) {
   char flag = malbinary_read(cursor);
+  printf("decoded flag: %d --> ", flag);
   if (flag == 1) {
+    printf("true\n");
     (*result) = true;
   } else {
+    printf("true\n");
     (*result) = false;
   }
   return 0;
@@ -218,7 +252,7 @@ int malbinary_decoder_decode_integer(mal_decoder_t *self, void *cursor, mal_inte
   return 0;
 }
 
-int malbinary_decoder_decode_short_form(mal_decoder_t *self, void *cursor, long *result) {
+int malbinary_decoder_decode_short_form(mal_decoder_t *self, void *cursor, int64_t *result) {
   if (self->varint_supported)
     (*result) = malbinary_read_varlong(cursor);
   else
@@ -234,12 +268,12 @@ int malbinary_decoder_decode_list_size(mal_decoder_t *self, void *cursor, unsign
   return 0;
 }
 
-int malbinary_decoder_decode_small_enum(mal_decoder_t *self, void *cursor, int *result) {
+int malbinary_decoder_decode_small_enum(mal_decoder_t *self, void *cursor, int32_t *result) {
   (*result) = malbinary_read(cursor);
   return 0;
 }
 
-int malbinary_decoder_decode_medium_enum(mal_decoder_t *self, void *cursor, int *result) {
+int malbinary_decoder_decode_medium_enum(mal_decoder_t *self, void *cursor, int32_t *result) {
   if (self->varint_supported)
     (*result) = malbinary_read_uvarshort(cursor);
   else
@@ -247,7 +281,7 @@ int malbinary_decoder_decode_medium_enum(mal_decoder_t *self, void *cursor, int 
   return 0;
 }
 
-int malbinary_decoder_decode_large_enum(mal_decoder_t *self, void *cursor, int *result) {
+int malbinary_decoder_decode_large_enum(mal_decoder_t *self, void *cursor, int32_t *result) {
   if (self->varint_supported)
     (*result) = malbinary_read_uvarint(cursor);
   else
@@ -263,7 +297,7 @@ int malbinary_decoder_decode_uri(mal_decoder_t *self, void *cursor, mal_uri_t **
 
 int malbinary_decoder_decode_blob(mal_decoder_t *self, void *cursor, mal_blob_t **result) {
   int rc = 0;
-  unsigned int length;
+  uint32_t length;
   if (self->varint_supported)
     length = malbinary_read_uvarint(cursor);
   else
@@ -349,10 +383,10 @@ int malbinary_decoder_decode_duration(mal_decoder_t *self, void *cursor, mal_dur
   return malbinary_decoder_decode_double(self, cursor, result);
 }
 
-float intBitsToFloat(int x) {
+float intBitsToFloat(int32_t x) {
   union {
     float f;  // assuming 32-bit IEEE 754 single-precision
-    int i;    // assuming 32-bit 2's complement int
+    int32_t i;    // assuming 32-bit 2's complement int
   } u;
   u.i = x;
   return u.f;
@@ -366,10 +400,10 @@ int malbinary_decoder_decode_float(mal_decoder_t *self, void *cursor, mal_float_
   return rc;
 }
 
-double longBitsToDouble(long x) {
+double longBitsToDouble(int64_t x) {
   union {
     double d;
-    long l;
+    int64_t l;
   } u;
   u.l = x;
   return u.d;

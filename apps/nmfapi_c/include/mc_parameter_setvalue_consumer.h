@@ -18,7 +18,9 @@ extern "C" {
 //  @interface
 //  This is a stable class, and may not change except for emergencies. It
 //  is provided in stable builds.
-#define MC_PARAMETER_SETVALUE_CONSUMER_URI "mc/parameter/consumer/setValue"  // The consumer URI for the setValue operation
+
+// The consumer URI for the setValue operation
+#define MC_PARAMETER_SETVALUE_CONSUMER_URI "mc/parameter/consumer/setValue"
 
 //  Instanciate a consumer object for the setValue operation
 NMFAPI_C_EXPORT mc_parameter_setvalue_consumer_t *
@@ -47,12 +49,12 @@ NMFAPI_C_EXPORT int
     mc_parameter_setvalue_consumer_get_response_error_code (mc_parameter_setvalue_consumer_t *self);
 
 //  Get the param inst ids MAL message field
-NMFAPI_C_EXPORT long *
+NMFAPI_C_EXPORT int64_t *
     mc_parameter_setvalue_consumer_get_field_param_inst_id_list (mc_parameter_setvalue_consumer_t *self);
 
 //  Set the param inst ids MAL message field
 NMFAPI_C_EXPORT void
-    mc_parameter_setvalue_consumer_set_field_param_inst_id_list (mc_parameter_setvalue_consumer_t *self, long *param_inst_id_list);
+    mc_parameter_setvalue_consumer_set_field_param_inst_id_list (mc_parameter_setvalue_consumer_t *self, int64_t *param_inst_id_list);
 
 //  Get the param tags MAL message field
 NMFAPI_C_EXPORT unsigned char*
@@ -71,12 +73,12 @@ NMFAPI_C_EXPORT void
     mc_parameter_setvalue_consumer_set_field_param_value_list (mc_parameter_setvalue_consumer_t *self, char **param_value_list);
 
 //  Get the number of params MAL message field
-NMFAPI_C_EXPORT size_t
+NMFAPI_C_EXPORT unsigned int
     mc_parameter_setvalue_consumer_get_field_param_list_size (mc_parameter_setvalue_consumer_t *self);
 
 //  Set the number of params MAL message field
 NMFAPI_C_EXPORT void
-    mc_parameter_setvalue_consumer_set_field_param_list_size (mc_parameter_setvalue_consumer_t *self, size_t param_list_size);
+    mc_parameter_setvalue_consumer_set_field_param_list_size (mc_parameter_setvalue_consumer_t *self, unsigned int param_list_size);
 
 //  @end
 

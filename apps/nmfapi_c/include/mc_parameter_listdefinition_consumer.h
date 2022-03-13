@@ -17,7 +17,9 @@ extern "C" {
 //  @interface
 //  This is a stable class, and may not change except for emergencies. It
 //  is provided in stable builds.
-#define MC_PARAMETER_LISTDEFINITION_CONSUMER_URI "mc/parameter/consumer/listDefinition"  // The consumer URI for the listDefinition operation
+
+// The consumer URI for the listDefinition operation
+#define MC_PARAMETER_LISTDEFINITION_CONSUMER_URI "mc/parameter/consumer/listDefinition"
 
 //  Instanciate a consumer object for the listDefinition operation
 NMFAPI_C_EXPORT mc_parameter_listdefinition_consumer_t *
@@ -46,15 +48,15 @@ NMFAPI_C_EXPORT void
     mc_parameter_listdefinition_consumer_actor_init (mc_parameter_listdefinition_consumer_t *self);
 
 //  Get response variable for the identity ids
-NMFAPI_C_EXPORT long *
+NMFAPI_C_EXPORT int64_t *
     mc_parameter_listdefinition_consumer_get_response_identity_id_list (mc_parameter_listdefinition_consumer_t *self);
 
 //  Get response variable for the definition ids
-NMFAPI_C_EXPORT long *
+NMFAPI_C_EXPORT int64_t *
     mc_parameter_listdefinition_consumer_get_response_definition_id_list (mc_parameter_listdefinition_consumer_t *self);
 
 //  Get response variable for number of elements
-NMFAPI_C_EXPORT size_t
+NMFAPI_C_EXPORT unsigned int
     mc_parameter_listdefinition_consumer_get_response_element_count (mc_parameter_listdefinition_consumer_t *self);
 
 //  Get error code from processing the response
@@ -70,12 +72,12 @@ NMFAPI_C_EXPORT void
     mc_parameter_listdefinition_consumer_set_field_param_name_list (mc_parameter_listdefinition_consumer_t *self, char **param_names);
 
 //  Get the size of the param names MAL message field
-NMFAPI_C_EXPORT size_t
+NMFAPI_C_EXPORT unsigned int
     mc_parameter_listdefinition_consumer_get_field_param_name_list_size (mc_parameter_listdefinition_consumer_t *self);
 
 //  Set the size of the param names MAL message field
 NMFAPI_C_EXPORT void
-    mc_parameter_listdefinition_consumer_set_field_param_name_list_size (mc_parameter_listdefinition_consumer_t *self, size_t param_names_size);
+    mc_parameter_listdefinition_consumer_set_field_param_name_list_size (mc_parameter_listdefinition_consumer_t *self, unsigned int param_names_size);
 
 //  @end
 

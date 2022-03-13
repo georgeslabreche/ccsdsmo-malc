@@ -71,10 +71,10 @@ typedef enum {
 } mal_interactiontype_t;
 
 // short form for enumeration type mal_interactiontype
-#define MAL_INTERACTIONTYPE_SHORT_FORM 0x1000001000013L
+#define MAL_INTERACTIONTYPE_SHORT_FORM INT64_C(0x1000001000013)
 
 // short form for list of enumeration type mal_interactiontype
-#define MAL_INTERACTIONTYPE_LIST_SHORT_FORM 0x1000001ffffedL
+#define MAL_INTERACTIONTYPE_LIST_SHORT_FORM INT64_C(0x1000001ffffed)
 
 // generated code for enumeration mal_sessiontype
 typedef enum {
@@ -84,10 +84,10 @@ typedef enum {
 } mal_sessiontype_t;
 
 // short form for enumeration type mal_sessiontype
-#define MAL_SESSIONTYPE_SHORT_FORM 0x1000001000014L
+#define MAL_SESSIONTYPE_SHORT_FORM INT64_C(0x1000001000014)
 
 // short form for list of enumeration type mal_sessiontype
-#define MAL_SESSIONTYPE_LIST_SHORT_FORM 0x1000001ffffecL
+#define MAL_SESSIONTYPE_LIST_SHORT_FORM INT64_C(0x1000001ffffec)
 
 // generated code for enumeration mal_qoslevel
 typedef enum {
@@ -98,10 +98,10 @@ typedef enum {
 } mal_qoslevel_t;
 
 // short form for enumeration type mal_qoslevel
-#define MAL_QOSLEVEL_SHORT_FORM 0x1000001000015L
+#define MAL_QOSLEVEL_SHORT_FORM INT64_C(0x1000001000015)
 
 // short form for list of enumeration type mal_qoslevel
-#define MAL_QOSLEVEL_LIST_SHORT_FORM 0x1000001ffffebL
+#define MAL_QOSLEVEL_LIST_SHORT_FORM INT64_C(0x1000001ffffeb)
 
 // generated code for enumeration mal_updatetype
 typedef enum {
@@ -112,10 +112,10 @@ typedef enum {
 } mal_updatetype_t;
 
 // short form for enumeration type mal_updatetype
-#define MAL_UPDATETYPE_SHORT_FORM 0x1000001000016L
+#define MAL_UPDATETYPE_SHORT_FORM INT64_C(0x1000001000016)
 
 // short form for list of enumeration type mal_updatetype
-#define MAL_UPDATETYPE_LIST_SHORT_FORM 0x1000001ffffeaL
+#define MAL_UPDATETYPE_LIST_SHORT_FORM INT64_C(0x1000001ffffea)
 
 union mal_element_t {
   mal_blob_t *blob_value;
@@ -219,56 +219,56 @@ int mal_notify_decode_updateheader_list(void *cursor, mal_decoder_t *decoder, ma
 
 
 // short form for composite type MAL:_:Subscription
-#define MAL_SUBSCRIPTION_SHORT_FORM 0x1000001000017L
+#define MAL_SUBSCRIPTION_SHORT_FORM INT64_C(0x1000001000017)
 
 // short form for list of composite type MAL:_:Subscription
-#define MAL_SUBSCRIPTION_LIST_SHORT_FORM 0x1000001ffffe9L
+#define MAL_SUBSCRIPTION_LIST_SHORT_FORM INT64_C(0x1000001ffffe9)
 
 // short form for composite type MAL:_:EntityRequest
-#define MAL_ENTITYREQUEST_SHORT_FORM 0x1000001000018L
+#define MAL_ENTITYREQUEST_SHORT_FORM INT64_C(0x1000001000018)
 
 // short form for list of composite type MAL:_:EntityRequest
-#define MAL_ENTITYREQUEST_LIST_SHORT_FORM 0x1000001ffffe8L
+#define MAL_ENTITYREQUEST_LIST_SHORT_FORM INT64_C(0x1000001ffffe8)
 
 // short form for composite type MAL:_:EntityKey
-#define MAL_ENTITYKEY_SHORT_FORM 0x1000001000019L
+#define MAL_ENTITYKEY_SHORT_FORM INT64_C(0x1000001000019)
 
 // short form for list of composite type MAL:_:EntityKey
-#define MAL_ENTITYKEY_LIST_SHORT_FORM 0x1000001ffffe7L
+#define MAL_ENTITYKEY_LIST_SHORT_FORM INT64_C(0x1000001ffffe7)
 
 // short form for composite type MAL:_:UpdateHeader
-#define MAL_UPDATEHEADER_SHORT_FORM 0x100000100001aL
+#define MAL_UPDATEHEADER_SHORT_FORM INT64_C(0x100000100001a)
 
 // short form for list of composite type MAL:_:UpdateHeader
-#define MAL_UPDATEHEADER_LIST_SHORT_FORM 0x1000001ffffe6L
+#define MAL_UPDATEHEADER_LIST_SHORT_FORM INT64_C(0x1000001ffffe6)
 
 // generated code for composite MAL:_:IdBooleanPair
 // short form for composite type MAL:_:IdBooleanPair
-#define MAL_IDBOOLEANPAIR_SHORT_FORM 0x100000100001bL
+#define MAL_IDBOOLEANPAIR_SHORT_FORM INT64_C(0x100000100001b)
 
 // short form for list of composite type MAL:_:IdBooleanPair
-#define MAL_IDBOOLEANPAIR_LIST_SHORT_FORM 0x1000001ffffe5L
+#define MAL_IDBOOLEANPAIR_LIST_SHORT_FORM INT64_C(0x1000001ffffe5)
 
 // generated code for composite MAL:_:Pair
 // short form for composite type MAL:_:Pair
-#define MAL_PAIR_SHORT_FORM 0x100000100001cL
+#define MAL_PAIR_SHORT_FORM INT64_C(0x100000100001c)
 
 // short form for list of composite type MAL:_:Pair
-#define MAL_PAIR_LIST_SHORT_FORM 0x1000001ffffe4L
+#define MAL_PAIR_LIST_SHORT_FORM INT64_C(0x1000001ffffe4)
 
 // generated code for composite MAL:_:NamedValue
 // short form for composite type MAL:_:NamedValue
-#define MAL_NAMEDVALUE_SHORT_FORM 0x100000100001dL
+#define MAL_NAMEDVALUE_SHORT_FORM INT64_C(0x100000100001d)
 
 // short form for list of composite type MAL:_:NamedValue
-#define MAL_NAMEDVALUE_LIST_SHORT_FORM 0x1000001ffffe3L
+#define MAL_NAMEDVALUE_LIST_SHORT_FORM INT64_C(0x1000001ffffe3)
 
 // generated code for composite MAL:_:File
 // short form for composite type MAL:_:File
-#define MAL_FILE_SHORT_FORM 0x100000100001eL
+#define MAL_FILE_SHORT_FORM INT64_C(0x100000100001e)
 
 // short form for list of composite type MAL:_:File
-#define MAL_FILE_LIST_SHORT_FORM 0x1000001ffffe2L
+#define MAL_FILE_LIST_SHORT_FORM INT64_C(0x1000001ffffe2)
 
 void mal_message_set_log_level(int level);
 

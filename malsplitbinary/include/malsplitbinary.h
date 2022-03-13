@@ -39,15 +39,15 @@ struct _malsplitbinary_cursor_t {
   // Pointer to the bitfield.
   char *bitfield_ptr;
   // Index of next bit to use during encode or decode.
-  unsigned int bitfield_idx;
+  uint32_t bitfield_idx;
   // Number of useful bits in bitfield, this counter is only used during the
   // evaluation of bitfield size.
-  unsigned int most_significant;
+  uint32_t most_significant;
   // Number of bits in bitfield, this counter has several semantics depending of
   // the encoding phase: during the size evaluation it contains the number of encoded
   // bits, during encoding or decoding phases it contains the maximum number of bits
   // in the bitfield area (depending of the most significant bit of this area)
-  unsigned int bitfield_length;
+  uint32_t bitfield_length;
   // Note: Normally only 2 counters are needed: bitfield_idx is not used during the
   // size evaluation, most_significant is not used during encoding or decoding.
 };
@@ -61,27 +61,27 @@ void malsplitbinary_cursor_destroy(void *cursor);
 void  malsplitbinary_cursor_reset(void *cursor);
 void  malsplitbinary_decoder_cursor_init(void *cursor,
     char *bytes, //message
-    unsigned int length, //message length
-    unsigned int offset); //message_offset
+    uint32_t length, //message length
+    uint32_t offset); //message_offset
 void  malsplitbinary_encoder_cursor_init(void *cursor,
     char *bytes, //message
-    unsigned int length, //message length
-    unsigned int offset); //message_offset
+    uint32_t length, //message length
+    uint32_t offset); //message_offset
 void  malsplitbinary_decoder_cursor_reset(void *cursor,
-    char *bytes, unsigned int length, unsigned int offset);
+    char *bytes, uint32_t length, uint32_t offset);
 void malsplitbinary_cursor_assert(void *cursor);
 char *malsplitbinary_cursor_get_bitfield_ptr(malsplitbinary_cursor_t *cursor);
-unsigned int malsplitbinary_cursor_get_bitfield_idx(malsplitbinary_cursor_t *cursor);
-unsigned int malsplitbinary_cursor_get_most_significant(malsplitbinary_cursor_t *cursor);
-unsigned int malsplitbinary_cursor_get_bitfield_length(malsplitbinary_cursor_t *cursor);
+uint32_t malsplitbinary_cursor_get_bitfield_idx(malsplitbinary_cursor_t *cursor);
+uint32_t malsplitbinary_cursor_get_most_significant(malsplitbinary_cursor_t *cursor);
+uint32_t malsplitbinary_cursor_get_bitfield_length(malsplitbinary_cursor_t *cursor);
 
 char *malsplitbinary_cursor_get_body_ptr(malsplitbinary_cursor_t *cursor);
-unsigned int malsplitbinary_cursor_get_body_offset(malsplitbinary_cursor_t *cursor);
+uint32_t malsplitbinary_cursor_get_body_offset(malsplitbinary_cursor_t *cursor);
 void malsplitbinary_cursor_print(malsplitbinary_cursor_t *cursor);
 void malsplitbinary_cursor_dump(malsplitbinary_cursor_t *cursor);
 
-unsigned int malsplitbinary_cursor_get_length(void *cursor);
-unsigned int malsplitbinary_cursor_get_offset(void *cursor);
+uint32_t malsplitbinary_cursor_get_length(void *cursor);
+uint32_t malsplitbinary_cursor_get_offset(void *cursor);
 
 // The format code must be unique among all the available encoding formats
 #define MALSPLITBINARY_FORMAT_CODE 1

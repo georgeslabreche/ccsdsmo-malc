@@ -55,17 +55,17 @@
 
     <method name = "get_response_param_identity_id_list">
         Get the identity id list of the created parameters
-        <return c_type = "long *" />
+        <return c_type = "int64_t *" />
     </method>
 
     <method name = "get_response_param_definition_id_list">
         Get the definition id list of the created parameters
-        <return c_type = "long *" />
+        <return c_type = "int64_t *" />
     </method>
 
     <method name = "get_response_element_count">
         Get response variable for number of elements
-        <return type = "size" />
+        <return c_type = "unsigned int" />
     </method>
 
     <!--
@@ -134,12 +134,12 @@
 
     <method name = "get_field_param_list_size">
         Get the number of params MAL message field
-        <return type = "size" />
+        <return c_type = "unsigned int" />
     </method>
 
     <method name = "set_field_param_list_size">
         Set the number of params MAL message field
-        <argument name = "param_list_size" type = "size" />
+        <argument name = "param_list_size" c_type = "unsigned int" />
     </method>
 
 </class>

@@ -31,8 +31,9 @@ extern "C" {
 
 struct _mal_element_holder_t {
   bool presence_flag;
-  long short_form;
+  int64_t short_form;
   union mal_element_t value;
+
 };
 
 mal_element_holder_t *mal_element_holder_new(void);
@@ -44,10 +45,10 @@ bool mal_element_holder_get_presence_flag(mal_element_holder_t *self);
 void mal_element_holder_set_presence_flag(mal_element_holder_t *self,
     bool presence_flag);
 
-long mal_element_holder_get_short_form(mal_element_holder_t *self);
+int64_t mal_element_holder_get_short_form(mal_element_holder_t *self);
 
 void mal_element_holder_set_short_form(mal_element_holder_t *self,
-    long short_form);
+    int64_t short_form);
 
 union mal_element_t mal_element_holder_get_value(mal_element_holder_t *self);
 

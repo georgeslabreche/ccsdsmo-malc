@@ -38,10 +38,10 @@ struct _mc_parameter_listdefinition_consumer_t {
     mal_uri_t *consumer_uri;
     mal_actor_t *actor;
     char **param_name_list;
-    size_t param_name_list_size;
-    long *response_identity_id_list;
-    long *response_definition_id_list;
-    size_t response_element_count;
+    unsigned int param_name_list_size;
+    int64_t *response_identity_id_list;
+    int64_t *response_definition_id_list;
+    unsigned int response_element_count;
     int response_error_code;
 };
 
@@ -196,14 +196,14 @@ mc_parameter_listdefinition_consumer_set_field_param_name_list (mc_parameter_lis
     self->param_name_list = param_name_list;
 }
 
-size_t
+unsigned int
 mc_parameter_listdefinition_consumer_get_field_param_name_list_size (mc_parameter_listdefinition_consumer_t *self)
 {
     return self->param_name_list_size;
 }
 
 void
-mc_parameter_listdefinition_consumer_set_field_param_name_list_size (mc_parameter_listdefinition_consumer_t *self, size_t param_name_list_size)
+mc_parameter_listdefinition_consumer_set_field_param_name_list_size (mc_parameter_listdefinition_consumer_t *self, unsigned int param_name_list_size)
 {
     self->param_name_list_size = param_name_list_size;
 }
@@ -213,21 +213,21 @@ mc_parameter_listdefinition_consumer_set_field_param_name_list_size (mc_paramete
 //  Getters for response variables
 
 //  Get response variable for the identity ids
-long *
+int64_t *
 mc_parameter_listdefinition_consumer_get_response_identity_id_list (mc_parameter_listdefinition_consumer_t *self)
 {
     return self->response_identity_id_list;
 }
 
 //  Get response variable for the definition ids
-long *
+int64_t *
 mc_parameter_listdefinition_consumer_get_response_definition_id_list (mc_parameter_listdefinition_consumer_t *self)
 {
     return self->response_definition_id_list;
 }
 
 //  Get response variable for number elements
-size_t
+unsigned int
 mc_parameter_listdefinition_consumer_get_response_element_count (mc_parameter_listdefinition_consumer_t *self)
 {
     return self->response_element_count;
@@ -291,7 +291,7 @@ mc_parameter_listdefinition_consumer_initialize (void *self, mal_actor_t *mal_ac
     mal_identifier_t **content = mal_identifier_list_get_content(param_name_mal_id_list);
 
     // Construct the message content
-    for(size_t i = 0; i < consumer->param_name_list_size; i++)
+    for(unsigned int i = 0; i < consumer->param_name_list_size; i++)
     {
         content[i] = mal_identifier_new(consumer->param_name_list[i]);
     }
@@ -507,7 +507,7 @@ mc_parameter_listdefinition_consumer_response (void *self, mal_ctx_t *mal_ctx,
             consumer->response_element_count = mc_objectinstancepair_list_get_element_count(object_instance_pair_list);
 
             // Allocate memory for the identity ids response
-            consumer->response_identity_id_list = (long *) calloc(consumer->response_element_count, sizeof(long));
+            consumer->response_identity_id_list = (int64_t *) calloc(consumer->response_element_count, sizeof(int64_t));
             if (!consumer->response_identity_id_list && (consumer->response_element_count > 0))
             {
                 // Log error
@@ -522,7 +522,7 @@ mc_parameter_listdefinition_consumer_response (void *self, mal_ctx_t *mal_ctx,
             }
 
             // Allocate memory for the definition ids response
-            consumer->response_definition_id_list = (long *) calloc(consumer->response_element_count, sizeof(long));
+            consumer->response_definition_id_list = (int64_t *) calloc(consumer->response_element_count, sizeof(int64_t));
             if (!consumer->response_definition_id_list && (consumer->response_element_count > 0))
             {
                 // Log error
@@ -545,7 +545,7 @@ mc_parameter_listdefinition_consumer_response (void *self, mal_ctx_t *mal_ctx,
             content = mc_objectinstancepair_list_get_content(object_instance_pair_list);
 
             // Set response variables
-            for (size_t i = 0; i < consumer->response_element_count; i++)
+            for (unsigned int i = 0; i < consumer->response_element_count; i++)
             {
                 consumer->response_identity_id_list[i] = mc_objectinstancepair_get_objidentityinstanceid(content[i]);
                 consumer->response_definition_id_list[i] = mc_objectinstancepair_get_objdefinstanceid(content[i]);

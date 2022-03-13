@@ -65,7 +65,7 @@ void mal_encoder_cursor_reset(mal_encoder_t *self, void *cursor) {
 void mal_encoder_cursor_init(
     mal_encoder_t *self,
     void *cursor,
-    char *bytes, unsigned int length, unsigned int offset) {
+    char *bytes, uint32_t length, uint32_t offset) {
   self->cursor_init(cursor, bytes, length, offset);
 }
 
@@ -74,11 +74,11 @@ void mal_encoder_cursor_destroy(mal_encoder_t *self, void *cursor) {
   self->cursor_destroy(cursor);
 }
 
-unsigned int mal_encoder_cursor_get_length(mal_encoder_t *self, void *cursor) {
+uint32_t mal_encoder_cursor_get_length(mal_encoder_t *self, void *cursor) {
   return self->cursor_get_length(cursor);
 }
 
-unsigned int mal_encoder_cursor_get_offset(mal_encoder_t *self, void *cursor) {
+uint32_t mal_encoder_cursor_get_offset(mal_encoder_t *self, void *cursor) {
   return self->cursor_get_offset(cursor);
 }
 
@@ -96,7 +96,7 @@ int mal_encoder_add_presence_flag_encoding_length(mal_encoder_t *self, mal_boole
   return self->mal_encoder_add_presence_flag_encoding_length(self, to_encode, cursor);
 }
 
-int mal_encoder_add_short_form_encoding_length(mal_encoder_t *self, long to_encode, void *cursor) {
+int mal_encoder_add_short_form_encoding_length(mal_encoder_t *self, int64_t to_encode, void *cursor) {
   return self->mal_encoder_add_short_form_encoding_length(self, to_encode, cursor);
 }
 
@@ -140,19 +140,19 @@ int mal_encoder_add_blob_encoding_length(mal_encoder_t *self, mal_blob_t *to_enc
   return self->mal_encoder_add_blob_encoding_length(self, to_encode, cursor);
 }
 
-int mal_encoder_add_list_size_encoding_length(mal_encoder_t *self, unsigned int to_encode, void *cursor) {
+int mal_encoder_add_list_size_encoding_length(mal_encoder_t *self, uint32_t to_encode, void *cursor) {
   return self->mal_encoder_add_list_size_encoding_length(self, to_encode, cursor);
 }
 
-int mal_encoder_add_small_enum_encoding_length(mal_encoder_t *self, unsigned int to_encode, void *cursor) {
+int mal_encoder_add_small_enum_encoding_length(mal_encoder_t *self, uint32_t to_encode, void *cursor) {
   return self->mal_encoder_add_small_enum_encoding_length(self, to_encode, cursor);
 }
 
-int mal_encoder_add_medium_enum_encoding_length(mal_encoder_t *self, unsigned int to_encode, void *cursor) {
+int mal_encoder_add_medium_enum_encoding_length(mal_encoder_t *self, uint32_t to_encode, void *cursor) {
   return self->mal_encoder_add_medium_enum_encoding_length(self, to_encode, cursor);
 }
 
-int mal_encoder_add_large_enum_encoding_length(mal_encoder_t *self, unsigned int to_encode, void *cursor) {
+int mal_encoder_add_large_enum_encoding_length(mal_encoder_t *self, uint32_t to_encode, void *cursor) {
   return self->mal_encoder_add_large_enum_encoding_length(self, to_encode, cursor);
 }
 
@@ -321,19 +321,19 @@ int mal_encoder_encode_presence_flag(mal_encoder_t *self, void *cursor, bool to_
   return self->mal_encoder_encode_presence_flag(self, cursor, to_encode);
 }
 
-int mal_encoder_encode_short_form(mal_encoder_t *self, void *cursor, long to_encode) {
+int mal_encoder_encode_short_form(mal_encoder_t *self, void *cursor, int64_t to_encode) {
   return self->mal_encoder_encode_short_form(self, cursor, to_encode);
 }
 
-int mal_encoder_encode_small_enum(mal_encoder_t *self, void *cursor, int to_encode) {
+int mal_encoder_encode_small_enum(mal_encoder_t *self, void *cursor, int32_t to_encode) {
   return self->mal_encoder_encode_small_enum(self, cursor, to_encode);
 }
 
-int mal_encoder_encode_medium_enum(mal_encoder_t *self, void *cursor, int to_encode) {
+int mal_encoder_encode_medium_enum(mal_encoder_t *self, void *cursor, int32_t to_encode) {
   return self->mal_encoder_encode_medium_enum(self, cursor, to_encode);
 }
 
-int mal_encoder_encode_large_enum(mal_encoder_t *self, void *cursor, int to_encode) {
+int mal_encoder_encode_large_enum(mal_encoder_t *self, void *cursor, int32_t to_encode) {
   return self->mal_encoder_encode_large_enum(self, cursor, to_encode);
 }
 
@@ -341,7 +341,7 @@ int mal_encoder_encode_integer(mal_encoder_t *self, void *cursor, mal_integer_t 
   return self->mal_encoder_encode_integer(self, cursor, to_encode);
 }
 
-int mal_encoder_encode_list_size(mal_encoder_t *self, void *cursor, unsigned int to_encode) {
+int mal_encoder_encode_list_size(mal_encoder_t *self, void *cursor, uint32_t to_encode) {
   return self->mal_encoder_encode_list_size(self, cursor, to_encode);
 }
 
@@ -381,15 +381,15 @@ int mal_encoder_encode_boolean(mal_encoder_t *self, void *cursor, mal_boolean_t 
   return self->mal_encoder_encode_boolean(self, cursor, to_encode);
 }
 
-void mal_write16(mal_encoder_t *self, int int_value, void *cursor) {
+void mal_write16(mal_encoder_t *self, int16_t int_value, void *cursor) {
   self->mal_write16(int_value, cursor);
 }
 
-void mal_write32(mal_encoder_t *self, int int_value, void *cursor) {
+void mal_write32(mal_encoder_t *self, int32_t int_value, void *cursor) {
   self->mal_write32(int_value, cursor);
 }
 
-void mal_write64(mal_encoder_t *self, long long_value, void *cursor) {
+void mal_write64(mal_encoder_t *self, int64_t long_value, void *cursor) {
   self->mal_write64(long_value,  cursor);
 }
 

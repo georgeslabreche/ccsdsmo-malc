@@ -55,22 +55,22 @@
 
     <method name = "get_field_param_identiy_id_list">
         Get the param instance identity ids MAL message field
-        <return c_type = "long *" />
+        <return c_type = "int64_t *" />
     </method>
 
     <method name = "set_field_param_identity_id_list">
         Set the param instance identity ids MAL message field
-        <argument name = "param_inst_id_list" c_type = "long *" />
+        <argument name = "param_inst_id_list" c_type = "int64_t *" />
     </method>
 
     <method name = "get_field_param_identity_id_list_size">
         Get the number of params MAL message field
-        <return type = "size" />
+        <return c_type = "unsigned int" />
     </method>
 
     <method name = "set_field_param_identity_id_list_size">
         Set the number of params MAL message field
-        <argument name = "param_identity_id_list_size" type = "size" />
+        <argument name = "param_identity_id_list_size" c_type = "unsigned int" />
     </method>
 
 </class>

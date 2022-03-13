@@ -38,8 +38,8 @@ struct _mc_parameter_removeparameter_consumer_t {
     mal_uri_t *provider_uri;
     mal_uri_t *consumer_uri;
     mal_actor_t *actor;
-    long *param_identity_id_list;
-    size_t param_identity_id_list_size;
+    int64_t *param_identity_id_list;
+    unsigned int param_identity_id_list_size;
     int response_error_code;
 };
 
@@ -160,26 +160,26 @@ mc_parameter_removeparameter_consumer_get_response_error_code (mc_parameter_remo
 //  --------------------------------------------------------------------------
 //  Getters and Setters for the class variables
 
-long *
+int64_t *
 mc_parameter_removeparameter_consumer_get_field_param_identity_id_list (mc_parameter_removeparameter_consumer_t *self)
 {
     return self->param_identity_id_list;
 }
 
 void
-mc_parameter_removeparameter_consumer_set_field_param_identity_id_list (mc_parameter_removeparameter_consumer_t *self, long *param_identity_id_list)
+mc_parameter_removeparameter_consumer_set_field_param_identity_id_list (mc_parameter_removeparameter_consumer_t *self, int64_t *param_identity_id_list)
 {
     self->param_identity_id_list = param_identity_id_list;
 }
 
-size_t
+unsigned int
 mc_parameter_removeparameter_consumer_get_field_param_identity_id_list_size (mc_parameter_removeparameter_consumer_t *self)
 {
     return self->param_identity_id_list_size;
 }
 
 void
-mc_parameter_removeparameter_consumer_set_field_param_identity_id_list_size (mc_parameter_removeparameter_consumer_t *self, size_t param_identity_id_list_size)
+mc_parameter_removeparameter_consumer_set_field_param_identity_id_list_size (mc_parameter_removeparameter_consumer_t *self, unsigned int param_identity_id_list_size)
 {
     self->param_identity_id_list_size = param_identity_id_list_size;
 }
@@ -236,7 +236,7 @@ mc_parameter_removeparameter_consumer_initialize (void *self, mal_actor_t *mal_a
     bool *presence_flag = mal_long_list_get_presence_flags(param_identity_id_list);
 
     // Construct the message content
-    for(size_t i = 0; i < consumer->param_identity_id_list_size; i++)
+    for(unsigned int i = 0; i < consumer->param_identity_id_list_size; i++)
     {
         param_identity_id[i] = (mal_long_t)consumer->param_identity_id_list[i];
         presence_flag[i] = true;

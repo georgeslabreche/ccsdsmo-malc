@@ -59,8 +59,10 @@ void mal_long_list_clear(mal_long_list_t * self){
     if (self->element_count > 0)
     {
       self->element_count = 0;
+      printf("free(self->content)\n");
       free(self->content);
       self->content = NULL;
+      printf("free(self->presence_flags)\n");
       free(self->presence_flags);
       self->presence_flags = NULL;
     }
@@ -70,7 +72,8 @@ void mal_long_list_clear(mal_long_list_t * self){
 void mal_long_list_destroy(mal_long_list_t **self_p) {
   if (self_p && *self_p) {
     mal_long_list_clear((*self_p));
-    free (*self_p);
+    printf("free (*self_p)\n");
+    free ((*self_p));
     (*self_p) = NULL;
   }
 }
@@ -94,7 +97,7 @@ int mal_long_list_add_encoding_length_malbinary(mal_long_list_t *self,
   rc = mal_encoder_add_list_size_encoding_length(encoder, list_size, cursor);
   if (rc < 0)
     return rc;
-  for (int i = 0; i < list_size; i++)
+  for (unsigned int i = 0; i < list_size; i++)
   {
     mal_long_t list_element = self->content[i];
     bool presence_flag = self->presence_flags[i];
@@ -118,7 +121,7 @@ int mal_long_list_encode_malbinary(mal_long_list_t *self,
   rc = mal_encoder_encode_list_size(encoder, cursor, list_size);
   if (rc < 0)
     return rc;
-  for (int i = 0; i < list_size; i++) {
+  for (unsigned int i = 0; i < list_size; i++) {
     mal_long_t list_element = self->content[i];
     bool presence_flag = self->presence_flags[i];
     rc = mal_encoder_encode_presence_flag(encoder, cursor, presence_flag);
@@ -151,12 +154,14 @@ int mal_long_list_decode_malbinary(mal_long_list_t *self,
   if (self->presence_flags == NULL)
     return -1;
   self->element_count = list_size;
-  for (int i = 0; i < list_size; i++) {
+  for (unsigned int i = 0; i < list_size; i++) {
     rc = mal_decoder_decode_presence_flag(decoder, cursor, &self->presence_flags[i]);
+    //printf("set self->presence_flags[%u] = %d\n", i, self->presence_flags[i]);
     if (rc < 0)
       return rc;
     if (self->presence_flags[i]) {
       rc = mal_decoder_decode_long(decoder, cursor, &self->content[i]);
+      //printf("decoded content[%u] = %lld\n", i, self->content[i]);
       if (rc < 0)
         return rc;
     }

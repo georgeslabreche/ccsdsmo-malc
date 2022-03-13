@@ -48,12 +48,12 @@ bool mal_decoder_is_varint(mal_decoder_t *decoder) {
  */
 
 /** Creates a new decoding cursor */
-void *mal_decoder_new_cursor(mal_decoder_t *self, char *bytes, unsigned int length, unsigned int offset) {
+void *mal_decoder_new_cursor(mal_decoder_t *self, char *bytes, uint32_t length, uint32_t offset) {
   return self->new_cursor(bytes, length, offset);
 }
 
 /** Reset a decoding cursor for reuse */
-void mal_decoder_cursor_reset(mal_decoder_t *self, void *cursor, char *bytes, unsigned int length, unsigned int offset) {
+void mal_decoder_cursor_reset(mal_decoder_t *self, void *cursor, char *bytes, uint32_t length, uint32_t offset) {
   self->cursor_reset(cursor, bytes, length, offset);
 }
 
@@ -76,15 +76,15 @@ void mal_decoder_cursor_assert(mal_decoder_t *self, void *cursor) {
 
 /* Decoding functions */
 
-short mal_read16(mal_decoder_t *self, void *cursor) {
+int16_t mal_read16(mal_decoder_t *self, void *cursor) {
   return self->mal_read16(cursor);
 }
 
-int mal_read32(mal_decoder_t *self, void *cursor) {
+int32_t mal_read32(mal_decoder_t *self, void *cursor) {
   return self->mal_read32(cursor);
 }
 
-long mal_read64(mal_decoder_t *self, void *cursor) {
+int64_t mal_read64(mal_decoder_t *self, void *cursor) {
   return self->mal_read64(cursor);
 }
 
@@ -96,19 +96,19 @@ int mal_decoder_decode_presence_flag(mal_decoder_t *self, void *cursor, bool *re
   return self->mal_decoder_decode_presence_flag(self, cursor, result);
 }
 
-int mal_decoder_decode_short_form(mal_decoder_t *self, void *cursor, long *result) {
+int mal_decoder_decode_short_form(mal_decoder_t *self, void *cursor, int64_t *result) {
   return self->mal_decoder_decode_short_form(self, cursor, result);
 }
 
-int mal_decoder_decode_small_enum(mal_decoder_t *self, void *cursor, int *result) {
+int mal_decoder_decode_small_enum(mal_decoder_t *self, void *cursor, int32_t *result) {
   return self->mal_decoder_decode_small_enum(self, cursor, result);
 }
 
-int mal_decoder_decode_medium_enum(mal_decoder_t *self, void *cursor, int *result) {
+int mal_decoder_decode_medium_enum(mal_decoder_t *self, void *cursor, int32_t *result) {
   return self->mal_decoder_decode_medium_enum(self, cursor, result);
 }
 
-int mal_decoder_decode_large_enum(mal_decoder_t *self, void *cursor, int *result) {
+int mal_decoder_decode_large_enum(mal_decoder_t *self, void *cursor, int32_t *result) {
   return self->mal_decoder_decode_large_enum(self, cursor, result);
 }
 

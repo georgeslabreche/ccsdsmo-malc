@@ -17,7 +17,9 @@ extern "C" {
 //  @interface
 //  This is a stable class, and may not change except for emergencies. It
 //  is provided in stable builds.
-#define SM_APPSLAUNCHER_LISTAPP_CONSUMER_URI "sm/appslauncher/consumer/listApp"  // The consumer URI for the listApp operation
+
+// The consumer URI for the listApp operation
+#define SM_APPSLAUNCHER_LISTAPP_CONSUMER_URI "sm/appslauncher/consumer/listApp"
 
 //  Create a consumer object for the listApp operation
 NMFAPI_C_EXPORT sm_appslauncher_listapp_consumer_t *
@@ -46,15 +48,15 @@ NMFAPI_C_EXPORT void
     sm_appslauncher_listapp_consumer_actor_init (sm_appslauncher_listapp_consumer_t *self);
 
 //  Get response variable for appsInstIds
-NMFAPI_C_EXPORT long *
+NMFAPI_C_EXPORT int64_t *
     sm_appslauncher_listapp_consumer_get_response_apps_inst_id_list (sm_appslauncher_listapp_consumer_t *self);
 
 //  Get response variable for running apps
 NMFAPI_C_EXPORT bool *
     sm_appslauncher_listapp_consumer_get_response_apps_inst_running_list (sm_appslauncher_listapp_consumer_t *self);
 
-//  Get response variable for number of apps
-NMFAPI_C_EXPORT size_t
+//  Get respo-nse variable for number of apps
+NMFAPI_C_EXPORT unsigned int
     sm_appslauncher_listapp_consumer_get_response_element_count (sm_appslauncher_listapp_consumer_t *self);
 
 //  Get error code from processing the response
@@ -70,12 +72,12 @@ NMFAPI_C_EXPORT void
     sm_appslauncher_listapp_consumer_set_field_app_name_list (sm_appslauncher_listapp_consumer_t *self, char **app_name_list);
 
 //  Get the size of the app names MAL message field
-NMFAPI_C_EXPORT size_t
+NMFAPI_C_EXPORT unsigned int
     sm_appslauncher_listapp_consumer_get_field_app_name_list_size (sm_appslauncher_listapp_consumer_t *self);
 
 //  Set the size of the app names MAL message field
 NMFAPI_C_EXPORT void
-    sm_appslauncher_listapp_consumer_set_field_app_name_list_size (sm_appslauncher_listapp_consumer_t *self, size_t app_name_list_size);
+    sm_appslauncher_listapp_consumer_set_field_app_name_list_size (sm_appslauncher_listapp_consumer_t *self, unsigned int app_name_list_size);
 
 //  Get the category MAL message field
 NMFAPI_C_EXPORT char *

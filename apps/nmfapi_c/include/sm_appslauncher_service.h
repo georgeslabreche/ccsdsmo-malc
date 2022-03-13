@@ -29,7 +29,7 @@ NMFAPI_C_EXPORT void
 //  The listApp operation allows a consumer to request the object instance identifiers
 //  of the Apps objects and running status for an app name or for a certain app category
 NMFAPI_C_EXPORT int
-    sm_appslauncher_service_list_app (sm_appslauncher_service_t *self, char **app_name_list, size_t app_name_list_size, char *category, long **response_apps_inst_id_list, bool **response_apps_inst_running_list, size_t *response_element_count);
+    sm_appslauncher_service_list_app (sm_appslauncher_service_t *self, char **app_name_list, unsigned int app_name_list_size, char *category, int64_t **response_apps_inst_id_list, bool **response_apps_inst_running_list, unsigned int *response_element_count);
 
 //  @end
 

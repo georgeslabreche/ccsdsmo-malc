@@ -17,11 +17,11 @@
         The listApp operation allows a consumer to request the object instance identifiers
         of the Apps objects and running status for an app name or for a certain app category
         <argument name = "app_name_list" c_type = "char **" />
-        <argument name = "app_name_list_size" type = "size" />
+        <argument name = "app_name_list_size" c_type = "unsigned int" />
         <argument name = "category" c_type = "char *" />
-        <argument name = "response_apps_inst_id_list" c_type = "long **" />
+        <argument name = "response_apps_inst_id_list" c_type = "int64_t **" />
         <argument name = "response_apps_inst_running_list" c_type = "bool **" />
-        <argument name = "response_element_count" c_type = "size_t *" />
+        <argument name = "response_element_count" c_type = "unsigned int *" />
 
         <return type = "integer" />
     </method>

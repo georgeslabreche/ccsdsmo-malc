@@ -21,10 +21,10 @@
         The listDefinition operation allows a consumer to request the latest object instance identifiers
         of the ParameterIdentity and ParameterDefinition objects for the supported parameters of the provider
         <argument name = "param_name_list" c_type = "char **" />
-        <argument name = "param_name_list_size" type = "size" />
-        <argument name = "response_identity_id_list" c_type = "long **" />
-        <argument name = "response_definition_id_list" c_type = "long **" />
-        <argument name = "response_element_count" c_type = "size_t *" />
+        <argument name = "param_name_list_size" c_type = "unsigned int" />
+        <argument name = "response_identity_id_list" c_type = "int64_t **" />
+        <argument name = "response_definition_id_list" c_type = "int64_t **" />
+        <argument name = "response_element_count" c_type = "unsigned int *" />
         <return type = "integer" />
     </method>
 
@@ -32,8 +32,8 @@
         The listDefinition operation allows a consumer to request the latest object instance identifiers
         of the ParameterIdentity and ParameterDefinition objects for the supported parameters of the provider
         <argument name = "param_name" c_type = "char *" />
-        <argument name = "response_identity_id" c_type = "long *" />
-        <argument name = "response_definition_id" c_type = "long *" />
+        <argument name = "response_identity_id" c_type = "int64_t *" />
+        <argument name = "response_definition_id" c_type = "int64_t *" />
         <return type = "integer" />
     </method>
 
@@ -43,17 +43,17 @@
 
     <method name = "get_value_list">
         The getValue operation returns the latest received value for the requested parameters
-        <argument name = "param_inst_id_list" c_type = "long *" />
-        <argument name = "param_inst_id_list_size" type = "size" />
+        <argument name = "param_inst_id_list" c_type = "int64_t *" />
+        <argument name = "param_inst_id_list_size" c_type = "unsigned int" />
         <argument name = "response_mal_attribute_list" c_type = "union mal_attribute_t **" />
         <argument name = "response_mal_attribute_tag_list" c_type = "unsigned char **" />
-        <argument name = "response_mal_element_count" c_type = "size_t *" />
+        <argument name = "response_mal_element_count" c_type = "unsigned int *" />
         <return type = "integer" />
     </method>
 
     <method name = "get_value">
         The getValue operation returns the latest received value for a requested parameter
-        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
         <argument name = "response_mal_attribute" c_type = "union mal_attribute_t *" />
         <argument name = "response_mal_attribute_tag" c_type = "unsigned char *" />
         <return type = "integer" />
@@ -62,16 +62,16 @@
     <method name = "get_value_blob">
         The getValue operation returns the latest received value for a requested parameter
         Sets the requested value with the expectation that it is of type MAL Blob
-        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
         <argument name = "content" c_type = "char **" />
-        <argument name = "content_length" c_type = "size_t *" />
+        <argument name = "content_length" c_type = "unsigned int *" />
         <return type = "integer" />
     </method>
 
     <method name = "get_value_boolean">
         The getValue operation returns the latest received value for a requested parameter
         Sets the requested value with the expectation that it is of type MAL Boolean
-        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
         <argument name = "value" c_type = "bool *" />
         <return type = "integer" />
     </method>
@@ -79,7 +79,7 @@
     <method name = "get_value_duration">
         The getValue operation returns the latest received value for a requested parameter
         Sets the requested value with the expectation that it is of type MAL Duration
-        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
         <argument name = "value" c_type = "double *" />
         <return type = "integer" />
     </method>
@@ -87,7 +87,7 @@
     <method name = "get_value_float">
         The getValue operation returns the latest received value for a requested parameter
         Sets the requested value with the expectation that it is of type MAL Float
-        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
         <argument name = "value" c_type = "float *" />
         <return type = "integer" />
     </method>
@@ -95,7 +95,7 @@
     <method name = "get_value_double">
         The getValue operation returns the latest received value for a requested parameter
         Sets the requested value with the expectation that it is of type MAL Double
-        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
         <argument name = "value" c_type = "double *" />
         <return type = "integer" />
     </method>
@@ -103,7 +103,7 @@
     <method name = "get_value_identifier">
         The getValue operation returns the latest received value for a requested parameter
         Sets the requested value with the expectation that it is of type MAL Identifer
-        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
         <argument name = "value" c_type = "char **" />
         <return type = "integer" />
     </method>
@@ -111,7 +111,7 @@
     <method name = "get_value_octet">
         The getValue operation returns the latest received value for a requested parameter
         Sets the requested value with the expectation that it is of type MAL Octet
-        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
         <argument name = "value" c_type = "char *" />
         <return type = "integer" />
     </method>
@@ -119,7 +119,7 @@
     <method name = "get_value_uoctet">
         The getValue operation returns the latest received value for a requested parameter
         Sets the requested value with the expectation that it is of type MAL UOctet
-        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
         <argument name = "value" c_type = "unsigned char *" />
         <return type = "integer" />
     </method>
@@ -127,55 +127,55 @@
     <method name = "get_value_short">
         The getValue operation returns the latest received value for a requested parameter
         Sets the requested value with the expectation that it is of type MAL Short
-        <argument name = "param_inst_id" c_type = "long" />
-        <argument name = "value" c_type = "short *" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
+        <argument name = "value" c_type = "int16_t *" />
         <return type = "integer" />
     </method>
 
     <method name = "get_value_ushort">
         The getValue operation returns the latest received value for a requested parameter
         Sets the requested value with the expectation that it is of type MAL UShort
-        <argument name = "param_inst_id" c_type = "long" />
-        <argument name = "value" c_type = "unsigned short *" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
+        <argument name = "value" c_type = "uint16_t *" />
         <return type = "integer" />
     </method>
 
     <method name = "get_value_integer">
         The getValue operation returns the latest received value for a requested parameter
         Sets the requested value with the expectation that it is of type MAL Integer
-        <argument name = "param_inst_id" c_type = "long" />
-        <argument name = "value" c_type = "int *" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
+        <argument name = "value" c_type = "int32_t *" />
         <return type = "integer" />
     </method>
 
     <method name = "get_value_uinteger">
         The getValue operation returns the latest received value for a requested parameter
         Sets the requested value with the expectation that it is of type MAL UInteger
-        <argument name = "param_inst_id" c_type = "long" />
-        <argument name = "value" c_type = "unsigned int *" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
+        <argument name = "value" c_type = "uint32_t *" />
         <return type = "integer" />
     </method>
 
     <method name = "get_value_long">
         The getValue operation returns the latest received value for a requested parameter
         Sets the requested value with the expectation that it is of type MAL Long
-        <argument name = "param_inst_id" c_type = "long" />
-        <argument name = "value" c_type = "long *" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
+        <argument name = "value" c_type = "int64_t *" />
         <return type = "integer" />
     </method>
 
     <method name = "get_value_ulong">
         The getValue operation returns the latest received value for a requested parameter
         Sets the requested value with the expectation that it is of type MAL ULong
-        <argument name = "param_inst_id" c_type = "long" />
-        <argument name = "value" c_type = "unsigned long *" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
+        <argument name = "value" c_type = "uint64_t *" />
         <return type = "integer" />
     </method>
 
     <method name = "get_value_string">
         The getValue operation returns the latest received value for a requested parameter
         Sets the requested value with the expectation that it is of type MAL String
-        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
         <argument name = "value" c_type = "char **" />
         <return type = "integer" />
     </method>
@@ -183,23 +183,23 @@
     <method name = "get_value_time">
         The getValue operation returns the latest received value for a requested parameter
         Sets the requested value with the expectation that it is of type MAL Time
-        <argument name = "param_inst_id" c_type = "long" />
-        <argument name = "value" c_type = "unsigned long *" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
+        <argument name = "value" c_type = "uint64_t *" />
         <return type = "integer" />
     </method>
 
     <method name = "get_value_finetime">
         The getValue operation returns the latest received value for a requested parameter
         Sets the requested value with the expectation that it is of type MAL Finetime
-        <argument name = "param_inst_id" c_type = "long" />
-        <argument name = "value" c_type = "unsigned long *" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
+        <argument name = "value" c_type = "uint64_t *" />
         <return type = "integer" />
     </method>
 
     <method name = "get_value_uri">
         The getValue operation returns the latest received value for a requested parameter
         Sets the requested value with the expectation that it is of type MAL URI
-        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
         <argument name = "value" c_type = "char **" />
         <return type = "integer" />
     </method>
@@ -210,16 +210,16 @@
 
     <method name = "set_value_list">
         The setValue operation allows a consumer to set the raw value for one or more parameters
-        <argument name = "param_inst_id_list" c_type = "long *" />
+        <argument name = "param_inst_id_list" c_type = "int64_t *" />
         <argument name = "param_tag_list" c_type = "unsigned char *" />
         <argument name = "param_value_list" c_type = "char **" />
-        <argument name = "param_list_size" type = "size" />
+        <argument name = "param_list_size" c_type = "unsigned int" />
         <return type = "integer" />
     </method>
 
     <method name = "set_value">
         The setValue operation allows a consumer to set the raw value for one or more parameters
-        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
         <argument name = "param_tag" c_type = "unsigned char" />
         <argument name = "param_value" c_type = "char *" />
         <return type = "integer" />
@@ -228,9 +228,9 @@
     <method name = "set_value_blob">
         The setValue operation allows a consumer to set the raw value for one or more parameters
         Takes value argument in predefined type with the expectation that the parameter is of type MAL Blob
-        <argument name = "param_inst_id" c_type = "long" />
+        <argument name = "param_inst_id" c_type = "int64_t" />
         <argument name = "param_content" c_type = "char *" />
-        <argument name = "param_content_length" c_type = "size_t" />
+        <argument name = "param_content_length" c_type = "unsigned int" />
         <return type = "integer" />
     </method>
 
@@ -242,10 +242,10 @@
         <argument name = "param_raw_unit_list" c_type = "char **" />
         <argument name = "param_generation_enabled_list" c_type = "bool *" />
         <argument name = "param_report_interval_list" c_type = "double *" />
-        <argument name = "param_list_size" type = "size" />
-        <argument name = "response_param_identity_id_list" c_type = "long **" />
-        <argument name = "response_param_definition_id_list" c_type = "long **" />
-        <argument name = "response_element_count" c_type = "size_t *" />
+        <argument name = "param_list_size" c_type = "unsigned int" />
+        <argument name = "response_param_identity_id_list" c_type = "int64_t **" />
+        <argument name = "response_param_definition_id_list" c_type = "int64_t **" />
+        <argument name = "response_element_count" c_type = "unsigned int *" />
         <return type = "integer" />
     </method>
 
@@ -257,21 +257,21 @@
         <argument name = "param_raw_unit" c_type = "char *" />
         <argument name = "param_generation_enabled" c_type = "bool" />
         <argument name = "param_report_interval" c_type = "double" />
-        <argument name = "response_param_identity_id" c_type = "long *" />
-        <argument name = "response_param_definition_id" c_type = "long *" />
+        <argument name = "response_param_identity_id" c_type = "int64_t *" />
+        <argument name = "response_param_definition_id" c_type = "int64_t *" />
         <return type = "integer" />
     </method>
 
     <method name = "remove_parameter_list">
         The removeParameter operation allows a consumer to remove one or more parameters from the list of parameters supported by the parameter provider
-        <argument name = "param_identity_id_list" c_type = "long *" />
-        <argument name = "param_identity_id_list_size" type = "size" />
+        <argument name = "param_identity_id_list" c_type = "int64_t *" />
+        <argument name = "param_identity_id_list_size" c_type = "unsigned int" />
         <return type = "integer" />
     </method>
 
     <method name = "remove_parameter">
         The removeParameter operation allows a consumer to remove one or more parameters from the list of parameters supported by the parameter provider
-        <argument name = "param_identity_id" c_type = "long" />
+        <argument name = "param_identity_id" c_type = "int64_t" />
         <return type = "integer" />
     </method>
 

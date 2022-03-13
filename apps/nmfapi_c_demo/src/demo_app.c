@@ -150,6 +150,7 @@ int main (int argc, char *argv [])
     // Demonstrate the listApp operation
     demo_appslauncher_service_list_app();
     
+#if 0    
     // Demonstrate the listDefinition operation with one parameter per request interaction
     demo_parameter_service_get_definition();
 
@@ -161,9 +162,10 @@ int main (int argc, char *argv [])
     // Demonstrate the getValue operation with one parameter per request interaction
     demo_parameter_service_get_value();
 
+
     // Demonstrate the setValue operation with one parameter per submit interaction
     demo_parameter_service_set_value();
-
+#endif
 
     // --------------------------------------------------------------------------
     // Destroy
@@ -196,7 +198,7 @@ demo_directory_service_lookup_provider()
     common_directory_service_t *directory_service = nmf_api_get_common_directory_service(nmf_api);
 
     // Request response variables
-    long *response_provider_id_list;
+    int64_t *response_provider_id_list;
     char **response_provider_uri_list;
     size_t response_element_count;
 
@@ -227,21 +229,21 @@ demo_appslauncher_service_list_app()
     char *category = "*";
 
     // Calculate size of app_name_list array
-    size_t app_name_list_size = sizeof(app_name_list) / sizeof(app_name_list[0]);
+    unsigned int app_name_list_size = sizeof(app_name_list) / sizeof(app_name_list[0]);
     
     // Request response variables
-    long *response_apps_inst_id_list;
+    int64_t *response_apps_inst_id_list;
     bool *response_apps_inst_running_list;
-    size_t response_element_count;
+    unsigned int response_element_count;
 
     // Send the listApp request with the response variable pointers
     sm_appslauncher_service_list_app(appslauncher_service, app_name_list, app_name_list_size, category,
         &response_apps_inst_id_list, &response_apps_inst_running_list, &response_element_count);
 
     // Print the request's response variable values
-    for(size_t i = 0; i < response_element_count; i++)
+    for(unsigned int i = 0; i < response_element_count; i++)
     {
-        printf("App #%ld running status is %d\n", response_apps_inst_id_list[i], response_apps_inst_running_list[i]);
+        printf("App #%" PRId64 " running status is %d\n", response_apps_inst_id_list[i], response_apps_inst_running_list[i]);
     }
 
     // Deallocate memory
@@ -288,13 +290,13 @@ demo_parameter_service_get_definition()
     };
 
     // Calculate size of array
-    size_t param_name_list_size = sizeof(param_name_list) / sizeof(param_name_list[0]);
+    unsigned int param_name_list_size = sizeof(param_name_list) / sizeof(param_name_list[0]);
 
     // Response variable for parameter inst and def ids
-    long response_identity_id;
-    long response_definition_id;
+    int64_t response_identity_id;
+    int64_t response_definition_id;
 
-    for(size_t i = 0; i < param_name_list_size; i++)
+    for(unsigned int i = 0; i < param_name_list_size; i++)
     {
         // Send the listDefinition request for a single parameter
         rc = mc_parameter_service_get_definition(parameter_service, param_name_list[i], &response_identity_id, &response_definition_id);
@@ -307,7 +309,7 @@ demo_parameter_service_get_definition()
         else // No errors
         {
             // Print response result
-            printf("Parameter %s has identity id %ld and definition id %ld\n",
+            printf("Parameter %s has identity id %" PRId64 " and definition id %" PRId64 "\n",
                 param_name_list[i], response_identity_id, response_definition_id);
         }
     }
@@ -351,12 +353,12 @@ demo_parameter_service_get_value_list()
     };
 
     // Calculate size of array
-    size_t param_name_list_size = sizeof(param_name_list) / sizeof(param_name_list[0]);
+    unsigned int param_name_list_size = sizeof(param_name_list) / sizeof(param_name_list[0]);
 
     // Response variable for param inst and def ids as well as element count
-    long *response_param_inst_id_list;
-    long *response_param_def_id_list;
-    size_t response_param_inst_id_list_size;
+    int64_t *response_param_inst_id_list;
+    int64_t *response_param_def_id_list;
+    unsigned int response_param_inst_id_list_size;
 
     // Send the listDefinition request with the response variable pointers
     rc = mc_parameter_service_list_definition(parameter_service, param_name_list, param_name_list_size,
@@ -376,7 +378,7 @@ demo_parameter_service_get_value_list()
     if(param_name_list_size != response_param_inst_id_list_size)
     {
         // Print error message
-        printf("Did not fetch the expected number of parameter definitions: Expected %lu but was %lu\n", param_name_list_size, response_param_inst_id_list_size);
+        printf("Did not fetch the expected number of parameter definitions: Expected %u but was %u\n", param_name_list_size, response_param_inst_id_list_size);
 
         // Return the error code
         return rc;
@@ -385,7 +387,7 @@ demo_parameter_service_get_value_list()
     // Response variable pointers and element count
     union mal_attribute_t *response_mal_attribute_list;
     unsigned char *response_mal_attributes_tag_list;
-    size_t response_mal_attributes_count;
+    unsigned int response_mal_attributes_count;
 
     // Send the getValue request with the response variable pointers
     rc = mc_parameter_service_get_value_list(parameter_service, response_param_inst_id_list, response_param_inst_id_list_size,
@@ -405,15 +407,15 @@ demo_parameter_service_get_value_list()
     if(response_param_inst_id_list_size != response_mal_attributes_count)
     {
         // Print error message
-        printf("Did not fetch the expected number of parameter values: Expected %lu but was %lu\n", response_param_inst_id_list_size, response_mal_attributes_count);
+        printf("Did not fetch the expected number of parameter values: Expected %u but was %u\n", response_param_inst_id_list_size, response_mal_attributes_count);
 
         // Return the error code
         return rc;
     }
 
     // Variables used to store and print responses
-    long param_id;
-    char tag;
+    int64_t param_id;
+    unsigned char tag;
     union mal_attribute_t attr;
 
     // Print values for fetched parameters
@@ -428,64 +430,64 @@ demo_parameter_service_get_value_list()
         switch(tag)
         {
             case MAL_IDENTIFIER_ATTRIBUTE_TAG:
-                printf("Parameter %s has id %ld and is an Identifier: %s\n", param_name_list[i], param_id, attr.identifier_value);
+                printf("Parameter %s has id %" PRId64 " and is an Identifier: %s\n", param_name_list[i], param_id, attr.identifier_value);
                 break;
 
             case MAL_STRING_ATTRIBUTE_TAG:
-                printf("Parameter %s has id %ld and is a String: %s\n", param_name_list[i], param_id, attr.string_value);
+                printf("Parameter %s has id %" PRId64 " and is a String: %s\n", param_name_list[i], param_id, attr.string_value);
                 break;
 
             case MAL_URI_ATTRIBUTE_TAG:
-                printf("Parameter %s has id %ld and is a URI: %s\n", param_name_list[i], param_id, attr.uri_value);
+                printf("Parameter %s has id %" PRId64 " and is a URI: %s\n", param_name_list[i], param_id, attr.uri_value);
                 break;
 
             case MAL_BOOLEAN_ATTRIBUTE_TAG:
-                printf("Parameter %s has id %ld and is a Boolean: %d\n", param_name_list[i], param_id, attr.boolean_value);
+                printf("Parameter %s has id %" PRId64 " and is a Boolean: %d\n", param_name_list[i], param_id, attr.boolean_value);
                 break;
 
             case MAL_FLOAT_ATTRIBUTE_TAG:
-                printf("Parameter %s has id %ld and is a Float: %f\n", param_name_list[i], param_id, attr.float_value);
+                printf("Parameter %s has id %" PRId64 " and is a Float: %f\n", param_name_list[i], param_id, attr.float_value);
                 break;
 
             case MAL_DOUBLE_ATTRIBUTE_TAG:
-                printf("Parameter %s has id %ld and is a Double: %f\n", param_name_list[i], param_id, attr.double_value);
+                printf("Parameter %s has id %" PRId64 " and is a Double: %f\n", param_name_list[i], param_id, attr.double_value);
                 break;
 
             case MAL_OCTET_ATTRIBUTE_TAG:
-                printf("Parameter %s has id %ld and is a Octet: %c\n", param_name_list[i], param_id, attr.octet_value);
+                printf("Parameter %s has id %" PRId64 " and is a Octet: %c\n", param_name_list[i], param_id, attr.octet_value);
                 break;
 
             case MAL_UOCTET_ATTRIBUTE_TAG:
-                printf("Parameter %s has id %ld and is a UOctet: %u\n", param_name_list[i], param_id, attr.uoctet_value);
+                printf("Parameter %s has id %" PRId64 " and is a UOctet: %u\n", param_name_list[i], param_id, attr.uoctet_value);
                 break;
 
             case MAL_SHORT_ATTRIBUTE_TAG:
-                printf("Parameter %s has id %ld and is a Short: %hd\n", param_name_list[i], param_id, attr.short_value);
+                printf("Parameter %s has id %" PRId64 " and is a Short: %" PRId16 "n", param_name_list[i], param_id, attr.short_value);
                 break;
 
             case MAL_USHORT_ATTRIBUTE_TAG:
-                printf("Parameter %s has id %ld and is a UShort: %hu\n", param_name_list[i], param_id, attr.ushort_value);
+                printf("Parameter %s has id %" PRId64 " and is a UShort: %" PRIu16 "\n", param_name_list[i], param_id, attr.ushort_value);
                 break;
 
             case MAL_INTEGER_ATTRIBUTE_TAG:
-                printf("Parameter %s has id %ld and is a Integer: %d\n", param_name_list[i], param_id, attr.integer_value);
+                printf("Parameter %s has id %" PRId64 " and is a Integer: %" PRId32 "n", param_name_list[i], param_id, attr.integer_value);
                 break;
 
             case MAL_UINTEGER_ATTRIBUTE_TAG:
-                printf("Parameter %s has id %ld and is a UInteger: %u\n", param_name_list[i], param_id, attr.uinteger_value);
+                printf("Parameter %s has id %" PRId64 " and is a UInteger: %" PRIu32 "\n", param_name_list[i], param_id, attr.uinteger_value);
                 break;
 
             case MAL_LONG_ATTRIBUTE_TAG:
-                printf("Parameter %s has id %ld and is a Long: %ld\n", param_name_list[i], param_id, attr.long_value);
+                printf("Parameter %s has id %" PRId64 " and is a Long: %" PRId64 "\n", param_name_list[i], param_id, attr.long_value);
                 break;
 
             case MAL_ULONG_ATTRIBUTE_TAG:
-                printf("Parameter %s has id %ld and is a ULong: %lu\n", param_name_list[i], param_id, attr.ulong_value);
+                printf("Parameter %s has id %" PRId64 " and is a ULong: %" PRIu64 "\n", param_name_list[i], param_id, attr.ulong_value);
                 break;
 
             default:
                 // Not handling Blob, Time, and Finetime
-                printf("Param %s has id %ld with unsupported attribute tag %d\n", param_name_list[i], param_id, tag);
+                printf("Param %s has id %" PRId64 " with unsupported attribute tag %d\n", param_name_list[i], param_id, tag);
         }
 
         // IMPORTANT: Don't forget to destroy the MAL attribute object
@@ -530,8 +532,8 @@ demo_parameter_service_get_value()
     int rc;
 
     // Variables to store the parameter inst and def ids nedded to fetch parameter values
-    long param_inst_id;
-    long param_def_id;
+    int64_t param_inst_id;
+    int64_t param_def_id;
 
     // --------------------------------------------------------------------------
     // Create the Parameter service
@@ -664,11 +666,11 @@ demo_parameter_service_set_value()
 
     // Convert random double value to string
     char param_value_to_set[20];
-    snprintf(param_value_to_set, 20, "%f", random_value);
+    snprintf(param_value_to_set, 20, "%0.12f", random_value);
 
     // Response variables for param inst and def ids
-    long param_inst_id;
-    long param_def_id;
+    int64_t param_inst_id;
+    int64_t param_def_id;
     
     // Send the listDefinition request for a single parameter
     rc = mc_parameter_service_get_definition(parameter_service, param_name, &param_inst_id, &param_def_id);
@@ -685,7 +687,7 @@ demo_parameter_service_set_value()
     else // No errors
     {
         // Print response result
-        printf("Parameter %s has identity id %ld and definition id %ld\n",
+        printf("Parameter %s has identity id %" PRId64 " and definition id %" PRId64 "\n",
             param_name, param_inst_id, param_def_id);
     }
 
@@ -709,13 +711,13 @@ demo_parameter_service_set_value()
     else
     {
         // Print the fetched parameter
-        printf("Value of parameter %s: %f\n", param_name, param_value);
+        printf("Value of parameter %s: %0.12f\n", param_name, param_value);
     }
 
     // STEP 3: The setValue request interaction will set the OSVersion param value
     
     // Verbosity
-    printf("Setting value of parameter %s from %f to %s\n", param_name, param_value, param_value_to_set);
+    printf("Setting value of parameter %s from %0.12f to %s\n", param_name, param_value, param_value_to_set);
 
     // Trigger the setValue submit interaction
     rc = mc_parameter_service_set_value(parameter_service, param_inst_id, MAL_DURATION_ATTRIBUTE_TAG, param_value_to_set);
@@ -747,7 +749,7 @@ demo_parameter_service_set_value()
         else
         {
             // Print the fetched parameter
-            printf("New value of parameter %s: %f\n", param_name, param_value);
+            printf("New value of parameter %s: %0.12f\n", param_name, param_value);
         }
     }
 

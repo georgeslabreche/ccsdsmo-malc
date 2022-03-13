@@ -44,9 +44,9 @@ struct _malbinary_cursor_t {
   char* body_ptr;
   // Length of the body part, calculated then fixed in malbinary_cursor_init
   // Should never be modified during encoding or decoding
-  unsigned int body_length;
+  uint32_t body_length;
   // Current offset during encoding/decoding in the body part, initialized to 0 in malbinary_cursor_init
-  unsigned int body_offset;
+  uint32_t body_offset;
 };
 
 typedef struct _malbinary_cursor_t malbinary_cursor_t;
@@ -55,13 +55,13 @@ void malbinary_cursor_destroy(void *cursor);
 
 void malbinary_cursor_reset(void *cursor);
 void malbinary_cursor_init(void *cursor,
-    char *bytes, unsigned int length, unsigned int offset);
+    char *bytes, uint32_t length, uint32_t offset);
 void malbinary_cursor_copy(malbinary_cursor_t *from, malbinary_cursor_t *to);
 
 void malbinary_cursor_assert(void *cursor);
 
-unsigned int malbinary_cursor_get_length(void *cursor);
-unsigned int malbinary_cursor_get_offset(void *cursor);
+uint32_t malbinary_cursor_get_length(void *cursor);
+uint32_t malbinary_cursor_get_offset(void *cursor);
 
 // The format code must be unique among all the available encoding formats
 #define MALBINARY_FORMAT_CODE 0

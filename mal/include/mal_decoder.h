@@ -52,30 +52,30 @@ bool mal_decoder_is_varint(mal_decoder_t *decoder);
  */
 
 /** Creates a new decoding cursor */
-void *mal_decoder_new_cursor(mal_decoder_t *self, char *bytes, unsigned int length, unsigned int offset);
+void *mal_decoder_new_cursor(mal_decoder_t *self, char *bytes, uint32_t length, uint32_t offset);
 /** Reset a decoding cursor for reuse */
-void mal_decoder_cursor_reset(mal_decoder_t *self, void *cursor, char *bytes, unsigned int length, unsigned int offset);
+void mal_decoder_cursor_reset(mal_decoder_t *self, void *cursor, char *bytes, uint32_t length,uint32_t offset);
 /** Destroy an decoding cursor */
 void mal_decoder_cursor_destroy(mal_decoder_t *self, void *cursor);
 
-unsigned int mal_decoder_cursor_get_length(mal_decoder_t *self, void *cursor);
-unsigned int mal_decoder_cursor_get_offset(mal_decoder_t *self, void *cursor);
+uint32_t mal_decoder_cursor_get_length(mal_decoder_t *self, void *cursor);
+uint32_t mal_decoder_cursor_get_offset(mal_decoder_t *self, void *cursor);
 
 void mal_decoder_cursor_assert(mal_decoder_t *self, void *cursor);
 
 /* Decoding functions */
 
-short mal_read16(mal_decoder_t *self, void *cursor);
-int mal_read32(mal_decoder_t *self, void *cursor);
-long mal_read64(mal_decoder_t *self, void *cursor);
+int16_t mal_read16(mal_decoder_t *self, void *cursor);
+int32_t mal_read32(mal_decoder_t *self, void *cursor);
+int64_t mal_read64(mal_decoder_t *self, void *cursor);
 int mal_decoder_decode_string(mal_decoder_t *self, void *cursor, mal_string_t **result);
 int mal_decoder_decode_presence_flag(mal_decoder_t *self, void *cursor, bool *result);
-int mal_decoder_decode_short_form(mal_decoder_t *self, void *cursor, long *result);
-int mal_decoder_decode_small_enum(mal_decoder_t *self, void *cursor, int *result);
-int mal_decoder_decode_medium_enum(mal_decoder_t *self, void *cursor, int *result);
-int mal_decoder_decode_large_enum(mal_decoder_t *self, void *cursor, int *result);
+int mal_decoder_decode_short_form(mal_decoder_t *self, void *cursor, int64_t *result);
+int mal_decoder_decode_small_enum(mal_decoder_t *self, void *cursor, int32_t *result);
+int mal_decoder_decode_medium_enum(mal_decoder_t *self, void *cursor, int32_t *result);
+int mal_decoder_decode_large_enum(mal_decoder_t *self, void *cursor, int32_t *result);
 int mal_decoder_decode_integer(mal_decoder_t *self, void *cursor, mal_integer_t *result);
-int mal_decoder_decode_list_size(mal_decoder_t *self, void *cursor, unsigned int *result);
+int mal_decoder_decode_list_size(mal_decoder_t *self, void *cursor, uint32_t *result);
 int mal_decoder_decode_uri(mal_decoder_t *self, void *cursor, mal_uri_t **result);
 int mal_decoder_decode_blob(mal_decoder_t *self, void *cursor, mal_blob_t **result);
 int mal_decoder_decode_time(mal_decoder_t *self, void *cursor, mal_time_t *result);
@@ -143,26 +143,26 @@ int mal_decoder_decode_ushort_list(mal_ushort_list_t *self, mal_decoder_t *decod
 /* Cursor manipulation */
 
 /** Creates a new decoding cursor */
-typedef void *mal_decoder_new_cursor_fn(char *bytes, unsigned int length, unsigned int offset);
+typedef void *mal_decoder_new_cursor_fn(char *bytes, uint32_t length, uint32_t offset);
 /** Reset a decoding cursor for reuse */
-typedef void mal_decoder_cursor_reset_fn(void *cursor, char *bytes, unsigned int length, unsigned int offset);
+typedef void mal_decoder_cursor_reset_fn(void *cursor, char *bytes, uint32_t length, uint32_t offset);
 /** Destroy an decoding cursor */
 typedef void mal_decoder_cursor_destroy_fn(void *cursor);
-typedef unsigned int mal_decoder_cursor_get_length_fn(void *cursor);
-typedef unsigned int mal_decoder_cursor_get_offset_fn(void *cursor);
+typedef uint32_t mal_decoder_cursor_get_length_fn(void *cursor);
+typedef uint32_t mal_decoder_cursor_get_offset_fn(void *cursor);
 typedef void mal_decoder_cursor_assert_fn(void *cursor);
 
 /* Decoding functions */
 
-typedef short mal_read16_fn(void *cursor);
-typedef int mal_read32_fn(void *cursor);
-typedef long mal_read64_fn(void *cursor);
+typedef int16_t mal_read16_fn(void *cursor);
+typedef int32_t mal_read32_fn(void *cursor);
+typedef int64_t mal_read64_fn(void *cursor);
 typedef int mal_decoder_decode_string_fn(mal_decoder_t *self, void *cursor, mal_string_t **result);
 typedef int mal_decoder_decode_presence_flag_fn(mal_decoder_t *self, void *cursor, bool *result);
-typedef int mal_decoder_decode_short_form_fn(mal_decoder_t *self, void *cursor, long *result);
-typedef int mal_decoder_decode_small_enum_fn(mal_decoder_t *self, void *cursor, int *result);
-typedef int mal_decoder_decode_medium_enum_fn(mal_decoder_t *self, void *cursor, int *result);
-typedef int mal_decoder_decode_large_enum_fn(mal_decoder_t *self, void *cursor, int *result);
+typedef int mal_decoder_decode_short_form_fn(mal_decoder_t *self, void *cursor, int64_t *result);
+typedef int mal_decoder_decode_small_enum_fn(mal_decoder_t *self, void *cursor, int32_t *result);
+typedef int mal_decoder_decode_medium_enum_fn(mal_decoder_t *self, void *cursor, int32_t *result);
+typedef int mal_decoder_decode_large_enum_fn(mal_decoder_t *self, void *cursor, int32_t *result);
 typedef int mal_decoder_decode_integer_fn(mal_decoder_t *self, void *cursor, mal_integer_t *result);
 typedef int mal_decoder_decode_list_size_fn(mal_decoder_t *self, void *cursor, unsigned int *result);
 typedef int mal_decoder_decode_uri_fn(mal_decoder_t *self, void *cursor, mal_uri_t **result);

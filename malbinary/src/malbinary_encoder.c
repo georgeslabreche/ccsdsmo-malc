@@ -47,39 +47,39 @@ void *malbinary_encoder_new_cursor() {
   return (void *) cursor;
 }
 
-void malbinary_write16(int int_value, void *cursor) {
+void malbinary_write16(int16_t int_value, void *cursor) {
   unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
-  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (int_value >> 8);
-  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (int_value >> 0);
+  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (signed char) (int_value >> 8);
+  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (signed char) (int_value >> 0);
   ((malbinary_cursor_t *) cursor)->body_offset = index;
 }
 
-void malbinary_write32(int int_value, void *cursor) {
+void malbinary_write32(int32_t int_value, void *cursor) {
   unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
-  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (int_value >> 24);
-  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (int_value >> 16);
-  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (int_value >> 8);
-  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (int_value >> 0);
+  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (signed char) (int_value >> 24);
+  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (signed char) (int_value >> 16);
+  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (signed char) (int_value >> 8);
+  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (signed char) (int_value >> 0);
   ((malbinary_cursor_t *) cursor)->body_offset = index;
 }
 
-void malbinary_write64(long long_value, void *cursor) {
+void malbinary_write64(int64_t long_value, void *cursor) {
   unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
-  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (long_value >> 56);
-  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (long_value >> 48);
-  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (long_value >> 40);
-  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (long_value >> 32);
-  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (long_value >> 24);
-  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (long_value >> 16);
-  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (long_value >> 8);
-  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (long_value >> 0);
+  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (signed char) (long_value >> 56);
+  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (signed char) (long_value >> 48);
+  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (signed char) (long_value >> 40);
+  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (signed char) (long_value >> 32);
+  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (signed char) (long_value >> 24);
+  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (signed char) (long_value >> 16);
+  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (signed char) (long_value >> 8);
+  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (signed char) (long_value >> 0);
   ((malbinary_cursor_t *) cursor)->body_offset = index;
 }
 
-int malbinary_var_ushort_encoding_length(unsigned short value) {
+int malbinary_var_ushort_encoding_length(uint16_t value) {
   if (value == 0) return 1;
   int ret = 0;
-  for (int i = 0; i < 16; i += 7) {
+  for (uint16_t i = 0; i < 16; i += 7) {
     if ((value >> i) == 0) {
       break;
     }
@@ -88,10 +88,10 @@ int malbinary_var_ushort_encoding_length(unsigned short value) {
   return ret;
 }
 
-int malbinary_var_uinteger_encoding_length(unsigned int value) {
+int malbinary_var_uinteger_encoding_length(uint32_t value) {
   if (value == 0) return 1;
   int ret = 0;
-  for (int i = 0; i < 32; i += 7) {
+  for (uint32_t i = 0; i < 32; i += 7) {
     if ((value >> i) == 0) {
       break;
     }
@@ -100,10 +100,10 @@ int malbinary_var_uinteger_encoding_length(unsigned int value) {
   return ret;
 }
 
-int malbinary_var_ulong_encoding_length(unsigned long value) {
+int malbinary_var_ulong_encoding_length(uint64_t value) {
   if (value == 0) return 1;
   int ret = 0;
-  for (int i = 0; i < 64; i += 7) {
+  for (uint64_t i = 0; i < 64; i += 7) {
     if ((value >> i) == 0) {
       break;
     }
@@ -112,20 +112,20 @@ int malbinary_var_ulong_encoding_length(unsigned long value) {
   return ret;
 }
 
-int malbinary_var_short_encoding_length(short value) {
+int malbinary_var_short_encoding_length(int16_t value) {
   return malbinary_var_ushort_encoding_length((value << 1) ^ (value >> 15));
 }
 
-int malbinary_var_integer_encoding_length(int value) {
+int malbinary_var_integer_encoding_length(int32_t value) {
   return malbinary_var_uinteger_encoding_length((value << 1) ^ (value >> 31));
 }
 
-int malbinary_var_long_encoding_length(long value) {
+int malbinary_var_long_encoding_length(int64_t value) {
   return malbinary_var_ulong_encoding_length((value << 1) ^ (value >> 63));
 }
 
-void malbinary_write_uvarinteger(unsigned int value, char *bytes) {
-  unsigned int index = 0;
+void malbinary_write_uvarinteger(uint32_t value, char *bytes) {
+  uint32_t index = 0;
   while ((value & -128) != 0)
   {
     bytes[index++] = (char) ((value & 127) | 128);
@@ -134,9 +134,9 @@ void malbinary_write_uvarinteger(unsigned int value, char *bytes) {
   bytes[index++] = (char) (value & 127);
 }
 
-void malbinary_write_uvarint(unsigned int value, void *cursor)
+void malbinary_write_uvarint(uint32_t value, void *cursor)
 {
-  unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
+  uint32_t index = ((malbinary_cursor_t *) cursor)->body_offset;
   while ((value & -128) != 0)
   {
     ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) ((value & 127) | 128);
@@ -147,38 +147,38 @@ void malbinary_write_uvarint(unsigned int value, void *cursor)
   ((malbinary_cursor_t *) cursor)->body_offset = index;
 }
 
-void malbinary_write_uvarshort(unsigned short value, void *cursor) {
+void malbinary_write_uvarshort(uint16_t value, void *cursor) {
   malbinary_write_uvarint(value, cursor);
 }
 
 
-void malbinary_write_uvarlong(unsigned long value, void *cursor)
+void malbinary_write_uvarlong(uint64_t value, void *cursor)
 {
-  unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
+  uint32_t index = ((malbinary_cursor_t *) cursor)->body_offset;
   while ((value & -128L) != 0L)
   {
-    ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (((int) value & 127) | 128);
+    ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) (((int32_t) value & 127) | 128);
     ((malbinary_cursor_t *) cursor)->body_offset = index;
     value >>= 7;
   }
-  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) ((int) value & 127);
+  ((malbinary_cursor_t *) cursor)->body_ptr[index++] = (char) ((int32_t) value & 127);
   ((malbinary_cursor_t *) cursor)->body_offset = index;
 }
 
-void malbinary_write_varshort(short value, void *cursor) {
+void malbinary_write_varshort(int16_t value, void *cursor) {
   malbinary_write_uvarint((value << 1) ^ (value >> 15), cursor);
 }
 
-void malbinary_write_varint(int value, void *cursor) {
+void malbinary_write_varint(int32_t value, void *cursor) {
   malbinary_write_uvarint((value << 1) ^ (value >> 31), cursor);
 }
 
-void malbinary_write_varlong(long value, void *cursor) {
+void malbinary_write_varlong(int64_t value, void *cursor) {
   malbinary_write_uvarlong((value << 1) ^ (value >> 63), cursor);
 }
 
-void malbinary_write_array(char *array, unsigned int length, void *cursor) {
-  unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
+void malbinary_write_array(char *array, uint32_t length, void *cursor) {
+  uint32_t index = ((malbinary_cursor_t *) cursor)->body_offset;
   for (int i = 0; i < length; i++) {
     ((malbinary_cursor_t *) cursor)->body_ptr[index++] = array[i];
   }
@@ -186,7 +186,7 @@ void malbinary_write_array(char *array, unsigned int length, void *cursor) {
 }
 
 void malbinary_write(char b, void *cursor) {
-  unsigned int index = ((malbinary_cursor_t *) cursor)->body_offset;
+  uint32_t index = ((malbinary_cursor_t *) cursor)->body_offset;
   ((malbinary_cursor_t *) cursor)->body_ptr[index++] = b;
   ((malbinary_cursor_t *) cursor)->body_offset = index;
 }
@@ -206,7 +206,7 @@ int malbinary_encoder_add_presence_flag_encoding_length(mal_encoder_t *self, mal
   return malbinary_encoder_add_boolean_encoding_length(self, to_encode, cursor);
 }
 
-int malbinary_encoder_add_short_form_encoding_length(mal_encoder_t *self, long to_encode, void *cursor) {
+int malbinary_encoder_add_short_form_encoding_length(mal_encoder_t *self, int64_t to_encode, void *cursor) {
   int rc = 0;
   if (self->varint_supported)
     ((malbinary_cursor_t *) cursor)->body_length += malbinary_var_long_encoding_length(to_encode);
@@ -367,7 +367,7 @@ int malbinary_encoder_encode_presence_flag(mal_encoder_t *self,
   return rc;
 }
 
-int malbinary_encoder_encode_short_form(mal_encoder_t *self, void *cursor, long to_encode) {
+int malbinary_encoder_encode_short_form(mal_encoder_t *self, void *cursor, int64_t to_encode) {
   int rc = 0;
   if (self->varint_supported)
     malbinary_write_varlong(to_encode, cursor);
@@ -394,13 +394,13 @@ int malbinary_encoder_encode_list_size(mal_encoder_t *self, void *cursor, unsign
   return rc;
 }
 
-int malbinary_encoder_encode_small_enum(mal_encoder_t *self, void *cursor, int to_encode) {
+int malbinary_encoder_encode_small_enum(mal_encoder_t *self, void *cursor, int32_t to_encode) {
   int rc = 0;
   malbinary_write(to_encode, cursor);
   return rc;
 }
 
-int malbinary_encoder_encode_medium_enum(mal_encoder_t *self, void *cursor, int to_encode) {
+int malbinary_encoder_encode_medium_enum(mal_encoder_t *self, void *cursor, int32_t to_encode) {
   int rc = 0;
   if (self->varint_supported)
     malbinary_write_uvarshort(to_encode, cursor);
@@ -409,7 +409,7 @@ int malbinary_encoder_encode_medium_enum(mal_encoder_t *self, void *cursor, int 
   return rc;
 }
 
-int malbinary_encoder_encode_large_enum(mal_encoder_t *self, void *cursor, int to_encode) {
+int malbinary_encoder_encode_large_enum(mal_encoder_t *self, void *cursor, int32_t to_encode) {
   int rc = 0;
   if (self->varint_supported)
     malbinary_write_uvarint(to_encode, cursor);
@@ -537,10 +537,10 @@ int malbinary_encoder_add_float_encoding_length(mal_encoder_t *self,
   return rc;
 }
 
-long doubleToLongBits(double x) {
+int64_t doubleToLongBits(double x) {
   union {
     double d;
-    long l;
+    int64_t l;
   } u;
   u.d = x;
   return u.l;
@@ -590,7 +590,7 @@ int malbinary_encoder_add_finetime_encoding_length(mal_encoder_t *self,
 int malbinary_encoder_encode_duration(mal_encoder_t *self, void *cursor, mal_duration_t to_encode) {
 // TODO: Be careful, during MAL/ZMTP interop duration was defined as a float (fixed by Guilhem).
 // return  malbinary_encoder_encode_float(self, cursor, (mal_float_t) to_encode);
- return  malbinary_encoder_encode_double(self, cursor, (mal_float_t) to_encode);
+ return  malbinary_encoder_encode_double(self, cursor, (mal_double_t) to_encode);
 }
 
 int malbinary_encoder_encode_float(mal_encoder_t *self, void *cursor, mal_float_t to_encode) {
@@ -605,7 +605,7 @@ int malbinary_encoder_encode_float(mal_encoder_t *self, void *cursor, mal_float_
 
 int malbinary_encoder_encode_double(mal_encoder_t *self, void *cursor, mal_double_t to_encode) {
   int rc = 0;
-  long l = doubleToLongBits(to_encode);
+  int64_t l = doubleToLongBits(to_encode);
   if (self->varint_supported)
     malbinary_write_varlong(l, cursor);
   else

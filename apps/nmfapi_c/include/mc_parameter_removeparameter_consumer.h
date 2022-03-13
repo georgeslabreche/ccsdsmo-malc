@@ -18,7 +18,9 @@ extern "C" {
 //  @interface
 //  This is a stable class, and may not change except for emergencies. It
 //  is provided in stable builds.
-#define MC_PARAMETER_REMOVEPARAMETER_CONSUMER_URI "mc/parameter/consumer/removeParameter"  // The consumer URI for the removeParameter operation
+
+// The consumer URI for the removeParameter operation
+#define MC_PARAMETER_REMOVEPARAMETER_CONSUMER_URI "mc/parameter/consumer/removeParameter"
 
 //  Instanciate a consumer object for the removeParameter operation
 NMFAPI_C_EXPORT mc_parameter_removeparameter_consumer_t *
@@ -47,20 +49,20 @@ NMFAPI_C_EXPORT int
     mc_parameter_removeparameter_consumer_get_response_error_code (mc_parameter_removeparameter_consumer_t *self);
 
 //  Get the param instance identity ids MAL message field
-NMFAPI_C_EXPORT long *
+NMFAPI_C_EXPORT int64_t *
     mc_parameter_removeparameter_consumer_get_field_param_identiy_id_list (mc_parameter_removeparameter_consumer_t *self);
 
 //  Set the param instance identity ids MAL message field
 NMFAPI_C_EXPORT void
-    mc_parameter_removeparameter_consumer_set_field_param_identity_id_list (mc_parameter_removeparameter_consumer_t *self, long *param_inst_id_list);
+    mc_parameter_removeparameter_consumer_set_field_param_identity_id_list (mc_parameter_removeparameter_consumer_t *self, int64_t *param_inst_id_list);
 
 //  Get the number of params MAL message field
-NMFAPI_C_EXPORT size_t
+NMFAPI_C_EXPORT unsigned int
     mc_parameter_removeparameter_consumer_get_field_param_identity_id_list_size (mc_parameter_removeparameter_consumer_t *self);
 
 //  Set the number of params MAL message field
 NMFAPI_C_EXPORT void
-    mc_parameter_removeparameter_consumer_set_field_param_identity_id_list_size (mc_parameter_removeparameter_consumer_t *self, size_t param_identity_id_list_size);
+    mc_parameter_removeparameter_consumer_set_field_param_identity_id_list_size (mc_parameter_removeparameter_consumer_t *self, unsigned int param_identity_id_list_size);
 
 //  @end
 

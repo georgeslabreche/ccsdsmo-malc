@@ -108,7 +108,7 @@ mal_uri_t *
 nmfapi_util_create_uri(const char* protocol, const char *hostname, const char *port, const char *id)
 {
     // Calculate length of URI
-    size_t uri_length = strlen(protocol);
+    unsigned int uri_length = strlen(protocol);
 
     if (hostname) 
     {
@@ -222,6 +222,7 @@ nmfapi_util_destroy_mal_message(mal_message_t *message, mal_ctx_t *mal_ctx)
 
 //  --------------------------------------------------------------------------
 //  Initialize a MAL attribute
+//  FIXME: Mask casts portable: atof, strtod, atoi, strtol, and strtoul
 
 int
 nmfapi_util_init_mal_attribute(char *raw_value, unsigned char tag, union mal_attribute_t *attribute)

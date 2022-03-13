@@ -34,8 +34,10 @@
 # ============
 #
 # This build4targets.sh script is a workaround to the aforementioned problem. It replaces the invalid git
-# clone commands with commands that will copy the mal project directories where they would normally be 
+# clone commands with cp commands that will copy the mal project directories where they would normally be 
 # cloned into if they had dedicated repositories — i.e., into builds/rpi/tmp-deps/
+#
+# For portability: also included sed command to include a compilation flag that forces signed chars.
 
 # Set the bash script variables.
 source env.sh
@@ -80,7 +82,12 @@ do
         # Clean things up before starting.
         make clean
 
-        # Make sure that already built depedencies are not deleted if we build with the "incremental" parameter.
+        # For portability reasons, make sure to force signed char when buidling the project.
+        # Throughout the code, char is not used in portable manner: it is not explicit when it should be signed because it is assumed that it is signed by default.
+        # As we know, this is not the case on all environments such as with ARM32 where the default is unsigned.
+        sed -i 's/FLAGS="--sysroot/FLAGS="-fsigned-char --sysroot/g' builds/${target}/build.sh
+
+        # Make sure that already built dependencies are not deleted if we build with the "incremental" parameter.
         sed -i 's/\if \[ -d ".\/tmp" \]/\if \[ ! $INCREMENTAL \] \&\& \[ -d ".\/tmp" \]/g' builds/${target}/build.sh
         sed -i 's/\if \[ -d ".\/tmp-deps" \]/\if \[ ! $INCREMENTAL \] \&\& \[ -d ".\/tmp-deps" \]/g' builds/${target}/build.sh
 
@@ -101,7 +108,7 @@ do
             # Remove all generated files before copying the project into builds/${target}/tmp-deps
             cd ../../${proj} && git clean -d -f -x && cd ../apps/${PROJECT_NAME}
 
-            # Replace the git clone commands with rsync commands.
+            # Replace the git clone commands with cp commands.
             sed -i "s/git clone --quiet --depth 1  ${proj}$/mkdir ${proj} \&\& cp -R ..\/..\/..\/..\/..\/${proj}\/{generate.sh,genmake,include,license.xml,project.xml,src} ${proj}\/ \&\& cd ${proj} \&\& .\/generate.sh/g" builds/${target}/build.sh
         done
 
@@ -114,7 +121,7 @@ do
             # Remove all generated files before copying the project into builds/${target}/tmp-deps
             cd ../${proj} && git clean -d -f -x && cd ../${PROJECT_NAME}
 
-            # Replace the git clone commands with rsync commands.
+            # Replace the git clone commands with cp commands.
             sed -i "s/git clone --quiet --depth 1  ${proj}$/mkdir ${proj} \&\& cp -R  ..\/..\/..\/..\/..\/apps\/${proj}\/{generate.sh,genmake,include,license.xml,project.xml,src} ${proj}\/ \&\& cd ${proj} \&\& .\/generate.sh/g" builds/${target}/build.sh
         done
 
@@ -129,6 +136,6 @@ do
         fi
 
         # Display file info of the output libraries to check that they were correctly built for the target environment.
-        file tmp/lib/lib*
+        #file tmp/lib/lib*
     fi
 done

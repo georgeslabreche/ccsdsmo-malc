@@ -68,24 +68,6 @@ genmake_mal() {
   check
 }
 
-genmake_apps() {
-  cd $PROGDIR/apps/generated_areas;
-  ./genmake $*
-  check
-
-  cd $PROGDIR/apps/nmfapi_c;
-  ./genmake $*
-  check
-
-  cd $PROGDIR/apps/nmfapi_c_demo;
-  ./genmake $*
-  check
-
-  cd $PROGDIR/apps/sepp_tm;
-  ./genmake $*
-  check
-}
-
 genmake_tests() {
   cd $PROGDIR/test/testarea;
   ./genmake $*
@@ -128,11 +110,29 @@ genmake_tests() {
   check
 }
 
+genmake_apps() {
+  cd $PROGDIR/apps/generated_areas;
+  ./genmake $*
+  check
+
+  cd $PROGDIR/apps/nmfapi_c;
+  ./genmake $*
+  check
+
+  cd $PROGDIR/apps/nmfapi_c_demo;
+  ./genmake $*
+  check
+
+  #cd $PROGDIR/apps/sepp_tm;
+  #./genmake $*
+  #check
+}
+
 # build and selftest malc libs
 genmake_mal $*
 
 # build and selftest malc test apps
-genmake_tests $*
+#genmake_tests $*
 
 # build amd selftest malc apps
 genmake_apps $*

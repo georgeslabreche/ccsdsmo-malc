@@ -91,7 +91,7 @@ int main (int argc, char *argv [])
     char* param_name_list[MAX_PARAM_LIST_SIZE];
     const char s[1] = ",";
     char *param_name;
-    size_t param_name_list_size = 0;
+    unsigned int param_name_list_size = 0;
 
     /* get the first token, i.e. the first param name */
     param_name = strtok(argv[argv_index_pname], s);
@@ -148,9 +148,9 @@ int main (int argc, char *argv [])
     mc_parameter_service_t *parameter_service = nmf_api_get_mc_parameter_service(nmf_api);
 
     /* response variable for param inst and def ids as well as element count */
-    long *response_param_inst_id_list;
-    long *response_param_def_id_list;
-    size_t response_param_inst_id_list_size;
+    int64_t *response_param_inst_id_list;
+    int64_t *response_param_def_id_list;
+    unsigned int response_param_inst_id_list_size;
 
     /* send the listDefinition request with the response variable pointers */
     rc = mc_parameter_service_list_definition(parameter_service, param_name_list, param_name_list_size,
@@ -170,16 +170,16 @@ int main (int argc, char *argv [])
     if(param_name_list_size != response_param_inst_id_list_size)
     {
         /* print error message */
-        printf("Did not fetch the expected number of parameter definitions: Expected %lu but was %lu\n", param_name_list_size, response_param_inst_id_list_size);
+        printf("Did not fetch the expected number of parameter definitions: Expected %u but was %u\n", param_name_list_size, response_param_inst_id_list_size);
 
         /* return the error code */
         return rc;
     }
 
     /* print parameter Ids */
-    for(size_t i = 0; i < param_name_list_size; i++)
+    for(unsigned int i = 0; i < param_name_list_size; i++)
     {
-        printf("\t- Parameter %s has identity id %ld and definition id %ld\n",
+        printf("\t- Parameter %s has identity id %" PRId64 " and definition id %" PRId64 "\n",
             param_name_list[i], response_param_inst_id_list[i], response_param_def_id_list[i]);
     }
 
@@ -193,7 +193,7 @@ int main (int argc, char *argv [])
     /* response variable pointers and element  */
     union mal_attribute_t *response_mal_attribute_list;
     unsigned char *response_mal_attributes_tag_list;
-    size_t response_mal_attributes_count;
+    unsigned int response_mal_attributes_count;
 
     /** 
      * trigger getValue interactions but in a way that incrementally tries aggregations with increasing number of parameters
@@ -205,10 +205,10 @@ int main (int argc, char *argv [])
      * 
      * we do this to test if aggregation building breaks past a certain threshold.
      */
-    for(size_t param_inst_ids_size = 1; param_inst_ids_size <= response_param_inst_id_list_size; param_inst_ids_size++)
+    for(unsigned int param_inst_ids_size = 1; param_inst_ids_size <= response_param_inst_id_list_size; param_inst_ids_size++)
     {
         /* verbosity */
-        printf("\nFetching values for %ld parameters:\n", param_inst_ids_size);
+        printf("\nFetching values for %u parameters:\n", param_inst_ids_size);
 
         /* Send the getValue request with the response variable pointers */
         rc = mc_parameter_service_get_value_list(parameter_service, response_param_inst_id_list, param_inst_ids_size,
@@ -228,16 +228,16 @@ int main (int argc, char *argv [])
         if(param_inst_ids_size != response_mal_attributes_count)
         {
             /* print error message */
-            printf("Did not fetch the expected number of parameter values: Expected %lu but was %lu\n", param_inst_ids_size, response_mal_attributes_count);
+            printf("Did not fetch the expected number of parameter values: Expected %u but was %u\n", param_inst_ids_size, response_mal_attributes_count);
 
             /* return the error code */
             return rc;
         }
 
         /* variables used to store and print responses */
-        long param_id;
-        long param_def_id;
-        char tag;
+        int64_t param_id;
+        int64_t param_def_id;
+        unsigned char tag;
         union mal_attribute_t attr;
 
         /* print values for fetched parameters */
@@ -255,64 +255,64 @@ int main (int argc, char *argv [])
             switch(tag)
             {
                 case MAL_IDENTIFIER_ATTRIBUTE_TAG:
-                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is an Identifier: %s\n", param_name_list[i], param_id, param_def_id, attr.identifier_value);
+                    printf("Parameter %s has instance identity id %" PRId64 ", definition id %" PRId64 ", and is an Identifier: %s\n", param_name_list[i], param_id, param_def_id, attr.identifier_value);
                     break;
 
                 case MAL_STRING_ATTRIBUTE_TAG:
-                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a String: %s\n", param_name_list[i], param_id, param_def_id, attr.string_value);
+                    printf("Parameter %s has instance identity id %" PRId64 ", definition id %" PRId64 ", and is a String: %s\n", param_name_list[i], param_id, param_def_id, attr.string_value);
                     break;
 
                 case MAL_URI_ATTRIBUTE_TAG:
-                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a URI: %s\n", param_name_list[i], param_id, param_def_id, attr.uri_value);
+                    printf("Parameter %s has instance identity id %" PRId64 ", definition id %" PRId64 ", and is a URI: %s\n", param_name_list[i], param_id, param_def_id, attr.uri_value);
                     break;
 
                 case MAL_BOOLEAN_ATTRIBUTE_TAG:
-                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a Boolean: %d\n", param_name_list[i], param_id, param_def_id, attr.boolean_value);
+                    printf("Parameter %s has instance identity id %" PRId64 ", definition id %" PRId64 ", and is a Boolean: %d\n", param_name_list[i], param_id, param_def_id, attr.boolean_value);
                     break;
 
                 case MAL_FLOAT_ATTRIBUTE_TAG:
-                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a Float: %f\n", param_name_list[i], param_id, param_def_id, attr.float_value);
+                    printf("Parameter %s has instance identity id %" PRId64 ", definition id %" PRId64 ", and is a Float: %f\n", param_name_list[i], param_id, param_def_id, attr.float_value);
                     break;
 
                 case MAL_DOUBLE_ATTRIBUTE_TAG:
-                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a Double: %f\n", param_name_list[i], param_id, param_def_id, attr.double_value);
+                    printf("Parameter %s has instance identity id %" PRId64 ", definition id %" PRId64 ", and is a Double: %f\n", param_name_list[i], param_id, param_def_id, attr.double_value);
                     break;
 
                 case MAL_OCTET_ATTRIBUTE_TAG:
-                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a Octet: %c\n", param_name_list[i], param_id, param_def_id, attr.octet_value);
+                    printf("Parameter %s has instance identity id %" PRId64 ", definition id %" PRId64 ", and is a Octet: %c\n", param_name_list[i], param_id, param_def_id, attr.octet_value);
                     break;
 
                 case MAL_UOCTET_ATTRIBUTE_TAG:
-                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a UOctet: %u\n", param_name_list[i], param_id, param_def_id, attr.uoctet_value);
+                    printf("Parameter %s has instance identity id %" PRId64 ", definition id %" PRId64 ", and is a UOctet: %u\n", param_name_list[i], param_id, param_def_id, attr.uoctet_value);
                     break;
 
                 case MAL_SHORT_ATTRIBUTE_TAG:
-                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a Short: %hd\n", param_name_list[i], param_id, param_def_id, attr.short_value);
+                    printf("Parameter %s has instance identity id %" PRId64 ", definition id %" PRId64 ", and is a Short: %" PRId16 "\n", param_name_list[i], param_id, param_def_id, attr.short_value);
                     break;
 
                 case MAL_USHORT_ATTRIBUTE_TAG:
-                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a UShort: %hu\n", param_name_list[i], param_id, param_def_id, attr.ushort_value);
+                    printf("Parameter %s has instance identity id %" PRId64 ", definition id %" PRId64 ", and is a UShort: %" PRIu16 "\n", param_name_list[i], param_id, param_def_id, attr.ushort_value);
                     break;
 
                 case MAL_INTEGER_ATTRIBUTE_TAG:
-                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a Integer: %d\n", param_name_list[i], param_id, param_def_id, attr.integer_value);
+                    printf("Parameter %s has instance identity id %" PRId64 ", definition id %" PRId64 ", and is a Integer: %" PRId32 "\n", param_name_list[i], param_id, param_def_id, attr.integer_value);
                     break;
 
                 case MAL_UINTEGER_ATTRIBUTE_TAG:
-                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a UInteger: %u\n", param_name_list[i], param_id, param_def_id, attr.uinteger_value);
+                    printf("Parameter %s has instance identity id %" PRId64 ", definition id %" PRId64 ", and is a UInteger: %" PRIu32 "\n", param_name_list[i], param_id, param_def_id, attr.uinteger_value);
                     break;
 
                 case MAL_LONG_ATTRIBUTE_TAG:
-                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a Long: %ld\n", param_name_list[i], param_id, param_def_id, attr.long_value);
+                    printf("Parameter %s has instance identity id %" PRId64 ", definition id %" PRId64 ", and is a Long: %" PRId64 "\n", param_name_list[i], param_id, param_def_id, attr.long_value);
                     break;
 
                 case MAL_ULONG_ATTRIBUTE_TAG:
-                    printf("Parameter %s has instance identity id %ld, definition id %ld, and is a ULong: %lu\n", param_name_list[i], param_id, param_def_id, attr.ulong_value);
+                    printf("Parameter %s has instance identity id %" PRId64 ", definition id %" PRId64 ", and is a ULong: %" PRIu64 "\n", param_name_list[i], param_id, param_def_id, attr.ulong_value);
                     break;
 
                 default:
                     /* not handling Blob, Time, and Finetime */
-                    printf("Parameter %s has instance identity id %ld, definition id %ld, with unsupported attribute tag %d\n", param_name_list[i], param_id, param_def_id, tag);
+                    printf("Parameter %s has instance identity id %" PRId64 ", definition id %" PRId64 ", with unsupported attribute tag %d\n", param_name_list[i], param_id, param_def_id, tag);
             }
 
             /**

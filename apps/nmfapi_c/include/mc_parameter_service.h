@@ -28,139 +28,139 @@ NMFAPI_C_EXPORT void
 //  The listDefinition operation allows a consumer to request the latest object instance identifiers
 //  of the ParameterIdentity and ParameterDefinition objects for the supported parameters of the provider
 NMFAPI_C_EXPORT int
-    mc_parameter_service_list_definition (mc_parameter_service_t *self, char **param_name_list, size_t param_name_list_size, long **response_identity_id_list, long **response_definition_id_list, size_t *response_element_count);
+    mc_parameter_service_list_definition (mc_parameter_service_t *self, char **param_name_list, unsigned int param_name_list_size, int64_t **response_identity_id_list, int64_t **response_definition_id_list, unsigned int *response_element_count);
 
 //  The listDefinition operation allows a consumer to request the latest object instance identifiers
 //  of the ParameterIdentity and ParameterDefinition objects for the supported parameters of the provider
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_definition (mc_parameter_service_t *self, char *param_name, long *response_identity_id, long *response_definition_id);
+    mc_parameter_service_get_definition (mc_parameter_service_t *self, char *param_name, int64_t *response_identity_id, int64_t *response_definition_id);
 
 //  The getValue operation returns the latest received value for the requested parameters
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_value_list (mc_parameter_service_t *self, long *param_inst_id_list, size_t param_inst_id_list_size, union mal_attribute_t **response_mal_attribute_list, unsigned char **response_mal_attribute_tag_list, size_t *response_mal_element_count);
+    mc_parameter_service_get_value_list (mc_parameter_service_t *self, int64_t *param_inst_id_list, unsigned int param_inst_id_list_size, union mal_attribute_t **response_mal_attribute_list, unsigned char **response_mal_attribute_tag_list, unsigned int *response_mal_element_count);
 
 //  The getValue operation returns the latest received value for a requested parameter
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_value (mc_parameter_service_t *self, long param_inst_id, union mal_attribute_t *response_mal_attribute, unsigned char *response_mal_attribute_tag);
+    mc_parameter_service_get_value (mc_parameter_service_t *self, int64_t param_inst_id, union mal_attribute_t *response_mal_attribute, unsigned char *response_mal_attribute_tag);
 
 //  The getValue operation returns the latest received value for a requested parameter
 //  Sets the requested value with the expectation that it is of type MAL Blob
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_value_blob (mc_parameter_service_t *self, long param_inst_id, char **content, size_t *content_length);
+    mc_parameter_service_get_value_blob (mc_parameter_service_t *self, int64_t param_inst_id, char **content, unsigned int *content_length);
 
 //  The getValue operation returns the latest received value for a requested parameter
 //  Sets the requested value with the expectation that it is of type MAL Boolean
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_value_boolean (mc_parameter_service_t *self, long param_inst_id, bool *value);
+    mc_parameter_service_get_value_boolean (mc_parameter_service_t *self, int64_t param_inst_id, bool *value);
 
 //  The getValue operation returns the latest received value for a requested parameter
 //  Sets the requested value with the expectation that it is of type MAL Duration
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_value_duration (mc_parameter_service_t *self, long param_inst_id, double *value);
+    mc_parameter_service_get_value_duration (mc_parameter_service_t *self, int64_t param_inst_id, double *value);
 
 //  The getValue operation returns the latest received value for a requested parameter
 //  Sets the requested value with the expectation that it is of type MAL Float
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_value_float (mc_parameter_service_t *self, long param_inst_id, float *value);
+    mc_parameter_service_get_value_float (mc_parameter_service_t *self, int64_t param_inst_id, float *value);
 
 //  The getValue operation returns the latest received value for a requested parameter
 //  Sets the requested value with the expectation that it is of type MAL Double
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_value_double (mc_parameter_service_t *self, long param_inst_id, double *value);
+    mc_parameter_service_get_value_double (mc_parameter_service_t *self, int64_t param_inst_id, double *value);
 
 //  The getValue operation returns the latest received value for a requested parameter
 //  Sets the requested value with the expectation that it is of type MAL Identifer
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_value_identifier (mc_parameter_service_t *self, long param_inst_id, char **value);
+    mc_parameter_service_get_value_identifier (mc_parameter_service_t *self, int64_t param_inst_id, char **value);
 
 //  The getValue operation returns the latest received value for a requested parameter
 //  Sets the requested value with the expectation that it is of type MAL Octet
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_value_octet (mc_parameter_service_t *self, long param_inst_id, char *value);
+    mc_parameter_service_get_value_octet (mc_parameter_service_t *self, int64_t param_inst_id, char *value);
 
 //  The getValue operation returns the latest received value for a requested parameter
 //  Sets the requested value with the expectation that it is of type MAL UOctet
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_value_uoctet (mc_parameter_service_t *self, long param_inst_id, unsigned char *value);
+    mc_parameter_service_get_value_uoctet (mc_parameter_service_t *self, int64_t param_inst_id, unsigned char *value);
 
 //  The getValue operation returns the latest received value for a requested parameter
 //  Sets the requested value with the expectation that it is of type MAL Short
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_value_short (mc_parameter_service_t *self, long param_inst_id, short *value);
+    mc_parameter_service_get_value_short (mc_parameter_service_t *self, int64_t param_inst_id, int16_t *value);
 
 //  The getValue operation returns the latest received value for a requested parameter
 //  Sets the requested value with the expectation that it is of type MAL UShort
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_value_ushort (mc_parameter_service_t *self, long param_inst_id, unsigned short *value);
+    mc_parameter_service_get_value_ushort (mc_parameter_service_t *self, int64_t param_inst_id, uint16_t *value);
 
 //  The getValue operation returns the latest received value for a requested parameter
 //  Sets the requested value with the expectation that it is of type MAL Integer
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_value_integer (mc_parameter_service_t *self, long param_inst_id, int *value);
+    mc_parameter_service_get_value_integer (mc_parameter_service_t *self, int64_t param_inst_id, int32_t *value);
 
 //  The getValue operation returns the latest received value for a requested parameter
 //  Sets the requested value with the expectation that it is of type MAL UInteger
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_value_uinteger (mc_parameter_service_t *self, long param_inst_id, unsigned int *value);
+    mc_parameter_service_get_value_uinteger (mc_parameter_service_t *self, int64_t param_inst_id, uint32_t *value);
 
 //  The getValue operation returns the latest received value for a requested parameter
 //  Sets the requested value with the expectation that it is of type MAL Long
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_value_long (mc_parameter_service_t *self, long param_inst_id, long *value);
+    mc_parameter_service_get_value_long (mc_parameter_service_t *self, int64_t param_inst_id, int64_t *value);
 
 //  The getValue operation returns the latest received value for a requested parameter
 //  Sets the requested value with the expectation that it is of type MAL ULong
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_value_ulong (mc_parameter_service_t *self, long param_inst_id, unsigned long *value);
+    mc_parameter_service_get_value_ulong (mc_parameter_service_t *self, int64_t param_inst_id, uint64_t *value);
 
 //  The getValue operation returns the latest received value for a requested parameter
 //  Sets the requested value with the expectation that it is of type MAL String
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_value_string (mc_parameter_service_t *self, long param_inst_id, char **value);
+    mc_parameter_service_get_value_string (mc_parameter_service_t *self, int64_t param_inst_id, char **value);
 
 //  The getValue operation returns the latest received value for a requested parameter
 //  Sets the requested value with the expectation that it is of type MAL Time
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_value_time (mc_parameter_service_t *self, long param_inst_id, unsigned long *value);
+    mc_parameter_service_get_value_time (mc_parameter_service_t *self, int64_t param_inst_id, uint64_t *value);
 
 //  The getValue operation returns the latest received value for a requested parameter
 //  Sets the requested value with the expectation that it is of type MAL Finetime
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_value_finetime (mc_parameter_service_t *self, long param_inst_id, unsigned long *value);
+    mc_parameter_service_get_value_finetime (mc_parameter_service_t *self, int64_t param_inst_id, uint64_t *value);
 
 //  The getValue operation returns the latest received value for a requested parameter
 //  Sets the requested value with the expectation that it is of type MAL URI
 NMFAPI_C_EXPORT int
-    mc_parameter_service_get_value_uri (mc_parameter_service_t *self, long param_inst_id, char **value);
+    mc_parameter_service_get_value_uri (mc_parameter_service_t *self, int64_t param_inst_id, char **value);
 
 //  The setValue operation allows a consumer to set the raw value for one or more parameters
 NMFAPI_C_EXPORT int
-    mc_parameter_service_set_value_list (mc_parameter_service_t *self, long *param_inst_id_list, unsigned char *param_tag_list, char **param_value_list, size_t param_list_size);
+    mc_parameter_service_set_value_list (mc_parameter_service_t *self, int64_t *param_inst_id_list, unsigned char *param_tag_list, char **param_value_list, unsigned int param_list_size);
 
 //  The setValue operation allows a consumer to set the raw value for one or more parameters
 NMFAPI_C_EXPORT int
-    mc_parameter_service_set_value (mc_parameter_service_t *self, long param_inst_id, unsigned char param_tag, char *param_value);
+    mc_parameter_service_set_value (mc_parameter_service_t *self, int64_t param_inst_id, unsigned char param_tag, char *param_value);
 
 //  The setValue operation allows a consumer to set the raw value for one or more parameters
 //  Takes value argument in predefined type with the expectation that the parameter is of type MAL Blob
 NMFAPI_C_EXPORT int
-    mc_parameter_service_set_value_blob (mc_parameter_service_t *self, long param_inst_id, char *param_content, size_t param_content_length);
+    mc_parameter_service_set_value_blob (mc_parameter_service_t *self, int64_t param_inst_id, char *param_content, unsigned int param_content_length);
 
 //  The addParameter operation allows a consumer to define a list of parameters that do not currently exist
 NMFAPI_C_EXPORT int
-    mc_parameter_service_add_parameter_list (mc_parameter_service_t *self, char **param_name_list, char **param_description_list, unsigned char *param_raw_type_list, char **param_raw_unit_list, bool *param_generation_enabled_list, double *param_report_interval_list, size_t param_list_size, long **response_param_identity_id_list, long **response_param_definition_id_list, size_t *response_element_count);
+    mc_parameter_service_add_parameter_list (mc_parameter_service_t *self, char **param_name_list, char **param_description_list, unsigned char *param_raw_type_list, char **param_raw_unit_list, bool *param_generation_enabled_list, double *param_report_interval_list, unsigned int param_list_size, int64_t **response_param_identity_id_list, int64_t **response_param_definition_id_list, unsigned int *response_element_count);
 
 //  The addParameter operation allows a consumer to define a single parameter that does not currently exist
 NMFAPI_C_EXPORT int
-    mc_parameter_service_add_parameter (mc_parameter_service_t *self, char *param_name, char *param_description, unsigned char param_raw_type, char *param_raw_unit, bool param_generation_enabled, double param_report_interval, long *response_param_identity_id, long *response_param_definition_id);
+    mc_parameter_service_add_parameter (mc_parameter_service_t *self, char *param_name, char *param_description, unsigned char param_raw_type, char *param_raw_unit, bool param_generation_enabled, double param_report_interval, int64_t *response_param_identity_id, int64_t *response_param_definition_id);
 
 //  The removeParameter operation allows a consumer to remove one or more parameters from the list of parameters supported by the parameter provider
 NMFAPI_C_EXPORT int
-    mc_parameter_service_remove_parameter_list (mc_parameter_service_t *self, long *param_identity_id_list, size_t param_identity_id_list_size);
+    mc_parameter_service_remove_parameter_list (mc_parameter_service_t *self, int64_t *param_identity_id_list, unsigned int param_identity_id_list_size);
 
 //  The removeParameter operation allows a consumer to remove one or more parameters from the list of parameters supported by the parameter provider
 NMFAPI_C_EXPORT int
-    mc_parameter_service_remove_parameter (mc_parameter_service_t *self, long param_identity_id);
+    mc_parameter_service_remove_parameter (mc_parameter_service_t *self, int64_t param_identity_id);
 
 //  @end
 

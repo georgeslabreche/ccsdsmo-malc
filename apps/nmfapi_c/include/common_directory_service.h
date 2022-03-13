@@ -46,7 +46,7 @@ NMFAPI_C_EXPORT int
 //  The lookup operation allows a service consumer to query the directory service to return a list of
 //  service providers that match the requested criteria. If no match is found, then an empty list is returned
 NMFAPI_C_EXPORT int
-    common_directory_service_lookup_provider_all_uri (common_directory_service_t *self, long **response_provider_id_list, char ***response_provider_uri_list, size_t *response_element_count);
+    common_directory_service_lookup_provider_all_uri (common_directory_service_t *self, int64_t **response_provider_id_list, char ***response_provider_uri_list, unsigned int *response_element_count);
 
 #endif // NMFAPI_C_BUILD_DRAFT_API
 //  @end
