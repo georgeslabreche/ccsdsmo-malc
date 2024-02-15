@@ -45,7 +45,7 @@ int main (int argc, char *argv [])
             printf("demo_getvalue [options] ...");
             printf("\n  --host  / -h        hostname");
             printf("\n  --pport / -p        provider port");
-            printf("\n  --cport / -p        consumer port");
+            printf("\n  --cport / -c        consumer port");
             printf("\n  --debug / -d        enable debug logging");
             printf("\n  --help  / -?        this information\n\n");
             return 0;

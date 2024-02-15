@@ -26,7 +26,7 @@
 #define MAL_INCLUDE_MAL_ENDPOINT_H_
 
 #ifdef __cplusplus
-extern "C" {%
+extern "C" {
 #endif
 
 mal_endpoint_t *mal_endpoint_new(

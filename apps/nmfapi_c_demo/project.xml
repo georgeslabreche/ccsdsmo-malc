@@ -78,6 +78,7 @@
         Need at least one class generated to workaround a bug in which
         the _classes.h header is not generated, i.e. nmfapi_c_demo_classes.h
         Make it a utils class and at worst leave it "blank".
+        In the end we implemented a utils class for setValue so we didn't need this...
     -->
     <class name = "demo_app_utils" selftest = "0">
         Dummy class to workaround a bug
@@ -88,10 +89,19 @@
         If they are not properly prefixed then they won't be packaged for
         deployment by the deployment scripts 
     -->
+    <!-- A demo app -->
     <main name = "demo_app">Demo App</main>
+
+    <!-- A demo app for getValue -->
     <main name = "demo_getvalue">Demo the getValue interaction provided by the Monitor and Control Parameter Service</main>
+
+    <!-- A demo app for setValue -->
+    <class name = "demo_setvalue_utils" selftest = "0">A utils class for the setValue demo app</class>
+    <main name = "demo_setvalue">Demo the setValue interaction provided by the Monitor and Control Parameter Service</main>
+
+    <!-- a demo app for addParameter -->
     <main name = "demo_addparameter">Demo the addParameter interaction provided by the Monitor and Control Parameter Service</main>
-    
+
     <!-- Targets -->
     <target name = "rpi" />
 
