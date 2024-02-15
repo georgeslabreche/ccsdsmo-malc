@@ -45,12 +45,12 @@ int main (int argc, char *argv [])
         ||  streq (argv [argn], "-?"))
         {
             printf("demo_getvalue [options] ...");
-            printf("\n  --host  / -h        hostname");
-            printf("\n  --pport / -p        provider port");
-            printf("\n  --cport / -p        consumer port");
-            printf("\n  --pname / -n        comma separated list of param names (max %d)", MAX_PARAM_LIST_SIZE);
-            printf("\n  --debug / -d        enable debug logging");
-            printf("\n  --help  / -?        this information\n\n");
+            printf("\n  --host   / -h        hostname");
+            printf("\n  --pport  / -p        provider port");
+            printf("\n  --cport  / -c        consumer port");
+            printf("\n  --pnames / -n        comma separated list of param names (max %d)", MAX_PARAM_LIST_SIZE);
+            printf("\n  --debug  / -d        enable debug logging");
+            printf("\n  --help   / -?        this information\n\n");
             return 0;
         }
         else
@@ -88,31 +88,44 @@ int main (int argc, char *argv [])
     }
 
     /* parse param names */
+    char* param_names = argv[argv_index_pname];
     char* param_name_list[MAX_PARAM_LIST_SIZE];
-    const char s[1] = ",";
-    char *param_name;
+    const char delimiter = ',';
     size_t param_name_list_size = 0;
 
-    /* get the first token, i.e. the first param name */
-    param_name = strtok(argv[argv_index_pname], s);
+    char* start = param_names;
+    char* end = NULL;
 
-    /* walk through other param names */
-    while(param_name != NULL)
+    while ((end = strchr(start, delimiter)) != NULL || *start)
     {
-        if(param_name_list_size >= MAX_PARAM_LIST_SIZE)
+        size_t length = (end ? (size_t)(end - start) : strlen(start));
+        if (param_name_list_size >= MAX_PARAM_LIST_SIZE)
         {
-            printf("Too many parameterr names listed in --pnames, max is %d\n", MAX_PARAM_LIST_SIZE);
+            printf("Too many parameter names listed in --pnames, max is %d\n", MAX_PARAM_LIST_SIZE);
             return 1;
         }
 
-        /* put param name into the param nam list */
-        param_name_list[param_name_list_size] = param_name;
+        /* allocate memory for the new string, plus null-terminator */
+        param_name_list[param_name_list_size] = malloc(length + 1);
+        if (param_name_list[param_name_list_size] == NULL)
+        {
+            printf("Memory allocation failed\n");
+            return 1;
+        }
 
-        /* fetch next param name */
-        param_name = strtok(NULL, s);
-
-        /* increment param nama list index counter  */
+        /* copy the substring into the new allocation */
+        strncpy(param_name_list[param_name_list_size], start, length);
+        param_name_list[param_name_list_size][length] = '\0';
         param_name_list_size++;
+
+        /* exit if no more delimiters are found */
+        if (!end)
+        {
+            break;
+        }
+
+        /* move past the delimiter */
+        start = end + 1;
     }
 
 
@@ -220,7 +233,7 @@ int main (int argc, char *argv [])
             /* print error message */
             printf("Error requesting parameter values\n");
 
-            /* Return the error code */
+            /* return the error code */
             return rc;
         }
 
@@ -325,21 +338,27 @@ int main (int argc, char *argv [])
         }
     }
 
-    // Deallocate memory
+    /* deallocate memory */
     free(response_param_inst_id_list);
     response_param_inst_id_list = NULL;
 
-    // Deallocate memory
+    /* deallocate memory */
     free(response_param_def_id_list);
     response_param_def_id_list = NULL;
 
-    // Deallocate memory
+    /* deallocate memory */
     free(response_mal_attribute_list);
     response_mal_attribute_list = NULL;
 
-    // Deallocate memory
+    /* deallocate memory */
     free(response_mal_attributes_tag_list);
     response_mal_attributes_tag_list = NULL;
+
+    /* deallocate memory */
+    for (size_t i = 0; i < param_name_list_size; i++)
+    {
+        free(param_name_list[i]);
+    }
 
     // --------------------------------------------------------------------------
     // destroy
