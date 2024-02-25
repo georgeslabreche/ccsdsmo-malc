@@ -26,7 +26,7 @@
 #define MAL_INCLUDE_MAL_POLLER_H_
 
 #ifdef __cplusplus
-extern "C" {%
+extern "C" {
 #endif
 
 mal_poller_t *mal_poller_new(mal_ctx_t *mal_ctx);

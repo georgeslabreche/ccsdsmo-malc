@@ -76,12 +76,15 @@
 #ifdef NMFAPI_C_DEMO_BUILD_DRAFT_API
 typedef struct _demo_app_utils_t demo_app_utils_t;
 #define DEMO_APP_UTILS_T_DEFINED
+typedef struct _demo_setvalue_utils_t demo_setvalue_utils_t;
+#define DEMO_SETVALUE_UTILS_T_DEFINED
 #endif // NMFAPI_C_DEMO_BUILD_DRAFT_API
 
 
 //  Public classes, each with its own header file
 #ifdef NMFAPI_C_DEMO_BUILD_DRAFT_API
 #include "demo_app_utils.h"
+#include "demo_setvalue_utils.h"
 #endif // NMFAPI_C_DEMO_BUILD_DRAFT_API
 
 #ifdef NMFAPI_C_DEMO_BUILD_DRAFT_API

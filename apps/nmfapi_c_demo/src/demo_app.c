@@ -86,7 +86,7 @@ int main (int argc, char *argv [])
             puts ("demo_app [options] ...");
             puts ("  --host  / -h        hostname");
             puts ("  --pport / -p        provider port");
-            puts ("  --cport / -p        consumer port");
+            puts ("  --cport / -c        consumer port");
             puts ("  --debug / -d        enable debug logging");
             puts ("  --help  / -?        this information");
             return 0;
