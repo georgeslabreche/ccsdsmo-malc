@@ -17,7 +17,9 @@ extern "C" {
 //  @interface
 //  This is a stable class, and may not change except for emergencies. It
 //  is provided in stable builds.
-#define SM_APPSLAUNCHER_LISTAPP_CONSUMER_URI "sm/appslauncher/consumer/listApp"  // The consumer URI for the listApp operation
+
+// The consumer URI for the listApp operation
+#define SM_APPSLAUNCHER_LISTAPP_CONSUMER_URI "sm/appslauncher/consumer/listApp"
 
 //  Create a consumer object for the listApp operation
 NMFAPI_C_EXPORT sm_appslauncher_listapp_consumer_t *

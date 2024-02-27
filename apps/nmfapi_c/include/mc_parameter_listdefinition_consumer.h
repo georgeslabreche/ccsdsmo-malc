@@ -17,7 +17,9 @@ extern "C" {
 //  @interface
 //  This is a stable class, and may not change except for emergencies. It
 //  is provided in stable builds.
-#define MC_PARAMETER_LISTDEFINITION_CONSUMER_URI "mc/parameter/consumer/listDefinition"  // The consumer URI for the listDefinition operation
+
+// The consumer URI for the listDefinition operation
+#define MC_PARAMETER_LISTDEFINITION_CONSUMER_URI "mc/parameter/consumer/listDefinition"
 
 //  Instanciate a consumer object for the listDefinition operation
 NMFAPI_C_EXPORT mc_parameter_listdefinition_consumer_t *
