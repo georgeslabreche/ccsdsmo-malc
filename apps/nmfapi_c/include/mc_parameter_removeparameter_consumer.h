@@ -18,7 +18,9 @@ extern "C" {
 //  @interface
 //  This is a stable class, and may not change except for emergencies. It
 //  is provided in stable builds.
-#define MC_PARAMETER_REMOVEPARAMETER_CONSUMER_URI "mc/parameter/consumer/removeParameter"  // The consumer URI for the removeParameter operation
+
+// The consumer URI for the removeParameter operation
+#define MC_PARAMETER_REMOVEPARAMETER_CONSUMER_URI "mc/parameter/consumer/removeParameter"
 
 //  Instanciate a consumer object for the removeParameter operation
 NMFAPI_C_EXPORT mc_parameter_removeparameter_consumer_t *

@@ -19,7 +19,9 @@ extern "C" {
 //  stable builds by default. If you use this in applications, please ask
 //  for it to be pushed to stable state. Use --enable-drafts to enable.
 #ifdef NMFAPI_C_BUILD_DRAFT_API
-#define COMMON_DIRECTORY_LOOKUPPROVIDER_CONSUMER_URI "common/directory/consumer/lookupProvider"  // The consumer URI for the lookupProvider operation
+
+// The consumer URI for the lookupProvider operation
+#define COMMON_DIRECTORY_LOOKUPPROVIDER_CONSUMER_URI "common/directory/consumer/lookupProvider"
 
 //  *** Draft method, for development use, may change without warning ***
 //  Instanciate a consumer object for the lookupProvider operation

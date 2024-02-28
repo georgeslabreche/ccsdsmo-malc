@@ -21,7 +21,7 @@
 //  Logging
 
 // The class logger
-clog_logger_t sm_appslauncher_service_logger = CLOG_DEBUG_LEVEL;
+clog_logger_t sm_appslauncher_service_logger = CLOG_ERROR_LEVEL;
 
 void
 sm_appslauncher_service_set_log_level (int level)

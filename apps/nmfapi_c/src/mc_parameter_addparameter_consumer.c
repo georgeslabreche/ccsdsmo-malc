@@ -21,7 +21,7 @@
 //  Logging
 
 //  The class logger
-clog_logger_t mc_parameter_addparameter_consumer_logger = CLOG_DEBUG_LEVEL;
+clog_logger_t mc_parameter_addparameter_consumer_logger = CLOG_ERROR_LEVEL;
 
 //  Set the log level
 void

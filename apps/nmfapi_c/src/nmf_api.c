@@ -18,7 +18,7 @@
 //  Logging
 
 // The class logger
-clog_logger_t nmf_api_logger = CLOG_DEBUG_LEVEL;
+clog_logger_t nmf_api_logger = CLOG_ERROR_LEVEL;
 
 //  Set the log level for this class
 void

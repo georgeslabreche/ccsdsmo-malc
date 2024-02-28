@@ -25,7 +25,7 @@
 /* */
 #include "maltcp.h"
 
-clog_logger_t maltcp_logger = CLOG_DEBUG_LEVEL;
+clog_logger_t maltcp_logger = CLOG_WARN_LEVEL;
 
 void maltcp_set_log_level(int level) {
   maltcp_logger = level;

@@ -18,7 +18,9 @@ extern "C" {
 //  @interface
 //  This is a stable class, and may not change except for emergencies. It
 //  is provided in stable builds.
-#define MC_PARAMETER_SETVALUE_CONSUMER_URI "mc/parameter/consumer/setValue"  // The consumer URI for the setValue operation
+
+// The consumer URI for the setValue operation
+#define MC_PARAMETER_SETVALUE_CONSUMER_URI "mc/parameter/consumer/setValue"
 
 //  Instanciate a consumer object for the setValue operation
 NMFAPI_C_EXPORT mc_parameter_setvalue_consumer_t *

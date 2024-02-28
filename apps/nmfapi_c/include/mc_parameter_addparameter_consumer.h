@@ -18,7 +18,9 @@ extern "C" {
 //  @interface
 //  This is a stable class, and may not change except for emergencies. It
 //  is provided in stable builds.
-#define MC_PARAMETER_ADDPARAMETER_CONSUMER_URI "mc/parameter/consumer/addParameter"  // The consumer URI for the addParameter operation
+
+// The consumer URI for the addParameter operation
+#define MC_PARAMETER_ADDPARAMETER_CONSUMER_URI "mc/parameter/consumer/addParameter"
 
 //  Instanciate a consumer object for the addParameter operation
 NMFAPI_C_EXPORT mc_parameter_addparameter_consumer_t *

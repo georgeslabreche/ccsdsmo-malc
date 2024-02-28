@@ -24,7 +24,7 @@
 //  Logging
 
 // The class logger
-clog_logger_t common_directory_service_logger = CLOG_DEBUG_LEVEL;
+clog_logger_t common_directory_service_logger = CLOG_ERROR_LEVEL;
 
 //  Set the log level
 void
