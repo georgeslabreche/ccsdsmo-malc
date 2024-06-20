@@ -381,15 +381,15 @@ int mal_encoder_encode_boolean(mal_encoder_t *self, void *cursor, mal_boolean_t 
   return self->mal_encoder_encode_boolean(self, cursor, to_encode);
 }
 
-void mal_write16(mal_encoder_t *self, int int_value, void *cursor) {
+void mal_write16(mal_encoder_t *self, uint16_t int_value, void *cursor) {
   self->mal_write16(int_value, cursor);
 }
 
-void mal_write32(mal_encoder_t *self, int int_value, void *cursor) {
+void mal_write32(mal_encoder_t *self, uint32_t int_value, void *cursor) {
   self->mal_write32(int_value, cursor);
 }
 
-void mal_write64(mal_encoder_t *self, long long_value, void *cursor) {
+void mal_write64(mal_encoder_t *self, uint64_t long_value, void *cursor) {
   self->mal_write64(long_value,  cursor);
 }
 

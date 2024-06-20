@@ -41,11 +41,11 @@ clog_logger_t malbinary_decoder_get_logger(mal_decoder_t *self);
 
 char malbinary_read(void *cursor);
 
-short malbinary_read16(void *cursor);
+uint16_t malbinary_read16(void *cursor);
 
-int malbinary_read32(void *cursor);
+uint32_t malbinary_read32(void *cursor);
 
-long malbinary_read64(void *cursor);
+uint64_t malbinary_read64(void *cursor);
 
 int malbinary_decoder_decode_string(mal_decoder_t *self, void *cursor, mal_string_t **result);
 
@@ -82,11 +82,11 @@ int malbinary_decoder_decode_ushort(mal_decoder_t *self, void *cursor, mal_ushor
 
 int malbinary_decoder_decode_boolean(mal_decoder_t *self, void *cursor, mal_boolean_t *result);
 
-short malbinary_read16(void *cursor);
+uint16_t malbinary_read16(void *cursor);
 
-int malbinary_read32(void *cursor);
+uint32_t malbinary_read32(void *cursor);
 
-long malbinary_read64(void *cursor);
+uint64_t malbinary_read64(void *cursor);
 
 int malbinary_decoder_decode_duration(mal_decoder_t *self, void *cursor, mal_duration_t *result);
 

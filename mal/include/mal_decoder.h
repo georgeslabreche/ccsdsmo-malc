@@ -65,9 +65,9 @@ void mal_decoder_cursor_assert(mal_decoder_t *self, void *cursor);
 
 /* Decoding functions */
 
-short mal_read16(mal_decoder_t *self, void *cursor);
-int mal_read32(mal_decoder_t *self, void *cursor);
-long mal_read64(mal_decoder_t *self, void *cursor);
+uint16_t mal_read16(mal_decoder_t *self, void *cursor);
+uint32_t mal_read32(mal_decoder_t *self, void *cursor);
+uint64_t mal_read64(mal_decoder_t *self, void *cursor);
 int mal_decoder_decode_string(mal_decoder_t *self, void *cursor, mal_string_t **result);
 int mal_decoder_decode_presence_flag(mal_decoder_t *self, void *cursor, bool *result);
 int mal_decoder_decode_short_form(mal_decoder_t *self, void *cursor, long *result);
@@ -154,9 +154,9 @@ typedef void mal_decoder_cursor_assert_fn(void *cursor);
 
 /* Decoding functions */
 
-typedef short mal_read16_fn(void *cursor);
-typedef int mal_read32_fn(void *cursor);
-typedef long mal_read64_fn(void *cursor);
+typedef uint16_t mal_read16_fn(void *cursor);
+typedef uint32_t mal_read32_fn(void *cursor);
+typedef uint64_t mal_read64_fn(void *cursor);
 typedef int mal_decoder_decode_string_fn(mal_decoder_t *self, void *cursor, mal_string_t **result);
 typedef int mal_decoder_decode_presence_flag_fn(mal_decoder_t *self, void *cursor, bool *result);
 typedef int mal_decoder_decode_short_form_fn(mal_decoder_t *self, void *cursor, long *result);

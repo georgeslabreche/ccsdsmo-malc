@@ -664,7 +664,7 @@ demo_parameter_service_set_value()
 
     // Convert random double value to string
     char param_value_to_set[20];
-    snprintf(param_value_to_set, 20, "%f", random_value);
+    snprintf(param_value_to_set, 20, "%0.12f", random_value);
 
     // Response variables for param inst and def ids
     long param_inst_id;
@@ -709,13 +709,13 @@ demo_parameter_service_set_value()
     else
     {
         // Print the fetched parameter
-        printf("Value of parameter %s: %f\n", param_name, param_value);
+        printf("Value of parameter %s: %.12f\n", param_name, param_value);
     }
 
     // STEP 3: The setValue request interaction will set the OSVersion param value
     
     // Verbosity
-    printf("Setting value of parameter %s from %f to %s\n", param_name, param_value, param_value_to_set);
+    printf("Setting value of parameter %s from %.12f to %s\n", param_name, param_value, param_value_to_set);
 
     // Trigger the setValue submit interaction
     rc = mc_parameter_service_set_value(parameter_service, param_inst_id, MAL_DURATION_ATTRIBUTE_TAG, param_value_to_set);
@@ -747,7 +747,7 @@ demo_parameter_service_set_value()
         else
         {
             // Print the fetched parameter
-            printf("New value of parameter %s: %f\n", param_name, param_value);
+            printf("New value of parameter %s: %0.12f\n", param_name, param_value);
         }
     }
 

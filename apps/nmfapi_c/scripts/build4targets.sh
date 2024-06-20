@@ -69,7 +69,7 @@ done
 # Got the app's directory.
 cd ..
 
-# Cross compile for each taget environment.
+# Cross compile for each target environment.
 for target in "${TARGETS[@]}"
 do
     # Check that cross-compilation directory exists.
